@@ -43,7 +43,33 @@ check_broken_link_fails() {
   else pass check_broken_link_fails; fi
 }
 
-for c in check_build check_wiki_section check_raw_ignored check_home_posts_only check_broken_link_fails; do $c; done
+check_index_complete() {
+  local f missing=""
+  for f in content/wiki/concepts/*.md content/wiki/sources/*.md; do
+    [[ -e "$f" ]] || continue
+    local rel=${f#content/wiki/}
+    grep -qF "]($rel)" content/wiki/_index.md || missing+="$rel "
+  done
+  if [[ -n "$missing" ]]; then fail check_index_complete "not in _index.md: $missing"
+  else pass check_index_complete; fi
+}
+
+check_search_includes_wiki() {
+  if grep -q '/wiki/concepts/' public/index.json 2>/dev/null; then pass check_search_includes_wiki
+  else fail check_search_includes_wiki "no /wiki/concepts/ pages in public/index.json"; fi
+}
+
+check_concepts_cite_sources() {
+  local f bad=""
+  for f in content/wiki/concepts/*.md; do
+    [[ -e "$f" ]] || continue
+    grep -q '](../sources/' "$f" || bad+="$f "
+  done
+  if [[ -n "$bad" ]]; then fail check_concepts_cite_sources "no source link in: $bad"
+  else pass check_concepts_cite_sources; fi
+}
+
+for c in check_build check_wiki_section check_raw_ignored check_home_posts_only check_broken_link_fails check_index_complete check_search_includes_wiki check_concepts_cite_sources; do $c; done
 # rebuild cleanly so later checks see real output
 hugo --gc --minify --quiet >/dev/null 2>&1
 [[ $FAILS -eq 0 ]] && echo "ALL PASS" || { echo "$FAILS FAILED"; exit 1; }
