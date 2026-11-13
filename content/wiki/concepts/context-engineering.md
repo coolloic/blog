@@ -4,6 +4,7 @@ summary: "Deciding what goes into an agent's finite context window, and when."
 category: concept
 sources:
   - ../sources/anatomy-of-a-modern-ai-agent.md
+  - ../sources/google-cloud-choose-agentic-design-pattern.md
 lastmod: 2026-11-13
 tags: ["agents", "context"]
 ---
@@ -18,6 +19,8 @@ tags: ["agents", "context"]
 - **Write things down.** Notes in files (plans, progress logs, to-do lists) let an agent recover its state after a reset or compaction.
 - **Delegate.** [Subagents](subagents.md) do context-heavy work in a fresh window and return only a summary.
 
+In multi-agent systems the same principles apply per agent: **isolate** each agent's context, **persist** what later steps need, and **compress** large data before passing it on ([Google Cloud](../sources/google-cloud-choose-agentic-design-pattern.md)).
+
 ## Related
 
 [Agent loop](agent-loop.md)
@@ -25,3 +28,4 @@ tags: ["agents", "context"]
 ## Sources
 
 - [The Anatomy of a Modern AI Agent](../sources/anatomy-of-a-modern-ai-agent.md)
+- [Choose a design pattern for your agentic AI system (Google Cloud)](../sources/google-cloud-choose-agentic-design-pattern.md)

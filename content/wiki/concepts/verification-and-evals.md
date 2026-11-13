@@ -4,6 +4,7 @@ summary: "Feedback from outside the model, for the agent at runtime and for the 
 category: concept
 sources:
   - ../sources/anatomy-of-a-modern-ai-agent.md
+  - ../sources/google-cloud-choose-agentic-design-pattern.md
 lastmod: 2026-11-13
 tags: ["agents", "evals"]
 ---
@@ -24,6 +25,12 @@ An agent that can run the tests fixes its own bugs. One that can't ships them co
 
 Evals are a set of realistic tasks with checkable outcomes, run every time a prompt, [tool](tools.md) or model changes. Without them, every change is a guess.
 
+## As architecture
+
+The **review-and-critique** (generator–critic) pattern builds verification into the system: a separate critic agent checks output against criteria, or runs tests, before it's accepted. Each revision cycle costs another model call. See [agent design patterns](agent-design-patterns.md).
+
+Note: the Google Cloud pattern guide gives no evaluation guidance, so builder-side evals still rest on the agents post.
+
 ## Related
 
 [Agent loop](agent-loop.md) · [Subagents](subagents.md)
@@ -31,3 +38,4 @@ Evals are a set of realistic tasks with checkable outcomes, run every time a pro
 ## Sources
 
 - [The Anatomy of a Modern AI Agent](../sources/anatomy-of-a-modern-ai-agent.md)
+- [Choose a design pattern for your agentic AI system (Google Cloud)](../sources/google-cloud-choose-agentic-design-pattern.md)

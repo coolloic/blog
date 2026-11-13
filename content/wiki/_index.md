@@ -11,6 +11,7 @@ A knowledge base on cutting-edge AI, maintained by an LLM from sources I collect
 ## Concepts
 
 - [Agent guardrails](concepts/agent-guardrails.md): sandboxing, permissions and input handling that bound what an agent can do.
+- [Agent design patterns](concepts/agent-design-patterns.md): reusable architectures for arranging one or many agents, and how to choose between them.
 - [Agent loop](concepts/agent-loop.md): the core of every AI agent, a model choosing actions in a loop until the task is done.
 - [Context engineering](concepts/context-engineering.md): deciding what goes into an agent's finite context window, and when.
 - [Model Context Protocol (MCP)](concepts/model-context-protocol.md): open standard for exposing tools, resources and prompts to any compatible agent.
@@ -20,4 +21,5 @@ A knowledge base on cutting-edge AI, maintained by an LLM from sources I collect
 
 ## Sources
 
+- [Choose a design pattern for your agentic AI system (Google Cloud)](sources/google-cloud-choose-agentic-design-pattern.md): guide to 12 agent design patterns and how to choose between them.
 - [The Anatomy of a Modern AI Agent](sources/anatomy-of-a-modern-ai-agent.md): blog post mapping an agent as a loop plus tools, context, delegation, verification and guardrails.

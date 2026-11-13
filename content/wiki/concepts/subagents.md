@@ -4,6 +4,7 @@ summary: "Delegating focused sub-tasks to agents with fresh context windows."
 category: concept
 sources:
   - ../sources/anatomy-of-a-modern-ai-agent.md
+  - ../sources/google-cloud-choose-agentic-design-pattern.md
 lastmod: 2026-11-13
 tags: ["agents", "multi-agent"]
 ---
@@ -18,6 +19,10 @@ tags: ["agents", "multi-agent"]
 - **Cost: tokens.** Each subagent pays for its own context.
 - **Rule of thumb:** delegate when sub-tasks are truly independent. Otherwise the overhead outweighs the gain.
 
+## Arrangements
+
+How subagents are wired together is an architectural choice. It can be a fixed order (sequential, parallel or loop), routing by a coordinator model, multi-level hierarchical decomposition, or an all-to-all swarm. Google's guide advises starting with a single agent and moving to multi-agent only when one agent must juggle several distinct responsibilities. See [agent design patterns](agent-design-patterns.md).
+
 ## Related
 
 [Verification and evals](verification-and-evals.md), where independent reviewer subagents are a common use.
@@ -25,3 +30,4 @@ tags: ["agents", "multi-agent"]
 ## Sources
 
 - [The Anatomy of a Modern AI Agent](../sources/anatomy-of-a-modern-ai-agent.md)
+- [Choose a design pattern for your agentic AI system (Google Cloud)](../sources/google-cloud-choose-agentic-design-pattern.md)
