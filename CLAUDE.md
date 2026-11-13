@@ -5,7 +5,7 @@ A Hugo (PaperMod) site with two kinds of content:
 - **Blog posts** in `content/posts/`: dated essays written by the owner. Edit them only when asked.
 - **The wiki** in `content/wiki/`: a knowledge base on cutting-edge AI that **you (the LLM) maintain** from sources the owner collects. This follows Karpathy's "LLM Wiki" pattern.
 
-Preview with `hugo server -D` (served at `http://localhost:1313/blog/`). Never `git push` without the owner's go-ahead; pushing to `main` publishes the site.
+Preview with `hugo server -D` (served at `http://localhost:1313/blog/`). Pushing to `main` publishes the site. The owner has approved committing and pushing directly once `scripts/check-wiki.sh` passes; no need to ask first.
 
 ## Layout (three layers)
 
