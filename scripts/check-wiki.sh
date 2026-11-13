@@ -69,7 +69,30 @@ check_concepts_cite_sources() {
   else pass check_concepts_cite_sources; fi
 }
 
-for c in check_build check_wiki_section check_raw_ignored check_home_posts_only check_broken_link_fails check_index_complete check_search_includes_wiki check_concepts_cite_sources; do $c; done
+check_rss_posts_only() {
+  if grep -Eq '<link>[^<]*/wiki/' public/index.xml 2>/dev/null; then
+    fail check_rss_posts_only "wiki pages listed in public/index.xml"
+  else pass check_rss_posts_only; fi
+}
+
+check_ci_strict() {
+  if grep -Eq 'hugo .*--panicOnWarning' .github/workflows/deploy.yml; then pass check_ci_strict
+  else fail check_ci_strict "deploy workflow builds without --panicOnWarning (broken links would ship)"; fi
+}
+
+check_unsafe_link_neutralised() {
+  local fixture=content/wiki/zz-unsafe.md out
+  out=$(mktemp -d)
+  printf -- '---\ntitle: zz\n---\n[x](javascript:alert(1))\n' > "$fixture"
+  hugo --quiet -d "$out" >/dev/null 2>&1
+  rm -f "$fixture"
+  if grep -rqi 'href="\?javascript:' "$out/wiki/zz-unsafe/" 2>/dev/null; then
+    fail check_unsafe_link_neutralised "javascript: link rendered as a live href"
+  else pass check_unsafe_link_neutralised; fi
+  rm -rf "$out"
+}
+
+for c in check_build check_wiki_section check_raw_ignored check_home_posts_only check_broken_link_fails check_index_complete check_search_includes_wiki check_concepts_cite_sources check_rss_posts_only check_ci_strict check_unsafe_link_neutralised; do $c; done
 # rebuild cleanly so later checks see real output
 hugo --gc --minify --quiet >/dev/null 2>&1
 [[ $FAILS -eq 0 ]] && echo "ALL PASS" || { echo "$FAILS FAILED"; exit 1; }
