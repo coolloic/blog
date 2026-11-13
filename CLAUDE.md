@@ -56,7 +56,7 @@ Triggered by "ingest <file in raw/ | URL | blog post>".
 1. Read the source in full. Never modify files in `raw/`.
 2. Create `content/wiki/sources/<slug>.md` per the conventions above.
 3. For each concept the source covers, create the concept page or update the existing one. Merge new information; don't duplicate it. Where the source contradicts an existing page, keep both claims, attributed, and flag the contradiction in a `> **Contradiction:**` note.
-4. Update `content/wiki/_index.md`: one line per new page under `## Concepts` or `## Sources`, formatted `- [Title](concepts/slug.md): summary`, kept alphabetical.
+4. Update `content/wiki/_index.md` by running `python3 scripts/gen-index.py content/wiki`. It rebuilds the Concepts (grouped by area, from each concept's first tag: fde, models, prompting, retrieval, training, inference, evaluation, agents, frameworks, protocols, security, platforms) and Sources sections from page front matter.
 5. Append to `content/wiki/log.md`: `- YYYY-MM-DD · ingest · <source title> → N sources, M concepts (created X, updated Y)`.
 6. Run `bash scripts/check-wiki.sh` and fix any failure.
 7. Report to the owner: pages created or updated, and any contradictions found.

@@ -102,7 +102,21 @@ check_mermaid_rendered() {
   else pass check_mermaid_rendered; fi
 }
 
-for c in check_build check_wiki_section check_raw_ignored check_home_posts_only check_broken_link_fails check_index_complete check_search_includes_wiki check_concepts_cite_sources check_rss_posts_only check_ci_strict check_unsafe_link_neutralised check_mermaid_rendered; do $c; done
+check_all_wiki_pages_rendered() {
+  # A page whose date (or lastmod, which Hugo falls back to) is still in the future in UTC is silently skipped.
+  local out missing=""
+  out=$(mktemp -d)
+  hugo --quiet -d "$out" >/dev/null 2>&1
+  for f in content/wiki/concepts/*.md content/wiki/sources/*.md; do
+    local d; d=$(basename "$(dirname "$f")")
+    [[ -f "$out/wiki/$d/$(basename "$f" .md)/index.html" ]] || missing="$missing $d/$(basename "$f")"
+  done
+  rm -rf "$out"
+  if [[ -n "$missing" ]]; then fail check_all_wiki_pages_rendered "$(echo $missing | wc -w | tr -d ' ') pages not rendered, e.g.$(echo $missing | cut -d' ' -f1-3)"
+  else pass check_all_wiki_pages_rendered; fi
+}
+
+for c in check_build check_wiki_section check_raw_ignored check_home_posts_only check_broken_link_fails check_index_complete check_search_includes_wiki check_concepts_cite_sources check_rss_posts_only check_ci_strict check_unsafe_link_neutralised check_mermaid_rendered check_all_wiki_pages_rendered; do $c; done
 # rebuild cleanly so later checks see real output
 hugo --gc --minify --quiet >/dev/null 2>&1
 [[ $FAILS -eq 0 ]] && echo "ALL PASS" || { echo "$FAILS FAILED"; exit 1; }

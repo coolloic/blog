@@ -86,3 +86,8 @@ markup:
     noClasses: false
     codeFences: true
     guessSyntax: true
+
+# Don't fall back to lastmod for a page's date: wiki pages have only lastmod, and a
+# lastmod that is still "tomorrow" in UTC would make Hugo treat them as future and drop them.
+frontmatter:
+  date: ["date", "publishDate"]
