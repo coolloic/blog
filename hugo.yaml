@@ -1,0 +1,83 @@
+# Change baseURL to your real address once deployed,
+# e.g. https://<github-username>.github.io/blog/ or a custom domain.
+baseURL: https://coolloic.github.io/blog/
+locale: en-us
+title: Loic's Blog
+theme: PaperMod
+
+enableRobotsTXT: true
+buildDrafts: false
+buildFuture: false
+pagination:
+  pagerSize: 10
+
+minify:
+  disableXML: true
+  minifyOutput: true
+
+outputs:
+  home: [HTML, RSS, JSON] # JSON powers the search page
+
+params:
+  env: production
+  description: "Technical notes on cutting-edge AI: models, agents, and the tools around them."
+  author: Loic
+  defaultTheme: auto # follows the reader's light/dark preference
+  ShowReadingTime: true
+  ShowShareButtons: false
+  ShowPostNavLinks: true
+  ShowBreadCrumbs: false
+  ShowCodeCopyButtons: true
+  ShowToc: true
+  TocOpen: false
+  ShowWordCount: false
+  ShowRssButtonInSectionTermList: true
+  disableSpecial1stPost: false
+
+  homeInfoParams:
+    Title: "Hi, I'm Loic 👋"
+    Content: "Technical writing on cutting-edge AI: models, agents, tooling, and what I learn building with them."
+
+  socialIcons:
+    - name: github
+      url: "https://github.com/coolloic"
+    - name: rss
+      url: "index.xml"
+
+  editPost:
+    URL: "https://github.com/coolloic/blog/tree/main/content"
+    Text: "Suggest changes"
+    appendFilePath: true
+
+menu:
+  main:
+    - identifier: posts
+      name: Posts
+      url: /posts/
+      weight: 10
+    - identifier: archives
+      name: Archive
+      url: /archives/
+      weight: 20
+    - identifier: tags
+      name: Tags
+      url: /tags/
+      weight: 30
+    - identifier: search
+      name: Search
+      url: /search/
+      weight: 40
+    - identifier: now
+      name: Now
+      url: /now/
+      weight: 45
+    - identifier: about
+      name: About
+      url: /about/
+      weight: 50
+
+markup:
+  highlight:
+    noClasses: false
+    codeFences: true
+    guessSyntax: true
