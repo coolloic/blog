@@ -22,6 +22,21 @@ Start from the requirements, not the pattern:
 
 If the task is predictable or fits in a single model call (summarising, translating, classifying), **don't use an agent at all**. Otherwise, **start with a single agent** and add structure only when a requirement forces it. Revisit the choice as the workload changes.
 
+Synthesis: the guide gives criteria, not a flowchart. This is one way to read them as a decision path:
+
+```mermaid
+flowchart TD
+  A["New task"] --> B{"Predictable, or one model call?"}
+  B -- yes --> N["No agent: call the model directly"]
+  B -- no --> C["Start with a single agent"]
+  C --> D{"Struggling as tools and responsibilities grow?"}
+  D -- no --> K["Keep the single agent"]
+  D -- "needs constant re-planning" --> R["ReAct"]
+  D -- "steps known in advance" --> W["Fixed workflow: sequential, parallel, loop"]
+  D -- "steps depend on the input" --> O["Model-orchestrated: coordinator, hierarchical, swarm"]
+  C -. "high-stakes decisions" .-> H["Add human-in-the-loop"]
+```
+
 ## The patterns
 
 ### Single agent
@@ -30,11 +45,24 @@ One model with a set of [tools](tools.md) and a detailed system prompt. It plans
 - **Use for:** multi-step tasks needing external data, and as the first version of any agent.
 - **Watch for:** quality drops (wrong tool choice, failures, latency) as tools and responsibilities grow. That's the signal to move to ReAct or multi-agent.
 
+```mermaid
+flowchart LR
+  U["Request"] --> A["Agent + system prompt"]
+  A <--> T["Tools"]
+  A --> F["Answer"]
+```
+
 ### ReAct (reason and act)
 
 A single agent that cycles explicitly through **Thought** (reason about the next step), **Action** (call a tool or answer) and **Observation** (record the result), until it reaches an answer, an iteration limit or an error.
 - **Use for:** dynamic tasks that need continual re-planning.
 - **Trade-off:** cheaper than multi-agent, and the reasoning trace helps debugging. But the loop adds latency, quality depends on the model's reasoning, and one bad tool result can mislead the final answer.
+
+```mermaid
+flowchart LR
+  Q["Request"] --> T["Thought"] --> A["Action: call a tool"] --> O["Observation"] --> T
+  T -- "answer ready" --> F["Final answer"]
+```
 
 ### Fixed workflows (code decides the order)
 
@@ -46,9 +74,42 @@ These [subagent](subagents.md) arrangements use predefined control flow with no 
 | **Parallel** | Fan out to agents running at once, then merge | Independent sub-tasks, or gathering several views quickly | Higher burst cost; merging conflicting results is hard |
 | **Loop** | Repeat a sequence until an exit condition | Polling, self-correction | A bad exit condition means runaway cost |
 
+**Sequential**
+
+```mermaid
+flowchart LR
+  I["Input"] --> A["Agent A"] --> B["Agent B"] --> C["Agent C"] --> O["Output"]
+```
+
+**Parallel**
+
+```mermaid
+flowchart LR
+  I["Input"] --> A["Agent A"] & B["Agent B"] & C["Agent C"]
+  A & B & C --> M["Merge"] --> O["Output"]
+```
+
+**Loop**
+
+```mermaid
+flowchart LR
+  I["Input"] --> A["Agent A"] --> B["Agent B"] --> X{"Exit condition met?"}
+  X -- no --> A
+  X -- yes --> O["Output"]
+```
+
 Two loop variants focus on output quality:
 - **Review and critique (generator–critic):** a generator drafts and a critic checks the draft against criteria (accuracy, format, safety), then approves it or sends it back. An example is a code generator paired with a security-auditor critic that runs tests. This is [verification](verification-and-evals.md) built into the architecture.
 - **Iterative refinement:** one or more agents improve a shared result over several passes until it meets a quality bar or hits an iteration limit. Good for drafting, planning and debugging code.
+
+**Review and critique**
+
+```mermaid
+flowchart LR
+  R["Request"] --> G["Generator"] --> D["Draft"] --> C{"Critic: meets criteria?"}
+  C -- "no, with feedback" --> G
+  C -- yes --> O["Output"]
+```
 
 ### Dynamic orchestration (a model decides)
 
@@ -58,10 +119,68 @@ Two loop variants focus on output quality:
 | **Hierarchical decomposition** | A root agent splits the task, sub-agents split further, workers execute | Ambiguous, open-ended work (research, planning) | Hard to design and debug; nested calls make it slow and costly |
 | **Swarm** | Agents talk all-to-all, critique and hand off, with no central supervisor | Very complex problems that benefit from debate | The most complex and costly pattern; needs exit conditions to converge |
 
+**Coordinator**
+
+```mermaid
+flowchart TD
+  R["Customer request"] --> C["Coordinator: a model picks the route"]
+  C --> A["Order status agent"]
+  C --> B["Returns agent"]
+  C --> D["Refunds agent"]
+```
+
+**Hierarchical decomposition**
+
+```mermaid
+flowchart TD
+  R["Root agent: research project"] --> G["Gather"]
+  R --> N["Analyse"]
+  R --> W["Write report"]
+  G --> G1["Worker"]
+  G --> G2["Worker"]
+  N --> N1["Worker"]
+  N --> N2["Worker"]
+```
+
+**Swarm**
+
+```mermaid
+flowchart LR
+  U["Request"] --> D["Dispatcher"]
+  D <--> M["Market research"]
+  D <--> E["Engineering"]
+  D <--> F["Finance"]
+  M <--> E
+  E <--> F
+  F <--> M
+```
+
 ### Special requirements
 
 - **Human-in-the-loop:** the agent pauses at set checkpoints for a person to approve, correct or add input. An example is a compliance officer approving a redacted dataset before release. It's one of the strongest [guardrails](agent-guardrails.md), at the cost of building the review system.
 - **Custom logic:** your own code branches between other patterns. For example, a refund agent runs parallel checks, then branches to either a refund or a sequential store-credit flow. This is the most flexible option, but also the most work to build and maintain.
+
+**Human-in-the-loop**
+
+```mermaid
+flowchart LR
+  A["Agent works"] --> C{"Checkpoint"} --> H["Human reviews"]
+  H -- approve --> N["Agent continues"]
+  H -- "correct or add input" --> A
+```
+
+**Custom logic** (the refund example)
+
+```mermaid
+flowchart TD
+  Q["Refund request"] --> C["Coordinator: custom code"]
+  C --> V["In parallel: verify purchaser, check eligibility"]
+  V --> E{"Eligible?"}
+  E -- yes --> P["Refund processor"]
+  E -- no --> S["Store-credit flow, sequential"]
+  P --> F["Response agent"]
+  S --> F
+```
 
 ## Cross-cutting concerns
 

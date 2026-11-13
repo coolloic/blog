@@ -44,6 +44,7 @@ tags: ["agents"]
 - **One concept per page.** Start with a one-paragraph definition, then the detail. Link related concepts inline where they're mentioned.
 - **Every concept page ends with a `## Sources` section** linking the source pages it draws on. Every claim must trace to a source. If you add your own synthesis, say so ("Synthesis: …").
 - **Source pages** contain: what the source is (title, author, date, link to the original, never a copy of it), a short summary, its key claims as bullets, and the concept pages it feeds.
+- **Diagrams:** use fenced ```` ```mermaid ```` blocks (flowcharts work best). They render on the site via `layouts/_markup/render-codeblock-mermaid.html` and natively in Obsidian. Quote node labels (`A["Label"]`). Add a diagram when structure or flow is easier to see than to read. A diagram that goes beyond what a source shows must be labelled "Synthesis:".
 - Write for a technical reader. Be concise and precise. Don't pad.
 
 ## Workflows

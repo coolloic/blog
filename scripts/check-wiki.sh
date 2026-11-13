@@ -92,7 +92,17 @@ check_unsafe_link_neutralised() {
   rm -rf "$out"
 }
 
-for c in check_build check_wiki_section check_raw_ignored check_home_posts_only check_broken_link_fails check_index_complete check_search_includes_wiki check_concepts_cite_sources check_rss_posts_only check_ci_strict check_unsafe_link_neutralised; do $c; done
+check_mermaid_rendered() {
+  local with=public/wiki/concepts/agent-design-patterns/index.html without=public/wiki/concepts/tools/index.html n
+  n=$(grep -o 'mermaid@[0-9.]*/dist/mermaid.esm.min.mjs' "$with" 2>/dev/null | wc -l | tr -d ' ')
+  if ! grep -Eq '<pre class="?mermaid' "$with" 2>/dev/null; then fail check_mermaid_rendered "no <pre class=mermaid> in agent-design-patterns"
+  elif grep -Eq '&amp;(#34|gt|lt|quot);' "$with"; then fail check_mermaid_rendered "diagram source is double-escaped (Mermaid will show syntax errors)"
+  elif [[ "$n" != 1 ]]; then fail check_mermaid_rendered "mermaid script included $n times (want 1)"
+  elif grep -q 'mermaid.esm' "$without"; then fail check_mermaid_rendered "mermaid script loaded on a page without diagrams"
+  else pass check_mermaid_rendered; fi
+}
+
+for c in check_build check_wiki_section check_raw_ignored check_home_posts_only check_broken_link_fails check_index_complete check_search_includes_wiki check_concepts_cite_sources check_rss_posts_only check_ci_strict check_unsafe_link_neutralised check_mermaid_rendered; do $c; done
 # rebuild cleanly so later checks see real output
 hugo --gc --minify --quiet >/dev/null 2>&1
 [[ $FAILS -eq 0 ]] && echo "ALL PASS" || { echo "$FAILS FAILED"; exit 1; }
