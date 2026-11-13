@@ -1,0 +1,17 @@
+{{- /*
+  Resolves relative links to .md files (e.g. [MCP](mcp.md), [x](../sources/y.md#part))
+  to the target page's URL, so the same Markdown works in Obsidian and on the site.
+  An unresolvable .md link emits a warning; build with --panicOnWarning to fail on it.
+*/ -}}
+{{- $u := urls.Parse .Destination -}}
+{{- $href := .Destination -}}
+{{- if and (not $u.IsAbs) (strings.HasSuffix $u.Path ".md") -}}
+  {{- with .PageInner.GetPage $u.Path -}}
+    {{- $href = .RelPermalink -}}
+    {{- with $u.Fragment }}{{ $href = printf "%s#%s" $href . }}{{ end -}}
+  {{- else -}}
+    {{- warnf "%s: broken wiki link %q" $.PageInner.File.Path $.Destination -}}
+  {{- end -}}
+{{- end -}}
+<a href="{{ $href | safeURL }}"{{ with .Title }} title="{{ . }}"{{ end }}{{ if $u.IsAbs }} rel="noopener"{{ end }}>{{ .Text }}</a>
+{{- /* chomp trailing newline */ -}}

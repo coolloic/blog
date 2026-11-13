@@ -33,6 +33,7 @@ params:
   ShowWordCount: false
   ShowRssButtonInSectionTermList: true
   disableSpecial1stPost: false
+  mainSections: [posts] # keep wiki pages off the home page, archive and post nav
 
   homeInfoParams:
     Title: "Hi, I'm Loic 👋"
@@ -55,6 +56,10 @@ menu:
       name: Posts
       url: /posts/
       weight: 10
+    - identifier: wiki
+      name: Wiki
+      url: /wiki/
+      weight: 15
     - identifier: archives
       name: Archive
       url: /archives/
