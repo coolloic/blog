@@ -1,8 +1,9 @@
 {{- /*
   Renders ```mermaid code blocks as diagrams (Obsidian renders the same blocks natively).
-  The loader script lives in layouts/partials/extend_footer.html. It must not be emitted here:
-  the page Store is shared across output formats and kept across `hugo server` rebuilds,
-  so a "first diagram adds the script" flag can drop it from the HTML page.
+  Every diagram references the same module; the browser runs it once per page.
+  Don't gate this on a .Page.Store flag or put it in the footer: content renders
+  concurrently with a Store shared across output formats, and PaperMod caches the
+  footer per layout, so both gave a different answer from build to build.
 */ -}}
-{{- .Page.Store.Set "hasMermaid" true -}}
 <pre class="mermaid">{{ .Inner }}</pre>
+<script type="module" src="{{ "js/mermaid-loader.js" | relURL }}"></script>
