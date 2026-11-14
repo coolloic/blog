@@ -99,6 +99,7 @@ check_mermaid_rendered() {
   elif grep -Eq '&amp;(#34|gt|lt|quot);' "$with"; then fail check_mermaid_rendered "diagram source is double-escaped (Mermaid will show syntax errors)"
   elif [[ "$n" != 1 ]]; then fail check_mermaid_rendered "mermaid script included $n times (want 1)"
   elif grep -q 'mermaid.esm' "$without"; then fail check_mermaid_rendered "mermaid script loaded on a page without diagrams"
+  elif ! awk '/<\/main>/{m=1} m && /mermaid\.esm/{f=1} END{exit !f}' "$with"; then fail check_mermaid_rendered "mermaid loader is inside the page content (hugo server drops it on rebuild); it belongs in the footer"
   else pass check_mermaid_rendered; fi
 }
 
