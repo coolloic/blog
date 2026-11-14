@@ -63,7 +63,7 @@ OpenAI suggests a developer message ordered Identity → Instructions → Exampl
 
 **Long-context ordering.** For 20k+ token inputs, Anthropic puts documents first and the question last (up to 30% better in its tests) and asks the model to extract relevant quotes before answering ([Anthropic](../sources/anthropic-prompting-best-practices.md)). Google gives the same advice for Gemini 3: data first, instructions at the end, bridged by "Based on the information above" ([Google](../sources/google-gemini-prompting-strategies.md)). This interacts with position effects documented in [long-context degradation](long-context-degradation.md) ([Lost in the Middle](../sources/lost-in-the-middle.md)).
 
-**Reasoning.** Ask for step-by-step thinking on non-reasoning models; rely on built-in thinking and effort controls on reasoning models. See [chain-of-thought](chain-of-thought.md) and [extended thinking](extended-thinking.md).
+**Reasoning.** Ask for step-by-step thinking on non-reasoning models; rely on built-in thinking and effort controls on [reasoning models](reasoning-models.md). See [chain-of-thought](chain-of-thought.md) and [extended thinking](extended-thinking.md).
 
 **Decomposition / prompt chaining.** Split a task into sequential calls when you need to inspect, log or branch on intermediate outputs. Anthropic's common chain is draft → critique against criteria → refine ([Anthropic](../sources/anthropic-prompting-best-practices.md)). Google lists three shapes: one prompt per instruction (routed by input), sequential chains, and parallel operations aggregated afterwards ([Google](../sources/google-gemini-prompting-strategies.md)). These map to the workflow patterns in [agent design patterns](agent-design-patterns.md).
 
@@ -94,7 +94,7 @@ Synthesis: treat every model upgrade as a prompt migration: rerun evals, remove 
 ## Prompt versioning and operations
 
 - **Prompts live in code.** OpenAI recommends keeping production prompts in application code as small typed builder modules, reviewed and tested like any code, rolled out behind feature flags. Its hosted reusable-prompt objects are being deprecated (`v1/prompts` shutdown scheduled 2026-11-30) ([OpenAI guide](../sources/openai-prompt-engineering-guide.md)).
-- **Pin model snapshots** (e.g. a dated ID) so behaviour does not shift under a fixed prompt; version the pair (prompt, model) together ([OpenAI guide](../sources/openai-prompt-engineering-guide.md)).
+- **Pin model snapshots** (e.g. a dated ID) so behaviour does not shift under a fixed prompt; version the pair (prompt, model) together ([prompt management](prompt-management.md)) ([OpenAI guide](../sources/openai-prompt-engineering-guide.md)).
 - **Cache-friendly layout.** Put stable content (system prompt, examples, policies) first and variable content last so [prompt caching](prompt-caching.md) hits ([OpenAI guide](../sources/openai-prompt-engineering-guide.md), [Notebook](../sources/notebook-prompt-engineering.md)). Editing the top of the prompt mid-conversation invalidates the cache; Anthropic's mid-conversation system messages exist partly to avoid this ([Anthropic mid-conversation](../sources/anthropic-mid-conversation-system-messages.md)).
 - **Trace and observe** prompt versions in production ([LLM observability](llm-observability.md)); tools such as [LangSmith](langsmith.md) and [DSPy](dspy.md) automate parts of this.
 
@@ -115,7 +115,7 @@ Synthesis: this table distils the vendor guidance above; it is a heuristic, not 
 | Missing facts | Context / retrieval, not cleverer wording |
 | Multi-step reasoning errors | Thinking/effort on reasoning models; CoT on others |
 | Need to inspect intermediate steps | Prompt chaining |
-| Same behaviour needed at very high volume with a small model | Consider fine-tuning or distillation |
+| Same behaviour needed at very high volume with a small model | Consider fine-tuning or [distillation](knowledge-distillation.md) |
 | Cost or latency target missed | Model choice, caching, shorter prompts before rewording |
 
 ## Sources

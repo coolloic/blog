@@ -17,7 +17,7 @@ lastmod: 2026-11-14
 tags: ["models", "reasoning", "inference"]
 ---
 
-**Test-time compute** (also called inference-time compute or test-time scaling) is the compute a model spends answering one query, beyond a single greedy pass. You can spend more of it in two ways. **Serially**, by letting the model reason longer before answering, which is what [reasoning models](reasoning-models.md) are trained to do. Or **in parallel**, by sampling many candidate answers and picking one with a vote, a verifier or a scoring model. o1 showed that accuracy keeps rising with more RL training compute *and* with more thinking time, so test-time compute became a second scaling axis next to parameters and pretraining data ([OpenAI](../sources/openai-learning-to-reason-with-llms.md)).
+**Test-time compute** (also called inference-time compute or test-time scaling) is the compute a model spends answering one query, beyond a single greedy pass. You can spend more of it in two ways. **Serially**, by letting the model reason longer before answering, which is what [reasoning models](reasoning-models.md) are trained to do. Or **in parallel**, by sampling many candidate answers and picking one with a vote, a verifier or a scoring model. o1 showed that accuracy keeps rising with more RL training compute *and* with more thinking time, so test-time compute became a second [scaling axis](scaling-laws.md) next to parameters and pretraining data ([OpenAI](../sources/openai-learning-to-reason-with-llms.md)).
 
 ## The two axes
 
@@ -60,7 +60,7 @@ flowchart TD
 
 **It can be controlled at decode time.** s1's *budget forcing* ends thinking early by emitting the end-of-thinking delimiter, or extends it by suppressing the stop and appending "Wait". This lifted a 32B model trained on only 1,000 examples from 50% to 57% on AIME24 ([s1](../sources/s1-simple-test-time-scaling.md)). Synthesis: vendor "budget" and "effort" controls are the productised version of this lever.
 
-**Parallel scaling without training:** self-consistency (sample several CoTs, majority-vote the answer) gave +17.9 points on GSM8K over greedy CoT. It needs answers that can be compared exactly ([Wang et al.](../sources/wang-2022-self-consistency.md)).
+**Parallel scaling without training:** self-consistency (sample several [CoTs](chain-of-thought.md), majority-vote the answer) gave +17.9 points on GSM8K over greedy CoT. It needs answers that can be compared exactly ([Wang et al.](../sources/wang-2022-self-consistency.md)).
 
 ## Failure modes
 
@@ -77,7 +77,7 @@ Synthesis, grounded in the sources above:
 2. **Use parallel compute when you have a cheap checker.** Unit tests, schema validation, SQL execution or exact-match voting turn N samples into reliable gains. Without a checker you need an [LLM judge](llm-as-judge.md), and its errors cap the benefit.
 3. **Route by difficulty.** A cheap first pass or classifier sends easy traffic to low effort and escalates the rest. This is the product version of compute-optimal allocation. See [model selection](model-selection.md) and [cost and latency optimization](cost-and-latency-optimization.md).
 4. **Size output limits for reasoning.** Raise `max_tokens` before blaming the model; OpenAI suggests reserving at least 25K tokens at first ([OpenAI guide](../sources/openai-reasoning-guide.md)). Very long budgets belong in [batch processing](batch-processing.md).
-5. **Know when to stop scaling inference.** If the model is far below the bar, more thinking rarely closes the gap. Change the model, the context ([RAG](retrieval-augmented-generation.md), tools) or the training ([fine-tuning](fine-tuning.md)).
+5. **Know when to stop scaling inference.** If the model is far below the bar, more thinking rarely closes the gap. Change the model, the context ([RAG](retrieval-augmented-generation.md), [tools](tools.md)) or the training ([fine-tuning](fine-tuning.md)).
 
 ## Sources
 

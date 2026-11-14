@@ -27,7 +27,7 @@ tags: ["evaluation", "cost", "latency", "caching", "routing"]
 ## Where time and money go
 
 - **Output tokens dominate latency.** Cutting output by 50% can cut latency by about 50%, while halving the prompt may gain only 1-5% ([OpenAI](../sources/openai-latency-optimization-guide.md)). On MPT models, 512 extra input tokens cost less latency than 8 extra output tokens ([Databricks](../sources/databricks-llm-inference-performance-engineering.md)).
-- **Input tokens dominate cost** in RAG and agent workloads, where long system prompts, tool definitions and history are resent every turn. Synthesis: that is why caching gives the largest savings there.
+- **Input tokens dominate cost** in [RAG](retrieval-augmented-generation.md) and agent workloads, where long [system prompts](system-prompts.md), [tool definitions](tools.md) and history are resent every turn. Synthesis: that is why caching gives the largest savings there.
 - **Measure cost per completed task, not per token.** A pricier model at low effort can match a cheaper model at default for only about 7% more per solved task, and on one run two of 20 problems carried 43% of spend, so price the tail ([Anthropic](../sources/anthropic-optimizing-cost-and-intelligence.md)).
 
 ## The levers
@@ -35,10 +35,10 @@ tags: ["evaluation", "cost", "latency", "caching", "routing"]
 | Lever | Saves | Typical effect (source, date) | Main cost / risk |
 |---|---|---|---|
 | [Prompt caching](prompt-caching.md) | input cost, TTFT | reads 0.1x input price (0.05x on some 2026 models); writes 1.25x (5 min) or 2x (1 h) on Anthropic | needs byte-identical prefix; any change upstream invalidates |
-| Semantic (response) cache | whole call | 2-10x faster on hit, zero tokens (GPTCache, 2023); up to 68.8% fewer calls (Regmi 2024) | wrong answers on false hits |
+| [Semantic (response) cache](semantic-caching.md) | whole call | 2-10x faster on hit, zero tokens (GPTCache, 2023); up to 68.8% fewer calls (Regmi 2024) | wrong answers on false hits |
 | [Batch APIs](batch-processing.md) | 50% of cost | Anthropic and OpenAI batch are half price; most Anthropic batches done < 1 h, max 24 h | no streaming, async only |
 | Flex / priority tiers | cost or latency | OpenAI Flex is half of Standard, Priority about double (2026-11) | Flex is slower; Priority costs more |
-| Routing / cascades | cost | FrugalGPT: match GPT-4 at up to 98% lower cost (2023); RouteLLM: over 2x cheaper without quality loss | router errors, extra call on escalation |
+| [Routing / cascades](model-routing-and-fallbacks.md) | cost | FrugalGPT: match GPT-4 at up to 98% lower cost (2023); RouteLLM: over 2x cheaper without quality loss | router errors, extra call on escalation |
 | Smaller model / lower effort | cost and latency | model size is the main speed factor; effort is the main control on Haiku 5.5 | quality drop; needs evals |
 | [Distillation](knowledge-distillation.md) / [fine-tuning](fine-tuning.md) | prompt length, model size | shorter prompts and a smaller task-specific model | training cost, maintenance |
 | Token budgets | output cost and latency | `max_tokens`, concise instructions, short JSON keys | truncation (`finish_reason = length`) |
@@ -50,13 +50,13 @@ Sources: [Anthropic caching](../sources/anthropic-prompt-caching-docs.md), [Anth
 
 ### 1. Prompt (prefix) caching
 
-The provider stores the KV state of a prompt prefix and reuses it, so only the suffix is recomputed. Anthropic hashes `tools` → `system` → `messages` and needs a byte-identical prefix up to an explicit breakpoint (up to 4), with a 5-minute TTL refreshed on every hit or an optional 1-hour TTL; minimum cacheable length is 512 tokens on the 5.x models ([source](../sources/anthropic-prompt-caching-docs.md)). OpenAI caches automatically, from 1,024 tokens on GPT-5.6 and later (earlier models have model-dependent minimums); routing hashes the initial prefix plus `prompt_cache_key`, and above about 15 requests per minute for one prefix+key requests can spill to other machines and miss ([source](../sources/openai-prompt-caching-guide.md)).
+The provider stores the [KV state](kv-cache.md) of a prompt prefix and reuses it, so only the suffix is recomputed. Anthropic hashes `tools` → `system` → `messages` and needs a byte-identical prefix up to an explicit breakpoint (up to 4), with a 5-minute TTL refreshed on every hit or an optional 1-hour TTL; minimum cacheable length is 512 tokens on the 5.x models ([source](../sources/anthropic-prompt-caching-docs.md)). OpenAI caches automatically, from 1,024 tokens on GPT-5.6 and later (earlier models have model-dependent minimums); routing hashes the initial prefix plus `prompt_cache_key`, and above about 15 requests per minute for one prefix+key requests can spill to other machines and miss ([source](../sources/openai-prompt-caching-guide.md)).
 
 Practical rules: put static content (tools, system prompt, documents) first and per-request content last ([OpenAI latency](../sources/openai-latency-optimization-guide.md)); never change tool definitions, model, effort or `tool_choice` mid-conversation, since that invalidates the cache ([Anthropic](../sources/anthropic-prompt-caching-docs.md), [Anthropic cost](../sources/anthropic-optimizing-cost-and-intelligence.md)); for parallel fan-out, wait until the first response starts streaming so the cache entry exists ([source](../sources/anthropic-prompt-caching-docs.md)). Track the hit rate from usage fields (`cache_read_input_tokens`, `cached_tokens`). Caching never changes the output.
 
 ### 2. Semantic (response) caching
 
-A semantic cache embeds the incoming query, looks for a similar past query in a vector store, and returns the stored answer if similarity clears a threshold. GPTCache's pipeline is adapter → pre-processor → embedding → cache manager (scalar + vector store, LRU/FIFO eviction) → similarity evaluator → post-processor ([source](../sources/gptcache-2023.md)).
+A semantic cache [embeds](embeddings.md) the incoming query, looks for a similar past query in a [vector store](vector-databases.md), and returns the stored answer if similarity clears a threshold. GPTCache's pipeline is adapter → pre-processor → embedding → cache manager (scalar + vector store, LRU/FIFO eviction) → similarity evaluator → post-processor ([source](../sources/gptcache-2023.md)).
 
 ```mermaid
 flowchart LR
@@ -81,14 +81,14 @@ Anthropic Message Batches and the OpenAI Batch API cost 50% of standard. Anthrop
 - **Router:** predict up front whether the weak model suffices; RouteLLM trains routers on preference data and saw them transfer to new model pairs ([source](../sources/routellm.md)).
 - **Effort-first:** Anthropic's measurements favour sweeping effort on one model before adding a second. Advisor and orchestrator pairings gave mixed results, and when outcomes are checkable the cheapest strategy was run at low effort and re-run failures at high effort (about 97% solved at about $0.17 per task vs 95.3% at $0.29 all-high) ([source](../sources/anthropic-optimizing-cost-and-intelligence.md)).
 
-See [model selection](model-selection.md). Synthesis: routing pays only when traffic is heterogeneous and there is a cheap, reliable quality signal (tests, schema validation, a judge); otherwise a single right-sized model is simpler and as cheap.
+See [model selection](model-selection.md). Synthesis: routing pays only when traffic is heterogeneous and there is a cheap, reliable quality signal (tests, schema validation, [a judge](llm-as-judge.md)); otherwise a single right-sized model is simpler and as cheap.
 
 ### 5. Token budgets
 
 - Cap output with `max_tokens` (a hard cut that can stop mid-sentence) and ask for sentence or paragraph limits rather than word counts ([Anthropic](../sources/anthropic-reduce-latency-docs.md)).
-- Shorten structured output: short field and function names cut tokens and latency ([OpenAI](../sources/openai-latency-optimization-guide.md)).
+- Shorten [structured output](structured-outputs.md): short field and function names cut tokens and latency ([OpenAI](../sources/openai-latency-optimization-guide.md)).
 - Trim input: prune RAG results, clean HTML, replace long instructions by fine-tuning ([OpenAI](../sources/openai-latency-optimization-guide.md)). See [context engineering](context-engineering.md).
-- Count before sending: Anthropic's token-counting endpoint is free but approximate, and newer Claude tokenizers produce about 30% more tokens for the same text, so recount after a model upgrade ([source](../sources/anthropic-token-counting-docs.md)).
+- Count before sending: Anthropic's token-counting endpoint is free but approximate, and newer Claude [tokenizers](tokenization.md) produce about 30% more tokens for the same text, so recount after a model upgrade ([source](../sources/anthropic-token-counting-docs.md)).
 - Watch price cliffs: OpenAI charges higher rates above 272K input tokens and Haiku 5.5 above 100K ([OpenAI pricing](../sources/openai-api-pricing.md), [Anthropic pricing](../sources/anthropic-pricing.md)).
 - Reasoning tokens are billed output: lower effort or thinking budgets on [reasoning models](reasoning-models.md) when the task does not need them.
 
@@ -101,8 +101,8 @@ OpenAI's seven principles: process tokens faster (smaller model, predicted outpu
 - **Quality regressions hidden by savings.** Smaller models, low effort and aggressive truncation fail on the tail; gate every change on evals. The Haiku 5.5 worker setup cut cost 32% but lost about 4 points of pass rate ([source](../sources/anthropic-optimizing-cost-and-intelligence.md)).
 - **Silent cache misses.** A timestamp or random ID in the system prompt, reordered tools, or a changed parameter drops the hit rate to zero while everything still "works" ([source](../sources/anthropic-prompt-caching-docs.md)).
 - **Stale or wrong semantic hits** ([source](../sources/gptcache-2023.md)).
-- **Retries and agent loops.** Synthesis: a stuck agent or retry storm can cost more than all other optimizations save; cap steps and spend per task and alert on outliers.
-- **Rate limits.** Cached tokens still count toward OpenAI TPM limits ([source](../sources/openai-prompt-caching-guide.md)).
+- **Retries and [agent loops](agent-loop.md).** Synthesis: a stuck agent or retry storm can cost more than all other optimizations save; cap steps and spend per task and alert on outliers.
+- **Rate limits.** Cached tokens still count toward OpenAI TPM [limits](rate-limits-and-retries.md) ([source](../sources/openai-prompt-caching-guide.md)).
 
 ## When to use what
 

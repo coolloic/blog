@@ -25,7 +25,7 @@ lastmod: 2026-11-14
 tags: ["training", "fine-tuning", "llm"]
 ---
 
-**Fine-tuning** means continuing to train a pre-trained language model's weights on a smaller, targeted dataset so that it behaves differently: it follows a format, adopts a style, gets better at a narrow task, or makes different choices. Compare the cheaper alternatives. [Prompting](prompt-engineering.md) changes *how you ask*. [RAG](retrieval-augmented-generation.md) changes *what the model can see* at query time. Fine-tuning changes *how the model behaves*, and it costs the most effort of the three ([notebook](../sources/notebook-finetune-rag-prompt.md)). Post-training has three families: supervised fine-tuning (SFT), [preference optimization](preference-optimization.md) (RLHF, DPO, GRPO), and [distillation](knowledge-distillation.md). Each can update all weights or only a small adapter ([PEFT/LoRA](peft-and-lora.md)).
+**Fine-tuning** means continuing to train a pre-trained language model's weights on a smaller, targeted dataset so that it behaves differently: it follows a format, adopts a style, gets better at a narrow task, or makes different choices. Compare the cheaper alternatives. [Prompting](prompt-engineering.md) changes *how you ask*. [RAG](retrieval-augmented-generation.md) changes *what the model can see* at query time. Fine-tuning changes *how the model behaves*, and it costs the most effort of the three ([notebook](../sources/notebook-finetune-rag-prompt.md)). [Post-training](llm-training-pipeline.md) has three families: supervised fine-tuning (SFT), [preference optimization](preference-optimization.md) (RLHF, DPO, GRPO), and [distillation](knowledge-distillation.md). Each can update all weights or only a small adapter ([PEFT/LoRA](peft-and-lora.md)).
 
 ## Fine-tune, prompt, or RAG?
 
@@ -47,7 +47,7 @@ Source: [notebook](../sources/notebook-finetune-rag-prompt.md). The vendors give
 
 Fine-tuning does pay off in these cases ([OpenAI](../sources/openai-model-optimization-guide.md), [Vertex AI](../sources/vertex-ai-gemini-tuning.md)):
 
-- strict output formats, classification and extraction
+- strict output formats ([structured outputs](structured-outputs.md)), classification and extraction
 - a consistent tone
 - fixing instruction-following failures
 - more examples than fit in a prompt
@@ -79,12 +79,12 @@ flowchart TD
 
 - **SFT (supervised fine-tuning).** Token-level cross-entropy (negative log-likelihood) on target sequences. Padding is always masked. For prompt/completion data TRL also masks the prompt by default, so loss falls only on the completion; for conversational data, masking everything but assistant turns is opt-in (`assistant_only_loss=True`) ([TRL](../sources/hugging-face-trl-docs.md)). InstructGPT's first stage was SFT on about 13k labeller demonstrations ([InstructGPT](../sources/instructgpt-ouyang-2022.md)).
 - **Preference tuning (DPO and similar).** Trains on chosen/rejected pairs. Suits subjective qualities such as tone or summary focus. See [preference optimization](preference-optimization.md).
-- **Reinforcement fine-tuning (RFT/RLFT).** Reward functions score sampled outputs. It suits verifiable, multi-step tasks. Vertex AI says it can need only dozens to a few hundred prompts ([Vertex AI](../sources/vertex-ai-gemini-tuning.md)); Bedrock scores responses with reward functions such as AWS Lambda ([Bedrock](../sources/bedrock-model-customization.md)).
+- **Reinforcement fine-tuning (RFT/RLFT).** Reward functions score sampled outputs. It suits verifiable, multi-step tasks. Vertex AI says it can need only dozens to a few hundred prompts ([Vertex AI](../sources/vertex-ai-gemini-tuning.md)); Bedrock scores responses with reward functions such as AWS Lambda ([Bedrock](../sources/bedrock-model-customization.md)). See [reinforcement fine-tuning](reinforcement-fine-tuning.md).
 - **Continued pre-training.** Next-token training on raw domain text. It forgets the most and is the weakest way to add facts ([LoRA Learns Less](../sources/lora-learns-less-forgets-less.md), [Ovadia et al.](../sources/ovadia-fine-tuning-or-retrieval.md)).
 
 ### Full fine-tuning vs PEFT
 
-Full fine-tuning updates every parameter. You need memory for the weights, the gradients and the Adam optimizer states. On GPT-3 175B that meant 1.2 TB of training VRAM, against 350 GB with LoRA ([LoRA](../sources/lora-hu-2021.md)). PEFT freezes the base model and trains a small adapter. QLoRA goes further and freezes the base in 4-bit, which fits a 65B model on one 48 GB GPU ([QLoRA](../sources/qlora-dettmers-2023.md)).
+Full fine-tuning updates every parameter. You need memory for the weights, the gradients and the Adam optimizer states. On GPT-3 175B that meant 1.2 TB of training VRAM, against 350 GB with LoRA ([LoRA](../sources/lora-hu-2021.md)). PEFT freezes the base model and trains a small adapter. QLoRA goes further and freezes the base in 4-bit ([quantization](quantization.md)), which fits a 65B model on one 48 GB GPU ([QLoRA](../sources/qlora-dettmers-2023.md)).
 
 The trade-offs: LoRA "learns less and forgets less". It underperforms full fine-tuning on large code and math corpora but keeps more of the base model's abilities ([Biderman et al.](../sources/lora-learns-less-forgets-less.md)). On small-to-medium SFT sets and on RL, LoRA applied to all layers matches full fine-tuning ([LoRA Without Regret](../sources/lora-without-regret.md)). Vertex AI offers both: parameter-efficient tuning is cheaper and needs less data, while full tuning may score higher but costs more to train *and serve* ([Vertex AI](../sources/vertex-ai-gemini-tuning.md)). Details are on [PEFT and LoRA](peft-and-lora.md).
 
@@ -117,7 +117,7 @@ Sources: [TRL](../sources/hugging-face-trl-docs.md), [Unsloth](../sources/unslot
 - **Hallucination from new facts** ([Gekhman et al.](../sources/gekhman-fine-tuning-new-knowledge.md)).
 - **Overfitting.** The model memorises templates and loses diversity. Fix it with fewer epochs, a lower LR, more varied data or early stopping ([Unsloth](../sources/unsloth-lora-hyperparameters.md)).
 - **Staleness and lock-in.** Facts baked into the weights go stale ([notebook](../sources/notebook-finetune-rag-prompt.md)). A tuned model is tied to its base model's lifecycle. OpenAI's fine-tuned models stop working when their base model is retired ([OpenAI deprecations](../sources/openai-deprecations-fine-tuning.md)).
-- **Safety regression.** *Synthesis:* fine-tuning can wear away refusal behaviour learned in the base model's preference tuning. Re-run safety evals after every tune (see [guardrail tooling](guardrail-tooling.md)).
+- **Safety regression.** *Synthesis:* fine-tuning can wear away refusal behaviour learned in the base model's preference tuning. Re-run [safety evals](llm-red-teaming.md) after every tune (see [guardrail tooling](guardrail-tooling.md)).
 
 ## Managed fine-tuning APIs (as of 2026-11-14)
 

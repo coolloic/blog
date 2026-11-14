@@ -55,8 +55,10 @@ flowchart TD
 
 Synthesis: the metadata-header branch is a common practice not measured in these sources.
 
-- **Contextual retrieval** (Anthropic): Claude 3 Haiku sees the whole document plus the chunk and writes a short situating context; cost about $1.02 per million document tokens with prompt caching (2024 pricing). It cut retrieval failures 35% alone and 49% combined with contextual BM25. Generic document summaries attached to chunks helped very little ([Anthropic](../sources/anthropic-contextual-retrieval.md)).
+- **[Contextual retrieval](contextual-retrieval.md)** (Anthropic): Claude 3 Haiku sees the whole document plus the chunk and writes a short situating context; cost about $1.02 per million document tokens with prompt caching (2024 pricing). It cut retrieval failures 35% alone and 49% combined with contextual BM25 ([hybrid search](hybrid-search.md)). Generic document summaries attached to chunks helped very little ([Anthropic](../sources/anthropic-contextual-retrieval.md)).
 - **Late chunking** gets similar context-awareness inside the embedding model, without an LLM call per chunk ([Günther et al.](../sources/gunther-2024-late-chunking.md)).
+
+> **Contradiction:** this page, citing [Günther et al.](../sources/gunther-2024-late-chunking.md), presents late chunking as giving similar context-awareness to contextual retrieval. The contextual retrieval page, citing [Merola & Singh 2025](../sources/merola-2025-late-chunking-vs-contextual-retrieval.md), reports late chunking as model-dependent (from neutral to strongly negative) and slightly less relevant than contextual retrieval, though cheaper to compute.
 - **Small-to-big retrieval** (Synthesis): index small chunks for matching, but return the parent section to the LLM. Frameworks such as [LlamaIndex](llamaindex.md) ship this pattern.
 
 ## Chunking for other consumers
@@ -85,7 +87,7 @@ Synthesis: in practice, build a small labelled set from your own documents (ques
 - Start with a recursive splitter around 200-400 tokens and little or no overlap; tune separators for your format ([Chroma](../sources/chroma-evaluating-chunking.md)).
 - Prefer structure-aware splitting when documents have real structure (Synthesis).
 - Add contextual retrieval when chunks are not self-explanatory; it pairs with [prompt caching](prompt-caching.md) to stay cheap ([Anthropic](../sources/anthropic-contextual-retrieval.md)).
-- If the corpus fits in context (about 200k tokens), skip chunking entirely ([Anthropic](../sources/anthropic-contextual-retrieval.md)).
+- If the corpus fits in the [context window](context-window.md) (about 200k tokens), skip chunking entirely ([Anthropic](../sources/anthropic-contextual-retrieval.md)).
 
 ## Sources
 

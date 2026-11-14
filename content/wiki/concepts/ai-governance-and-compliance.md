@@ -23,7 +23,7 @@ lastmod: 2026-11-14
 tags: ["fde", "governance", "compliance", "regulation"]
 ---
 
-**AI governance and compliance** is how an organization shows regulators, auditors, customers and its own board that its AI systems are identified, risk-assessed, controlled and monitored. In practice, four kinds of instrument overlap. A **law** creates legal obligations: the EU AI Act. A **voluntary risk framework** gives you vocabulary and a list of practices: NIST AI RMF and its Generative AI Profile. A **certifiable management-system standard** lets a third party audit your governance process: ISO/IEC 42001. **Attestation reports** let you rely on a vendor's controls: SOC 2. Regulated sectors add their own regime on top, such as bank model risk management. An FDE does not need to be a lawyer, but has to know which obligations a deployment triggers, which evidence each one needs, and which technical controls produce that evidence. The controls themselves (retention, RBAC, audit logs, PII handling) are covered in [enterprise LLM deployment](enterprise-llm-deployment.md).
+**AI governance and compliance** is how an organization shows regulators, auditors, customers and its own board that its AI systems are identified, risk-assessed, controlled and monitored. In practice, four kinds of instrument overlap. A **law** creates legal obligations: the EU AI Act. A **voluntary risk framework** gives you vocabulary and a list of practices: NIST AI RMF and its Generative AI Profile. A **certifiable management-system standard** lets a third party audit your governance process: ISO/IEC 42001. **Attestation reports** let you rely on a vendor's controls: SOC 2. Regulated sectors add their own regime on top, such as bank model risk management. An FDE does not need to be a lawyer, but has to know which obligations a deployment triggers, which evidence each one needs, and which technical controls produce that evidence. The controls themselves (retention, RBAC, audit logs, [PII handling](pii-and-data-privacy.md)) are covered in [enterprise LLM deployment](enterprise-llm-deployment.md).
 
 ## How the pieces fit
 
@@ -67,13 +67,13 @@ Synthesis: this mapping is the author's; no single source draws it.
 **Deployer duties for high-risk systems (Art. 26)** ([Art. 26](../sources/eu-ai-act-article-26-deployers.md)):
 
 - Use the system according to the provider's instructions.
-- Assign human oversight to competent, trained people with the authority to act. See [human-in-the-loop](agent-guardrails.md); the owner's experiment shows an interrupt-and-approve gate for compliance steps ([Notebook](../sources/notebook-11-human-in-the-loop.md)).
+- Assign human oversight to competent, trained people with the authority to act. See [human-in-the-loop](human-in-the-loop.md); the owner's experiment shows an interrupt-and-approve gate for compliance steps ([Notebook](../sources/notebook-11-human-in-the-loop.md)).
 - Ensure input data you control is relevant and representative.
 - Monitor operation, then suspend use and report serious incidents when needed.
 - **Keep the logs under your control for at least six months.**
 - Inform workers and affected people, and feed the provider's information into your GDPR DPIA.
 
-Synthesis: the six-month log duty has to be reconciled with ZDR. Under ZDR the provider keeps nothing ([Anthropic](../sources/anthropic-api-and-data-retention.md)), so the deployer must keep its own logs, for example via a compliance or audit API ([Compliance API](../sources/anthropic-compliance-api-docs.md)) or its own gateway. Note that Anthropic's Compliance API returns content (chats, files, session transcripts) only for Claude Enterprise; for API workloads it exposes the Activity Feed, so request and response logs have to come from your own gateway.
+Synthesis: the six-month log duty has to be reconciled with ZDR. Under ZDR the provider keeps nothing ([Anthropic](../sources/anthropic-api-and-data-retention.md)), so the deployer must keep its own logs, for example via a compliance or audit API ([Compliance API](../sources/anthropic-compliance-api-docs.md)) or its own [gateway](llm-gateways.md). Note that Anthropic's Compliance API returns content (chats, files, session transcripts) only for Claude Enterprise; for API workloads it exposes the Activity Feed, so request and response logs have to come from your own gateway.
 
 **Penalties (Art. 99):** up to EUR 35M or 7% of worldwide turnover for prohibited practices; EUR 15M or 3% for most other obligations, including deployer and transparency duties; EUR 7.5M or 1% for misleading information to authorities. For SMEs the lower of the two amounts applies; as amended, small mid-caps also get the lower-of rule for the 3% and 1% tiers, but not for prohibited practices ([Art. 99](../sources/eu-ai-act-article-99-penalties.md)).
 
@@ -103,7 +103,7 @@ Synthesis on what high-risk means for typical LLM use cases. Annex III covers us
 - A SOC 2 report is a CPA firm's opinion, under AICPA SSAE 18, on a service organization's controls against the Trust Services Criteria: Security, Availability, Processing Integrity, Confidentiality, Privacy ([Microsoft](../sources/microsoft-soc-2-offering.md)).
 - **Type 1** assesses control design at a point in time and does not look back over a period. **Type 2** also tests operating effectiveness over a period, usually 12 months. **Bridge letters** are the vendor's self-attestation for the time since the audited period and are not audit opinions ([Microsoft](../sources/microsoft-soc-2-offering.md), [AWS](../sources/aws-soc-faqs.md)).
 - SOC 2 reports are under NDA (e.g. via AWS Artifact); SOC 3 is the public summary ([AWS](../sources/aws-soc-faqs.md)).
-- **Read the user entity responsibilities and exceptions.** User entity responsibilities are controls *you* must operate for the overall system to meet the criteria ([Microsoft](../sources/microsoft-soc-2-offering.md)). Synthesis: a vendor's SOC 2 does not cover your prompts, your RAG index or your gateway. Those are yours to control and evidence.
+- **Read the user entity responsibilities and exceptions.** User entity responsibilities are controls *you* must operate for the overall system to meet the criteria ([Microsoft](../sources/microsoft-soc-2-offering.md)). Synthesis: a vendor's SOC 2 does not cover your prompts, your [RAG](retrieval-augmented-generation.md) index or your gateway. Those are yours to control and evidence.
 
 ## Model risk management (banking)
 
@@ -120,7 +120,7 @@ Synthesis on what high-risk means for typical LLM use cases. Annex III covers us
 ## Practical guidance
 
 - **Start with an inventory and classification.** For each system record the use case, role (provider or deployer), AI Act tier, data categories, model and vendor, and owner. NIST GV-1.6 and ISO 42001 both expect one ([AI 600-1](../sources/nist-ai-600-1-genai-profile.md), [Konfirmity](../sources/konfirmity-iso-42001-requirements.md)).
-- **Generate evidence as a by-product of engineering.** Synthesis: eval reports, trace and audit logs, change records for prompts and models, and red-team results double as compliance artifacts. Design them once ([LLM observability](llm-observability.md), [verification and evals](verification-and-evals.md)).
+- **Generate evidence as a by-product of engineering.** Synthesis: eval reports, trace and audit logs, change records for prompts and models, and [red-team](llm-red-teaming.md) results double as compliance artifacts. Design them once ([LLM observability](llm-observability.md), [verification and evals](verification-and-evals.md)).
 - **Collect vendor evidence early:** SOC 2 Type 2, ISO 42001 certificate scope, DPA/BAA, retention terms. Check that the service and Region you will use are in scope ([AWS](../sources/aws-iso-42001-faq.md), [Microsoft](../sources/microsoft-iso-42001-offering.md)).
 - **Pitfalls:**
   - assuming the vendor's certificate covers you;

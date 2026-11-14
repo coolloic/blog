@@ -17,19 +17,19 @@ lastmod: 2026-11-14
 tags: ["frameworks", "agents", "google", "multi-agent"]
 ---
 
-**Google ADK (Agent Development Kit)** is Google's open-source, code-first framework for building, evaluating and deploying agents. It has SDKs for Python (`google-adk`), TypeScript (`@google/adk`), Go, Java and Kotlin, and its docs now live at adk.dev ([ADK docs](../sources/google-adk-docs-overview.md)). It puts model-driven agents (`LlmAgent`) and deterministic orchestration in one framework, and it ships sessions, state, memory, artifacts, callbacks, a web dev UI (`adk web`), an evaluation framework and one-command deployment to Google Cloud (Agent Runtime, Cloud Run, GKE). Gemini is the default model, and adapters cover Claude, OpenAI, Ollama, vLLM and LiteLLM ([ADK docs](../sources/google-adk-docs-overview.md)). The biggest recent change is **ADK 2.0**, which went GA for Python on 2026-05-19, Go on 2026-06-30 and TypeScript on 2026-08-21. It replaced the hierarchical agent executor with a graph-based **Workflow Runtime** in which agents, tools and functions are all nodes ([ADK 2.0](../sources/google-adk-2-0-release-notes.md)).
+**Google ADK (Agent Development Kit)** is Google's open-source, code-first framework for building, evaluating and deploying agents. It has SDKs for Python (`google-adk`), TypeScript (`@google/adk`), Go, Java and Kotlin, and its docs now live at adk.dev ([ADK docs](../sources/google-adk-docs-overview.md)). It puts model-driven agents (`LlmAgent`) and deterministic orchestration in one framework, and it ships sessions, state, memory, artifacts, callbacks, a web dev UI (`adk web`), an [evaluation framework](agent-evaluation.md) and one-command deployment to Google Cloud (Agent Runtime, Cloud Run, GKE). [Gemini](gemini-api.md) is the default model, and adapters cover Claude, OpenAI, Ollama, vLLM and [LiteLLM](llm-gateways.md) ([ADK docs](../sources/google-adk-docs-overview.md)). The biggest recent change is **ADK 2.0**, which went GA for Python on 2026-05-19, Go on 2026-06-30 and TypeScript on 2026-08-21. It replaced the hierarchical agent executor with a graph-based **Workflow Runtime** in which agents, tools and functions are all nodes ([ADK 2.0](../sources/google-adk-2-0-release-notes.md)).
 
 ## Core primitives
 
 | Primitive | Role |
 |---|---|
 | `Agent` / `LlmAgent` | Model, `instruction` (may template `{state_key}`), `tools`, `sub_agents`, `output_key`, input/output schemas |
-| Tools | Python functions (auto-schema), OpenAPI, MCP, `AgentTool` (an agent called as a tool), built-ins |
+| [Tools](tools.md) | Python functions (auto-schema), OpenAPI, [MCP](model-context-protocol.md), `AgentTool` (an agent called as a tool), built-ins |
 | Workflow agents (1.x) | `SequentialAgent`, `ParallelAgent`, `LoopAgent`: deterministic orchestration with no LLM deciding the order |
 | Graph / dynamic workflows (2.0) | Nodes and edges with code-based routing, or orchestration in plain async code |
 | `Runner` | Drives one invocation, commits events through services |
-| `SessionService`, `ArtifactService`, `MemoryService` | Conversation and state persistence, binary artifacts, cross-session memory |
-| Callbacks / plugins | Before/after agent, model and tool hooks, used for guardrails and logging |
+| `SessionService`, `ArtifactService`, `MemoryService` | Conversation and state persistence, binary artifacts, [cross-session memory](agent-memory.md) |
+| Callbacks / plugins | Before/after agent, model and tool hooks, used for [guardrails](agent-guardrails.md) and logging |
 
 ## The runtime: events, Runner and state commits
 
@@ -49,7 +49,7 @@ flowchart LR
 Consequences you will hit:
 
 - A state change is durable only **after its event is processed**. Reads before that are "dirty reads", and they are lost if the invocation fails ([event loop](../sources/google-adk-event-loop-docs.md)).
-- Partial streaming events are displayed, but their actions are never committed ([event loop](../sources/google-adk-event-loop-docs.md)).
+- Partial [streaming](streaming.md) events are displayed, but their actions are never committed ([event loop](../sources/google-adk-event-loop-docs.md)).
 - `run_async` is the real entry point. Blocking synchronous I/O inside a tool stalls the loop ([event loop](../sources/google-adk-event-loop-docs.md)).
 
 ### Session state scopes
@@ -81,13 +81,13 @@ In Google's illustrative refund benchmark (a Gemini Flash model with mock APIs, 
 
 ## A2A: agents across process boundaries
 
-ADK can expose an agent as an [Agent2Agent](agent2agent-protocol.md) server and consume remote agents through `RemoteA2aAgent`, a client proxy that handles networking, auth and formatting ([A2A](../sources/google-adk-a2a-docs.md)). Use A2A when the other agent is a separate service, owned by another team, written in another language or framework, or needs a formal contract. Use local sub-agents for internal structure, latency-sensitive paths and shared state, because A2A adds network and serialisation overhead. Python support is full. Go, Java and Kotlin A2A support is experimental ([A2A](../sources/google-adk-a2a-docs.md)).
+ADK can expose an agent as an [Agent2Agent](agent2agent-protocol.md) server and consume remote agents through `RemoteA2aAgent`, a client proxy that handles networking, auth and formatting ([A2A](../sources/google-adk-a2a-docs.md)). Use A2A when the other agent is a separate service, owned by another team, written in another language or framework, or needs a formal contract. Use local [sub-agents](subagents.md) for internal structure, latency-sensitive paths and shared state, because A2A adds network and serialisation overhead. Python support is full. Go, Java and Kotlin A2A support is experimental ([A2A](../sources/google-adk-a2a-docs.md)).
 
 ## Limitations and failure modes
 
 - **Churn.** ADK is young, and 2.0 broke custom agents (`BaseAgent` now subclasses `BaseNode`, so `_run_async_impl` overrides are bypassed). The event schema also changed, which breaks rigid session stores, and Google advises updating every reader application before writing 2.0 sessions to a shared database ([ADK 2.0](../sources/google-adk-2-0-release-notes.md), [Notebook](../sources/notebook-adk.md)).
-- **Exception handling.** Broad `except Exception` blocks hide failures from 2.0's automatic retries, and catching `BaseException` breaks human-in-the-loop pauses ([ADK 2.0](../sources/google-adk-2-0-release-notes.md)).
-- **Google-centric happy path.** It is model-agnostic in principle, but the smoothest path is Gemini plus Google Cloud. Its community is also smaller than LangChain's ([Notebook](../sources/notebook-adk.md)).
+- **Exception handling.** Broad `except Exception` blocks hide failures from 2.0's automatic retries, and catching `BaseException` breaks [human-in-the-loop](human-in-the-loop.md) pauses ([ADK 2.0](../sources/google-adk-2-0-release-notes.md)).
+- **Google-centric happy path.** It is model-agnostic in principle, but the smoothest path is Gemini plus Google Cloud. Its community is also smaller than [LangChain](langchain.md)'s ([Notebook](../sources/notebook-adk.md)).
 - **State pitfalls.** Dirty reads, `{key}` templating that errors on missing keys (use `{key?}`), and literal braces in instructions that collide with templating ([state](../sources/google-adk-session-state-docs.md)).
 - **Runaway loops.** A `LoopAgent` without `max_iterations` relies on the model remembering to escalate ([workflows](../sources/google-adk-workflows-docs.md)).
 

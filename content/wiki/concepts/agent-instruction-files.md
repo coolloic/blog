@@ -62,7 +62,7 @@ The AGENTS.md site suggests these sections: overview, build and test commands, c
 
 The same guidance says to stop describing the architecture in CLAUDE.md, because current models explore the code themselves ([best practices](../sources/claude-code-best-practices.md)).
 
-The research agrees with the narrow approach. Gloaguen et al. (arXiv 2602.11988, ICLR 2026) tested context files on SWE-bench tasks and on repos that commit their own files, across several agents and models ([paper](../sources/gloaguen-2026-evaluating-agents-md.md)):
+The research agrees with the narrow approach. Gloaguen et al. (arXiv 2602.11988, ICLR 2026) tested context files on [SWE-bench](benchmarks.md) tasks and on repos that commit their own files, across several agents and models ([paper](../sources/gloaguen-2026-evaluating-agents-md.md)):
 
 - The files did **not** generally improve success, whether written by an LLM or by developers.
 - They raised inference cost by **more than 20%**.

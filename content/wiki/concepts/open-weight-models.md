@@ -18,7 +18,7 @@ lastmod: 2026-11-14
 tags: ["models", "open-weight", "licensing", "self-hosting"]
 ---
 
-An **open-weight model** is an LLM whose trained parameters are published for download, usually on Hugging Face, so you can run, [fine-tune](fine-tuning.md), [quantize](quantization.md) and serve it on your own hardware. That is not the same as **open source**. The OSI's Open Source AI Definition 1.0 also requires the complete training and inference code and enough information about the training data to rebuild a substantially equivalent system. A weights-only release does not qualify. In practice, "open" models range from truly permissive (MIT, Apache 2.0) to custom licences with revenue caps, branding rules and bans on running a Model-as-a-Service business. **Read the licence before you read the benchmarks.** This page is a snapshot read on **2026-11-14**. For the proprietary side, see [frontier model landscape](frontier-model-landscape.md).
+An **open-weight model** is an LLM whose trained parameters are published for download, usually on [Hugging Face](hugging-face-ecosystem.md), so you can run, [fine-tune](fine-tuning.md), [quantize](quantization.md) and serve it on your own hardware. That is not the same as **open source**. The OSI's Open Source AI Definition 1.0 also requires the complete training and inference code and enough information about the training data to rebuild a substantially equivalent system. A weights-only release does not qualify. In practice, "open" models range from truly permissive (MIT, Apache 2.0) to custom licences with revenue caps, branding rules and bans on running a Model-as-a-Service business. **Read the licence before you read the benchmarks.** This page is a snapshot read on **2026-11-14**. For the proprietary side, see [frontier model landscape](frontier-model-landscape.md).
 
 ## Current families (snapshot, 2026-11-14)
 
@@ -38,9 +38,9 @@ An **open-weight model** is an LLM whose trained parameters are published for do
 
 ## Architecture trends worth knowing
 
-Large open models are now almost all sparse **mixture-of-experts** (MoE) models. Each token passes through only a few experts, so compute per token scales with the *active* parameter count, while memory still scales with the *total*. Gemma's documentation makes the point explicitly: the 26B A4B model runs almost as fast as a 4B model, but all 26B parameters must be loaded. Expert counts are rising: Qwen3.8-Max uses 512 experts (10 routed + 1 shared active), and Kimi K3.1 Pro uses 896 (16 + 2 shared).
+Large open models are now almost all sparse **[mixture-of-experts](mixture-of-experts.md)** (MoE) models. Each token passes through only a few experts, so compute per token scales with the *active* parameter count, while memory still scales with the *total*. Gemma's documentation makes the point explicitly: the 26B A4B model runs almost as fast as a 4B model, but all 26B parameters must be loaded. Expert counts are rising: Qwen3.8-Max uses 512 experts (10 routed + 1 shared active), and Kimi K3.1 Pro uses 896 (16 + 2 shared).
 
-**Hybrid attention for long context.** To make 256K to 1M contexts affordable, vendors interleave cheap layers with full-attention layers:
+**Hybrid attention for long context.** To make 256K to 1M contexts affordable, vendors interleave cheap layers with full-[attention](transformer-architecture.md) layers:
 
 - **Qwen3.8:** three Gated DeltaNet (linear-attention) layers for every gated full-attention layer.
 - **Kimi K3.1 Pro:** 69 KDA linear layers plus 24 gated sparse (DSA) layers.
@@ -84,17 +84,17 @@ Key points:
 
 ## Self-hosting vs the vendor's API
 
-Most open-weight vendors also sell hosted inference: DeepSeek's API, `mistral-large-4` on the Mistral API, and the hosted Qwen3.8-Max (which adds vision input, non-thinking mode, 1M default context and built-in tools not in the text-only, thinking-only open checkpoint). DeepSeek's API is cheap: $0.30 input (cache miss) / $1.20 output per MTok for Flash at peak, and half that off-peak. Note that DeepSeek's peak window is short (01:00-04:00 and 06:00-10:00 UTC on weekdays), so most traffic pays the off-peak rate.
+Most open-weight vendors also sell hosted inference: DeepSeek's API, `mistral-large-4` on the Mistral API, and the hosted Qwen3.8-Max (which adds vision input, non-thinking mode, 1M default context and built-in [tools](tools.md) not in the text-only, thinking-only open checkpoint). DeepSeek's API is cheap: $0.30 input (cache miss) / $1.20 output per MTok for Flash at peak, and half that off-peak. Note that DeepSeek's peak window is short (01:00-04:00 and 06:00-10:00 UTC on weekdays), so most traffic pays the off-peak rate.
 
 Synthesis: what self-hosting costs you in practice:
 
 - **Hardware.** DeepSeek's V4-Pro vLLM recipe targets a 4xGB300 node, and frontier-scale MoEs (0.8T to 2.8T parameters) need multi-GPU nodes even at 4-bit. Single-GPU or laptop deployment is realistic only for about 30B-class models: Gemma 4 31B needs ~17.5GB at 4-bit (weights only, before KV cache), gpt-oss-120b fits one 80GB GPU, and the gpt-oss-20b and Gemma E2B/E4B models run on device. See [local LLMs](local-llms.md) and [LLM inference serving](llm-inference-serving.md).
-- **Prompt formats.** gpt-oss works only with the harmony format. DeepSeek V4 ships no Jinja chat template, just a Python encoder. Recommended sampling settings differ by mode (Qwen thinking vs non-thinking). A wrong template silently degrades quality.
+- **Prompt formats.** gpt-oss works only with the harmony format. DeepSeek V4 ships no Jinja chat template, just a Python encoder. Recommended [sampling settings](sampling-parameters.md) differ by mode (Qwen thinking vs non-thinking). A wrong template silently degrades quality.
 - **Ops ownership.** You own scaling, upgrades, evals and safety filtering. Meta notes it added extra safety post-training to Muse Spark Open specifically because open weights may run without system guardrails. See [guardrail tooling](guardrail-tooling.md).
 
 ## Limitations and failure modes
 
-- **Benchmarks are vendor-reported**, usually in a chosen harness (often Claude Code) at max effort. DeepSeek's and Qwen's own tables still show the top proprietary models of mid-2026 ahead on several agentic benchmarks (Qwen's table reports the hosted Qwen3.8-Max, not the open checkpoint). Re-run on your own tasks ([LLM evaluation](llm-evaluation.md)).
+- **[Benchmarks](benchmarks.md) are vendor-reported**, usually in a chosen harness (often [Claude Code](coding-agents.md)) at max effort. DeepSeek's and Qwen's own tables still show the top proprietary models of mid-2026 ahead on several agentic benchmarks (Qwen's table reports the hosted Qwen3.8-Max, not the open checkpoint). Re-run on your own tasks ([LLM evaluation](llm-evaluation.md)).
 - **"Extensible to 1M"** (Qwen3.8) means context extension beyond the native 262K. Expect weaker recall there ([long-context degradation](long-context-degradation.md)).
 - **Thinking-only models** can't serve low-latency routes.
 - **Version churn.** DeepSeek has already retired the `deepseek-v4-flash` names, and Mistral lists deprecations for Large 3 (retires 2027-04-30) and others. Pin checkpoint hashes.

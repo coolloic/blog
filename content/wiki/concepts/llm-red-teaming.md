@@ -28,7 +28,7 @@ lastmod: 2026-11-14
 tags: ["security", "red-teaming", "evaluation", "agents"]
 ---
 
-**LLM red teaming** is the practice of attacking your own LLM application, the way an adversary or a careless user would, to find failures before deployment: jailbreaks, [prompt injection](prompt-injection.md), data leakage, harmful content, unauthorised tool actions, and runaway cost. It differs from [benchmarks](benchmarks.md) and ordinary [evaluation](llm-evaluation.md) in intent: an eval measures how often the system does the right thing on representative inputs; a red team searches for the inputs that make it do the wrong thing, and keeps searching when the first attempt fails. Microsoft's AI Red Team, after more than 100 product engagements, states it plainly: red teaming is not safety benchmarking ([Bullwinkel et al.](../sources/bullwinkel-2025-lessons-red-teaming-100-products.md)).
+**LLM red teaming** is the practice of attacking your own LLM application, the way an adversary or a careless user would, to find failures before deployment: jailbreaks, [prompt injection](prompt-injection.md), data leakage, harmful [content](content-moderation.md), unauthorised [tool](tools.md) actions, and runaway cost. It differs from [benchmarks](benchmarks.md) and ordinary [evaluation](llm-evaluation.md) in intent: an eval measures how often the system does the right thing on representative inputs; a red team searches for the inputs that make it do the wrong thing, and keeps searching when the first attempt fails. Microsoft's AI Red Team, after more than 100 product engagements, states it plainly: red teaming is not safety benchmarking ([Bullwinkel et al.](../sources/bullwinkel-2025-lessons-red-teaming-100-products.md)).
 
 ## What is under test
 
@@ -38,7 +38,7 @@ The model is the smallest part of the attack surface. OWASP's GenAI Red Teaming 
 |---|---|---|
 | Model evaluation | What does the base model do when pushed? | jailbreak susceptibility, toxicity, bias, memorised data |
 | Implementation | Do the [system prompt](system-prompts.md), [guardrails](agent-guardrails.md) and filters hold? | prompt extraction, filter bypass via encoding or multi-turn |
-| System | What can the app reach? APIs, storage, retrieval, plugins, supply chain | RAG poisoning, BOLA/BFLA through tools, SSRF, cross-tenant leakage |
+| System | What can the app reach? APIs, storage, retrieval, plugins, supply chain | [RAG](retrieval-augmented-generation.md) poisoning, BOLA/BFLA through tools, SSRF, cross-tenant leakage |
 | Runtime / human and agentic | How do users and other agents manipulate the live system? | goal hijack, tool misuse, over-trust in agent output |
 
 Microsoft's first lesson is the same idea from the other side: start from what the system can do and where it is deployed, because a model with tool access or customer data has different worst cases than a chat toy ([Bullwinkel et al.](../sources/bullwinkel-2025-lessons-red-teaming-100-products.md)).
@@ -65,7 +65,7 @@ Synthesis: a minimal mapping from test category to taxonomy entry:
 
 ## Manual vs automated red teaming
 
-**Manual** red teaming finds novel, context-specific failures. Anthropic's 2022 study gathered 38,961 human attacks on models from 2.7B to 52B parameters and found RLHF models got harder to red team as they scaled while other model types stayed flat ([Ganguli et al.](../sources/ganguli-2022-red-teaming-reduce-harms.md)). Microsoft lists the human element as crucial, partly because responsible-AI harms are widespread yet hard to measure automatically ([Bullwinkel et al.](../sources/bullwinkel-2025-lessons-red-teaming-100-products.md)).
+**Manual** red teaming finds novel, context-specific failures. Anthropic's 2022 study gathered 38,961 human attacks on models from 2.7B to 52B parameters and found [RLHF](preference-optimization.md) models got harder to red team as they scaled while other model types stayed flat ([Ganguli et al.](../sources/ganguli-2022-red-teaming-reduce-harms.md)). Microsoft lists the human element as crucial, partly because responsible-AI harms are widespread yet hard to measure automatically ([Bullwinkel et al.](../sources/bullwinkel-2025-lessons-red-teaming-100-products.md)).
 
 **Automated** red teaming uses an attacker LLM to generate and adapt attacks and a classifier or judge to score replies. Perez et al. introduced the pattern in 2022 and found tens of thousands of offensive replies, leaked training data and phone numbers in a 280B chatbot ([Perez et al.](../sources/perez-2022-red-teaming-lms-with-lms.md)). Automation buys coverage and regression testing, not judgment ([Bullwinkel et al.](../sources/bullwinkel-2025-lessons-red-teaming-100-products.md)).
 
@@ -100,7 +100,7 @@ Synthesis: the loop above combines the promptfoo and PyRIT workflows; manual tes
 | Maintainer | NVIDIA, Apache-2.0 | Microsoft AI Red Team, MIT | Promptfoo (OpenAI acquisition announced March 2026), open source |
 | Latest | v0.17.1 (2026-10-16) | v1.2.0 (2026-11-13) | continuous |
 | Model | Scanner: fixed **probes** + **detectors** per probe, run by a harness | Framework: compose **targets**, **converters**, **attacks**, **scorers**, persisted to memory | Config-driven: **plugins** (what to test) × **strategies** (how to deliver) graded by an LLM |
-| Strength | Broad known-vulnerability sweep of a model endpoint; repeatable | Custom multi-turn operations; human-in-the-loop GUI (CoPyRIT); research attacks (Crescendo, TAP, Skeleton Key, GOAT, Best-of-N) | App-level testing tailored by `purpose`; 157 plugins incl. BOLA/BFLA/RBAC/MCP; framework presets; CI-friendly YAML |
+| Strength | Broad known-vulnerability sweep of a model endpoint; repeatable | Custom multi-turn operations; human-in-the-loop GUI (CoPyRIT); research attacks (Crescendo, TAP, Skeleton Key, GOAT, Best-of-N) | App-level testing tailored by `purpose`; 157 plugins incl. BOLA/BFLA/RBAC/[MCP](model-context-protocol.md); framework presets; CI-friendly YAML |
 | Weak spot | Mostly static prompts; adaptive probe only since v0.16 | Python code required; v1 broke APIs | Attack generation and grading depend on an LLM (default `openai:gpt-5`, or Promptfoo's remote service) |
 | Output | `report.jsonl`, hit log, FAIL rate per detector, hit@k ASR (v0.17.1) | SQLite/Azure SQL memory, scores (true/false, Likert, undetermined), Findings | Web report by category and severity with failing inputs |
 
@@ -127,7 +127,7 @@ When to use what (Synthesis, grounded in the sources above):
 
 - **Before any customer-facing launch**, run a scoped engagement. Write `purpose` and a threat model, pick OWASP/Agentic categories, run promptfoo against the real HTTP endpoint (not the bare model), and add manual multi-turn sessions on the highest-impact paths: tool calls that write, move money, or touch PII.
 - **When choosing or upgrading a base model**, run a garak sweep for a quick, comparable model-level baseline.
-- **For deep, bespoke campaigns** (multi-turn, multimodal, browser-based targets, or agents talking to agents over A2A), use PyRIT.
+- **For deep, bespoke campaigns** (multi-turn, [multimodal](multimodal-models.md), [browser-based](computer-use-agents.md) targets, or agents talking to agents over [A2A](agent2agent-protocol.md)), use PyRIT.
 - **In CI**, keep a fixed regression set of past failures plus a small, freshly generated set, and track ASR per category with [error bars](llm-evaluation.md). Gate on regressions, not on zero.
 - **Fix architecture, not just prompts.** The durable fixes are least-privilege tools, human approval for irreversible actions, output handling that never executes model text, and per-user retrieval scoping ([Notebook: web/AI security](../sources/notebook-web-ai-security.md)). See [LLM security risks](llm-security-risks.md), [human-in-the-loop](human-in-the-loop.md), [guardrail tooling](guardrail-tooling.md).
 - **Not a substitute for** functional evals, privacy engineering ([PII and data privacy](pii-and-data-privacy.md)) or production monitoring ([observability](llm-observability.md)).

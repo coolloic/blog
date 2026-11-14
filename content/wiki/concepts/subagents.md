@@ -5,11 +5,11 @@ category: concept
 sources:
   - ../sources/anatomy-of-a-modern-ai-agent.md
   - ../sources/google-cloud-choose-agentic-design-pattern.md
-lastmod: 2026-11-13
+lastmod: 2026-11-14
 tags: ["agents", "multi-agent"]
 ---
 
-**Subagents** are agents started by a main agent to handle a focused sub-task, each in its own fresh context window. Each one runs its own [agent loop](agent-loop.md) and returns a summary, not its full transcript.
+**Subagents** are agents started by a main agent to handle a focused sub-task, each in its own fresh [context window](context-window.md). Each one runs its own [agent loop](agent-loop.md) and returns a summary, not its full transcript.
 
 ## Trade-offs
 
@@ -26,6 +26,16 @@ How subagents are wired together is an architectural choice. It can be a fixed o
 ## Related
 
 [Verification and evals](verification-and-evals.md), where independent reviewer subagents are a common use.
+
+## Going deeper
+
+- [Deep Research Agents](deep-research-agents.md): the orchestrator-worker case with measured gains and ~15x token cost.
+- [Claude Agent SDK](claude-agent-sdk.md): concrete subagent mechanics: forks, background runs, nesting and concurrency caps.
+- [OpenAI Agents SDK](openai-agents-sdk.md): handoffs versus agents-as-tools.
+- [Agent2Agent (A2A) Protocol](agent2agent-protocol.md): delegating to agents across team, vendor or organisation boundaries.
+- [Agent Evaluation](agent-evaluation.md): MAST failure modes specific to multi-agent systems.
+- [Model Selection](model-selection.md): cost of a strong orchestrator with cheaper worker models.
+- [LangGraph](langgraph.md): subgraphs and handoffs as a framework-level implementation.
 
 ## Sources
 

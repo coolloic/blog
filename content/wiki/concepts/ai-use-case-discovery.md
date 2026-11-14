@@ -37,7 +37,7 @@ Discovery techniques in the sources include onsite process mapping ([Pragmatic E
 
 ## Step 2: does it actually need an LLM, or an agent?
 
-Apply fit tests before scoring. Start with the simplest solution. Optimised single LLM calls with retrieval and examples are often enough ([Anthropic, effective agents](../sources/anthropic-building-effective-agents.md)). OpenAI says agents fit workflows that have resisted deterministic automation ([OpenAI, agents guide](../sources/openai-practical-guide-building-agents.md)):
+Apply fit tests before scoring. Start with the simplest solution. Optimised single LLM calls with retrieval and [examples](few-shot-prompting.md) are often enough ([Anthropic, effective agents](../sources/anthropic-building-effective-agents.md)). OpenAI says [agents](agent-design-patterns.md) fit workflows that have resisted deterministic automation ([OpenAI, agents guide](../sources/openai-practical-guide-building-agents.md)):
 
 | Signal | Example | Implication |
 |---|---|---|
@@ -66,7 +66,7 @@ Re-score each quarter, because model progress turns high-effort ideas into low-e
 
 ## Step 4: define success
 
-Success criteria should be **specific, measurable, achievable and relevant**, and usually multidimensional: task fidelity, consistency, tone, privacy, latency and price ([Anthropic, define success](../sources/anthropic-define-success-criteria-and-evals.md)). Synthesis: separate three layers of metric and agree all three with the customer up front.
+Success criteria should be **specific, measurable, achievable and relevant**, and usually multidimensional: task fidelity, consistency, tone, privacy, [latency and price](cost-and-latency-optimization.md) ([Anthropic, define success](../sources/anthropic-define-success-criteria-and-evals.md)). Synthesis: separate three layers of metric and agree all three with the customer up front.
 
 | Layer | Examples | Measured by |
 |---|---|---|
@@ -103,8 +103,8 @@ Synthesis: a discovery phase should end with a one-to-two-page brief (Estée Lau
 2. The task the LLM performs and what stays human.
 3. Data sources, access path and sensitivity.
 4. Success metrics at all three layers, with go/no-go thresholds.
-5. An initial eval set. Anthropic suggests starting agent evals with 20-50 tasks drawn from real cases ([Anthropic, demystifying evals](../sources/anthropic-demystifying-evals-for-ai-agents.md); see [verification and evals](verification-and-evals.md)).
-6. Risks, guardrails and the escalation path.
+5. An initial eval set. Anthropic suggests starting [agent evals](agent-evaluation.md) with 20-50 tasks drawn from real cases ([Anthropic, demystifying evals](../sources/anthropic-demystifying-evals-for-ai-agents.md); see [verification and evals](verification-and-evals.md)).
+6. Risks, [guardrails](agent-guardrails.md) and the [escalation path](human-in-the-loop.md).
 7. Build/buy decision, time-box and an owner.
 
 ## Sources

@@ -23,10 +23,10 @@ tags: ["agents", "research", "multi-agent", "search"]
 
 ## Reference architecture
 
-Anthropic's published design is the clearest public blueprint. It is an orchestrator-worker system ([Anthropic](../sources/anthropic-multi-agent-research-system.md)):
+Anthropic's published design is the clearest public blueprint. It is an [orchestrator-worker](agent-design-patterns.md) system ([Anthropic](../sources/anthropic-multi-agent-research-system.md)):
 
 1. **Lead agent (planner).** It analyses the query, writes a plan and saves it to external memory, because context beyond 200k tokens is truncated.
-2. **Parallel search subagents.** Each gets a specific brief, runs its own search-evaluate-refine loop in a fresh context window, and returns condensed findings. See [subagents](subagents.md).
+2. **Parallel search subagents.** Each gets a specific brief, runs its own search-evaluate-refine loop in a fresh [context window](context-window.md), and returns condensed findings. See [subagents](subagents.md).
 3. **Synthesis loop.** The lead merges the findings and decides whether to spawn more subagents or change strategy.
 4. **Citation agent.** It takes the finished report plus the source documents and attaches a citation to each claim.
 
@@ -51,7 +51,7 @@ The clarify step comes from OpenAI's cookbook ([cookbook](../sources/openai-deep
 Design rules from the Anthropic write-up:
 
 - **Delegate precisely.** Each subagent brief needs an objective, an output format, tool guidance and boundaries. Vague briefs led to duplicated searches.
-- **Scale effort to the query.** Roughly 1 agent and 3-10 tool calls for a simple fact; 10+ subagents for complex research. Embed these rules in the prompt, because agents misjudge effort.
+- **Scale effort to the query.** Roughly 1 agent and 3-10 [tool](tools.md) calls for a simple fact; 10+ subagents for complex research. Embed these rules in the prompt, because agents misjudge effort.
 - **Search broad, then narrow.** Start with short queries and refine them.
 - **Parallelise at two levels.** The lead runs 3-5 subagents at once, and each subagent issues 3+ tool calls in parallel. This cut research time by up to 90% on complex queries.
 - **Think between tool calls.** The lead plans with [extended thinking](extended-thinking.md); subagents use interleaved thinking to judge results and pick the next query.
@@ -61,19 +61,19 @@ Older academic systems such as STORM use a fixed pipeline instead of a dynamic l
 
 ## Why it works: tokens and trained persistence
 
-- On BrowseComp, token usage alone explained about 80% of performance variance in Anthropic's analysis; tool-call count and model choice explained most of the rest. Multi-agent designs work largely because they let the system spend more tokens in parallel, separate context windows ([Anthropic](../sources/anthropic-multi-agent-research-system.md)). This is [test-time compute](test-time-compute.md) applied to retrieval.
+- On BrowseComp, a [benchmark](benchmarks.md), token usage alone explained about 80% of performance variance in Anthropic's analysis; tool-call count and model choice explained most of the rest. Multi-agent designs work largely because they let the system spend more tokens in parallel, separate context windows ([Anthropic](../sources/anthropic-multi-agent-research-system.md)). This is [test-time compute](test-time-compute.md) applied to retrieval.
 - An Opus 4 lead with Sonnet 4 subagents beat a single Opus 4 agent by 90.2% on Anthropic's internal eval, with the biggest gains on breadth-first questions ([Anthropic](../sources/anthropic-multi-agent-research-system.md)).
 - BrowseComp (1,266 hard-to-find, easy-to-check questions): GPT-4o with browsing scored 1.9%, o1 9.9%, and OpenAI Deep Research 51.5%. Accuracy rose smoothly with browsing effort, and aggregating 64 sampled answers (majority vote, confidence-weighted vote, best-of-N) added roughly 15-25%, with best-of-N by the model's own confidence doing best ([BrowseComp](../sources/wei-2025-browsecomp.md)). Synthesis: giving a chat model a search tool is not enough; the gain comes from a model trained to search persistently.
-- OpenAI trained its deep research model, an early o3 variant, with [reinforcement learning](reinforcement-fine-tuning.md) on browsing tasks: searching, clicking, scrolling, reading files and using Python. Tasks were graded against ground truth or rubrics by a chain-of-thought grader ([system card](../sources/openai-deep-research-system-card.md)).
+- OpenAI trained its deep research model, an early o3 variant, with [reinforcement learning](reinforcement-fine-tuning.md) on browsing tasks: searching, clicking, scrolling, reading files and using Python. Tasks were graded against ground truth or rubrics by a [chain-of-thought](chain-of-thought.md) grader ([system card](../sources/openai-deep-research-system-card.md)).
 
 ## Vendor implementations (as of 2026-11)
 
 | | OpenAI | Google Gemini | Anthropic | Perplexity |
 |---|---|---|---|---|
-| Form | Responses API: reasoning model + hosted `web_search`, `background: true` | Managed agent via Interactions API | Claude Research product; in the API you build it from `web_search`/`web_fetch` + subagents | Agent API effort presets |
+| Form | [Responses API](openai-responses-api.md): [reasoning model](reasoning-models.md) + hosted `web_search`, `background: true` | Managed agent via Interactions API | Claude Research product; in the API you build it from `web_search`/`web_fetch` + subagents | Agent API effort presets |
 | Current IDs | dedicated `o3-/o4-mini-deep-research` shut down 2026-07-23 (replacement `gpt-5.6-sol`); guide now recommends `gpt-6-astra` at high/xhigh reasoning | `deep-research-preview-04-2026`, `deep-research-max-preview-04-2026` | orchestrator-worker design (Opus lead, Sonnet workers in the 2025 write-up) | `high` (40 steps), `xhigh` (300 steps, Claude Opus 5.5 by default), `ultra` |
-| Data sources | web search, MCP, file search, code interpreter | `google_search`, `url_context`, `code_execution`, `file_search`, `mcp_server` | any tools, incl. MCP | `web_search`, `fetch_url`, sandbox, finance search |
-| Async / steering | background mode + polling; `max_tool_calls` cap | `background=True`, polling or streaming with thought summaries, resume with `last_event_id`; `collaborative_planning` | lead waits synchronously per subagent batch | preset step budget |
+| Data sources | web search, [MCP](model-context-protocol.md), file search, code interpreter | `google_search`, `url_context`, `code_execution`, `file_search`, `mcp_server` | any tools, incl. MCP | `web_search`, `fetch_url`, sandbox, finance search |
+| Async / steering | background mode + polling; `max_tool_calls` cap | `background=True`, polling or [streaming](streaming.md) with thought summaries, resume with `last_event_id`; `collaborative_planning` | lead waits synchronously per subagent batch | preset step budget |
 | Citations | `url_citation` annotations with char spans | cited report | dedicated citation agent | grounded citations |
 
 Sources: [OpenAI cookbook](../sources/openai-deep-research-cookbook.md), [deprecations](../sources/openai-deprecations-deep-research.md), [OpenAI web search guide](../sources/openai-web-search-tool-docs.md), [Gemini](../sources/gemini-deep-research-agent-docs.md), [Anthropic](../sources/anthropic-multi-agent-research-system.md), [Perplexity](../sources/perplexity-api-docs.md).

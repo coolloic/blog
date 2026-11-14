@@ -36,7 +36,7 @@ flowchart TD
 Both vendors use the same basic contract, with Anthropic's docs spelling out more of the error handling ([Anthropic computer use](../sources/anthropic-computer-use-tool-docs.md), [OpenAI computer use](../sources/openai-computer-use-guide.md)):
 
 - The model may return **several actions in one turn** (Anthropic: multiple `tool_use` blocks; OpenAI: an ordered `actions` array in one `computer_call`). Execute them in order. Anthropic specifies: on the first failure, return an error for it and a fixed "Not executed" error for every later one; any unanswered `tool_use` block gets the next request rejected. OpenAI's guide gives no equivalent batch-error rule.
-- Because a single batch can complete a multi-step action, human approval must inspect **each** action before it runs, not the turn as a whole ([Anthropic computer use](../sources/anthropic-computer-use-tool-docs.md)).
+- Because a single batch can complete a multi-step action, [human approval](human-in-the-loop.md) must inspect **each** action before it runs, not the turn as a whole ([Anthropic computer use](../sources/anthropic-computer-use-tool-docs.md)).
 - In OpenAI's API a `computer_call` with `status: "completed"` means the model finished *writing* the call, not that anything ran ([OpenAI computer use](../sources/openai-computer-use-guide.md)).
 - The final message is a claim, not a fact: OpenAI advises verifying the actual outcome and capping steps, time and cost ([OpenAI computer use](../sources/openai-computer-use-guide.md)). See [verification and evals](verification-and-evals.md).
 
@@ -47,7 +47,7 @@ Both vendors use the same basic contract, with Anthropic's docs spelling out mor
 | Scope | Whole desktop | Browser tabs | Desktop or browser | Browser |
 | Observation | Screenshots (+ `zoom` crops) | Accessibility tree refs, page text, screenshots, `browser_state` tab list | Screenshots | Accessibility snapshots; screenshots optional |
 | Actions | 17 members: clicks, drag, mouse down/up, scroll, type, key (repeat), hold_key, wait, zoom | 31 members incl. `navigate`, `read_page`, `find`, `form_input`, tabs; JS exec, uploads, console/network off by default | click, double_click, drag, move, scroll, keypress, type, wait, screenshot; or model-written Playwright/PyAutoGUI code | navigate, snapshot, click, type, fill form, evaluate, tabs; `--caps=vision` adds coordinates |
-| Version / model | `computer_toolset_20260801` (Fable/Mythos 5.2, Opus/Sonnet/Haiku 5.5); `computer_20251124` beta for Opus 4.5-4.7 and Sonnet 4.6 | `browser_toolset_20260801` | Responses API `computer` tool; `gpt-6-astra`, `gpt-6.1-sol`, code execution recommended for Astra | MCP server, any MCP client |
+| Version / model | `computer_toolset_20260801` (Fable/Mythos 5.2, Opus/Sonnet/Haiku 5.5); `computer_20251124` beta for Opus 4.5-4.7 and Sonnet 4.6 | `browser_toolset_20260801` | [Responses API](openai-responses-api.md) `computer` tool; `gpt-6-astra`, `gpt-6.1-sol`, code execution recommended for Astra | MCP server, any MCP client |
 
 Sources: [Anthropic computer use](../sources/anthropic-computer-use-tool-docs.md), [Anthropic browser use](../sources/anthropic-browser-use-tool-docs.md), [OpenAI computer use](../sources/openai-computer-use-guide.md), [Playwright MCP](../sources/playwright-mcp-readme.md).
 
@@ -55,17 +55,17 @@ Sources: [Anthropic computer use](../sources/anthropic-computer-use-tool-docs.md
 
 The central design choice is how the agent **grounds** an action on a target:
 
-- **Coordinates from screenshots** work on anything (canvas, remote desktops, native apps) but depend on visual grounding, the main failure cause in OSWorld ([OSWorld](../sources/osworld-benchmark.md)).
+- **Coordinates from screenshots** work on anything (canvas, remote desktops, native apps) but depend on [visual grounding](multimodal-models.md), the main failure cause in OSWorld ([OSWorld](../sources/osworld-benchmark.md)).
 - **Element references from the accessibility tree** are deterministic and usually cheaper in tokens than a screenshot ([Anthropic browser use](../sources/anthropic-browser-use-tool-docs.md), [Playwright MCP](../sources/playwright-mcp-readme.md)). But refs go stale when the DOM changes, and the API cannot detect it, so the executor must return an error ([Anthropic browser use](../sources/anthropic-browser-use-tool-docs.md)). Fall back to coordinates for canvas, video, virtualized lists and cross-origin iframes.
 - **Code generation** (the model writes Playwright or PyAutoGUI scripts) is OpenAI's recommended path for its newest model ([OpenAI computer use](../sources/openai-computer-use-guide.md)), and Playwright's README suggests CLI-plus-skills over MCP for coding agents to save tokens ([Playwright MCP](../sources/playwright-mcp-readme.md)).
 
-Synthesis: prefer the most structured interface that exists: a real API or [MCP](model-context-protocol.md) tool, then DOM/accessibility actions, then coordinates. OpenAI's guide makes the same ordering explicit by listing function tools, MCP and plain web search as alternatives when the UI isn't the only way in ([OpenAI computer use](../sources/openai-computer-use-guide.md)).
+Synthesis: prefer the most structured interface that exists: a real API or [MCP](model-context-protocol.md) tool, then DOM/accessibility actions, then coordinates. OpenAI's guide makes the same ordering explicit by listing function tools, MCP and plain [web search](web-search-apis.md) as alternatives when the UI isn't the only way in ([OpenAI computer use](../sources/openai-computer-use-guide.md)).
 
 ### Screenshots, coordinates and tokens
 
 - Coordinates are in **screenshot pixels**. If you downscale screenshots, scale clicks back up; on macOS Retina (2x), halve them ([Anthropic computer use](../sources/anthropic-computer-use-tool-docs.md)).
 - Screenshots over the model's cap (2,576 px / 4,784 visual tokens on Claude 4.7+, 1,568 px earlier) are **rejected**, not downscaled, for tool results ([Anthropic vision](../sources/anthropic-vision-docs.md)). Recommended display: 1024x768 or 1280x720 for desktops, 1280x800 or 1366x768 for web apps, nothing above 1920x1080 ([Anthropic computer use](../sources/anthropic-computer-use-tool-docs.md)).
-- Each screenshot is about 1,000-1,800 input tokens, so long sessions are a [context engineering](context-engineering.md) problem. Prune old screenshots in batches (Anthropic suggests keep the last three, prune every 25 turns) so [prompt caching](prompt-caching.md) still hits; on Fable/Mythos 5.1-5.2 and Opus/Sonnet/Haiku 5.5, client-side pruning invalidates every later thinking block, so Anthropic advises avoiding it (if you must prune, set `prefix_mismatch_behavior: "drop_block"`) ([Anthropic computer use](../sources/anthropic-computer-use-tool-docs.md)).
+- Each screenshot is about 1,000-1,800 input tokens, so long sessions are a [context engineering](context-engineering.md) problem. Prune old screenshots in batches (Anthropic suggests keep the last three, prune every 25 turns) so [prompt caching](prompt-caching.md) still hits; on Fable/Mythos 5.1-5.2 and Opus/Sonnet/Haiku 5.5, client-side pruning invalidates every later [thinking block](extended-thinking.md), so Anthropic advises avoiding it (if you must prune, set `prefix_mismatch_behavior: "drop_block"`) ([Anthropic computer use](../sources/anthropic-computer-use-tool-docs.md)).
 - Above 20 images in one request, a stricter per-image size limit applies, and screenshots in tool results count ([Anthropic vision](../sources/anthropic-vision-docs.md)).
 
 ## How good are they?

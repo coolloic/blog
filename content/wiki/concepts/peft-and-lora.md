@@ -51,7 +51,7 @@ QLoRA backpropagates through a **frozen 4-bit base model** into LoRA adapters th
 2. **Double quantization:** the quantization constants are quantized too.
 3. **Paged optimizers:** absorb memory spikes.
 
-In practice, QLoRA uses about 4× less VRAM than 16-bit LoRA and is slightly slower and slightly less accurate ([Unsloth](../sources/unsloth-lora-hyperparameters.md)). In TRL you pass a `BitsAndBytesConfig` together with a `peft_config` ([TRL](../sources/hugging-face-trl-docs.md)). PEFT's `loftq` init reduces quantization error for quantized bases ([PEFT](../sources/hugging-face-peft-lora-guide.md)). See [quantization](quantization.md).
+In practice, QLoRA uses about 4× less VRAM than 16-bit LoRA and is slightly slower and slightly less accurate ([Unsloth](../sources/unsloth-lora-hyperparameters.md)). In [TRL](hugging-face-ecosystem.md) you pass a `BitsAndBytesConfig` together with a `peft_config` ([TRL](../sources/hugging-face-trl-docs.md)). PEFT's `loftq` init reduces quantization error for quantized bases ([PEFT](../sources/hugging-face-peft-lora-guide.md)). See [quantization](quantization.md).
 
 ## Variants and options (PEFT library)
 
@@ -72,7 +72,7 @@ Source: [PEFT](../sources/hugging-face-peft-lora-guide.md).
 | Knob | Starting value | Evidence |
 |---|---|---|
 | Target modules | All linear layers: q, k, v, o, gate, up, down | Attention-only LoRA underperforms even at matched parameter count ([LoRA Without Regret](../sources/lora-without-regret.md), [Unsloth](../sources/unsloth-lora-hyperparameters.md)) |
-| Rank r | 16–32 (8–128 range) | Higher ranks cost memory and can overfit ([Unsloth](../sources/unsloth-lora-hyperparameters.md)); in RL even r=1 matches full fine-tuning ([LoRA Without Regret](../sources/lora-without-regret.md)) |
+| Rank r | 16–32 (8–128 range) | Higher ranks cost memory and can overfit ([Unsloth](../sources/unsloth-lora-hyperparameters.md)); in [RL](reinforcement-fine-tuning.md) even r=1 matches full fine-tuning ([LoRA Without Regret](../sources/lora-without-regret.md)) |
 | α | r or 2r | ([Unsloth](../sources/unsloth-lora-hyperparameters.md)) |
 | Learning rate | ~2e-4 (SFT), ~10× the full-FT optimum; ~5e-6 for DPO/GRPO | ([LoRA Without Regret](../sources/lora-without-regret.md), [Unsloth](../sources/unsloth-lora-hyperparameters.md)); TRL suggests ~1e-4 for SFT adapters and ~1e-5 for DPO adapters ([TRL](../sources/hugging-face-trl-docs.md)) |
 | Dropout | 0–0.1 | Rarely useful on short runs ([Unsloth](../sources/unsloth-lora-hyperparameters.md)) |
@@ -90,7 +90,7 @@ Note that the original paper adapted only Wq and Wv with tiny ranks and still ma
 | Large-corpus code/math, continued pre-training | Substantially worse ([Biderman et al.](../sources/lora-learns-less-forgets-less.md)) | Better; learns perturbations of 10–100× higher rank |
 | Forgetting | Less: preserves out-of-domain skills and diversity ([Biderman et al.](../sources/lora-learns-less-forgets-less.md)) | More |
 
-Google's managed tuning shows the same split: adapter tuning is cheaper and works with less data, while full tuning may score higher on complex tasks but costs more to train and serve ([Vertex AI](../sources/vertex-ai-gemini-tuning.md)).
+[Google's managed tuning](google-vertex-ai.md) shows the same split: adapter tuning is cheaper and works with less data, while full tuning may score higher on complex tasks but costs more to train and serve ([Vertex AI](../sources/vertex-ai-gemini-tuning.md)).
 
 ## Failure modes
 
@@ -102,8 +102,8 @@ Google's managed tuning shows the same split: adapter tuning is cheaper and work
 
 ## When to use, and when not
 
-- **Use LoRA/QLoRA** by default for task, format and style SFT, for DPO and RL, for limited GPU memory, for many tenant- or task-specific variants served from one base ([LLM inference serving](llm-inference-serving.md)), and when you want to limit forgetting.
-- **Prefer full fine-tuning** for continued pre-training on billions of tokens, for large domain shifts such as a new language or heavy code or math, or when you have the compute and evals show LoRA hitting a ceiling.
+- **Use LoRA/QLoRA** by default for task, format and style SFT, for [DPO](preference-optimization.md) and RL, for limited GPU memory, for many tenant- or task-specific variants served from one base ([LLM inference serving](llm-inference-serving.md)), and when you want to limit forgetting.
+- **Prefer full fine-tuning** for [continued pre-training](llm-training-pipeline.md) on billions of tokens, for large domain shifts such as a new language or heavy code or math, or when you have the compute and evals show LoRA hitting a ceiling.
 
 ## Sources
 

@@ -59,7 +59,7 @@ Docling is the clearest open example ([Docling report](../sources/docling-techni
 - **Assembly:** reading-order correction, caption linking, language detection; export to JSON or Markdown.
 - **Throughput (2024, OCR off, 225 pages):** about 1.3 pages/s on an M3 Max and 0.6-0.9 pages/s on a Xeon E5-2690 (4 vs 16 threads) with the native backend.
 
-The current Docling docs add many input formats (DOCX, PPTX, XLSX, HTML, images, audio, XBRL), chart-to-table conversion, pluggable OCR engines (Tesseract, RapidOCR and others), structure-aware chunkers, framework integrations and an MCP server ([Docling docs](../sources/docling-docs.md)).
+The current Docling docs add many input formats (DOCX, PPTX, XLSX, HTML, images, audio, XBRL), chart-to-table conversion, pluggable OCR engines (Tesseract, RapidOCR and others), structure-aware chunkers, framework integrations and an [MCP](model-context-protocol.md) server ([Docling docs](../sources/docling-docs.md)).
 
 **Unstructured** has the same shape but exposes it as a `strategy` switch ([Unstructured partitioning](../sources/unstructured-partitioning-docs.md)):
 
@@ -79,7 +79,7 @@ Instead of chaining detectors, a VLM reads the page image and writes the structu
 - **Small specialist models:** Granite-Docling-258M (Apache 2.0, September 2025) emits DocTags, a compact markup of element type, position and relationships, in one pass. It also fixed SmolDocling's habit of looping on repeated tokens ([Granite-Docling](../sources/granite-docling-announcement.md)). olmOCR fine-tunes a 7B VLM on 260k real PDF pages and costs about $176 per million pages versus over $6,240 with GPT-4o (2025 prices) ([olmOCR](../sources/olmocr-2025.md)).
 - **Hosted OCR APIs:** Mistral OCR (March 2025, since superseded) returned ordered Markdown plus images, at up to 2,000 pages/min per node and about 1,000 pages per dollar ([Mistral OCR](../sources/mistral-ocr-announcement.md)).
 - **Hosted parsing services with tiers:** LlamaParse v2 sells the trade-off directly (as of 2026-11): Fast (no model, 1 credit/page), Cost-effective (3), Agentic (10, for scans, multi-column pages, charts) and Agentic Plus (25, a separate pipeline for dense financial tables). Credits cost $1.25-1.50 per 1,000. Pin a dated `version` in production so output does not drift ([LlamaParse](../sources/llamaparse-tiers-and-pricing.md)).
-- **General frontier models:** Claude takes a PDF as a `document` block and receives each page as both extracted text and an image. That costs about 1,500-3,000 text tokens per page plus image tokens, with up to 600 pages per request, or 100 when the request's context window is under 1M tokens (as of 2026-11). Dense PDFs can fill the context window before the page limit ([Anthropic PDF](../sources/anthropic-pdf-support-docs.md)). Vision limits carry over: rotated, low-quality or tiny images degrade results ([Anthropic vision](../sources/anthropic-vision-docs.md)).
+- **General frontier models:** Claude takes a PDF as a `document` block and receives each page as both extracted text and an image. That costs about 1,500-3,000 text tokens per page plus image tokens, with up to 600 pages per request, or 100 when the request's [context window](context-window.md) is under 1M tokens (as of 2026-11). Dense PDFs can fill the context window before the page limit ([Anthropic PDF](../sources/anthropic-pdf-support-docs.md)). Vision limits carry over: rotated, low-quality or tiny images degrade results ([Anthropic vision](../sources/anthropic-vision-docs.md)).
 
 ### Where the field stands
 
@@ -87,7 +87,7 @@ On OmniDocBench (CVPR 2025; leaderboard read 2026-11-14), specialized document V
 
 ### Skipping parsing: retrieve page images
 
-ColPali embeds each page image as about 1,030 patch vectors and retrieves with late interaction. On ViDoRe it scored nDCG@5 81.3 versus 67.0 for an Unstructured + captioning + BGE-M3 text pipeline. It indexed pages in 0.39 s versus 7.22 s on an L4 GPU, but stores about 257 KB per page ([ColPali](../sources/colpali-2024.md)). It solves retrieval only; you still need a [multimodal model](multimodal-models.md) to read the retrieved page, or text extracted from it.
+ColPali embeds each page image as about 1,030 patch vectors and retrieves with [late interaction](late-interaction-retrieval.md). On ViDoRe it scored nDCG@5 81.3 versus 67.0 for an Unstructured + captioning + BGE-M3 text pipeline. It indexed pages in 0.39 s versus 7.22 s on an L4 GPU, but stores about 257 KB per page ([ColPali](../sources/colpali-2024.md)). It solves retrieval only; you still need a [multimodal model](multimodal-models.md) to read the retrieved page, or text extracted from it.
 
 ## Comparison
 
@@ -110,7 +110,7 @@ Sources: rows draw on the sources cited in the sections above; the cell judgemen
 - **VLM hallucination and repetition:** generative parsers can produce fluent text that is not on the page, or loop on tokens ([Granite-Docling](../sources/granite-docling-announcement.md); see [hallucination](hallucination.md)).
 - **Headers, footers and page numbers** repeated on every page pollute chunks; drop them using element types (Synthesis).
 - **Version drift:** hosted parsers change output between releases, so pin versions ([LlamaParse](../sources/llamaparse-tiers-and-pricing.md)).
-- **Privacy:** IDs and contracts are sensitive. Prefer local parsing (Docling runs air-gapped), minimize fields and encrypt at rest ([Docling docs](../sources/docling-docs.md), [Notebook](../sources/notebook-license-ml-lab.md)).
+- **Privacy:** IDs and contracts are [sensitive](pii-and-data-privacy.md). Prefer local parsing (Docling runs air-gapped), minimize fields and encrypt at rest ([Docling docs](../sources/docling-docs.md), [Notebook](../sources/notebook-license-ml-lab.md)).
 
 ## Field extraction (IDP)
 

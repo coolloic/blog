@@ -19,7 +19,7 @@ lastmod: 2026-11-14
 tags: ["security", "guardrails", "moderation", "prompt-injection"]
 ---
 
-**Guardrail tooling** is the software that sits around a model call and checks what goes in and what comes out: user prompts, retrieved documents, tool arguments and results, and the final response. Each check is a classifier, a rule, or a second LLM call, and each ends in an action: allow, block, mask, rewrite, re-ask, or log. Guardrails are separate from the model's own trained refusals. They are configured by the developer at runtime, independent of the model, and auditable ([Rebedea et al.](../sources/rebedea-2023-nemo-guardrails.md)). They complement [agent guardrails](agent-guardrails.md) (sandboxing, permissions), which limit what an agent *can do* rather than what text passes through.
+**Guardrail tooling** is the software that sits around a model call and checks what goes in and what comes out: user prompts, [retrieved documents](retrieval-augmented-generation.md), [tool](tools.md) arguments and results, and the final response. Each check is a classifier, a rule, or a second LLM call, and each ends in an action: allow, block, mask, rewrite, re-ask, or log. Guardrails are separate from the model's own trained refusals. They are configured by the developer at runtime, independent of the model, and auditable ([Rebedea et al.](../sources/rebedea-2023-nemo-guardrails.md)). They complement [agent guardrails](agent-guardrails.md) (sandboxing, permissions), which limit what an agent *can do* rather than what text passes through.
 
 ## Where checks run
 
@@ -48,10 +48,10 @@ A common gap is that **tool traffic is often not checked**. Bedrock content filt
 NeMo Guardrails is a Python library and server that acts as a proxy between the application and the LLM. It is configured with `config.yml`, `prompts.yml` and Colang flows (Colang 1.0 is the default, 2.0 is also supported), plus Python actions ([NeMo docs](../sources/nemo-guardrails-docs.md)).
 
 - **Self-check rails.** `self check input` and `self check output` run a separate LLM call with a yes/no policy prompt. In the tutorial, a blocked request costs 1 LLM call and an allowed one costs 2.
-- **Dialog rails.** Three chained calls: canonical user intent (few-shot examples retrieved by embedding similarity), then the next step, then the bot message. They cannot be batched, so latency and cost are about 3x a plain call ([Rebedea et al.](../sources/rebedea-2023-nemo-guardrails.md)). `rails.dialog.single_call` merges them into one call.
-- **Model-backed rails.** These call dedicated safety models (Nemotron content-safety, Llama Guard), a jailbreak-detection NIM, topic control, PII detectors (Presidio, GLiNER) and third-party APIs.
+- **Dialog rails.** Three chained calls: canonical user intent ([few-shot](few-shot-prompting.md) examples retrieved by [embedding](embeddings.md) similarity), then the next step, then the bot message. They cannot be batched, so latency and cost are about 3x a plain call ([Rebedea et al.](../sources/rebedea-2023-nemo-guardrails.md)). `rails.dialog.single_call` merges them into one call.
+- **Model-backed rails.** These call dedicated safety models (Nemotron content-safety, Llama Guard), a [jailbreak](jailbreaks.md)-detection NIM, topic control, [PII](pii-and-data-privacy.md) detectors (Presidio, GLiNER) and third-party APIs.
 - **Knobs.** `rails.input.parallel` and `rails.output.parallel` run rails concurrently. Streaming output rails take `chunk_size` (200 tokens), `context_size` (50) and `stream_first` (true, meaning tokens are streamed *before* the chunk is checked).
-- **Evidence.** In the paper's 200-prompt test (100 harmful, 100 helpful), input and output rails on gpt-3.5-turbo blocked about 99% of harmful red-team prompts and about 2% of helpful ones. Without rails, gpt-3.5-turbo already refused 93% of the harmful prompts on its own; the bigger gain was on text-davinci-003 (24% without rails, 97% with both rails, at a cost of 5% of helpful prompts blocked). The sample is small and the models are old.
+- **Evidence.** In the paper's 200-prompt test (100 harmful, 100 helpful), input and output rails on gpt-3.5-turbo blocked about 99% of harmful [red-team](llm-red-teaming.md) prompts and about 2% of helpful ones. Without rails, gpt-3.5-turbo already refused 93% of the harmful prompts on its own; the bigger gain was on text-davinci-003 (24% without rails, 97% with both rails, at a cost of 5% of helpful prompts blocked). The sample is small and the models are old.
 
 ### Guardrails AI (open source)
 
@@ -83,7 +83,7 @@ A Bedrock guardrail is a versioned policy bundle ([Bedrock docs](../sources/aws-
 - **Policies.** Content filters (Hate, Insults, Sexual, Violence, Misconduct, Prompt Attack) with NONE/LOW/MEDIUM/HIGH strength per direction; denied topics; word filters; PII block or mask plus regex; contextual grounding; Automated Reasoning checks.
 - **How to attach it.** Attach it to `InvokeModel` or `Converse`, or call `ApplyGuardrail` standalone to guard any model, including non-AWS ones (see [Amazon Bedrock](amazon-bedrock.md)).
 - **Evaluation and billing.** Input policies run in parallel. A blocked input skips the model call, and billing is per policy evaluated.
-- **Gotcha: input tags.** With `InvokeModel` and `InvokeModelWithResponseStream`, prompt-attack detection only runs on text wrapped in `guardContent` input tags. Without tags it silently does nothing. Tags are also how you keep the system prompt and RAG context from triggering false positives. The prompt-attack filter never evaluates tool results or tool definitions.
+- **Gotcha: input tags.** With `InvokeModel` and `InvokeModelWithResponseStream`, prompt-attack detection only runs on text wrapped in `guardContent` input tags. Without tags it silently does nothing. Tags are also how you keep the [system prompt](system-prompts.md) and RAG context from triggering false positives. The prompt-attack filter never evaluates tool results or tool definitions.
 - **Grounding checks.** Thresholds run from 0 to 0.99. Limits are 100k characters of source, 1k of query and 5k of response.
 - **Tiers.** The Standard tier adds code-aware detection and prompt-leakage detection, and requires cross-Region inference.
 
@@ -98,7 +98,7 @@ Azure AI Content Safety is a standalone API, and the engine behind Foundry guard
 
 ### OpenAI moderation (managed, free)
 
-`omni-moderation-latest` classifies text and images into 13 categories with scores. It can run standalone or inline in the Responses API. It is a harm classifier only, with no injection detection ([OpenAI](../sources/openai-moderation-guide.md)). Details are in [content moderation](content-moderation.md).
+`omni-moderation-latest` classifies text and images into 13 categories with scores. It can run standalone or inline in the [Responses API](openai-responses-api.md). It is a harm classifier only, with no injection detection ([OpenAI](../sources/openai-moderation-guide.md)). Details are in [content moderation](content-moderation.md).
 
 ## Comparison
 
@@ -118,7 +118,7 @@ Synthesis: the table compresses the sources above; "no" means the source documen
 
 Synthesis, built from the sources cited inline:
 
-1. **Cheap first, expensive last.** Run regex, word lists and small encoders (Prompt Guard at about 20 ms) before LLM-based judges (Llama Guard, self-check). Run independent checks in parallel (Bedrock evaluates input policies in parallel; in NeMo set `rails.input.parallel` / `rails.output.parallel`, which default to false).
+1. **Cheap first, expensive last.** Run regex, word lists and small encoders (Prompt Guard at about 20 ms) before [LLM-based judges](llm-as-judge.md) (Llama Guard, self-check). Run independent checks in parallel (Bedrock evaluates input policies in parallel; in NeMo set `rails.input.parallel` / `rails.output.parallel`, which default to false).
 2. **Check provenance, not just content.** Classify the user turn and third-party content separately: Bedrock input tags, Azure `userPrompt` vs `documents`. A trusted system prompt can look like an injection, which is why AWS asks you to tag only the user's text.
 3. **Output = untrusted.** Validate structure (schema, `FILTER`/`REASK`), [grounding](hallucination.md) (Bedrock contextual grounding, Azure groundedness), and leakage (PII masking) before anything reaches a user, a SQL engine or a tool ([notebook](../sources/notebook-web-ai-security.md)).
 4. **Streaming trade-off.** Checking every chunk before release adds latency. Releasing first (Bedrock `ASYNCHRONOUS`, NeMo `stream_first: true`) can briefly expose bad content, and Bedrock cannot mask PII in async mode. OpenAI inline moderation of a stream only returns results after generation ends. See [streaming](streaming.md).
@@ -143,7 +143,7 @@ Synthesis:
 - **Need conversational policy (stay on topic, scripted flows):** NeMo Guardrails dialog rails, if you can pay the extra calls.
 - **Mostly structural or business-rule validation (schemas, PII, competitor names):** Guardrails AI validators or plain code.
 - **Cheap baseline harm screen on OpenAI:** the free moderation endpoint, with thresholds you set yourself.
-- **Not a substitute** for least privilege, sandboxing and human approval on agent actions.
+- **Not a substitute** for least privilege, [sandboxing](code-execution-sandboxes.md) and [human approval](human-in-the-loop.md) on agent actions.
 
 ## Sources
 

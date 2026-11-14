@@ -16,7 +16,7 @@ lastmod: 2026-11-14
 tags: ["frameworks", "agents", "anthropic", "multi-agent"]
 ---
 
-The **Claude Agent SDK** is Anthropic's library for embedding the agent that powers Claude Code in your own Python or TypeScript application. It ships the same [agent loop](agent-loop.md), built-in [tools](tools.md) (file read/edit, Bash, grep, web fetch), permission system, sessions, hooks, [subagents](subagents.md) and context management as Claude Code, programmable from code ([overview](../sources/claude-agent-sdk-overview-docs.md)). It was called the Claude Code SDK until September 2025. Anthropic renamed it because the same harness was being used for research, video and note-taking work, not just coding ([Anthropic, 2025](../sources/anthropic-building-agents-with-claude-agent-sdk.md)). Most frameworks give you primitives to assemble an agent. This SDK gives you a finished, opinionated agent ("give Claude a computer") that you configure and constrain.
+The **Claude Agent SDK** is Anthropic's library for embedding the agent that powers Claude Code in your own Python or TypeScript application. It ships the same [agent loop](agent-loop.md), built-in [tools](tools.md) (file read/edit, Bash, grep, web fetch), permission system, sessions, hooks, [subagents](subagents.md) and [context management](context-engineering.md) as Claude Code, programmable from code ([overview](../sources/claude-agent-sdk-overview-docs.md)). It was called the Claude Code SDK until September 2025. Anthropic renamed it because the same harness was being used for research, video and note-taking work, not just coding ([Anthropic, 2025](../sources/anthropic-building-agents-with-claude-agent-sdk.md)). Most frameworks give you primitives to assemble an agent. This SDK gives you a finished, opinionated agent ("give Claude a computer") that you configure and constrain.
 
 ## Architecture: a library wrapping a CLI subprocess
 
@@ -35,10 +35,10 @@ Anthropic offers four ways to build with Claude, and the SDK is one of them ([ov
 
 | Option | Who runs the loop | Use when |
 |---|---|---|
-| Client SDK (raw Messages API) | You write it (or use the beta tool runner) | You need full control, few tools, or non-agentic calls |
+| Client SDK (raw [Messages API](anthropic-messages-api.md)) | You write it (or use the beta tool runner) | You need full control, few tools, or non-agentic calls |
 | **Agent SDK** | Claude Code binary, in a process you operate | You want Claude Code's tools, permissions and context handling inside your own service |
 | Claude Code CLI | Claude Code, interactive | Day-to-day development, one-off tasks |
-| Managed Agents | Anthropic-hosted harness and sandbox | You don't want to operate the loop or the sandbox |
+| Managed Agents | Anthropic-hosted harness and [sandbox](code-execution-sandboxes.md) | You don't want to operate the loop or the sandbox |
 
 ## The loop and its message stream
 
@@ -50,11 +50,11 @@ Key controls on `ClaudeAgentOptions` / `Options`:
 |---|---|---|
 | `max_turns` | Cap on tool-use turns; ends with `error_max_turns` | unlimited |
 | `max_budget_usd` | Spend cap including subagents; ends with `error_max_budget_usd` | unlimited |
-| `effort` | `low` … `max` reasoning depth per turn | resolved by Claude Code |
+| `effort` | `low` … `max` [reasoning depth](extended-thinking.md) per turn | resolved by Claude Code |
 | `allowed_tools` / `disallowed_tools` | Pre-approve / deny (bare name removes the tool) | none |
 | `tools` | Which built-ins exist in context at all | all core built-ins |
 | `permission_mode` | `default`, `dontAsk`, `acceptEdits`, `plan`, `auto`, `bypassPermissions` | `default` |
-| `setting_sources` | Load CLAUDE.md, skills, hooks, settings from user/project/local | project for default options |
+| `setting_sources` | Load [CLAUDE.md](agent-instruction-files.md), [skills](agent-skills.md), hooks, settings from user/project/local | project for default options |
 | `mcp_servers`, `agents`, `hooks` | External tools, subagent definitions, lifecycle callbacks | none |
 | `resume`, `continue`, `fork_session` | Session continuity | new session |
 
@@ -85,18 +85,18 @@ Sessions are local JSONL transcripts. `continue` resumes the latest session in t
 
 - **Heavy runtime.** It's a stateful subprocess with a shell, not a stateless HTTP call. Concurrency is bounded by RAM, and memory grows over long sessions ([hosting](../sources/claude-agent-sdk-hosting-docs.md)).
 - **No built-in wall-clock timeout** for sessions or subagents. Only turn and budget caps exist (plus a `CLAUDE_ASYNC_AGENT_STALL_TIMEOUT_MS` stall watchdog for subagents that stop producing output, which is not a total-runtime deadline), and the budget can overshoot by one response plus any subagents still running ([agent loop](../sources/claude-agent-sdk-agent-loop-docs.md), [hosting](../sources/claude-agent-sdk-hosting-docs.md)).
-- **Claude-only.** It runs Claude models (via the Anthropic API or the Bedrock and Google Cloud endpoints), not arbitrary providers ([hosting](../sources/claude-agent-sdk-hosting-docs.md)).
+- **Claude-only.** It runs Claude models (via the Anthropic API or the [Bedrock](amazon-bedrock.md) and [Google Cloud](google-vertex-ai.md) endpoints), not arbitrary providers ([hosting](../sources/claude-agent-sdk-hosting-docs.md)).
 - **Settings leakage.** Filesystem settings and CLAUDE.md load by default and can leak across tenants ([hosting](../sources/claude-agent-sdk-hosting-docs.md)).
 - **Error semantics.** A single-shot `query()` raises *after* yielding an error result, so wrap it and check the result `subtype` ([agent loop](../sources/claude-agent-sdk-agent-loop-docs.md)).
 - **Licensing and branding.** You must use API-key auth (no claude.ai login without approval), and you can't brand your product as Claude Code ([overview](../sources/claude-agent-sdk-overview-docs.md)).
 
 ## When to use it, and when not
 
-Use it when the task looks like "an engineer with a computer": [coding agents](coding-agents.md), file-heavy research, document processing, ops automation. These are cases where agentic search over files, Bash and verification by running things beat hand-built tools. Anthropic's own advice is to start with agentic search and add semantic search only if needed, and to verify work through rules, screenshots or an [LLM judge](llm-as-judge.md) ([Anthropic, 2025](../sources/anthropic-building-agents-with-claude-agent-sdk.md)).
+Use it when the task looks like "an engineer with a computer": [coding agents](coding-agents.md), file-heavy research, [document processing](document-processing.md), ops automation. These are cases where agentic search over files, Bash and verification by running things beat hand-built tools. Anthropic's own advice is to start with agentic search and add semantic search only if needed, and to verify work through rules, screenshots or an [LLM judge](llm-as-judge.md) ([Anthropic, 2025](../sources/anthropic-building-agents-with-claude-agent-sdk.md)).
 
 Avoid it for low-latency chat, single-shot extraction or classification, multi-provider requirements, or very high fan-out serverless workloads. For those, use the raw API with [function calling](function-calling.md), or a lighter framework such as [Pydantic AI](pydantic-ai.md), [OpenAI Agents SDK](openai-agents-sdk.md) or [LangGraph](langgraph.md). Anthropic's general guidance still applies: start with the simplest solution and add agentic machinery only when it measurably helps ([Building effective agents](../sources/anthropic-building-effective-agents.md)).
 
-Synthesis: compared with the other SDKs on this wiki ([OpenAI Agents SDK](openai-agents-sdk.md), [Google ADK](google-adk.md), [CrewAI](crewai.md), [AutoGen / Agent Framework](autogen.md)), the Claude Agent SDK is the most "batteries-included single agent". Its multi-agent story is model-driven subagent delegation, not declarative graphs, and its strongest differentiators are the permission pipeline and the computer-use-style toolset.
+Synthesis: compared with the other SDKs on this wiki ([OpenAI Agents SDK](openai-agents-sdk.md), [Google ADK](google-adk.md), [CrewAI](crewai.md), [AutoGen / Agent Framework](autogen.md)), the Claude Agent SDK is the most "batteries-included single agent". Its multi-agent story is model-driven subagent delegation, not declarative graphs, and its strongest differentiators are the permission pipeline and the [computer-use](computer-use-agents.md)-style toolset.
 
 ## Sources
 

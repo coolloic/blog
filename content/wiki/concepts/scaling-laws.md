@@ -19,13 +19,13 @@ lastmod: 2026-11-14
 tags: ["training", "scaling-laws", "pretraining", "compute"]
 ---
 
-**Scaling laws** are empirical fits showing that a language model's pretraining loss falls smoothly and predictably, as a power law, when you increase parameters (N), training tokens (D) or training compute (C). Labs use them to choose model size and data budget before an expensive run, and to predict the result from runs 100-10,000x smaller. For a practitioner, they explain why model families come in the sizes they do, why small open models are trained on absurd numbers of tokens, and why "bigger is better" holds for loss but not always for a given benchmark or cost target ([Kaplan](../sources/kaplan-2020-scaling-laws.md), [Hoffmann](../sources/hoffmann-2022-chinchilla.md)).
+**Scaling laws** are empirical fits showing that a language model's pretraining loss falls smoothly and predictably, as a power law, when you increase parameters (N), training tokens (D) or training compute (C). Labs use them to choose model size and data budget before an expensive run, and to predict the result from runs 100-10,000x smaller. For a practitioner, they explain why model families come in the sizes they do, why small [open models](open-weight-models.md) are trained on absurd numbers of tokens, and why "bigger is better" holds for loss but not always for a given benchmark or cost target ([Kaplan](../sources/kaplan-2020-scaling-laws.md), [Hoffmann](../sources/hoffmann-2022-chinchilla.md)).
 
 ## The core quantities
 
 - **N:** parameter count. Kaplan counts only non-embedding parameters; with embeddings included the curves look shape-dependent ([Kaplan](../sources/kaplan-2020-scaling-laws.md)). For [mixture-of-experts](mixture-of-experts.md) models, total and active parameters differ, so a single N is ambiguous (Synthesis).
 - **D:** training tokens (see [tokenization](tokenization.md): the same text gives different D under different tokenizers).
-- **C ≈ 6·N·D FLOPs:** roughly 2 FLOPs per parameter per token forward and 4 backward. It ignores attention cost, which grows with context length ([Kaplan](../sources/kaplan-2020-scaling-laws.md), [Hoffmann](../sources/hoffmann-2022-chinchilla.md)).
+- **C ≈ 6·N·D FLOPs:** roughly 2 FLOPs per parameter per token forward and 4 backward. It ignores [attention](transformer-architecture.md) cost, which grows with [context length](context-window.md) ([Kaplan](../sources/kaplan-2020-scaling-laws.md), [Hoffmann](../sources/hoffmann-2022-chinchilla.md)).
 - **Loss:** next-token cross-entropy on held-out text. Scaling laws predict loss, not task accuracy.
 
 ## Kaplan et al. (2020): "make the model bigger"
@@ -66,7 +66,7 @@ Synthesis: the diagram combines the Llama 3 prediction method with the inference
 
 ## Over-training: why Chinchilla-optimal is not production-optimal
 
-Chinchilla minimises **training** compute. Once a model is served, every generated token costs roughly 2N FLOPs, so a smaller model trained longer can be cheaper over its lifetime even if it costs more to train. Sardana et al. add inference demand to the objective ([Sardana](../sources/sardana-2024-beyond-chinchilla-optimal.md)):
+Chinchilla minimises **training** compute. Once a model is [served](llm-inference-serving.md), every generated token costs roughly 2N FLOPs, so a smaller model trained longer can be cheaper over its lifetime even if it costs more to train. Sardana et al. add inference demand to the objective ([Sardana](../sources/sardana-2024-beyond-chinchilla-optimal.md)):
 
 | Target quality (Chinchilla-equivalent) | Lifetime inference | Optimal model | Training tokens |
 |---|---|---|---|

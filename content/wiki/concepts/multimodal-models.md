@@ -16,13 +16,13 @@ lastmod: 2026-11-14
 tags: ["models", "multimodal", "vision", "audio", "image-generation"]
 ---
 
-A **multimodal model** accepts (and possibly emits) more than text: images, document pages, audio, video frames. For an engineer the key fact is that every modality is turned into tokens that share the [context window](context-window.md) with text, so it is billed and limited like text, and the conversion step (resizing, tiling, page rasterization, audio chunking) decides both cost and accuracy. In practice "multimodal" covers four distinct capabilities, often served by different models or endpoints: **understanding** (image/PDF/audio in, text out), **image generation**, **speech-to-text (STT)** and **text-to-speech (TTS)**. Real-time speech-in/speech-out is covered in [voice agents](voice-agents.md); acting on screenshots is covered in [computer-use agents](computer-use-agents.md).
+A **multimodal model** accepts (and possibly emits) more than text: images, document pages, audio, video frames. For an engineer the key fact is that every modality is turned into [tokens](tokenization.md) that share the [context window](context-window.md) with text, so it is billed and limited like text, and the conversion step (resizing, tiling, page rasterization, audio chunking) decides both cost and accuracy. In practice "multimodal" covers four distinct capabilities, often served by different models or endpoints: **understanding** (image/PDF/audio in, text out), **image generation**, **speech-to-text (STT)** and **text-to-speech (TTS)**. Real-time speech-in/speech-out is covered in [voice agents](voice-agents.md); acting on screenshots is covered in [computer-use agents](computer-use-agents.md).
 
 ## How images become tokens
 
 Vision-language models cut an image into patches or tiles and embed each as a token. The vendors expose this differently, and the numbers determine cost (as of 2026-11):
 
-| | Anthropic Claude | Google Gemini |
+| | [Anthropic Claude](anthropic-messages-api.md) | [Google Gemini](gemini-api.md) |
 |---|---|---|
 | Unit | 28x28-px patch = 1 "visual token"; cost `ceil(w/28) * ceil(h/28)` | ≤384 px both sides: 258 tokens; else 768x768 tiles at 258 each |
 | Max native size | High-res tier (Claude 4.7+): 2,576 px long edge, 4,784 tokens. Standard: 1,568 px, 1,568 tokens. Larger images are downscaled | `media_resolution` caps tokens per image/frame |
@@ -69,14 +69,14 @@ Images are also an injection channel: text rendered inside a screenshot or page 
 
 Claude does not generate or edit images ([Anthropic vision](../sources/anthropic-vision-docs.md)). OpenAI's GPT Image family is a representative generation API ([OpenAI image generation](../sources/openai-image-generation-guide.md)):
 
-- **Two surfaces.** The Image API (Generations, Edits) for one-shot calls; the Responses API `image_generation` tool for conversational, multi-turn editing where a mainline model may rewrite your prompt (`revised_prompt`).
+- **Two surfaces.** The Image API (Generations, Edits) for one-shot calls; the [Responses API](openai-responses-api.md) `image_generation` tool for conversational, multi-turn editing where a mainline model may rewrite your prompt (`revised_prompt`).
 - **Edits.** Multiple reference images; masks are *prompt-guided*, so the output may not respect the mask's exact shape; newer models add "markup" annotation layers.
 - **Models (2026-11).** `gpt-image-2.5`/`2.6` in Sunburst (editing precision) and Flare (fast generation) variants, plus the older `gpt-image-2`; parameter ranges differ by model.
 - **Parameters.** `size` (fixed presets or custom within multiples of 16, aspect 1:3 to 3:1, edge at most 3840 px), `quality` (`low`/`medium`/`high`/`auto` on `gpt-image-2`; adds `xhigh` and `max` on the 2.6 variants), `complexity`, `background` (transparent needs png/webp), `output_format` (png/jpeg/webp, plus svg and gif on newer models), `output_compression`, `n`, `partial_images` (0-3) for streamed previews, `moderation` (`auto`/`low`).
 - **Cost and latency (2026-11).** Billed per image token (e.g. $30 per million output tokens for GPT-Image-2.5/2.6); `gpt-image-2` at 1024x1024 is about $0.006 low, $0.053 medium, $0.211 high (the guide gives no per-image table for the 2.6 variants; use OpenAI's calculator). Complex prompts can take up to 2 minutes; JPEG returns faster than PNG; each streamed partial adds 100 tokens.
 - **Stated weaknesses.** Precise text rendering, consistency of recurring characters and brand elements, and exact layout placement.
 
-Synthesis: treat image generation as a slow, asynchronous job (queue it, stream partials for UX), use `low` quality for drafts and gate final renders, and never rely on it for pixel-exact layouts such as UI mockups with real copy.
+Synthesis: treat image generation as a slow, asynchronous job (queue it, [stream](streaming.md) partials for UX), use `low` quality for drafts and gate final renders, and never rely on it for pixel-exact layouts such as UI mockups with real copy.
 
 ## Audio: speech-to-text and text-to-speech
 

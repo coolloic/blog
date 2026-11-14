@@ -62,7 +62,7 @@ Left alone, a router collapses. A few experts win early, get more gradient and w
 | Global-batch balance loss | The balance loss is computed over the whole batch, not per sequence, which leaves room for specialisation | Qwen3 ([Qwen3](../sources/qwen3-technical-report.md)) |
 | Auxiliary-loss-free bias | A per-expert bias is added to scores **only for top-k selection** and nudged ±γ each step against load. A tiny sequence-wise loss (α = 1e-4) remains. No token dropping | DeepSeek-V3 ([DeepSeek-V3](../sources/deepseek-v3-technical-report.md)) |
 
-DeepSeek reports that the bias method beat the auxiliary loss on most benchmarks at 229B scale (HumanEval 40.2 → 46.3) and produced more specialised experts. Batch-wise balancing beat sequence-wise because it constrains the model less. Its cost is that small batches or domain-shifted traffic can be imbalanced at inference, which DeepSeek handles with redundant experts ([DeepSeek-V3](../sources/deepseek-v3-technical-report.md)).
+DeepSeek reports that the bias method beat the auxiliary loss on most [benchmarks](benchmarks.md) at 229B scale (HumanEval 40.2 → 46.3) and produced more specialised experts. Batch-wise balancing beat sequence-wise because it constrains the model less. Its cost is that small batches or domain-shifted traffic can be imbalanced at inference, which DeepSeek handles with redundant experts ([DeepSeek-V3](../sources/deepseek-v3-technical-report.md)).
 
 ## Model landscape (as of 2026-11)
 
@@ -82,7 +82,7 @@ The trend runs toward more, smaller experts and active fractions of roughly 3–
 
 ## Why MoE dominates open-weight releases
 
-- **Quality per training FLOP.** Switch-Base reached T5-Base quality about 7x faster ([Switch](../sources/fedus-2021-switch-transformers.md)). Qwen reports that MoE base models match dense ones with 1/5 or fewer of the active parameters. Qwen3-30B-A3B matches Qwen2.5-32B ([Qwen3](../sources/qwen3-technical-report.md)). DeepSeek-V3's pre-training took 2.664M H800 GPU-hours, and the full run, including context extension and post-training, took 2.788M ([V3](../sources/deepseek-v3-technical-report.md)).
+- **Quality per training FLOP.** Switch-Base reached T5-Base quality about 7x faster ([Switch](../sources/fedus-2021-switch-transformers.md)). Qwen reports that MoE base models match dense ones with 1/5 or fewer of the active parameters. Qwen3-30B-A3B matches Qwen2.5-32B ([Qwen3](../sources/qwen3-technical-report.md)). DeepSeek-V3's [pre-training](llm-training-pipeline.md) took 2.664M H800 GPU-hours, and the full run, including context extension and post-training, took 2.788M ([V3](../sources/deepseek-v3-technical-report.md)).
 - **Cheap decoding per token at scale.** Per-token FLOPs and weight reads track active parameters. DeepSeek served V3/R1 at about 14.8k output tokens/s per 8-GPU H800 node and estimated a theoretical cost-profit margin of 545% at R1 prices ([DeepSeek inference](../sources/deepseek-v3-r1-inference-system.md)).
 - **Laptop-class models with large-model knowledge.** gpt-oss-20b runs in 16GB, and Google says Gemma 4 26B A4B runs almost as fast as a 4B model ([gpt-oss](../sources/gpt-oss-model-card.md), [Gemma 4](../sources/gemma-4-docs.md)).
 - Synthesis: open-weight labs face tight training budgets and users who run models on their own hardware. Both pressures favour the architecture with the best quality per FLOP. Memory is the cost, and it is pushed onto the deployer.
@@ -116,7 +116,7 @@ Experts are most of the bytes, so quantising only the experts captures most of t
 - **Router collapse / imbalance:** a few experts get trained while the rest stay idle. Throughput is gated by the hottest GPU.
 - **Token dropping:** with a capacity factor, overflow tokens skip the layer. Switch kept drops below about 1% ([Switch](../sources/fedus-2021-switch-transformers.md)). DeepSeek-V3 drops none ([V3](../sources/deepseek-v3-technical-report.md)).
 - **Training instability:** bf16 Switch models diverged until the router ran in float32 and initialisation was scaled down ([Switch](../sources/fedus-2021-switch-transformers.md)).
-- **Batch-dependent behaviour:** routing and balancing depend on batch composition, and domain-shifted traffic can overload a few experts at inference ([V3](../sources/deepseek-v3-technical-report.md)). Synthesis: this is one source of run-to-run nondeterminism in served MoEs.
+- **Batch-dependent behaviour:** routing and balancing depend on batch composition, and domain-shifted traffic can overload a few experts at inference ([V3](../sources/deepseek-v3-technical-report.md)). Synthesis: this is one source of run-to-run [nondeterminism](llm-limitations.md) in served MoEs.
 - **Communication-bound serving:** all-to-all over slow interconnects can erase the FLOP savings. MoE gains depend on NVLink/IB bandwidth ([vLLM EP](../sources/vllm-expert-parallel-deployment.md), [DeepSeek inference](../sources/deepseek-v3-r1-inference-system.md)).
 - **Reasoning vs knowledge:** Switch's pre-training gains transferred better to knowledge tasks than to reasoning tasks ([Switch](../sources/fedus-2021-switch-transformers.md)).
 

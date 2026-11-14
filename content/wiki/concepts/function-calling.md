@@ -28,11 +28,11 @@ flowchart TD
     E -- "no" --> F["Final text, stop_reason end_turn"]
 ```
 
-Under the hood, the tool definitions are rendered into the prompt. On Claude, the API builds a dedicated system prompt from them, which costs about 286 to 804 extra input tokens depending on model and `tool_choice` (286 on Opus 5.5 and Sonnet 5.5; 675, or 804 with a forced choice, on Opus 4.7), on top of the definitions themselves ([Anthropic](../sources/anthropic-tool-use-docs.md)). OpenAI likewise injects definitions into the context, where they count against the window and are billed as input ([OpenAI](../sources/openai-function-calling-guide.md)). Synthesis: every tool you declare is paid for on every turn, so tool definitions belong in the cached prefix (see [prompt caching](prompt-caching.md)).
+Under the hood, the tool definitions are rendered into the prompt. On Claude, the API builds a dedicated system prompt from them, which costs about 286 to 804 extra input tokens depending on model and `tool_choice` (286 on Opus 5.5 and Sonnet 5.5; 675, or 804 with a forced choice, on Opus 4.7), on top of the definitions themselves ([Anthropic](../sources/anthropic-tool-use-docs.md)). OpenAI likewise injects definitions into the context, where they count against the [context window](context-window.md) and are billed as input ([OpenAI](../sources/openai-function-calling-guide.md)). Synthesis: every tool you declare is paid for on every turn, so tool definitions belong in the cached prefix (see [prompt caching](prompt-caching.md)).
 
 ## Vendor comparison (as of 2026-11)
 
-| | Anthropic Messages API | OpenAI Responses API | Gemini API |
+| | [Anthropic Messages API](anthropic-messages-api.md) | [OpenAI Responses API](openai-responses-api.md) | [Gemini API](gemini-api.md) |
 |---|---|---|---|
 | Declaration | `tools: [{name, description, input_schema, input_examples?, strict?, defer_loading?}]` | `tools: [{type:"function", name, description, parameters, strict?}]` | function declarations (name, description, parameters) |
 | Call object | `tool_use` content block with `id`, `name`, `input` (object) | `function_call` output item with `call_id`, `name`, `arguments` (JSON **string**) | function-call part with `id` |
@@ -46,7 +46,7 @@ Sources: [Anthropic](../sources/anthropic-tool-use-docs.md), [OpenAI](../sources
 
 ### Tool choice details that bite
 
-- **Anthropic `any`/`tool` prefill the assistant turn.** The model emits no prose before the call, and thinking is skipped on every model that accepts forced calls. Forced choice is rejected (400) with manual extended thinking and on the newest models (Opus 5.5, Sonnet 5.5, Fable/Mythos 5.1+). On those, use `auto` plus `strict: true`, or [structured outputs](structured-outputs.md) for a fixed response shape ([Anthropic](../sources/anthropic-tool-use-docs.md)).
+- **Anthropic `any`/`tool` prefill the assistant turn.** The model emits no prose before the call, and thinking is skipped on every model that accepts forced calls. Forced choice is rejected (400) with manual [extended thinking](extended-thinking.md) and on the newest models (Opus 5.5, Sonnet 5.5, Fable/Mythos 5.1+). On those, use `auto` plus `strict: true`, or [structured outputs](structured-outputs.md) for a fixed response shape ([Anthropic](../sources/anthropic-tool-use-docs.md)).
 - **Changing `tool_choice` breaks the cache.** On Claude, it invalidates cached message blocks. On OpenAI, `allowed_tools` exists so you can restrict the callable subset without changing `tools`, which keeps the prefix cacheable ([Anthropic](../sources/anthropic-tool-use-docs.md), [OpenAI](../sources/openai-function-calling-guide.md)).
 - **Gemini `VALIDATED`** is the default when function declarations are combined with built-in tools or structured output (`AUTO` stays the default when only function declarations are enabled). The model may answer in text or call a function, but calls are schema-checked, and Google documents it as producing fewer malformed calls than `AUTO` ([Gemini](../sources/gemini-function-calling-docs.md)).
 
@@ -55,14 +55,14 @@ Sources: [Anthropic](../sources/anthropic-tool-use-docs.md), [OpenAI](../sources
 All three vendors let one model turn contain several independent calls.
 
 - **Anthropic:** parallel calls are on by default. The API doesn't prescribe execution order, so you can run calls concurrently or sequentially. You must return *one* `tool_result` per `tool_use`, all in a *single* user message, placed *before* any text. Sending results as separate user messages is the most common mistake, and it "teaches" the model to stop parallelising. If you skip a call (for example because an earlier dependent call failed), still return a result with `is_error: true`. With `auto`, `disable_parallel_tool_use: true` means at most one call; with `any`/`tool`, exactly one ([Anthropic](../sources/anthropic-tool-use-docs.md)).
-- **OpenAI:** `parallel_tool_calls: false` limits the model to zero or one call. Built-in tools can't be part of a parallel batch. Reasoning items returned with tool calls must be passed back with the outputs ([OpenAI](../sources/openai-function-calling-guide.md)).
+- **OpenAI:** `parallel_tool_calls: false` limits the model to zero or one call. Built-in tools can't be part of a parallel batch. [Reasoning](reasoning-models.md) items returned with tool calls must be passed back with the outputs ([OpenAI](../sources/openai-function-calling-guide.md)).
 - **Gemini:** results can be returned in any order because the API matches them by `id`, so you can run functions asynchronously and append results as they complete. *Compositional* calling, where one call depends on another's output, happens over successive turns. Thinking models attach a `thought_signature` to call parts, and you must echo it back unmodified in its original part; Google states this is mandatory for function calling on Gemini 3, and the SDKs handle it automatically ([Gemini](../sources/gemini-function-calling-docs.md)).
 
 Synthesis: parallelism is a latency optimisation the model proposes. The application decides whether it's safe. Run read-only calls concurrently and side-effecting or order-dependent ones sequentially.
 
 ## Schemas, strictness and argument quality
 
-Without strict mode, arguments are *usually* valid but not guaranteed. A model may also invent values for missing required parameters: Claude Sonnet is documented as sometimes guessing a location rather than asking ([Anthropic](../sources/anthropic-tool-use-docs.md)). Strict mode compiles the schema into a grammar (see [structured outputs](structured-outputs.md)). On Claude, strict tools have hard limits: 20 strict tools, 24 optional parameters and 16 union-typed parameters per request ([Anthropic structured outputs](../sources/anthropic-structured-outputs-docs.md)). OpenAI strict mode requires `additionalProperties: false` and every field in `required`, with optionality expressed as `["type", "null"]` ([OpenAI](../sources/openai-function-calling-guide.md)).
+Without strict mode, arguments are *usually* valid but not guaranteed. A model may also invent values for missing required parameters: Claude Sonnet is documented as sometimes guessing a location rather than asking ([Anthropic](../sources/anthropic-tool-use-docs.md)). Strict mode compiles the schema into a [grammar](constrained-decoding.md) (see [structured outputs](structured-outputs.md)). On Claude, strict tools have hard limits: 20 strict tools, 24 optional parameters and 16 union-typed parameters per request ([Anthropic structured outputs](../sources/anthropic-structured-outputs-docs.md)). OpenAI strict mode requires `additionalProperties: false` and every field in `required`, with optionality expressed as `["type", "null"]` ([OpenAI](../sources/openai-function-calling-guide.md)).
 
 OpenAI also offers **custom tools**: free-text input constrained by a Lark or regex grammar instead of JSON. They are useful for emitting code, SQL or a DSL where JSON escaping hurts ([OpenAI](../sources/openai-function-calling-guide.md)).
 
@@ -77,7 +77,7 @@ OpenAI's soft guideline is to keep fewer than about 20 functions available at th
 ## Failure modes
 
 - **Wrong or no tool chosen.** Usually a description problem. Anthropic's top recommendation is detailed descriptions of at least 3 to 4 sentences covering what the tool does, when to use it and what each parameter means ([Anthropic](../sources/anthropic-tool-use-docs.md)).
-- **Hallucinated arguments** for required fields the user never supplied. Validate them server-side and let the tool return an error the model can act on.
+- **[Hallucinated](hallucination.md) arguments** for required fields the user never supplied. Validate them server-side and let the tool return an error the model can act on.
 - **Broken history.** Missing `tool_result` for a `tool_use`, mismatched ids, text before results, or (Gemini) dropped thought signatures. The API rejects some of these, and others silently degrade behaviour.
 - **`stop_reason: "max_tokens"` mid-call**, which leaves arguments truncated. Check `stop_reason` before executing ([Messages API reference](../sources/anthropic-messages-api-reference.md)).
 - **Reasoning-extraction refusals.** A parameter that asks the model for its step-by-step reasoning can trigger a refusal on Claude. Ask for a short explanation instead ([Anthropic](../sources/anthropic-tool-use-docs.md)).
@@ -85,7 +85,7 @@ OpenAI's soft guideline is to keep fewer than about 20 functions available at th
 
 ## When to use / when not
 
-- **Use** function calling when the model must *act* or *fetch* mid-conversation: retrieval, lookups, writes, multi-step agents.
+- **Use** function calling when the model must *act* or *fetch* mid-conversation: [retrieval](retrieval-augmented-generation.md), lookups, writes, multi-step agents.
 - **Don't use** a fake tool just to get JSON out. Native [structured outputs](structured-outputs.md) are the right tool for shaping the final answer, and Gemini's and OpenAI's docs draw exactly this line ([Gemini](../sources/gemini-function-calling-docs.md), [OpenAI](../sources/openai-function-calling-guide.md)). Synthesis: the old "single forced tool as JSON mode" trick is also unavailable on the newest Claude models, which reject forced `tool_choice`.
 
 ## Sources

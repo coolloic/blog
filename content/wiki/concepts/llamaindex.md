@@ -11,7 +11,7 @@ lastmod: 2026-11-14
 tags: ["frameworks", "retrieval", "rag", "agents"]
 ---
 
-**LlamaIndex** is an open-source framework (Python, plus a TypeScript port) for connecting LLMs to your own data. Its centre of gravity is [retrieval-augmented generation](retrieval-augmented-generation.md): load data into `Document`s, split them into `Node`s, index them, then answer questions through a **query engine** that retrieves, post-processes and synthesizes. On top of that it offers agents and **Workflows**, an event-driven orchestration layer ([LlamaIndex docs](../sources/llamaindex-framework-docs.md), [Workflows docs](../sources/llamaindex-workflows-docs.md)). The owner's tutorial sums up the positioning: LangChain is breadth (orchestration, agents), LlamaIndex is depth on data ([Notebook](../sources/notebook-langchain-vs-llamaindex.md)). Framework version as of 2026-11-14: `llama-index` v0.14.25 (2026-09-21).
+**LlamaIndex** is an open-source framework (Python, plus a TypeScript port) for connecting LLMs to your own data. Its centre of gravity is [retrieval-augmented generation](retrieval-augmented-generation.md): load data into `Document`s, split them into `Node`s, index them, then answer questions through a **query engine** that retrieves, post-processes and synthesizes. On top of that it offers agents and **Workflows**, an event-driven orchestration layer ([LlamaIndex docs](../sources/llamaindex-framework-docs.md), [Workflows docs](../sources/llamaindex-workflows-docs.md)). The owner's tutorial sums up the positioning: [LangChain](langchain.md) is breadth (orchestration, agents), LlamaIndex is depth on data ([Notebook](../sources/notebook-langchain-vs-llamaindex.md)). Framework version as of 2026-11-14: `llama-index` v0.14.25 (2026-09-21).
 
 ## The data model and pipeline
 
@@ -22,7 +22,7 @@ The docs describe five RAG stages: **loading, indexing, storing, querying, evalu
 | `Document` | Container for any source: PDF, API output, DB rows |
 | `Node` | The "atomic unit": a chunk of a Document with metadata and relationships to other nodes |
 | Reader / connector | Loads data into Documents (hundreds on LlamaHub; `SimpleDirectoryReader` for folders) |
-| `IngestionPipeline` | Ordered transformations (node parser, metadata extractors, embedding model), optional direct write to a [vector store](vector-databases.md) |
+| `IngestionPipeline` | Ordered transformations (node parser, metadata extractors, [embedding model](embeddings.md)), optional direct write to a [vector store](vector-databases.md) |
 | Index | Data structure over Nodes that exposes a retriever |
 | Retriever | Fetches relevant Nodes for a query |
 | Node postprocessor | Filters, re-weights or [reranks](reranking.md) retrieved Nodes |
@@ -73,7 +73,7 @@ Synthesis: `refine` with `similarity_top_k=10` means about ten sequential LLM ca
 
 ## Agents and Workflows
 
-Agents are prebuilt workflows: `FunctionAgent` (native [function calling](function-calling.md)), `ReActAgent`, `CodeActAgent`, and `AgentWorkflow` for multi-agent handoffs. Tools are plain Python functions, described to the model by name, docstring and type hints, or **whole query engines wrapped as tools**. That last option is how LlamaIndex does [agentic RAG](agentic-rag.md). The APIs are async (`await agent.run(user_msg=...)`), and the docs warn that agents need capable models ([docs](../sources/llamaindex-framework-docs.md)).
+Agents are prebuilt workflows: `FunctionAgent` (native [function calling](function-calling.md)), `ReActAgent`, `CodeActAgent`, and `AgentWorkflow` for multi-agent handoffs. [Tools](tools.md) are plain Python functions, described to the model by name, docstring and type hints, or **whole query engines wrapped as tools**. That last option is how LlamaIndex does [agentic RAG](agentic-rag.md). The APIs are async (`await agent.run(user_msg=...)`), and the docs warn that agents need capable models ([docs](../sources/llamaindex-framework-docs.md)).
 
 **Workflows** are the lower-level layer ([Workflows docs](../sources/llamaindex-workflows-docs.md)):
 
@@ -81,7 +81,7 @@ Agents are prebuilt workflows: `FunctionAgent` (native [function calling](functi
 - Branches are `if` statements that return different event types. Loops are steps that emit an event an earlier step handles. Fan-out is a step returning `list[Event]`, collected by another step.
 - The `@step` decorator infers input and output types from annotations, and the workflow **validates the event graph before running** (start and stop events exist, every produced event has a consumer); `workflow.validate()` runs the check explicitly. `run()` returns a `WorkflowHandler` you can await or stream events from. Set a `timeout` in seconds.
 - `Context` holds per-run state (`ctx.store.get/set`, atomic `edit_state()`, optional typed Pydantic state). Reusing a context carries state across runs. Heavy clients go in resources, not state, because state must serialize.
-- Human-in-the-loop: emit `InputRequiredEvent`, consume `HumanResponseEvent`. In a web app, snapshot the context, cancel the handler, and restore it when the reply arrives.
+- [Human-in-the-loop](human-in-the-loop.md): emit `InputRequiredEvent`, consume `HumanResponseEvent`. In a web app, snapshot the context, cancel the handler, and restore it when the reply arrives.
 
 ```mermaid
 flowchart LR
@@ -96,7 +96,7 @@ Synthesis: an illustrative corrective-RAG loop expressed as typed events, not ta
 
 ## Limitations and failure modes
 
-- **Durability is do-it-yourself by default.** Workflows are ephemeral by default and there is no built-in checkpointer. You snapshot the context (e.g. on internal `StepStateChanged` events) and restore it with `Context.from_dict()`. A crash loses work since the last snapshot, and a step that was mid-flight reruns from the top (resume is at-least-once), so steps with side effects must be idempotent. The alternative is the optional DBOS runtime plugin, which journals step transitions to a database so a crashed workflow can resume without your own snapshot loop ([Workflows docs](../sources/llamaindex-workflows-docs.md)).
+- **Durability is do-it-yourself by default.** Workflows are ephemeral by default and there is no built-in checkpointer. You snapshot the context (e.g. on internal `StepStateChanged` events) and restore it with `Context.from_dict()`. A crash loses work since the last snapshot, and a step that was mid-flight reruns from the top (resume is at-least-once), so steps with side effects must be idempotent. The alternative is the optional DBOS runtime plugin (see [durable agent execution](durable-agent-execution.md)), which journals step transitions to a database so a crashed workflow can resume without your own snapshot loop ([Workflows docs](../sources/llamaindex-workflows-docs.md)).
 - **`ctx.wait_for_event()` replays** all code before the wait each time an event arrives. The docs recommend the two-step event pattern instead.
 - **Opinionated defaults hide decisions.** `VectorStoreIndex.from_documents(docs)` silently picks a splitter, embedding model and LLM (via global `Settings`), and `compact` mode silently packs chunks. That is fast to start but easy to misjudge, which is Anthropic's general warning about frameworks hiding prompts and responses ([Anthropic](../sources/anthropic-building-effective-agents.md)).
 - **Agent orchestration is not the focus.** The owner's tutorial notes LlamaIndex's agents and workflows exist but are less central than LangGraph's ([Notebook](../sources/notebook-langchain-vs-llamaindex.md)).
@@ -112,7 +112,7 @@ Synthesis: an illustrative corrective-RAG loop expressed as typed events, not ta
 | Prompt quality across a multi-step pipeline must be optimized against a metric | [DSPy](dspy.md) |
 | Typed agent with validated outputs and dependency injection, retrieval as a tool | [Pydantic AI](pydantic-ai.md) |
 
-Synthesis: in a Forward Deployed engagement, LlamaIndex is a strong prototype accelerator for "chat with our documents". Before production, make the hidden choices explicit: chunker, embedding model, `similarity_top_k`, reranker, response mode. Evaluate retrieval separately from generation (see [LLM evaluation](llm-evaluation.md)), and pin integration package versions.
+Synthesis: in a [Forward Deployed](forward-deployed-engineering.md) engagement, LlamaIndex is a strong prototype accelerator for "chat with our documents". Before production, make the hidden choices explicit: chunker, embedding model, `similarity_top_k`, reranker, response mode. Evaluate retrieval separately from generation (see [LLM evaluation](llm-evaluation.md)), and pin integration package versions.
 
 ## Sources
 

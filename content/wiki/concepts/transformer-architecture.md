@@ -63,7 +63,7 @@ Attention is order-blind: shuffling the input permutes the output identically. P
 | Scheme | How | Where used | Notes |
 |---|---|---|---|
 | Sinusoidal (absolute) | Fixed sin/cos vectors added to embeddings | Original Transformer | Simple; no learned parameters ([Vaswani](../sources/vaswani-2017-attention-is-all-you-need.md)) |
-| **RoPE** (rotary) | Rotate each Q and K vector by an angle proportional to its position, pairs of dimensions at different frequencies | Most modern open decoders | Q·K then depends only on the relative offset; dependency decays with distance; flexible lengths ([Su et al.](../sources/su-2021-roformer-rope.md)) |
+| **RoPE** (rotary) | Rotate each Q and K vector by an angle proportional to its position, pairs of dimensions at different frequencies | Most modern [open decoders](open-weight-models.md) | Q·K then depends only on the relative offset; dependency decays with distance; flexible lengths ([Su et al.](../sources/su-2021-roformer-rope.md)) |
 | RoPE + scaling (e.g. YaRN) | Rescale RoPE frequencies, short fine-tune | Long-context variants | Extends context with about 10x fewer tokens and 2.5x fewer steps than prior methods ([YaRN](../sources/peng-2023-yarn.md)) |
 
 Why RoPE matters in practice: RoPE models do not generalise past the length they were trained on, because they meet rotation angles never seen in training ([YaRN](../sources/peng-2023-yarn.md)). Context extension by interpolation works, but positional precision degrades somewhat, which is one reason long-context quality declines gradually rather than falling off a cliff ([Anthropic](../sources/anthropic-effective-context-engineering.md)). Synthesis: this is a mechanism behind [long-context degradation](long-context-degradation.md), and why an advertised window is not the same as a reliable one.
@@ -94,7 +94,7 @@ Synthesis: decoder-only won for general LLMs because a single next-token objecti
 ## Failure modes and limits that come from the architecture
 
 - **Next-token prediction, not truth.** The model outputs plausible continuations, so it can [hallucinate](hallucination.md) fluently ([notebook](../sources/notebook-transformers.md)).
-- **Fixed knowledge.** Weights are frozen after training; there is a knowledge cutoff and no learning from chats without external memory or retrieval ([notebook](../sources/notebook-transformers.md)).
+- **Fixed knowledge.** Weights are frozen after training; there is a knowledge cutoff and no learning from chats without [external memory](agent-memory.md) or [retrieval](retrieval-augmented-generation.md) ([notebook](../sources/notebook-transformers.md)).
 - **Quadratic attention and context rot.** Longer inputs cost more and are used less reliably ([Anthropic](../sources/anthropic-effective-context-engineering.md)). See [context window](context-window.md).
 - **Length generalisation.** RoPE models break beyond trained length unless extended ([YaRN](../sources/peng-2023-yarn.md)).
 - **Numerical nondeterminism.** Kernel results depend on batch size, so identical requests can diverge on a busy server ([Thinking Machines](../sources/defeating-nondeterminism-llm-inference.md)). See [sampling parameters](sampling-parameters.md).

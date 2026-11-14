@@ -14,16 +14,16 @@ lastmod: 2026-11-14
 tags: ["retrieval", "rag", "search"]
 ---
 
-**Reranking** is the second stage of a two-stage retriever: a fast first stage ([BM25, dense or hybrid search](hybrid-search.md)) fetches a wide candidate set (often 50-150 chunks), and a slower, more accurate model re-scores each candidate against the query so that only the best few reach the LLM. The first stage optimizes recall cheaply; the reranker buys precision. In Anthropic's experiments, adding a reranker on top of contextual embeddings plus BM25 lowered the retrieval failure rate from 2.9% to 1.9% ([Anthropic](../sources/anthropic-contextual-retrieval.md)), and the owner's guide lists it as the fix for "relevant docs buried low" ([Notebook](../sources/notebook-rag-cag.md)).
+**Reranking** is the second stage of a two-stage retriever: a fast first stage ([BM25, dense or hybrid search](hybrid-search.md)) fetches a wide candidate set (often 50-150 chunks), and a slower, more accurate model re-scores each candidate against the query so that only the best few reach the LLM. The first stage optimizes recall cheaply; the reranker buys precision. In Anthropic's experiments, adding a reranker on top of [contextual embeddings](contextual-retrieval.md) plus BM25 lowered the retrieval failure rate from 2.9% to 1.9% ([Anthropic](../sources/anthropic-contextual-retrieval.md)), and the owner's guide lists it as the fix for "relevant docs buried low" ([Notebook](../sources/notebook-rag-cag.md)).
 
 ## Why a second stage: bi-encoder vs cross-encoder
 
-| | Bi-encoder (embedding retrieval) | Cross-encoder (reranker) |
+| | Bi-encoder ([embedding](embeddings.md) retrieval) | Cross-encoder (reranker) |
 |---|---|---|
 | Input | Query and document encoded **separately** | Query and document encoded **together** |
 | Output | A vector per text; cosine similarity | One relevance score per pair |
 | Precompute docs? | Yes, offline | No, every pair at query time |
-| Cost | One query encoding + ANN lookup | One transformer pass per candidate |
+| Cost | One query encoding + [ANN](ann-indexes.md) lookup | One transformer pass per candidate |
 | Accuracy | Lower: no token-level interaction between query and doc | Higher: full attention across both |
 
 Source: [SBERT docs](../sources/sbert-cross-encoders.md). Their scale illustration: comparing 10,000 sentences pairwise with a cross-encoder means about 50 million passes (about 65 hours) versus about 5 seconds to embed them once. Hence the standard pattern: bi-encoder retrieves around the top 100, cross-encoder re-scores those ([SBERT docs](../sources/sbert-cross-encoders.md)).
@@ -43,8 +43,8 @@ flowchart LR
 |---|---|---|---|
 | Cross-encoder | BERT-style model reads `[query; doc]`, outputs a score | `cross-encoder/ms-marco-MiniLM-L6-v2` ([SBERT](../sources/sbert-cross-encoders.md)) | Accurate; latency grows linearly with candidates |
 | Hosted rerank API | Managed cross-encoder-style model, multilingual | Cohere `rerank-v5.0-pro` / `-fast`, `rerank-v4.0-*`, `rerank-v3.5` (as of 2026-11) ([Cohere](../sources/cohere-rerank-docs.md)) | No infra; per-call cost and network latency; data leaves your VPC |
-| Late interaction | Per-token vectors for query and doc, precomputed for docs, cheap interaction at query time | ColBERT ([Khattab & Zaharia](../sources/khattab-2020-colbert.md)) | Two orders of magnitude faster and four orders of magnitude fewer FLOPs per query than a BERT cross-encoder; more storage |
-| LLM reranker | Prompt an LLM to output a ranking/permutation of candidates | RankGPT ([Sun et al.](../sources/sun-2023-rankgpt.md)) | Competitive with supervised rerankers; costly and slow; distillable (a 440M distilled model beat a 3B supervised one on BEIR) |
+| [Late interaction](late-interaction-retrieval.md) | Per-token vectors for query and doc, precomputed for docs, cheap interaction at query time | ColBERT ([Khattab & Zaharia](../sources/khattab-2020-colbert.md)) | Two orders of magnitude faster and four orders of magnitude fewer FLOPs per query than a BERT cross-encoder; more storage |
+| LLM reranker | Prompt an LLM to output a ranking/permutation of candidates | RankGPT ([Sun et al.](../sources/sun-2023-rankgpt.md)) | Competitive with supervised rerankers; costly and slow; [distillable](knowledge-distillation.md) (a 440M distilled model beat a 3B supervised one on BEIR) |
 
 ## The Cohere Rerank API shape
 
@@ -53,7 +53,7 @@ Send a `query`, a list of `documents` and `top_n`; get back `(index, relevance_s
 ## Choosing the numbers
 
 - **Candidates in (N):** Anthropic reranked the top 150 ([Anthropic](../sources/anthropic-contextual-retrieval.md)). Larger N raises recall ceiling and latency linearly.
-- **Chunks out (K):** passing 20 chunks beat 10 and 5 in Anthropic's evaluation ([Anthropic](../sources/anthropic-contextual-retrieval.md)). But more context is not free: models use the middle of long contexts poorly ([Lost in the Middle](../sources/lost-in-the-middle.md)), so with large K put the top-scored chunks at the start and end of the context (Synthesis).
+- **Chunks out (K):** passing 20 chunks beat 10 and 5 in Anthropic's evaluation ([Anthropic](../sources/anthropic-contextual-retrieval.md)). But more context is not free: models use the middle of long contexts poorly ([long-context degradation](long-context-degradation.md); [Lost in the Middle](../sources/lost-in-the-middle.md)), so with large K put the top-scored chunks at the start and end of the context (Synthesis).
 - **Latency budget:** Anthropic notes reranking adds latency and the number of chunks reranked is a cost-performance trade-off ([Anthropic](../sources/anthropic-contextual-retrieval.md)).
 
 ## Beyond relevance

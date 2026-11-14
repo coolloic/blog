@@ -26,7 +26,7 @@ lastmod: 2026-11-14
 tags: ["agents", "skills", "context-engineering", "coding"]
 ---
 
-An **Agent Skill** is a directory containing a `SKILL.md` file (YAML frontmatter with a `name` and a `description`, then Markdown instructions) and, optionally, scripts, reference documents and assets. The agent sees only each skill's name and description at startup. When a task matches a description, it reads the body, and it opens bundled files or runs bundled scripts only if the task needs them. Anthropic introduced skills in October 2025 as a way to package procedural knowledge, the "how we do X here" that a new hire would get in an onboarding guide. Anthropic published the format as an open standard on 2025-12-18 at agentskills.io, and Codex, Gemini CLI and Cursor now read it ([Anthropic](../sources/anthropic-equipping-agents-with-skills.md), [spec](../sources/agent-skills-specification.md), [Codex](../sources/openai-codex-skills-docs.md), [Gemini CLI](../sources/gemini-cli-skills-docs.md), [Cursor](../sources/cursor-skills-docs.md)). Skills are a [context engineering](context-engineering.md) mechanism. They don't add new actions the way [tools](tools.md) or [MCP](model-context-protocol.md) do. They add knowledge about how to use the actions an agent already has.
+An **Agent Skill** is a directory containing a `SKILL.md` file (YAML frontmatter with a `name` and a `description`, then Markdown instructions) and, optionally, scripts, reference documents and assets. The agent sees only each skill's name and description at startup. When a task matches a description, it reads the body, and it opens bundled files or runs bundled scripts only if the task needs them. Anthropic introduced skills in October 2025 as a way to package procedural knowledge, the "how we do X here" that a new hire would get in an onboarding guide. Anthropic published the format as an open standard on 2025-12-18 at agentskills.io, and [coding agents](coding-agents.md) such as Codex, Gemini CLI and Cursor now read it ([Anthropic](../sources/anthropic-equipping-agents-with-skills.md), [spec](../sources/agent-skills-specification.md), [Codex](../sources/openai-codex-skills-docs.md), [Gemini CLI](../sources/gemini-cli-skills-docs.md), [Cursor](../sources/cursor-skills-docs.md)). Skills are a [context engineering](context-engineering.md) mechanism. They don't add new actions the way [tools](tools.md) or [MCP](model-context-protocol.md) do. They add knowledge about how to use the actions an agent already has.
 
 ## How progressive disclosure works
 
@@ -128,7 +128,7 @@ Because hooks run arbitrary code, Codex and Gemini CLI tie trust to a hash or fi
 
 ## Do skills work? Evidence
 
-SkillsBench (v4, 2026-06) ran 87 tasks across 18 model-harness configurations, each scored by a deterministic verifier ([SkillsBench](../sources/li-2026-skillsbench.md)):
+SkillsBench (v4, 2026-06), a [benchmark](benchmarks.md), ran 87 tasks across 18 model-harness configurations, each scored by a deterministic verifier ([SkillsBench](../sources/li-2026-skillsbench.md)):
 
 - Curated skills raised the average pass rate from 33.9% to 50.5%. Per-configuration gains ranged from +4.1 to +25.7 points.
 - Focused skills with at most three modules beat exhaustive documentation bundles.
@@ -158,7 +158,7 @@ From [best practices](../sources/anthropic-skill-authoring-best-practices.md) un
 - **Over-triggering or overlap.** Vague or overlapping descriptions make the model load the wrong skill. Fix by narrowing the descriptions or making the skill manual-only ([extend overview](../sources/claude-code-extend-features-overview.md)).
 - **Mistaking `allowed-tools` for a sandbox.** In Claude Code it pre-approves tools for the invoking turn and restricts nothing ([Claude Code skills](../sources/claude-code-skills-docs.md)).
 - **Supply-chain and [prompt injection](prompt-injection.md) risk.** A skill is instructions plus code running with the agent's permissions. A malicious one can exfiltrate data, and a skill that fetches external URLs can pull in hostile instructions even if its author is trustworthy. Audit skills like any software you install ([overview](../sources/anthropic-agent-skills-overview.md), [Anthropic](../sources/anthropic-equipping-agents-with-skills.md)). Gemini CLI's per-activation consent prompt and Codex's hook trust are partial mitigations. See [LLM security risks](llm-security-risks.md).
-- **Compliance.** As of 2026-11, Agent Skills on Anthropic's API are not eligible for zero data retention (ZDR) or HIPAA ([overview](../sources/anthropic-agent-skills-overview.md)). Custom API skills are workspace-wide, so multitenant apps need one workspace per tenant ([API guide](../sources/anthropic-skills-api-guide.md)).
+- **Compliance.** As of 2026-11, Agent Skills on Anthropic's API are not eligible for zero data retention (ZDR) or HIPAA (see [PII and data privacy](pii-and-data-privacy.md)) ([overview](../sources/anthropic-agent-skills-overview.md)). Custom API skills are workspace-wide, so multitenant apps need one workspace per tenant ([API guide](../sources/anthropic-skills-api-guide.md)).
 
 ## When to use / when not
 

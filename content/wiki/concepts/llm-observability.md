@@ -47,17 +47,17 @@ Synthesis: diagram assembled from the OTel operation names and the run trees sho
 
 ## OpenTelemetry GenAI semantic conventions
 
-The OTel GenAI conventions are the vendor-neutral vocabulary; LangSmith, Langfuse and Phoenix all ingest OTLP, so instrumenting once with them avoids lock-in. As of 2026-11 they live in a dedicated repo (`open-telemetry/semantic-conventions-genai`) and **every GenAI-specific attribute is still "Development" stability** (only reused core attributes such as `error.type` and `server.address` are Stable), so names can still change ([source](../sources/opentelemetry-genai-semantic-conventions.md)).
+The OTel GenAI conventions are the vendor-neutral vocabulary; LangSmith, [Langfuse](langfuse.md) and [Phoenix](arize-phoenix.md) all ingest OTLP, so instrumenting once with them avoids lock-in. As of 2026-11 they live in a dedicated repo (`open-telemetry/semantic-conventions-genai`) and **every GenAI-specific attribute is still "Development" stability** (only reused core attributes such as `error.type` and `server.address` are Stable), so names can still change ([source](../sources/opentelemetry-genai-semantic-conventions.md)).
 
 Key rules from the spec:
 
-- **Span name** `{operation} {model}`, e.g. `chat claude-sonnet-5-5`; kind `CLIENT`. The span covers the whole logical call *including automatic retries*.
-- **Required:** `gen_ai.operation.name`, `gen_ai.provider.name` (`openai`, `aws.bedrock`, `gcp.vertex_ai`...). The provider is set from the client's view, so behind a gateway it may not be the true upstream.
+- **Span name** `{operation} {model}`, e.g. `chat claude-sonnet-5-5`; kind `CLIENT`. The span covers the whole logical call *including automatic [retries](rate-limits-and-retries.md)*.
+- **Required:** `gen_ai.operation.name`, `gen_ai.provider.name` (`openai`, `aws.bedrock`, `gcp.vertex_ai`...). The provider is set from the client's view, so behind a [gateway](llm-gateways.md) it may not be the true upstream.
 - **Recommended request attributes:** `gen_ai.request.model`, `max_tokens`, `temperature`, `top_p`, stop sequences, `reasoning.level`. **Response:** `response.id`, `response.model` (the resolved snapshot, which can differ from the requested alias), `finish_reasons`, `time_to_first_chunk`.
 - **Usage:** `gen_ai.usage.input_tokens`, `output_tokens`, `cache_read.input_tokens`, `cache_write.input_tokens`, `reasoning.output_tokens`, plus text/image/audio splits.
 - **Correlation:** `gen_ai.conversation.id`, `gen_ai.prompt.name` + `gen_ai.prompt.version` (which template version produced this call), `gen_ai.conversation.compacted`.
 - **Metrics:** `gen_ai.client.inference.duration` (histogram, seconds, buckets 0.01 to 81.92 s), `time_to_first_chunk`, `time_per_output_chunk`, and token histograms. Metrics are cheap to keep at 100% even when traces are sampled.
-- **Agents and tools:** `create_agent`, `invoke_agent`, `invoke_workflow`, `plan`, `execute_tool`, memory operations, plus MCP and A2A conventions.
+- **Agents and tools:** `create_agent`, `invoke_agent`, `invoke_workflow`, `plan`, `execute_tool`, [memory](agent-memory.md) operations, plus [MCP](model-context-protocol.md) and [A2A](agent2agent-protocol.md) conventions.
 
 **Content capture is off by default.** Prompts, outputs, system instructions, tool arguments/results and retrieval queries are treated as sensitive and large. `OTEL_INSTRUMENTATION_GENAI_CAPTURE_CONTENT` = `NO_CONTENT` (default) / `SPAN_ONLY` / `EVENT_ONLY` / `SPAN_AND_EVENT`. For production the spec recommends an upload hook that writes content to separate storage (e.g. S3) and records only `gen_ai.input.messages_ref`-style URIs on the span, giving separate access control and retention for user data ([source](../sources/opentelemetry-genai-semantic-conventions.md)).
 
@@ -66,11 +66,11 @@ Key rules from the spec:
 | Layer | Log | Why |
 |---|---|---|
 | Identity | trace/span IDs, conversation/session ID, user or tenant ID, app version, environment | slice by customer, release, A/B arm |
-| Prompt | template name + version, variables, system prompt hash, tool definitions | attribute regressions to a prompt change |
+| Prompt | template name + version ([prompt management](prompt-management.md)), variables, [system prompt](system-prompts.md) hash, [tool](tools.md) definitions | attribute regressions to a prompt change |
 | Model call | provider, requested and resolved model, params (temperature, max_tokens, effort), `finish_reason` | `length` = truncation; `content_filter` = refusal; model alias drift |
-| Usage | input, output, cache read/write, reasoning tokens; computed cost | cost per request/feature/tenant; cache hit rate |
-| Latency | total duration, TTFT, time per output token, queue/retry time | streaming UX, provider degradation |
-| RAG | query, retrieved doc IDs, scores, reranker output | separate retrieval bugs from generation bugs |
+| Usage | input, output, cache read/write, reasoning tokens; computed cost | cost per request/feature/tenant; [cache](prompt-caching.md) hit rate |
+| Latency | total duration, TTFT, time per output token, queue/retry time | [streaming](streaming.md) UX, provider degradation |
+| RAG | query, retrieved doc IDs, scores, [reranker](reranking.md) output | separate retrieval bugs from generation bugs |
 | Tools | name, arguments, result size, error type, retries | broken tools, loops, schema errors |
 | Outcome | guardrail hits, eval/judge scores, user feedback (thumbs, edits, retries, abandonment) | online quality signal |
 
@@ -91,11 +91,11 @@ Provider-specific usage fields need normalising. Anthropic reports `input_tokens
 
 Sources: [LangSmith](../sources/langsmith-observability-docs.md), [Langfuse](../sources/langfuse-observability-docs.md), [Phoenix](../sources/arize-phoenix-docs.md). See also [LangSmith](langsmith.md).
 
-Synthesis, choosing: LangSmith is the lowest-friction choice for teams already on [LangChain](langchain.md)/[LangGraph](langgraph.md). Langfuse fits when data must stay in your VPC or you want an open-source, OTel-first store with cost analytics. Phoenix is strong for local debugging and eval-heavy workflows, especially with LlamaIndex/DSPy. In regulated enterprise deployments, instrument with OTel GenAI attributes and send through an OTel Collector, which lets you switch or dual-ship backends (Langfuse documents teams running it alongside Datadog from the same OTel instrumentation, and filtering which spans reach it in the Collector).
+Synthesis, choosing: LangSmith is the lowest-friction choice for teams already on [LangChain](langchain.md)/[LangGraph](langgraph.md). Langfuse fits when data must stay in your VPC or you want an open-source, OTel-first store with cost analytics. Phoenix is strong for local debugging and eval-heavy workflows, especially with [LlamaIndex](llamaindex.md)/[DSPy](dspy.md). In [regulated enterprise deployments](enterprise-llm-deployment.md), instrument with OTel GenAI attributes and send through an OTel Collector, which lets you switch or dual-ship backends (Langfuse documents teams running it alongside Datadog from the same OTel instrumentation, and filtering which spans reach it in the Collector).
 
 ## Failure modes and pitfalls
 
-- **PII and secrets in traces.** Prompts carry user data; capturing content by default turns the trace store into a sensitive data store. Use the OTel opt-in, redaction hooks, or external storage with its own retention ([source](../sources/opentelemetry-genai-semantic-conventions.md)).
+- **[PII](pii-and-data-privacy.md) and secrets in traces.** Prompts carry user data; capturing content by default turns the trace store into a sensitive data store. Use the OTel opt-in, redaction hooks, or external storage with its own retention ([source](../sources/opentelemetry-genai-semantic-conventions.md)).
 - **Lost spans.** Background batch exporters drop data when a serverless function exits before flush ([source](../sources/langfuse-observability-docs.md)). LangSmith's OTLP endpoint returns 200 before processing, and a span whose parent never arrives is dropped silently ([source](../sources/langsmith-observability-docs.md)).
 - **Broken trees.** Async tasks and thread pools lose OTel context, producing orphan root spans; propagate context explicitly. Synthesis.
 - **Sampling bias.** Head sampling (e.g. `LANGSMITH_TRACING_SAMPLING_RATE=0.1`) discards rare failures at the same rate as successes. Synthesis: keep metrics at 100%, and keep all error, guardrail-hit and negative-feedback traces.

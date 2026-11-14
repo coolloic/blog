@@ -15,7 +15,7 @@ lastmod: 2026-11-14
 tags: ["frameworks", "agents", "microsoft", "multi-agent"]
 ---
 
-**AutoGen** is Microsoft Research's open-source framework for building LLM applications from multiple **conversable agents** that talk to each other, to humans and to tools to solve a task ([Wu et al., 2023](../sources/wu-2023-autogen.md)). It popularised group-chat orchestration and code-writing/code-executing agent pairs. **As of 2026-11 AutoGen is archived**: it gets no bug fixes, security fixes or support, and Microsoft advises against production use ([README](../sources/autogen-github-readme.md)). Its successor is **Microsoft Agent Framework (MAF)**, built by the AutoGen and Semantic Kernel teams. MAF combines AutoGen's simple agent abstractions with Semantic Kernel's enterprise features and adds typed graph workflows ([MAF overview](../sources/microsoft-agent-framework-overview.md)). MAF 1.0 went GA for .NET and Python on 2026-04-03 ([MAF 1.0](../sources/microsoft-agent-framework-1-0-announcement.md)). This page covers both, because you will meet AutoGen code in existing projects and should build new work on MAF.
+**AutoGen** is Microsoft Research's open-source framework for building LLM applications from multiple **conversable agents** that talk to each other, to humans and to [tools](tools.md) to solve a task ([Wu et al., 2023](../sources/wu-2023-autogen.md)). It popularised group-chat orchestration and code-writing/code-executing agent pairs. **As of 2026-11 AutoGen is archived**: it gets no bug fixes, security fixes or support, and Microsoft advises against production use ([README](../sources/autogen-github-readme.md)). Its successor is **[Microsoft Agent Framework (MAF)](microsoft-agent-framework.md)**, built by the AutoGen and Semantic Kernel teams. MAF combines AutoGen's simple agent abstractions with Semantic Kernel's enterprise features and adds typed graph workflows ([MAF overview](../sources/microsoft-agent-framework-overview.md)). MAF 1.0 went GA for .NET and Python on 2026-04-03 ([MAF 1.0](../sources/microsoft-agent-framework-1-0-announcement.md)). This page covers both, because you will meet AutoGen code in existing projects and should build new work on MAF.
 
 ## Lineage
 
@@ -35,7 +35,7 @@ v0.4 was a ground-up rewrite. v0.2 users had complained about architectural limi
 |---|---|
 | **Core** (`autogen-core`) | Asynchronous, event-driven message passing between agents (`RoutedAgent` + message handlers), with local and experimental distributed runtimes, Python and .NET |
 | **AgentChat** (`autogen-agentchat`) | High-level API: `AssistantAgent`, `UserProxyAgent`, teams such as `RoundRobinGroupChat`, `SelectorGroupChat` (an LLM picks the next speaker), `Swarm` (handoffs), `MagenticOneGroupChat`, experimental `GraphFlow`, plus termination conditions |
-| **Extensions** (`autogen-ext`) | Model clients (OpenAI, Azure, Anthropic, Ollama), code executors (Docker, Azure), MCP |
+| **Extensions** (`autogen-ext`) | Model clients (OpenAI, Azure, Anthropic, Ollama), [code executors](code-execution-sandboxes.md) (Docker, Azure), [MCP](model-context-protocol.md) |
 
 Sources for the table: [README](../sources/autogen-github-readme.md), [v0.4 blog](../sources/microsoft-autogen-v0-4-blog.md), [migration guide](../sources/microsoft-agent-framework-autogen-migration-guide.md) (class names), [Notebook](../sources/notebook-autogen-crewai.md) (SelectorGroupChat).
 
@@ -47,12 +47,12 @@ The coordination style is **emergent**. Agents post to a shared conversation, a 
 
 MAF has four areas ([MAF overview](../sources/microsoft-agent-framework-overview.md)):
 
-- **Agents.** An `Agent` wraps a chat client with instructions and tools (`@tool`, hosted tools, MCP). Unlike AutoGen's `AssistantAgent`, which is single-turn unless `max_tool_iterations` is raised, an MAF `Agent` keeps calling tools until it can answer ([migration guide](../sources/microsoft-agent-framework-autogen-migration-guide.md)). `AgentSession` holds conversation state, context providers supply memory, and middleware intercepts agent actions.
-- **Harness agent.** An opinionated long-task agent with planning and todos, context compaction, file access and memory, and tool approval.
-- **Workflows.** Explicit execution paths. **Graph** workflows (`WorkflowBuilder`) connect typed **executors** with **edges** (conditional, fan-out, fan-in), emit events, and checkpoint at **superstep** boundaries. Python also has an experimental **functional** `@workflow` API that uses native control flow ([workflows](../sources/microsoft-agent-framework-workflows-docs.md)).
+- **Agents.** An `Agent` wraps a chat client with instructions and tools (`@tool`, hosted tools, MCP). Unlike AutoGen's `AssistantAgent`, which is single-turn unless `max_tool_iterations` is raised, an MAF `Agent` keeps calling tools until it can answer ([migration guide](../sources/microsoft-agent-framework-autogen-migration-guide.md)). `AgentSession` holds conversation state, context providers supply [memory](agent-memory.md), and middleware intercepts agent actions.
+- **Harness agent.** An opinionated long-task agent with planning and todos, [context compaction](context-engineering.md), file access and memory, and tool approval.
+- **Workflows.** Explicit execution paths. **Graph** workflows (`WorkflowBuilder`) connect typed **executors** with **edges** (conditional, fan-out, fan-in), emit events, and [checkpoint](durable-agent-execution.md) at **superstep** boundaries. Python also has an experimental **functional** `@workflow` API that uses native control flow ([workflows](../sources/microsoft-agent-framework-workflows-docs.md)).
 - **Integrations.** Model providers, memory stores, evaluation and UI adapters.
 
-Built-in multi-agent **orchestrations**: sequential, concurrent, handoff, group chat and **Magentic** (a manager agent dynamically coordinates specialists). They support human-in-the-loop through approval-required tools and request-info pauses ([workflows](../sources/microsoft-agent-framework-workflows-docs.md)).
+Built-in multi-agent **orchestrations**: sequential, concurrent, handoff, group chat and **Magentic** (a manager agent dynamically coordinates specialists). They support [human-in-the-loop](human-in-the-loop.md) through approval-required tools and request-info pauses ([workflows](../sources/microsoft-agent-framework-workflows-docs.md)).
 
 ### What changed from AutoGen
 
@@ -64,7 +64,7 @@ Built-in multi-agent **orchestrations**: sequential, concurrent, handoff, group 
 | Human-in-the-loop | No built-in pause in Teams | Request/response pauses (`ctx.request_info`, `RequestInfoExecutor`) |
 | Checkpointing | None built in | Superstep checkpoints, resume |
 | Runtime | Embedded + experimental distributed | Single-process today; distributed planned |
-| Agent loop | Single-turn by default | Multi-turn tool loop by default |
+| [Agent loop](agent-loop.md) | Single-turn by default | Multi-turn tool loop by default |
 
 Source: [migration guide](../sources/microsoft-agent-framework-autogen-migration-guide.md). The mapping: `RoundRobinGroupChat` becomes `SequentialBuilder`, and `MagenticOneGroupChat` becomes `MagenticBuilder` (with `max_round_count` and stall limits).
 
@@ -72,12 +72,12 @@ Source: [migration guide](../sources/microsoft-agent-framework-autogen-migration
 
 ### Status at 1.0 (2026-04)
 
-Stable: agent abstraction and connectors (Foundry, Azure OpenAI, OpenAI, Anthropic, Bedrock, Gemini, Ollama), middleware, memory and context providers (Mem0, Redis, Neo4j and more), graph workflows with checkpointing, the five orchestrations, declarative YAML agents and workflows, and MCP. A2A 1.0 was announced as "coming soon". Preview: DevUI, Foundry hosted agents, AG-UI, skills, the Agent Harness, and GitHub Copilot SDK and Claude Code SDK harness connectors ([MAF 1.0](../sources/microsoft-agent-framework-1-0-announcement.md)). The Go SDK is in public preview ([MAF overview](../sources/microsoft-agent-framework-overview.md)).
+Stable: agent abstraction and connectors (Foundry, Azure OpenAI, OpenAI, Anthropic, [Bedrock](amazon-bedrock.md), [Gemini](gemini-api.md), Ollama), middleware, memory and context providers ([Mem0](mem0.md), Redis, Neo4j and more), graph workflows with checkpointing, the five orchestrations, declarative YAML agents and workflows, and MCP. [A2A](agent2agent-protocol.md) 1.0 was announced as "coming soon". Preview: DevUI, Foundry hosted agents, AG-UI, [skills](agent-skills.md), the Agent Harness, and GitHub Copilot SDK and Claude Code SDK harness connectors ([MAF 1.0](../sources/microsoft-agent-framework-1-0-announcement.md)). The Go SDK is in public preview ([MAF overview](../sources/microsoft-agent-framework-overview.md)).
 
 ## Limitations and failure modes
 
 - **AutoGen is unmaintained.** Unpatched vulnerabilities may remain. Migrate before production ([README](../sources/autogen-github-readme.md)).
-- **Conversation-driven orchestration wanders.** Group chats can loop or let agents talk past each other without strict termination, which costs tokens and latency ([Notebook](../sources/notebook-autogen-crewai.md)).
+- **Conversation-driven orchestration wanders.** Group chats can loop or let agents talk past each other without strict termination, which costs tokens and latency (see [cost and latency optimization](cost-and-latency-optimization.md)) ([Notebook](../sources/notebook-autogen-crewai.md)).
 - **Migration isn't mechanical.** Single-agent code ports easily. Multi-agent teams must be rethought from event-driven chat to data-flow graphs ([migration guide](../sources/microsoft-agent-framework-autogen-migration-guide.md)).
 - **MAF scope.** It is single-process for now (no distributed runtime yet), many features are still preview, and it is Azure/Foundry-centric in samples and defaults ([migration guide](../sources/microsoft-agent-framework-autogen-migration-guide.md), [MAF 1.0](../sources/microsoft-agent-framework-1-0-announcement.md)).
 - **Responsibility stays with you.** Microsoft states that responsible-AI mitigations and data-flow compliance with third-party systems are the builder's job ([MAF overview](../sources/microsoft-agent-framework-overview.md)).

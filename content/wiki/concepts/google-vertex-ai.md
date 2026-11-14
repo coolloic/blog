@@ -19,7 +19,7 @@ lastmod: 2026-11-14
 tags: ["platforms", "gcp", "vertex-ai", "gemini", "enterprise", "agents", "rag"]
 ---
 
-**Google Vertex AI** is Google Cloud's managed ML and generative-AI platform. It serves Gemini and partner models (Claude, Grok, DeepSeek and others) through Model Garden ([release notes](../sources/gemini-enterprise-agent-platform-release-notes.md)). It adds tuning, managed RAG and agent hosting, all governed by GCP projects, IAM and VPC Service Controls ([notebook](../sources/notebook-gcp-services.md)). **Naming warning:** on **April 22, 2026** Google folded Vertex AI into **Gemini Enterprise Agent Platform** ("Agent Platform"). Agent Engine became **Agent Runtime**, Vertex AI RAG Engine became **RAG Engine**, Vertex AI Studio became **Agent Studio**, Vertex AI Search became **Agent Search**, and Vector Search 2.0 became **Agent Retrieval**. API hostnames (`aiplatform.googleapis.com`) and SDKs carry the old name ([release notes](../sources/gemini-enterprise-agent-platform-release-notes.md)). This page keeps "Vertex AI" because customers and code still use it.
+**Google Vertex AI** is Google Cloud's managed ML and generative-AI platform. It serves [Gemini](gemini-api.md) and partner models (Claude, Grok, DeepSeek and others) through Model Garden ([release notes](../sources/gemini-enterprise-agent-platform-release-notes.md)). It adds tuning, managed RAG and agent hosting, all governed by GCP projects, IAM and VPC Service Controls ([notebook](../sources/notebook-gcp-services.md)). **Naming warning:** on **April 22, 2026** Google folded Vertex AI into **Gemini Enterprise Agent Platform** ("Agent Platform"). Agent Engine became **Agent Runtime**, Vertex AI RAG Engine became **RAG Engine**, Vertex AI Studio became **Agent Studio**, Vertex AI Search became **Agent Search**, and Vector Search 2.0 became **Agent Retrieval**. API hostnames (`aiplatform.googleapis.com`) and SDKs carry the old name ([release notes](../sources/gemini-enterprise-agent-platform-release-notes.md)). This page keeps "Vertex AI" because customers and code still use it.
 
 ```mermaid
 flowchart TB
@@ -39,12 +39,12 @@ flowchart TB
 - **First-party Gemini.** In late 2026 the GA set includes the Gemini 2.5, 3.x Flash and Gemini 4 families. Gemini 4 Argon went GA on October 13, Carbon on November 10 and Hydrogen on November 12, 2026. Hydrogen is a *short-term release* with only a 45-day minimum retirement notice ([release notes](../sources/gemini-enterprise-agent-platform-release-notes.md)).
 - **Partner models.** H2 2026 additions include Claude Opus 5.5 (September 22), Sonnet 5.5 (September 28) and Haiku 5.5 (October 7), plus Grok 4.6/4.7 and DeepSeek-V4.1-Flash (preview) ([release notes](../sources/gemini-enterprise-agent-platform-release-notes.md)).
 - **Lifecycle.** Expect frequent retirements:
-  - Gemini 2.0 Flash and 2.0 Flash-Lite were discontinued June 1, 2026, including their Provisioned Throughput.
+  - Gemini 2.0 Flash and 2.0 Flash-Lite were discontinued June 1, 2026, including their [Provisioned Throughput](provisioned-throughput.md).
   - A batch of managed open-model (`-maas`) endpoints was deprecated July 21 and retired October 21, 2026. It covered DeepSeek, GLM, GPT-OSS, Kimi, Llama, MiniMax, Qwen and multilingual E5.
 
   Pin versions and track the notes ([release notes](../sources/gemini-enterprise-agent-platform-release-notes.md)).
-- **Model Garden** catalogues foundation, fine-tunable and task-specific models. Open models self-deploy to your own endpoints on vLLM (GPU), Hex-LLM (TPU), xDiT or Hugging Face DLCs, billed for compute. Org policies can allowlist vetted models. Models that can execute remote code can still be deployed, so review them ([Model Garden](../sources/vertex-ai-model-garden.md); see [LLM inference serving](llm-inference-serving.md)).
-- **Tuning** for Gemini: SFT, preference tuning and RL fine-tuning, with continuous tuning from checkpoints ([tuning](../sources/vertex-ai-gemini-tuning.md); [fine-tuning](fine-tuning.md)).
+- **Model Garden** catalogues foundation, fine-tunable and task-specific models. [Open models](open-weight-models.md) self-deploy to your own endpoints on vLLM (GPU), Hex-LLM (TPU), xDiT or Hugging Face DLCs, billed for compute. Org policies can allowlist vetted models. Models that can execute remote code can still be deployed, so review them ([Model Garden](../sources/vertex-ai-model-garden.md); see [LLM inference serving](llm-inference-serving.md)).
+- **Tuning** for Gemini: SFT, [preference tuning](preference-optimization.md) and [RL fine-tuning](reinforcement-fine-tuning.md), with continuous tuning from checkpoints ([tuning](../sources/vertex-ai-gemini-tuning.md); [fine-tuning](fine-tuning.md)).
 
 ## Endpoints and data residency
 
@@ -60,7 +60,7 @@ Data handling beyond the endpoint ([data governance](../sources/vertex-ai-data-g
 
 - **No training use.** Customer data isn't used for training without permission.
 - **Implicit caching is on by default.** It lives in memory and on a durable store, is project-scoped, and is deleted within 24 h. The durable tier has no CMEK and can be disabled per project.
-- **Zero data retention (ZDR)** requires all of the following:
+- **Zero data retention (ZDR)** ([data privacy](pii-and-data-privacy.md)) requires all of the following:
   - request-response logging off;
   - Live API session resumption off;
   - Interactions API `store=false`;
@@ -88,7 +88,7 @@ Data handling beyond the endpoint ([data governance](../sources/vertex-ai-data-g
   - Flash-class models: 2M → 50M TPM.
 - **Above the threshold, traffic may still succeed**, but it is throttled first.
 - **A 429 means contention**, not an exhausted quota.
-- **Remedies:** exponential backoff, smoothing spikes *within* each minute, and using `global`.
+- **Remedies:** exponential [backoff](rate-limits-and-retries.md), smoothing spikes *within* each minute, and using `global`.
 
 **Provisioned Throughput** is bought in **GSUs** ([PT](../sources/vertex-ai-provisioned-throughput.md)):
 
@@ -100,7 +100,7 @@ Recommended pattern: cover the steady baseline with PT, spill over to Standard o
 
 ## RAG Engine
 
-RAG Engine is a managed [RAG](retrieval-augmented-generation.md) pipeline: ingest (local files, Cloud Storage, Drive) → chunk → embed → index into a **RAG corpus** → retrieve → ground generation ([RAG Engine](../sources/vertex-ai-rag-engine.md)).
+RAG Engine is a managed [RAG](retrieval-augmented-generation.md) pipeline: ingest (local files, Cloud Storage, Drive) → chunk → [embed](embeddings.md) → index into a **RAG corpus** → retrieve → ground generation ([RAG Engine](../sources/vertex-ai-rag-engine.md)).
 
 - **[Chunking](chunking.md) defaults:** `chunk_size` 1,024 tokens, `chunk_overlap` 256.
 - **Parsing:** layout-aware parsing via the Document AI layout parser.
@@ -114,12 +114,12 @@ Synthesis: for strict-residency customers, RAG Engine may be disqualified. A sel
 
 ## Agent Runtime (formerly Agent Engine)
 
-Agent Runtime is a managed, serverless host for agents built with [ADK](google-adk.md), [LangGraph](langgraph.md), LangChain, LlamaIndex, AG2 or custom code, with [A2A](agent2agent-protocol.md) support ([Agent Runtime](../sources/gemini-enterprise-agent-platform-agent-runtime.md)). Companion services:
+Agent Runtime is a managed, serverless host for agents built with [ADK](google-adk.md), [LangGraph](langgraph.md), [LangChain](langchain.md), [LlamaIndex](llamaindex.md), AG2 or custom code, with [A2A](agent2agent-protocol.md) support ([Agent Runtime](../sources/gemini-enterprise-agent-platform-agent-runtime.md)). Companion services:
 
 - **Sessions** for conversation state.
 - **Memory Bank** for long-term [agent memory](agent-memory.md).
-- **Code Execution** sandbox.
-- **Example Store**, evaluation, feedback, and Cloud Trace / Logging observability.
+- **Code Execution** [sandbox](code-execution-sandboxes.md).
+- **Example Store**, [evaluation](agent-evaluation.md), feedback, and Cloud Trace / Logging [observability](llm-observability.md).
 
 Security:
 
@@ -150,7 +150,7 @@ A VPC-SC perimeter blocks exfiltration of training data, models and inference tr
 
 Synthesis, drawn from the sources above:
 
-- **Use Vertex / Agent Platform** when the customer is on GCP (BigQuery, GKE, Workspace), when Gemini's long context or multimodality fits the task, or when they want Gemini and Claude under one GCP bill and IAM model.
+- **Use Vertex / Agent Platform** when the customer is on GCP (BigQuery, GKE, Workspace), when Gemini's long [context](context-window.md) or [multimodality](multimodal-models.md) fits the task, or when they want Gemini and Claude under one GCP bill and IAM model.
 - **Use `global` plus Standard PayGo** for prototypes and most traffic where processing location doesn't matter. **Switch to `us`/`eu` endpoints** the moment a DPA or regulator specifies a processing location, and re-check which features (RAG corpora, tuning, PT models) remain available there.
 - **Buy PT** only for a measured steady baseline with latency SLOs. Don't size PT for peaks.
 - **Avoid** RAG Engine where residency controls are mandatory, and avoid Google Search grounding where zero retention is contractual.

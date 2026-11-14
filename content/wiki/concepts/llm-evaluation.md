@@ -23,7 +23,7 @@ lastmod: 2026-11-14
 tags: ["evaluation", "agents", "testing"]
 ---
 
-**LLM evaluation** ("evals") is the practice of measuring whether an LLM application does its job, using a fixed set of realistic tasks with checkable success criteria, scored by graders, and re-run on every change to a prompt, model, tool or retrieval step. Because outputs are open-ended and vary between runs, evals replace exact-match unit tests with graded judgement over a dataset, and they are the only way to tell whether a change helped or quietly broke something ([notebook](../sources/notebook-llm-evaluation.md), [OpenAI](../sources/openai-evaluation-best-practices.md)). This page covers application evals; for public model leaderboards see [benchmarks](benchmarks.md), and for model graders see [LLM-as-judge](llm-as-judge.md). The agent-runtime side of checking work is in [verification and evals](verification-and-evals.md).
+**LLM evaluation** ("evals") is the practice of measuring whether an LLM application does its job, using a fixed set of realistic tasks with checkable success criteria, scored by graders, and re-run on every change to a [prompt](prompt-management.md), model, tool or retrieval step. Because outputs are open-ended and vary between runs, evals replace exact-match unit tests with graded judgement over a dataset, and they are the only way to tell whether a change helped or quietly broke something ([notebook](../sources/notebook-llm-evaluation.md), [OpenAI](../sources/openai-evaluation-best-practices.md)). This page covers application evals; for public model leaderboards see [benchmarks](benchmarks.md), and for model graders see [LLM-as-judge](llm-as-judge.md). The agent-runtime side of checking work is in [verification and evals](verification-and-evals.md).
 
 ## Vocabulary
 
@@ -64,11 +64,11 @@ flowchart LR
 ## Golden datasets
 
 - **Start small, from real failures.** 20-50 tasks drawn from bug trackers, support queues and manual checks is a strong start, because early changes have large effects ([Anthropic](../sources/anthropic-demystifying-evals-for-ai-agents.md), [notebook](../sources/notebook-llm-evaluation.md)).
-- **Cover the distribution.** Mirror production traffic and add edge cases: irrelevant, very long, harmful, ambiguous, multilingual, typo-ridden or multi-intent inputs, jailbreaks, and conflicts between system and user instructions ([Claude docs](../sources/anthropic-define-success-criteria-and-evals.md), [OpenAI](../sources/openai-evaluation-best-practices.md)).
+- **Cover the distribution.** Mirror production traffic and add edge cases: irrelevant, very long, harmful, ambiguous, multilingual, typo-ridden or multi-intent inputs, [jailbreaks](jailbreaks.md), and conflicts between system and user instructions ([Claude docs](../sources/anthropic-define-success-criteria-and-evals.md), [OpenAI](../sources/openai-evaluation-best-practices.md)).
 - **Balance positives and negatives.** Test both when a behaviour should happen and when it should not (e.g. a search tool that over-triggers as well as under-triggers) ([Anthropic](../sources/anthropic-demystifying-evals-for-ai-agents.md)).
 - **Make tasks unambiguous.** Two experts should agree on pass/fail; a 0% pass rate over many trials usually means the task or grader is broken, not the model ([Anthropic](../sources/anthropic-demystifying-evals-for-ai-agents.md)).
-- **Synthetic inputs, real outputs.** LLM-generated user inputs along dimensions such as feature, scenario and persona are fine; the responses being graded must come from the real system ([Husain](../sources/husain-llm-judge-critique-shadowing.md)).
-- **Keep it out of prompts.** Eval cases leaked into few-shot examples measure memorisation ([notebook](../sources/notebook-llm-evaluation.md)).
+- **Synthetic inputs, real outputs.** [LLM-generated](synthetic-data-generation.md) user inputs along dimensions such as feature, scenario and persona are fine; the responses being graded must come from the real system ([Husain](../sources/husain-llm-judge-critique-shadowing.md)).
+- **Keep it out of prompts.** Eval cases leaked into [few-shot examples](few-shot-prompting.md) measure memorisation ([notebook](../sources/notebook-llm-evaluation.md)).
 - **Expect criteria drift.** Grading outputs changes what people think "good" means, so the rubric and dataset evolve together ([Shankar et al.](../sources/shankar-2024-who-validates-the-validators.md)).
 
 ## Grader types
@@ -82,13 +82,13 @@ flowchart LR
 
 Sources: [Anthropic](../sources/anthropic-demystifying-evals-for-ai-agents.md), [OpenAI](../sources/openai-evaluation-best-practices.md), [Claude docs](../sources/anthropic-define-success-criteria-and-evals.md). The Claude docs order the choice: code first, then LLM grading (after testing its reliability), and humans only where unavoidable; they also prefer many automatically graded cases over few hand-graded ones. Combine graders as weighted (score above a threshold), binary (all must pass) or hybrid ([Anthropic](../sources/anthropic-demystifying-evals-for-ai-agents.md)).
 
-**Grade outcomes, not paths.** For agents, check the end state (files, database rows, page state) rather than demanding a specific tool sequence; give partial credit; harden graders against shortcuts. Grader bugs are common: one CORE-Bench run moved from 42% to 95% after grading fixes and a less constrained scaffold; one bug was a check that rejected "96.12" against "96.124991…" ([Anthropic](../sources/anthropic-demystifying-evals-for-ai-agents.md)). τ-bench shows the pattern: an open-ended conversation graded deterministically by comparing final database state to an annotated goal ([τ-bench](../sources/yao-2024-tau-bench.md)).
+**Grade outcomes, not paths.** For [agents](agent-evaluation.md), check the end state (files, database rows, page state) rather than demanding a specific tool sequence; give partial credit; harden graders against shortcuts. Grader bugs are common: one CORE-Bench run moved from 42% to 95% after grading fixes and a less constrained scaffold; one bug was a check that rejected "96.12" against "96.124991…" ([Anthropic](../sources/anthropic-demystifying-evals-for-ai-agents.md)). τ-bench shows the pattern: an open-ended conversation graded deterministically by comparing final database state to an annotated goal ([τ-bench](../sources/yao-2024-tau-bench.md)).
 
-**Where to put evals** depends on architecture: single-turn calls need instruction-following and correctness evals; workflows need each call evaluated in isolation; agents add tool-selection and argument-precision evals; multi-agent systems add handoff accuracy ([OpenAI](../sources/openai-evaluation-best-practices.md)). For [RAG](retrieval-augmented-generation.md), score retrieval (recall, MRR, context precision) separately from generation (faithfulness to retrieved context), so a bad answer can be blamed on the right stage ([notebook](../sources/notebook-llm-evaluation.md), [Ragas](../sources/es-2023-ragas.md), [Ragas docs](../sources/ragas-docs-metrics.md)).
+**Where to put evals** depends on architecture: single-turn calls need instruction-following and correctness evals; workflows need each call evaluated in isolation; agents add tool-selection and argument-precision evals; multi-agent systems add handoff accuracy ([OpenAI](../sources/openai-evaluation-best-practices.md)). For [RAG](retrieval-augmented-generation.md), score retrieval (recall, MRR, context precision) separately from generation (faithfulness to retrieved context), so a bad answer can be blamed on the right stage; see [RAGAS and DeepEval](ragas-and-deepeval.md) for metric libraries ([notebook](../sources/notebook-llm-evaluation.md), [Ragas](../sources/es-2023-ragas.md), [Ragas docs](../sources/ragas-docs-metrics.md)).
 
 ## Non-determinism: trials, pass@k and pass^k
 
-Run each task several times. **pass@k** is the chance at least one of k trials succeeds (rises with k; right when one success is enough, e.g. a coding agent with tests). **pass^k** is the chance all k succeed (falls with k; right for customer-facing agents that must be consistent). At 75% per-trial success, pass^3 ≈ 0.75³ ≈ 42% ([Anthropic](../sources/anthropic-demystifying-evals-for-ai-agents.md), [τ-bench](../sources/yao-2024-tau-bench.md)). Temperature 0 does not make hosted inference deterministic: one study got 80 distinct outputs from 1,000 temperature-0 completions of one prompt ([Thinking Machines](../sources/defeating-nondeterminism-llm-inference.md)).
+Run each task several times. **pass@k** is the chance at least one of k trials succeeds (rises with k; right when one success is enough, e.g. a coding agent with tests). **pass^k** is the chance all k succeed (falls with k; right for customer-facing agents that must be consistent). At 75% per-trial success, pass^3 ≈ 0.75³ ≈ 42% ([Anthropic](../sources/anthropic-demystifying-evals-for-ai-agents.md), [τ-bench](../sources/yao-2024-tau-bench.md)). [Temperature](sampling-parameters.md) 0 does not make hosted inference deterministic: one study got 80 distinct outputs from 1,000 temperature-0 completions of one prompt ([Thinking Machines](../sources/defeating-nondeterminism-llm-inference.md)).
 
 ## Statistics: is the difference real?
 
@@ -121,11 +121,11 @@ Sources: [notebook](../sources/notebook-llm-evaluation.md), [Anthropic](../sourc
 
 | Tool | Model | Notes |
 |---|---|---|
-| [promptfoo](../sources/promptfoo-assertions-docs.md) | open-source CLI, YAML config | prompts × providers × tests matrix; deterministic, model-graded, tool-call and trajectory assertions with weights and thresholds; strong on red-teaming. OpenAI agreed to acquire it on 9 March 2026 (terms undisclosed; closing not confirmed in the sources) and said the open-source project continues ([TechCrunch](../sources/techcrunch-openai-acquires-promptfoo.md)). |
-| [Braintrust](../sources/braintrust-eval-sdk-docs.md) | hosted platform + SDK | `Eval(data, task, scores)`; each run is an experiment compared to the previous; `autoevals` scorers; CI and production logging. |
+| [promptfoo](../sources/promptfoo-assertions-docs.md) | open-source CLI, YAML config | prompts × providers × tests matrix; deterministic, model-graded, tool-call and trajectory assertions with weights and thresholds; strong on [red-teaming](llm-red-teaming.md); see [promptfoo](promptfoo.md). OpenAI agreed to acquire it on 9 March 2026 (terms undisclosed; closing not confirmed in the sources) and said the open-source project continues ([TechCrunch](../sources/techcrunch-openai-acquires-promptfoo.md)). |
+| [Braintrust](../sources/braintrust-eval-sdk-docs.md) | hosted platform + SDK | `Eval(data, task, scores)`; each run is an experiment compared to the previous; `autoevals` scorers; CI and production logging; see [Braintrust](braintrust.md). |
 | [Inspect](../sources/inspect-ai-docs.md) | open-source Python (UK AI Security Institute, Meridian Labs) | Task = Dataset + Solver + Scorer; agents, Docker sandboxes, scorers report accuracy with stderr; 200+ prebuilt benchmarks. Best fit for agentic and safety evals. |
 | [OpenAI Evals](../sources/openai-evals-github.md) | open-source registry (YAML/JSONL) | the hosted dashboard version goes read-only 31 Oct 2026 and shuts down 30 Nov 2026 ([OpenAI](../sources/openai-evaluation-best-practices.md)). |
-| LangSmith, Langfuse, Arize Phoenix | tracing + evals | named by Anthropic as common choices; see [LangSmith](langsmith.md). |
+| LangSmith, Langfuse, Arize Phoenix | tracing + evals | named by Anthropic as common choices; see [LangSmith](langsmith.md), [Langfuse](langfuse.md), [Arize Phoenix](arize-phoenix.md). |
 
 Anthropic's view is that the framework matters less than the quality of the tasks ([Anthropic](../sources/anthropic-demystifying-evals-for-ai-agents.md)).
 
@@ -141,7 +141,7 @@ Anthropic's view is that the framework matters less than the quality of the task
 
 ## Practical guidance
 
-Synthesis, for a forward-deployed engagement:
+Synthesis, for a [forward-deployed](forward-deployed-engineering.md) engagement:
 
 - Write success criteria with the customer's domain expert before writing prompts; get 30-50 labelled cases from their real data in week one.
 - Default to code graders (schemas, DB state, tests); add an LLM judge only for qualities code cannot see, and validate it against the expert's labels.

@@ -51,9 +51,9 @@ Synthesis: the loop arrow is the important part. Agentic search means repeated s
 
 ## Provider-native search tools (as of 2026-11)
 
-| | Anthropic `web_search` | OpenAI `web_search` (Responses) | Gemini `google_search` |
+| | Anthropic `web_search` | OpenAI `web_search` ([Responses](openai-responses-api.md)) | Gemini `google_search` |
 |---|---|---|---|
-| Who runs the loop | API server (`server_tool_use`), may `pause_turn` | API server; reasoning models add `open_page`, `find_in_page` | API server |
+| Who runs the loop | API server (`server_tool_use`), may `pause_turn` | API server; [reasoning models](reasoning-models.md) add `open_page`, `find_in_page` | API server |
 | Domain control | `allowed_domains` or `blocked_domains` (not both) | `filters.allowed/blocked_domains`, up to 100 each | not in the guide |
 | Volume control | `max_uses` per turn | `search_context_size` low/medium/high, `return_token_budget` | none documented |
 | Freshness control | `web_fetch_20260309`+ `use_cache: false` | `external_web_access: false` = cache-only | n/a |
@@ -64,7 +64,7 @@ Sources: [Anthropic search](../sources/anthropic-web-search-tool-docs.md), [Open
 
 Details that matter in production:
 
-- **Context filtering.** Basic search dumps every result into context. Claude's `web_search_20260209`+ and `web_fetch_20260209`+ let the model write code that filters results before they reach the context ("dynamic filtering"). It runs search from inside code execution, which the API provisions automatically; it is on by default (`allowed_callers` defaults to code execution) and is turned off with `allowed_callers: ["direct"]`. It needs Claude 4.6+ models, is not ZDR/HIPAA eligible, and is unavailable on Google-managed Vertex and Azure-hosted Foundry deployments, which offer only `web_search_20250305`. OpenAI caps search context at 128k tokens whatever the model's window. ([Anthropic](../sources/anthropic-web-search-tool-docs.md), [OpenAI](../sources/openai-web-search-tool-docs.md)) This is [context engineering](context-engineering.md) applied to the web.
+- **Context filtering.** Basic search dumps every result into context. Claude's `web_search_20260209`+ and `web_fetch_20260209`+ let the model write code that filters results before they reach the context ("dynamic filtering"). It runs search from inside [code execution](code-execution-sandboxes.md), which the API provisions automatically; it is on by default (`allowed_callers` defaults to code execution) and is turned off with `allowed_callers: ["direct"]`. It needs Claude 4.6+ models, is not ZDR/HIPAA eligible, and is unavailable on Google-managed [Vertex](google-vertex-ai.md) and Azure-hosted [Foundry](azure-ai-foundry.md) deployments, which offer only `web_search_20250305`. OpenAI caps search context at 128k tokens whatever the model's window. ([Anthropic](../sources/anthropic-web-search-tool-docs.md), [OpenAI](../sources/openai-web-search-tool-docs.md)) This is [context engineering](context-engineering.md) applied to the web.
 - **Multi-turn state.** Claude results carry `encrypted_content` and citations carry `encrypted_index`. Both must be sent back unchanged, or the next request fails with a 400. Search results also count as input tokens on every later turn, so they are worth [prompt caching](prompt-caching.md). ([Anthropic](../sources/anthropic-web-search-tool-docs.md))
 - **Errors are in-band.** Claude returns HTTP 200 with `web_search_tool_result_error` codes (`max_uses_exceeded`, `too_many_requests`, `query_too_long`...), so your loop must inspect content, not status codes. ([Anthropic](../sources/anthropic-web-search-tool-docs.md))
 - **Display obligations.** All three vendors require citations or search suggestions to be shown to end users. OpenAI asks for clickable inline links; Google's search-suggestion HTML is governed by its terms. ([OpenAI](../sources/openai-web-search-tool-docs.md), [Gemini](../sources/gemini-google-search-grounding-docs.md), [Anthropic](../sources/anthropic-web-search-tool-docs.md))
@@ -75,7 +75,7 @@ Details that matter in production:
 | API | Index / mechanism | Returns | Key knobs | Price (2026-11) |
 |---|---|---|---|---|
 | **Tavily** | aggregator tuned for LLM agents | results with relevance `score` + 1-3 query-relevant chunks per source; optional raw content and answer | `search_depth` ultra-fast/fast/basic/advanced, `topic`, `time_range`, `include_domains` (300) | 1 credit (advanced 2); $0.008/credit PAYG, 1k free/month |
-| **Exa** | own index; embedding-style retrieval (docs show a `neural` cost line) | results + highlights, full text, per-result summary, or schema answer | `type` lite/auto/deep-lite/deep, `category`, `maxAgeHours`, 1,200-domain filters | per 1k requests (up to 10 results): `lite` $4, `auto` $7, `deep-lite`/`deep` $12; contents $1/1k pages per type |
+| **Exa** | own index; [embedding](embeddings.md)-style retrieval (docs show a `neural` cost line) | results + highlights, full text, per-result summary, or schema answer | `type` lite/auto/deep-lite/deep, `category`, `maxAgeHours`, 1,200-domain filters | per 1k requests (up to 10 results): `lite` $4, `auto` $7, `deep-lite`/`deep` $12; contents $1/1k pages per type |
 | **Brave** | own independent index, no Google/Bing fallback | SERP JSON; LLM Context endpoint with extracted content (~1k-33k tokens) | vertical endpoints, Goggles | $5/1k searches at 50 QPS; Answers $4/1k + $5/M tokens; $5 free credit/month |
 | **Perplexity** | own search stack | Search API: ranked results; `sonar`: grounded answer | `search_type: fast`; Agent API effort presets | Search $5/1k ($1/1k fast); `sonar` $0.25/$2.50 per M tokens |
 | **SerpApi** | scrapes live Google SERPs | parsed blocks: organic, knowledge graph, local, related questions | `location`, `gl`, `hl`, `device`, `no_cache` | plans (not on the reference page); cached hits free |

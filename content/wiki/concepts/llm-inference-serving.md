@@ -84,14 +84,14 @@ Prefill and decode running on the same GPU interfere with each other, and they h
 
 - **Tensor parallelism (TP)** shards each layer's matrices across GPUs. Use it when the model does not fit on one GPU, or to free memory for KV cache. It needs fast interconnect, and latency gains diminish: going from 4 to 8 GPUs for Llama2-70B cut latency only to about 0.7x at small batch sizes ([Databricks](../sources/databricks-llm-inference-performance-engineering.md), [vLLM docs](../sources/vllm-optimization-and-tuning-docs.md)).
 - **Pipeline parallelism (PP)** places groups of layers on different GPUs or nodes. It adds latency and pipeline bubbles, and is used once TP is maxed out ([NVIDIA](../sources/nvidia-mastering-llm-inference-optimization.md)).
-- **Expert parallelism (EP)** spreads MoE experts across GPUs. **Data parallelism (DP)** runs full replicas for more throughput ([vLLM docs](../sources/vllm-optimization-and-tuning-docs.md)).
+- **Expert parallelism (EP)** spreads [MoE](mixture-of-experts.md) experts across GPUs. **Data parallelism (DP)** runs full replicas for more throughput ([vLLM docs](../sources/vllm-optimization-and-tuning-docs.md)).
 
 ## Engines compared (as of 2026-11)
 
 | Engine | Core ideas | Strengths | Notes |
 |---|---|---|---|
 | **vLLM** | PagedAttention, continuous batching, chunked prefill, hash-based prefix caching | Broadest model/hardware/quantization coverage, OpenAI-compatible server, the de-facto default | V1 engine; recompute preemption; spec decoding via `speculative_config` |
-| **SGLang** | RadixAttention (radix-tree KV reuse), cache-aware scheduling, compressed-FSM structured decoding, frontend DSL | Multi-call programs, agents, shared prefixes, structured output; up to 6.4x vs then-SOTA in its paper | Runs on NVIDIA, AMD, TPU, Ascend and more; self-reports more than 400k GPUs in deployment |
+| **SGLang** | RadixAttention (radix-tree KV reuse), cache-aware scheduling, compressed-FSM [structured decoding](constrained-decoding.md), frontend DSL | Multi-call programs, agents, shared prefixes, structured output; up to 6.4x vs then-SOTA in its paper | Runs on NVIDIA, AMD, TPU, Ascend and more; self-reports more than 400k GPUs in deployment |
 | **TensorRT-LLM** | In-flight batching, paged KV with block reuse, FP8 (Hopper) / FP4 (Blackwell), EAGLE/MTP/n-gram speculation | Peak performance on NVIDIA hardware, low-precision kernels | Now PyTorch-based (TensorRT engine backend removed); `trtllm-serve` |
 | **TGI** | Continuous batching, FlashAttention/PagedAttention, SSE streaming | Was Hugging Face's production server | **Maintenance mode**: Hugging Face recommends vLLM or SGLang |
 
@@ -109,7 +109,7 @@ For laptops and edge devices, llama.cpp and Ollama with GGUF models are the usua
 ## Practical guidance
 
 Synthesis:
-- Start with vLLM or SGLang behind an OpenAI-compatible API. Prefer SGLang when the workload reuses prefixes heavily (agents, few-shot, multi-turn chat) or depends on [structured outputs](structured-outputs.md). Choose TensorRT-LLM when you are committed to NVIDIA hardware and need FP8/FP4 peak performance. Do not start new projects on TGI.
+- Start with vLLM or SGLang behind an OpenAI-compatible API. Prefer SGLang when the workload reuses prefixes heavily (agents, [few-shot](few-shot-prompting.md), multi-turn chat) or depends on [structured outputs](structured-outputs.md). Choose TensorRT-LLM when you are committed to NVIDIA hardware and need FP8/FP4 peak performance. Do not start new projects on TGI.
 - Size memory first (weights + KV budget, see [KV cache](kv-cache.md)), then tune `max_num_batched_tokens` and concurrency against explicit TTFT and TPOT SLOs.
 - Use [quantization](quantization.md) to fit more KV cache or fewer GPUs, and [speculative decoding](speculative-decoding.md) to cut latency at low load.
 - Consider disaggregation only at multi-node scale with strict SLOs. It adds KV-transfer infrastructure.

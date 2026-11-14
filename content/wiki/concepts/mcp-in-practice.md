@@ -47,7 +47,7 @@ Most tutorials, including the [owner's](../sources/notebook-mcp-build.md), show 
 - **No sessions.** `Mcp-Session-Id` is gone. A server that needs state (a cart, a browser context, a DB transaction) mints an opaque handle and receives it back as an ordinary tool argument. The spec's (non-normative) guidance is to keep handles opaque, re-check authorization on every call and state the handle's lifetime in the tool description ([tools spec](../sources/mcp-tools-spec.md)).
 - **Multi Round-Trip Requests (MRTR).** A server can no longer push `sampling/createMessage`, `elicitation/create` or `roots/list`. It returns `resultType: "input_required"` with `inputRequests` and an opaque `requestState`. The client gathers the input and retries the original call with `inputResponses` (plus `requestState`) and a new JSON-RPC id. Every result now carries `resultType`, and results from older servers that omit it are treated as `complete`.
 - **`subscriptions/listen`** replaces the GET stream and `resources/subscribe`, carrying only the change notifications the client opts in to.
-- **Deprecated:** Roots, Sampling, Logging (twelve-month minimum window). Migration: pass paths as tool parameters, call LLM APIs directly, log to stderr or OpenTelemetry. **Removed:** `ping`, `logging/setLevel` (log level is now set per request in `_meta`), SSE resumption via `Last-Event-ID`. Tasks became an opt-in extension (`tasks/get` polling, `tasks/update`).
+- **Deprecated:** Roots, Sampling, Logging (twelve-month minimum window). Migration: pass paths as tool parameters, call LLM APIs directly, log to stderr or OpenTelemetry (see [LLM observability](llm-observability.md)). **Removed:** `ping`, `logging/setLevel` (log level is now set per request in `_meta`), SSE resumption via `Last-Event-ID`. Tasks became an opt-in extension (`tasks/get` polling, `tasks/update`).
 
 The Python SDK v2 serves both eras from one app. Calling `ctx.elicit()` or sampling on a 2026 connection raises `NoBackChannelError` ([SDK docs](../sources/mcp-sdks-docs.md)).
 
@@ -80,12 +80,12 @@ Streamable HTTP details that matter when you deploy:
 - Servers must validate `Origin` to stop DNS rebinding. Local servers should bind to 127.0.0.1.
 - Send `X-Accel-Buffering: no` so nginx-style proxies don't buffer SSE.
 - Statelessness only helps modern clients: 2025-era clients still open sessions and need sticky routing. In the Python SDK, MRTR `requestState` is protected with a per-process key by default, so scaled deployments must share keys (`RequestStateSecurity(keys=[...])`) ([SDK docs](../sources/mcp-sdks-docs.md)).
-- A dropped stream loses the request, and the client re-issues it. Design `tools/call` handlers to be idempotent, or use the Tasks extension for long-running work.
+- A dropped stream loses the request, and the client re-issues it. Design `tools/call` handlers to be idempotent, or use the Tasks extension for long-running work (see [durable agent execution](durable-agent-execution.md) and [rate limits and retries](rate-limits-and-retries.md)).
 - The 2024-11-05 HTTP+SSE transport is deprecated. Clients detect older servers by sending a modern request and inspecting the 400 body ([transports spec](../sources/mcp-streamable-http-transport-spec.md)).
 
 ## Authorization (remote servers)
 
-A protected server is an **OAuth 2.1 resource server** ([authorization spec](../sources/mcp-authorization-spec.md)):
+A protected server is an **OAuth 2.1 resource server** ([authorization spec](../sources/mcp-authorization-spec.md)). The wider identity picture (delegation, token exchange, enterprise SSO, credential brokers) is in [agent authentication and authorization](agent-authentication-and-authorization.md):
 
 1. An unauthenticated request gets `401` with `WWW-Authenticate: Bearer resource_metadata="…", scope="…"`.
 2. The client fetches the server's RFC 9728 Protected Resource Metadata, picks an authorization server, and discovers its metadata via RFC 8414 or OIDC.
@@ -120,10 +120,10 @@ Practical server design:
 | Confused deputy | Proxy with a static third-party client ID + consent cookie ([best practices](../sources/mcp-security-best-practices.md)) | Per-client consent before forwarding, exact redirect URIs, single-use `state` |
 | SSRF | Malicious metadata URLs pointing at `169.254.169.254` | HTTPS only, block private ranges, egress proxy |
 | Handle hijack | Guessable state handles | Random handles bound to the token's user ID |
-| Local server compromise | One-click config runs arbitrary commands | Show the full command, require consent, sandbox |
+| Local server compromise | One-click config runs arbitrary commands | Show the full command, require consent, [sandbox](code-execution-sandboxes.md) |
 | Malicious auth URL | `javascript:` or shell-injected URL opened by the client | Allow only http(s), never open URLs via a shell |
 
-The spec's own principles require explicit user consent before tool invocation and data sharing, but MCP cannot enforce them. The host must ([spec](../sources/mcp-specification-2026-07-28.md)). Synthesis: the combination of private-data tools, untrusted-content tools and outbound tools in one agent is the dangerous one. Gate it with [guardrails](agent-guardrails.md) and human approval rather than relying on descriptions. See also [LLM security risks](llm-security-risks.md).
+The spec's own principles require explicit user consent before tool invocation and data sharing, but MCP cannot enforce them. The host must ([spec](../sources/mcp-specification-2026-07-28.md)). Synthesis: the combination of private-data tools, untrusted-content tools and outbound tools in one agent is the dangerous one. Gate it with [guardrails](agent-guardrails.md) and [human approval](human-in-the-loop.md) rather than relying on descriptions. See also [LLM security risks](llm-security-risks.md).
 
 ## When to use MCP, and when not
 

@@ -28,7 +28,7 @@ lastmod: 2026-11-14
 tags: ["agents", "coding", "harness", "benchmarks", "sandboxing"]
 ---
 
-A **coding agent** is an LLM running in an [agent loop](agent-loop.md) inside a software repository. It gathers context (search, read files), acts (edit files, run shell commands, use git) and verifies (run tests, builds, linters, screenshots), repeating until the task is done or it hands back to a human. The model supplies the reasoning. The **harness** around it (Claude Code, OpenAI Codex, Cursor's agent, GitHub Copilot's cloud agent, Devin) supplies the tools, decides what enters the context, enforces permissions and sandboxing, and persists state across sessions ([How Claude Code works](../sources/claude-code-how-it-works.md)). Benchmark scores and real-world results measure the model and harness together ([Anthropic SWE-bench post](../sources/anthropic-swe-bench-sonnet.md)).
+A **coding agent** is an LLM running in an [agent loop](agent-loop.md) inside a software repository. It gathers context (search, read files), acts (edit files, run shell commands, use git) and verifies (run tests, builds, linters, screenshots), repeating until the task is done or it hands back to a human. The model supplies the reasoning. The **harness** around it (Claude Code, OpenAI Codex, Cursor's agent, GitHub Copilot's cloud agent, Devin) supplies the tools, decides what enters the context, enforces permissions and [sandboxing](code-execution-sandboxes.md), and persists state across sessions ([How Claude Code works](../sources/claude-code-how-it-works.md)). Benchmark scores and real-world results measure the model and harness together ([Anthropic SWE-bench post](../sources/anthropic-swe-bench-sonnet.md)).
 
 ## Anatomy of a harness
 
@@ -58,16 +58,16 @@ Synthesis: the diagram merges the Claude Code loop description, its permission/h
 | Absolute paths | Agent stops getting lost after `cd` | [Anthropic](../sources/anthropic-swe-bench-sonnet.md) |
 | Lint check rejects broken edits | Failed edits cascade: success odds fall from 90.5% to 57.2% after one failed edit | [SWE-agent](../sources/swe-agent-yang-2024.md) |
 | Capped, summarised search output (e.g. 50 hits) and truncated tool results (Claude Code default 25k tokens) | Keeps context high-signal; truncation message steers to narrower queries | [SWE-agent](../sources/swe-agent-yang-2024.md), [writing tools](../sources/anthropic-writing-tools-for-agents.md) |
-| Grep **plus** semantic (embedding) search | Cursor: +12.5% average offline accuracy; in an online A/B, code retention rose most (+2.6%) on 1,000+ file repos | [Cursor](../sources/cursor-semantic-search.md) |
+| Grep **plus** semantic ([embedding](embeddings.md)) search | Cursor: +12.5% average offline accuracy; in an online A/B, code retention rose most (+2.6%) on 1,000+ file repos | [Cursor](../sources/cursor-semantic-search.md) |
 | Collapse old observations / compact history | Bounded context growth | [SWE-agent](../sources/swe-agent-yang-2024.md), [How it works](../sources/claude-code-how-it-works.md) |
 
 Single-model edits replaced the 2024 pattern where a large model wrote edit instructions and a small "apply" model executed them, which was fragile ([Cognition](../sources/cognition-dont-build-multi-agents.md)).
 
-**Context management.** Each session starts with a fresh window. Claude Code loads instruction files, auto memory (first 200 lines or 25KB of MEMORY.md), skill descriptions and MCP tool *names* (definitions are deferred and loaded via tool search). It compacts automatically near the limit, and early detailed instructions can be lost when it does ([How it works](../sources/claude-code-how-it-works.md)). As of November 2026 most current Claude models have a 1M-token window, so running out is rare. `/clear` between unrelated tasks still helps quality and cost because every turn re-sends the whole conversation ([best practices](../sources/claude-code-best-practices.md)). See [context engineering](context-engineering.md), [context window](context-window.md) and [prompt caching](prompt-caching.md).
+**Context management.** Each session starts with a fresh window. Claude Code loads instruction files, auto memory (first 200 lines or 25KB of MEMORY.md), [skill](agent-skills.md) descriptions and [MCP](model-context-protocol.md) tool *names* (definitions are deferred and loaded via tool search). It compacts automatically near the limit, and early detailed instructions can be lost when it does ([How it works](../sources/claude-code-how-it-works.md)). As of November 2026 most current Claude models have a 1M-token window, so running out is rare. `/clear` between unrelated tasks still helps quality and cost because every turn re-sends the whole conversation ([best practices](../sources/claude-code-best-practices.md)). See [context engineering](context-engineering.md), [context window](context-window.md) and [prompt caching](prompt-caching.md).
 
 ## Instruction files: CLAUDE.md, AGENTS.md, rules
 
-All major agents inject repo-level Markdown into the context. These files are *guidance the model may weigh*, not enforcement ([memory docs](../sources/claude-code-memory-docs.md)).
+All major agents inject repo-level Markdown ([agent instruction files](agent-instruction-files.md)) into the context. These files are *guidance the model may weigh*, not enforcement ([memory docs](../sources/claude-code-memory-docs.md)).
 
 | | Claude Code | OpenAI Codex | Cursor | Copilot cloud agent |
 |---|---|---|---|---|
@@ -99,7 +99,7 @@ Both layers are needed. Without network isolation an injected agent can exfiltra
 
 ## Verification: the decisive practice
 
-An agent stops when work *looks* done, so it needs a check that returns pass/fail ([best practices](../sources/claude-code-best-practices.md)). Claude Code's escalation ladder runs from the prompt ("run the auth tests and keep going until they pass"), to `/goal` (a separate model checks a condition each turn), to a `Stop` hook that exits with code 2 to send the agent back (capped at eight consecutive blocks), to review by a fresh subagent that never saw the reasoning. Ask for evidence (the command and its output), not a claim. When asking a reviewer for issues, tell it to skip style, or it will always find *something* ([best practices](../sources/claude-code-best-practices.md)). Unit tests can lie by omission: Anthropic's long-running harness only got reliable feature completion once agents tested as a user through browser automation ([long-running harnesses](../sources/anthropic-effective-harnesses-long-running-agents.md)). See [verification and evals](verification-and-evals.md).
+An agent stops when work *looks* done, so it needs a check that returns pass/fail ([best practices](../sources/claude-code-best-practices.md)). Claude Code's escalation ladder runs from the prompt ("run the auth tests and keep going until they pass"), to `/goal` (a separate model checks a condition each turn), to a `Stop` hook that exits with code 2 to send the agent back (capped at eight consecutive blocks), to review by a fresh subagent that never saw the reasoning. Ask for evidence (the command and its output), not a claim. When asking a reviewer for issues, tell it to skip style, or it will always find *something* ([best practices](../sources/claude-code-best-practices.md)). Unit tests can lie by omission: Anthropic's long-running harness only got reliable feature completion once agents tested as a user through browser automation (see [computer-use agents](computer-use-agents.md)) ([long-running harnesses](../sources/anthropic-effective-harnesses-long-running-agents.md)). See [verification and evals](verification-and-evals.md).
 
 ## Long-running and parallel work
 
@@ -145,7 +145,7 @@ To build your own coding agent rather than use one, see [Claude Agent SDK](claud
 
 Synthesis, drawing on the sources above and the [Notebook harness tutorial](../sources/notebook-agent-engineering.md):
 - **Good fit:** tasks with a crisp pass/fail check (failing test, typecheck, migration across many files, CI fix), repo exploration and Q&A, scaffolding, and batch migrations via headless loops. These are open-ended work where the model should drive but the stop condition is measurable.
-- **Use more structure** (a graph workflow, narrow tools, human gates) when the path must be guaranteed, as in compliance flows or irreversible operations, and whenever actions touch production systems that checkpoints can't undo.
+- **Use more structure** (a graph workflow, narrow tools, [human gates](human-in-the-loop.md)) when the path must be guaranteed, as in compliance flows or irreversible operations, and whenever actions touch production systems that checkpoints can't undo.
 - **Be sceptical** of claimed speedups for experts on familiar, high-standards codebases. Measure on your own work ([METR](../sources/metr-2025-developer-productivity.md)).
 - **FDE checklist:** a short AGENTS.md/CLAUDE.md with commands; deny rules plus sandbox for secrets and network; a Stop hook or CI as the definition of done; branch protection and human merge; turn and budget caps for unattended runs.
 

@@ -16,7 +16,7 @@ lastmod: 2026-11-14
 tags: ["frameworks", "agents", "openai", "multi-agent"]
 ---
 
-The **OpenAI Agents SDK** (`pip install openai-agents`, with a separate JS/TS package) is OpenAI's open-source framework for building agents from a deliberately small set of primitives. An **Agent** is an LLM with instructions and tools. It can delegate through **handoffs** or **agents-as-tools**, and **guardrails** validate its inputs and outputs. A **Runner** drives the [agent loop](agent-loop.md), and sessions, tracing, MCP, human-in-the-loop, sandbox, realtime and voice agents are built on top ([docs](../sources/openai-agents-sdk-docs.md), [README](../sources/openai-agents-python-readme.md)). It launched in March 2025 alongside the Responses API as the production successor to the experimental Swarm library ([InfoQ, 2025](../sources/infoq-2025-openai-responses-api-agents-sdk.md)). It is MIT-licensed, needs Python 3.10+, and claims support for the Responses and Chat Completions APIs plus 100+ other LLMs ([README](../sources/openai-agents-python-readme.md)).
+The **OpenAI Agents SDK** (`pip install openai-agents`, with a separate JS/TS package) is OpenAI's open-source framework for building agents from a deliberately small set of primitives. An **Agent** is an LLM with instructions and [tools](tools.md). It can delegate through **handoffs** or **agents-as-tools**, and **guardrails** validate its inputs and outputs. A **Runner** drives the [agent loop](agent-loop.md), and sessions, tracing, [MCP](model-context-protocol.md), [human-in-the-loop](human-in-the-loop.md), [sandbox](code-execution-sandboxes.md), realtime and voice agents are built on top ([docs](../sources/openai-agents-sdk-docs.md), [README](../sources/openai-agents-python-readme.md)). It launched in March 2025 alongside the [Responses API](openai-responses-api.md) as the production successor to the experimental Swarm library ([InfoQ, 2025](../sources/infoq-2025-openai-responses-api-agents-sdk.md)). It is MIT-licensed, needs Python 3.10+, and claims support for the Responses and Chat Completions APIs plus 100+ other LLMs ([README](../sources/openai-agents-python-readme.md)).
 
 ## The Runner loop
 
@@ -39,8 +39,8 @@ The run is final when the model returns text of the declared `output_type` with 
 | Field | Purpose |
 |---|---|
 | `instructions` | String, or a (sync/async) function of context and agent, so prompts can be dynamic |
-| `model`, `model_settings` | Model and sampling settings such as temperature and `tool_choice` |
-| `tools` | `@function_tool` functions (schema from signature, Pydantic validation), hosted tools, MCP, `agent.as_tool()` |
+| `model`, `model_settings` | Model and [sampling settings](sampling-parameters.md) such as temperature and `tool_choice` |
+| `tools` | `@function_tool` functions ([function calling](function-calling.md); schema from signature, Pydantic validation), hosted tools, MCP, `agent.as_tool()` |
 | `handoffs` | Agents or `handoff()` objects this agent may transfer to |
 | `output_type` | Pydantic/dataclass/TypedDict, which switches on [structured outputs](structured-outputs.md) |
 | `input_guardrails`, `output_guardrails` | Validation functions with tripwires |
@@ -69,7 +69,7 @@ Guardrails return a `GuardrailFunctionOutput` with a `tripwire_triggered` flag. 
 
 - **Input guardrails** run only on the *first* agent. By default they run **in parallel** with the agent for lower latency, so a tripwire can fire after tokens were spent or tools already ran. Set `run_in_parallel=False` to block until the check passes.
 - **Output guardrails** run only on the agent that produces the final output.
-- **Tool guardrails** wrap function tools on every invocation. They don't cover handoff calls, hosted tools (web search), computer or shell tools, or `as_tool()` agents.
+- **Tool guardrails** wrap function tools on every invocation. They don't cover handoff calls, hosted tools ([web search](web-search-apis.md)), computer or shell tools, or `as_tool()` agents.
 
 Common pattern: a cheap, fast model screens requests before an expensive agent runs. See [agent guardrails](agent-guardrails.md) and [guardrail tooling](guardrail-tooling.md) for the wider design space.
 
@@ -79,7 +79,7 @@ There are four mutually constraining options ([running agents](../sources/openai
 
 ## Tracing
 
-Tracing is **on by default**. It records a trace per run, with spans for agents, LLM generations, function calls, guardrails and handoffs, and sends them to OpenAI's Traces dashboard. Custom processors can add or replace exporters, and integrations exist for LangSmith, Langfuse, Arize Phoenix, MLflow, Datadog and others. Inputs and outputs are stored unless `trace_include_sensitive_data=False`. Tracing isn't available under Zero Data Retention ([tracing](../sources/openai-agents-sdk-tracing-docs.md)). See [LLM observability](llm-observability.md).
+Tracing is **on by default**. It records a trace per run, with spans for agents, LLM generations, function calls, guardrails and handoffs, and sends them to OpenAI's Traces dashboard. Custom processors can add or replace exporters, and integrations exist for [LangSmith](langsmith.md), [Langfuse](langfuse.md), [Arize Phoenix](arize-phoenix.md), MLflow, Datadog and others. Inputs and outputs are stored unless `trace_include_sensitive_data=False`. Tracing isn't available under Zero Data Retention ([tracing](../sources/openai-agents-sdk-tracing-docs.md)). See [LLM observability](llm-observability.md).
 
 ## Limitations and failure modes
 

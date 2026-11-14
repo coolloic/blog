@@ -29,19 +29,19 @@ lastmod: 2026-11-14
 tags: ["platforms", "openai", "api"]
 ---
 
-The **Responses API** (`POST /v1/responses`) is OpenAI's main endpoint for model calls, launched in March 2025 to merge Chat Completions' simplicity with the Assistants API's tools and state ([InfoQ](../sources/infoq-2025-openai-responses-api-agents-sdk.md)). A request takes `instructions` plus an `input` list of typed **items**; the response is an `output` list of items (`message`, `reasoning`, `function_call`, hosted-tool calls) rather than a single chat message. Unlike Chat Completions it can store conversation state on OpenAI's side, run hosted tools inside the request, and carry encrypted reasoning between turns ([migration guide](../sources/openai-migrate-to-responses-guide.md)). As of November 2026 it is the only route to the full GPT-6 feature set: GPT-6 Astra and GPT-6.1 Sol support tool calling only through Responses, and from GPT-5.4 on Chat Completions allows tool calling only with `reasoning_effort: none` ([reasoning guide](../sources/openai-reasoning-guide.md), [migration guide](../sources/openai-migrate-to-responses-guide.md)), and the Assistants API was sunset on 2026-08-26 ([migration guide](../sources/openai-migrate-to-responses-guide.md)).
+The **Responses API** (`POST /v1/responses`) is OpenAI's main endpoint for model calls, launched in March 2025 to merge Chat Completions' simplicity with the Assistants API's [tools](tools.md) and state ([InfoQ](../sources/infoq-2025-openai-responses-api-agents-sdk.md)). A request takes `instructions` plus an `input` list of typed **items**; the response is an `output` list of items (`message`, `reasoning`, `function_call`, hosted-tool calls) rather than a single chat message. Unlike Chat Completions it can store conversation state on OpenAI's side, run hosted tools inside the request, and carry encrypted reasoning between turns ([migration guide](../sources/openai-migrate-to-responses-guide.md)). As of November 2026 it is the only route to the full GPT-6 feature set: GPT-6 Astra and GPT-6.1 Sol support tool calling only through Responses, and from GPT-5.4 on Chat Completions allows tool calling only with `reasoning_effort: none` ([reasoning guide](../sources/openai-reasoning-guide.md), [migration guide](../sources/openai-migrate-to-responses-guide.md)), and the Assistants API was sunset on 2026-08-26 ([migration guide](../sources/openai-migrate-to-responses-guide.md)).
 
 ## Request and response shape
 
 | Aspect | Chat Completions | Responses |
 |---|---|---|
 | Unit | `messages` in and `choices[].message` out | typed items in `input` and `output` |
-| System prompt | `system`/`developer` message | top-level `instructions` |
+| [System prompt](system-prompts.md) | `system`/`developer` message | top-level `instructions` |
 | Candidates | `n` up to 128 | one generation, no `n` |
 | Function tool | nested under `function` (externally tagged) | fields at top level (internally tagged) |
 | Strict schemas | off unless `strict: true` | tried when `strict` is omitted, falls back to non-strict if the schema is incompatible |
-| Structured output | `response_format` | `text.format` |
-| Hosted tools | none (except search models) | web search, file search, code interpreter, shell, computer use, image generation, remote MCP |
+| [Structured output](structured-outputs.md) | `response_format` | `text.format` |
+| Hosted tools | none (except search models) | [web search](web-search-apis.md), file search, [code interpreter](code-execution-sandboxes.md), shell, [computer use](computer-use-agents.md), image generation, remote [MCP](model-context-protocol.md) |
 | Storage default | stored by default for new accounts | stored (30 days) unless `store: false` |
 | Streaming | `delta` chunks | typed semantic events |
 
@@ -68,13 +68,13 @@ flowchart TD
 
 `reasoning.context` (`auto` / `current_turn` / `all_turns`; GPT-5.6 defaults to `all_turns`) decides whether earlier turns' reasoning is reused; reuse works only within one model family ([reasoning guide](../sources/openai-reasoning-guide.md)).
 
-**Compaction** keeps long conversations inside the window: `context_management: [{type: "compaction", compact_threshold: N}]` compacts server-side when the prompt crosses N tokens, or `POST /responses/compact` returns a smaller window statelessly. The result is an opaque encrypted compaction item; with `previous_response_id` chaining you must not prune manually ([compaction guide](../sources/openai-compaction-guide.md)).
+**Compaction** keeps long conversations inside the [window](context-window.md): `context_management: [{type: "compaction", compact_threshold: N}]` compacts server-side when the prompt crosses N tokens, or `POST /responses/compact` returns a smaller window statelessly. The result is an opaque encrypted compaction item; with `previous_response_id` chaining you must not prune manually ([compaction guide](../sources/openai-compaction-guide.md)).
 
 **Background mode** (`background: true`) runs long reasoning or agent jobs asynchronously: poll while `queued`/`in_progress`, cancel via `/cancel`, and resume a dropped stream with `starting_after` a saved `sequence_number`. It stores data temporarily even with `store: false` (about 10 minutes for ZDR projects) ([background guide](../sources/openai-background-mode-guide.md)).
 
 ## Tools
 
-Function tools are `{type: "function", name, description, parameters, strict}`; calls arrive as `function_call` items with a `call_id`, and you answer with `function_call_output` items carrying the same `call_id`, passing back any reasoning items alongside ([function calling](../sources/openai-function-calling-guide.md); see [function calling](function-calling.md)). `tool_choice` accepts `auto`, `required`, a named function, `allowed_tools` (restrict without changing the tool list, which keeps the cache warm) and `none`. `tool_search` with `defer_loading` loads tools on demand on gpt-5.4+, and custom tools accept free text constrained by a Lark or regex grammar ([function calling](../sources/openai-function-calling-guide.md)).
+Function tools are `{type: "function", name, description, parameters, strict}`; calls arrive as `function_call` items with a `call_id`, and you answer with `function_call_output` items carrying the same `call_id`, passing back any reasoning items alongside ([function calling](../sources/openai-function-calling-guide.md); see [function calling](function-calling.md)). `tool_choice` accepts `auto`, `required`, a named function, `allowed_tools` (restrict without changing the tool list, which keeps the cache warm) and `none`. `tool_search` with `defer_loading` loads tools on demand on gpt-5.4+, and custom tools accept free text constrained by a Lark or regex grammar ([constrained decoding](constrained-decoding.md)) ([function calling](../sources/openai-function-calling-guide.md)).
 
 Hosted tools run inside the request and appear as their own output items:
 
@@ -95,7 +95,7 @@ Hosted tools run inside the request and appear as their own output items:
 
 - Caching is automatic by default (on GPT-5.6+ for prefixes of 1,024+ visible tokens; earlier models have model-dependent minimums). GPT-5.6+ adds `prompt_cache_options`: `implicit` (default; one automatic breakpoint at the latest message, leaving three for your own) or `explicit` (only your breakpoints, so no breakpoints means no caching), up to four writes per request, and `ttl` `30m` (write 1.25x) or `12h` (write 2.5x, Responses only), with reads at 0.1x input (0.05x on GPT-6.1 Sol and Terra; see also [pricing](../sources/openai-api-pricing.md)). Caches live on individual machines, so above roughly 15 RPM traffic can overflow to other machines and miss; on older models `prompt_cache_key` steers routing, while on GPT-5.6+ routing is automatic and the key is optional (mainly for cache accounting). Changing tools, reasoning effort or output format breaks the prefix ([caching guide](../sources/openai-prompt-caching-guide.md)).
 - Rate limits are RPM/TPM/RPD/TPD per tier (Free, Build $5, Launch $100, Grow $500 in cumulative purchases). TPM is charged on the larger of `max_tokens` and the estimated input size, so an inflated `max_tokens` wastes headroom ([rate limits](../sources/openai-rate-limits-guide.md); see [rate limits and retries](rate-limits-and-retries.md)).
-- Batch and Flex are half price, Fast mode 2x; input above 272K tokens pays a higher rate ([pricing](../sources/openai-api-pricing.md)).
+- [Batch](batch-processing.md) and Flex are half price, Fast mode 2x; input above 272K tokens pays a higher rate ([pricing](../sources/openai-api-pricing.md)).
 
 ## Side by side with Claude and Gemini
 
@@ -111,15 +111,15 @@ Synthesis, compiled from the three provider pages and their sources (Nov 2026):
 | Caching | automatic ≥1,024 tokens, optional breakpoints, 30 m / 12 h TTL | opt-in: block-level `cache_control` or one top-level "automatic" breakpoint, ≤4 breakpoints, 5 m / 1 h | implicit (≥4,096 on Gemini 3/4); explicit `cachedContents` on generateContent only |
 | Server loop hand-back | hosted-tool items inline | `pause_turn` | built-in tool steps inline |
 | Files lifetime | until deleted | until deleted | auto-deleted after 48 h |
-| Sampling params | `temperature` 0-2, `top_p` documented on Chat Completions | 400 on version `2026-10-21` | silently ignored on Gemini 3.6 Flash+ |
+| [Sampling params](sampling-parameters.md) | `temperature` 0-2, `top_p` documented on Chat Completions | 400 on version `2026-10-21` | silently ignored on Gemini 3.6 Flash+ |
 
 Sources: [conversation state](../sources/openai-conversation-state-guide.md), [migration guide](../sources/openai-migrate-to-responses-guide.md), [OpenAI caching](../sources/openai-prompt-caching-guide.md), [Anthropic API reference](../sources/anthropic-messages-api-reference.md), [Anthropic caching](../sources/anthropic-prompt-caching-docs.md), [Anthropic thinking](../sources/anthropic-thinking-docs.md), [Anthropic server tools](../sources/anthropic-server-tools-docs.md), [Anthropic sampling removal](../sources/anthropic-api-2026-10-21-sampling-removal.md), [Gemini Interactions](../sources/gemini-interactions-api-docs.md), [Gemini thinking](../sources/gemini-thinking-docs.md), [Gemini caching](../sources/gemini-context-caching-docs.md), [Gemini Files](../sources/gemini-files-api-docs.md), [Gemini generateContent](../sources/gemini-generate-content-api.md), [Chat Completions reference](../sources/openai-chat-completions-api-reference.md).
 
-**Porting checklist** (Synthesis): (1) move the system prompt to the target's slot and re-send it every turn wherever chaining forgets it; (2) remap tool-call IDs and the role that carries results; (3) never carry reasoning artifacts across providers, and drop them when switching model family; (4) redesign cache layout, since OpenAI and Gemini cache implicitly while Claude caching is opt-in (explicit breakpoints or a top-level automatic `cache_control`); (5) strip sampling parameters; (6) re-upload files per provider and plan for Gemini's 48-hour expiry; (7) re-run evals, because the same prompt behaves differently (see [model routing and fallbacks](model-routing-and-fallbacks.md)).
+**Porting checklist** (Synthesis): (1) move the system prompt to the target's slot and re-send it every turn wherever chaining forgets it; (2) remap tool-call IDs and the role that carries results; (3) never carry reasoning artifacts across providers, and drop them when switching model family; (4) redesign cache layout, since OpenAI and Gemini cache implicitly while Claude caching is opt-in (explicit breakpoints or a top-level automatic `cache_control`); (5) strip sampling parameters; (6) re-upload files per provider and plan for Gemini's 48-hour expiry; (7) re-run [evals](llm-evaluation.md), because the same prompt behaves differently (see [model routing and fallbacks](model-routing-and-fallbacks.md)).
 
 ## The "OpenAI-compatible" trap
 
-Many providers expose Chat Completions-shaped endpoints, not Responses. Anthropic's layer ignores `strict`, drops prompt caching, hoists all system messages to the top, hides thinking, and is positioned for testing rather than production ([Anthropic compat](../sources/anthropic-openai-sdk-compatibility.md)). Gemini's layer is beta, covers Chat Completions, embeddings, images and batch but not Responses, and silently ignores unknown parameters ([Gemini compat](../sources/gemini-openai-compatibility-docs.md)). Synthesis: "OpenAI-compatible" means Chat Completions syntax only; hosted tools, stored state and encrypted reasoning do not port. Use a native SDK or a gateway that translates semantics (see [LLM gateways](llm-gateways.md)).
+Many providers expose Chat Completions-shaped endpoints, not Responses. Anthropic's layer ignores `strict`, drops prompt caching, hoists all system messages to the top, hides thinking, and is positioned for testing rather than production ([Anthropic compat](../sources/anthropic-openai-sdk-compatibility.md)). Gemini's layer is beta, covers Chat Completions, [embeddings](embeddings.md), images and batch but not Responses, and silently ignores unknown parameters ([Gemini compat](../sources/gemini-openai-compatibility-docs.md)). Synthesis: "OpenAI-compatible" means Chat Completions syntax only; hosted tools, stored state and encrypted reasoning do not port. Use a native SDK or a gateway that translates semantics (see [LLM gateways](llm-gateways.md)).
 
 ## Failure modes and gotchas
 

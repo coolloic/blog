@@ -17,7 +17,7 @@ lastmod: 2026-11-14
 tags: ["retrieval", "rag", "prompting"]
 ---
 
-**Query transformation** is the pre-retrieval stage of a [RAG](retrieval-augmented-generation.md) pipeline in which an LLM (or rules) turns the user's raw question into one or more search requests that better match how the answer is written in the corpus. The output can be a cleaner query, a longer pseudo-document, several paraphrases, a more abstract question, a set of sub-questions, or a semantic query plus a structured metadata filter. It exists because retrieval caps what RAG can do: if the right chunk never comes back, the generator cannot recover ([Notebook](../sources/notebook-rag-cag.md)). The owner's guide lists it as the fix for vague or multi-part questions, next to HyDE for short queries that embed poorly ([Notebook](../sources/notebook-rag-cag.md)).
+**Query transformation** is the pre-retrieval stage of a [RAG](retrieval-augmented-generation.md) pipeline in which an LLM (or rules) turns the user's raw question into one or more search requests that better match how the answer is written in the corpus. The output can be a cleaner query, a longer pseudo-document, several paraphrases, a more abstract question, a set of sub-questions, or a semantic query plus a structured metadata filter. It exists because retrieval caps what RAG can do: if the right chunk never comes back, the generator cannot recover ([Notebook](../sources/notebook-rag-cag.md)). The owner's guide lists it as the fix for vague or multi-part questions, next to HyDE for short queries that [embed](embeddings.md) poorly ([Notebook](../sources/notebook-rag-cag.md)).
 
 ## Why the raw query is often the wrong search key
 
@@ -36,7 +36,7 @@ tags: ["retrieval", "rag", "prompting"]
 | HyDE | Hypothetical answer, embedded in place of the query | 1-N / 1 | Unsupervised Contriever nDCG@10 on DL19: 44.5 to 61.3 ([Gao et al.](../sources/gao-2022-hyde.md)) | Fake specifics pull in wrong documents; weak if the LLM knows nothing about the domain |
 | Multi-query / RAG-Fusion | 3+ paraphrases, results fused | 1 / k | More complete answers in a manual study ([Rackauckas](../sources/rackauckas-2024-rag-fusion.md)) | Off-topic variants cause drift; k x retrieval cost |
 | Step-back | A more general question, retrieved alongside the original | 1-2 / 2 | PaLM-2L TimeQA +27%, MuSiQue +7% ([Zheng et al.](../sources/zheng-2023-step-back-prompting.md)) | Over-abstraction retrieves textbook context, not the fact |
-| Decomposition (self-ask) | Ordered sub-questions, each retrieved | many / many, sequential | Beats chain-of-thought; adding search helps further ([Press et al.](../sources/press-2022-self-ask.md)) | Latency; one wrong intermediate answer poisons later hops |
+| Decomposition (self-ask) | Ordered sub-questions, each retrieved | many / many, sequential | Beats [chain-of-thought](chain-of-thought.md); adding search helps further ([Press et al.](../sources/press-2022-self-ask.md)) | Latency; one wrong intermediate answer poisons later hops |
 | Self-query (metadata filter) | Query string + structured filter + limit | 1 / 1 | No published benchmark; a framework pattern ([LangChain](../sources/langchain-self-query-retriever.md)) | Invalid or over-strict filters silently return nothing |
 
 ### Rewriting
@@ -47,7 +47,7 @@ Rewrite-Retrieve-Read inserts an LLM rewrite before a frozen retriever and froze
 
 Both use an LLM's parametric knowledge to produce text that "looks like" the answer.
 
-- **Query2doc** few-shot prompts an LLM for a pseudo-document and **concatenates it with the query**, so the original terms are kept. It helps sparse and dense retrievers with no fine-tuning ([Wang et al.](../sources/wang-2023-query2doc.md)).
+- **Query2doc** [few-shot prompts](few-shot-prompting.md) an LLM for a pseudo-document and **concatenates it with the query**, so the original terms are kept. It helps sparse and dense retrievers with no fine-tuning ([Wang et al.](../sources/wang-2023-query2doc.md)).
 - **HyDE** prompts an instruction model ("write a paragraph that answers the question"), samples **N** hypothetical documents at temperature 0.7, embeds each with the document encoder, and averages the vectors, also counting the query itself as one hypothesis. The search vector is that mean ([Gao et al.](../sources/gao-2022-hyde.md)). The factual errors in the fake document are expected to be squeezed out by the encoder's dense bottleneck. On TREC DL19 nDCG@10 it lifted unsupervised Contriever from 44.5 to 61.3, above BM25's 50.6. On DL20 it went from 42.1 to 57.9 ([Gao et al.](../sources/gao-2022-hyde.md)). HyDE's paper targets the zero-shot case (no relevance labels). On DL20 a fine-tuned Contriever still beat it by about 10% on nDCG@10 ([Gao et al.](../sources/gao-2022-hyde.md)).
 
 Synthesis: the gain shrinks as your embedder improves and as the domain moves away from what the LLM knows (internal product codes, private policies). There the hypothetical document invents plausible but wrong vocabulary.
@@ -56,7 +56,7 @@ Synthesis: the gain shrinks as your embedder improves and as the domain moves aw
 
 Generate several rephrasings, retrieve for each, merge. Two merge styles exist:
 
-- **Unique union.** LangChain's `MultiQueryRetriever` asks for 3 variants by default (prompt overridable), runs the wrapped retriever per variant and deduplicates. `include_original=False` by default, so the user's own wording is *not* searched unless you turn it on ([LangChain](../sources/langchain-multi-query-retriever.md)).
+- **Unique union.** [LangChain](langchain.md)'s `MultiQueryRetriever` asks for 3 variants by default (prompt overridable), runs the wrapped retriever per variant and deduplicates. `include_original=False` by default, so the user's own wording is *not* searched unless you turn it on ([LangChain](../sources/langchain-multi-query-retriever.md)).
 - **Rank fusion.** RAG-Fusion fuses the per-query rankings with [reciprocal rank fusion](hybrid-search.md) ([Rackauckas](../sources/rackauckas-2024-rag-fusion.md)), which scores documents by summed reciprocal ranks so items found by several queries rise ([Cormack et al.](../sources/cormack-2009-reciprocal-rank-fusion.md)).
 
 The reported weakness is drift: when variants stray from the question, answers go off topic ([Rackauckas](../sources/rackauckas-2024-rag-fusion.md)). Synthesis: always include the original query, and put a [reranker](reranking.md) scored against the *original* question after fusion, so drift cannot reach the prompt.

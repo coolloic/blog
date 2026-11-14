@@ -66,7 +66,7 @@ Contiguous per-request reservation wasted 60-80% of KV memory: only 20.4%-38.2% 
 
 ### Prefix caching (cross-request reuse)
 
-When requests share a prefix (system prompt, tool definitions, few-shot examples, chat history, a RAG document), the engine can reuse the cached KV for it and skip that part of prefill. This cuts TTFT and compute. Two designs:
+When requests share a prefix ([system prompt](system-prompts.md), tool definitions, [few-shot examples](few-shot-prompting.md), chat history, a [RAG](retrieval-augmented-generation.md) document), the engine can reuse the cached KV for it and skip that part of prefill. This cuts TTFT and compute. Two designs:
 
 ```mermaid
 flowchart TB
@@ -86,7 +86,7 @@ Diagram of vLLM's scheme, drawn from the [vLLM prefix caching docs](../sources/v
 | Index | Hash per full block, chained: hash(parent hash, tokens, extras) | Radix tree over token sequences (on CPU) |
 | Granularity | Full blocks only; a partial last block is not reused | Tree nodes, KV paged with one token per page |
 | Eviction | LRU free queue with ref counts; a sequence's tail block goes first | LRU over leaf nodes, recursively |
-| Isolation | LoRA ID, multimodal hashes and `cache_salt` mixed into the hash | Not described in source |
+| Isolation | [LoRA](peft-and-lora.md) ID, multimodal hashes and `cache_salt` mixed into the hash | Not described in source |
 | Extras | `sha256` default (since v0.11); `xxhash` is faster but non-cryptographic | Cache-aware scheduling to raise hit rate; no measurable overhead on misses |
 
 Sources: [vLLM docs](../sources/vllm-automatic-prefix-caching-docs.md), [LMSYS blog](../sources/lmsys-sglang-radixattention-blog.md), [SGLang paper](../sources/sglang-paper.md).
@@ -106,7 +106,7 @@ vLLM's `kv_cache_dtype="fp8"` (or `fp8_e4m3`, `fp8_e5m2`) stores K/V in one byte
 
 ## When to care
 
-Synthesis: do the per-token KV calculation for every self-hosted deployment before picking GPUs. Enable prefix caching whenever prompts share long stable prefixes, which covers agents, RAG with fixed instructions and multi-turn chat. Turn on FP8 KV when you are KV-bound (frequent preemption, low batch size) and evaluations show no regression. Prefer GQA/MLA models for long-context, high-concurrency services.
+Synthesis: do the per-token KV calculation for every self-hosted deployment before picking GPUs. Enable prefix caching whenever prompts share long stable prefixes, which covers agents, RAG with fixed instructions and multi-turn chat. Turn on FP8 KV when you are KV-bound (frequent preemption, low batch size) and [evaluations](llm-evaluation.md) show no regression. Prefer GQA/MLA models for long-context, high-concurrency services.
 
 ## Sources
 

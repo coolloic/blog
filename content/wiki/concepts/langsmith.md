@@ -12,7 +12,7 @@ lastmod: 2026-11-14
 tags: ["frameworks", "observability", "evaluation", "langsmith"]
 ---
 
-**LangSmith** is LangChain's commercial platform for [LLM observability](llm-observability.md) and [evaluation](llm-evaluation.md). It records every step of an application as a tree of **runs** grouped into **traces** and **threads**. It also stores **datasets** of test examples, runs **experiments** that score an application version with evaluators, and (as **LangSmith Deployment**, formerly LangGraph Platform) hosts LangGraph agents on an Agent Server. LangSmith is framework-agnostic: LangChain and LangGraph are traced automatically, and other code is traced through the SDK or OpenTelemetry. ([observability docs](../sources/langsmith-observability-docs.md), [tracing/deployment source](../sources/langsmith-tracing-sdk-and-deployment.md))
+**LangSmith** is [LangChain](langchain.md)'s commercial platform for [LLM observability](llm-observability.md) and [evaluation](llm-evaluation.md). It records every step of an application as a tree of **runs** grouped into **traces** and **threads**. It also stores **datasets** of test examples, runs **experiments** that score an application version with evaluators, and (as **LangSmith Deployment**, formerly LangGraph Platform) hosts [LangGraph](langgraph.md) agents on an Agent Server. LangSmith is framework-agnostic: LangChain and LangGraph are traced automatically, and other code is traced through the SDK or OpenTelemetry. ([observability docs](../sources/langsmith-observability-docs.md), [tracing/deployment source](../sources/langsmith-tracing-sdk-and-deployment.md))
 
 ## Data model
 
@@ -30,7 +30,7 @@ flowchart TD
 
 Definitions ([observability docs](../sources/langsmith-observability-docs.md)):
 
-- **Run:** one unit of work, comparable to an OTel span. Run types are `chain`, `llm`, `embedding`, `prompt`, `tool`, `retriever` and `parser`. A run carries inputs, outputs, error, tags, metadata, token counts, `total_cost`, and `first_token_time` for streamed calls.
+- **Run:** one unit of work, comparable to an OTel span. Run types are `chain`, `llm`, `embedding`, `prompt`, `tool`, `retriever` and `parser`. A run carries inputs, outputs, error, tags, metadata, token counts, `total_cost`, and `first_token_time` for [streamed](streaming.md) calls.
 - **Trace:** the runs sharing one trace ID, capped at **25,000 runs**. Further runs are rejected.
 - **Thread:** the traces sharing a `thread_id` metadata value, i.e. one multi-turn conversation.
 - **Feedback:** a key plus a score attached to a run. It comes from users, evaluators or annotators.
@@ -47,8 +47,8 @@ Failure modes:
 
 - **Lost traces in short-lived processes.** Upload runs on a background thread, so a serverless function or script can exit before its traces are sent. Call `client.flush()` in a `finally` block ([SDK source](../sources/langsmith-tracing-sdk-and-deployment.md)).
 - **Silently dropped OTel spans.** Ingestion is asynchronous and returns 200 before processing. A span whose parent never arrives, for example because an upstream sampler dropped it, is discarded without error.
-- **Oversized traces.** Beyond 25,000 runs the extra runs are rejected. Synthesis: very long agent loops or big batch jobs should be split into several traces.
-- **Sensitive data.** Traces store full prompts and outputs. Synthesis: redact before tracing (for example with LangChain's `PIIMiddleware` or by masking inputs) and weigh retention when PII is involved.
+- **Oversized traces.** Beyond 25,000 runs the extra runs are rejected. Synthesis: very long [agent loops](agent-loop.md) or big batch jobs should be split into several traces.
+- **Sensitive data.** Traces store full prompts and outputs. Synthesis: redact before tracing (for example with LangChain's `PIIMiddleware` or by masking inputs) and weigh retention when [PII](pii-and-data-privacy.md) is involved.
 
 ## Evaluation
 
@@ -64,7 +64,7 @@ Here `target(inputs) -> outputs`, and an evaluator such as `correct(inputs, outp
 | Evaluator | Strength | Watch out for |
 |---|---|---|
 | Code (exact match, JSON valid, compiles) | Cheap, deterministic | Only checks what is mechanically checkable |
-| [LLM-as-judge](llm-as-judge.md) | Scores open-ended quality; reference-free or reference-based | Judge bias and cost; few-shot judge prompts help |
+| [LLM-as-judge](llm-as-judge.md) | Scores open-ended quality; reference-free or reference-based | Judge bias and cost; [few-shot](few-shot-prompting.md) judge prompts help |
 | Human (annotation queues, single or pairwise) | Ground truth, rubric-driven | Throughput; queues support multiple reviewers |
 | Pairwise | Easier than absolute scoring | Needs two versions |
 
@@ -80,7 +80,7 @@ Offline evaluation runs on datasets that have references and supports benchmarki
 
 Base traces are kept for 14 days and extended traces (an upgrade billed separately) for 180 days. The SaaS deletes trace data 180 days after ingestion, but examples saved to datasets persist. Agent Server usage is metered in LSUs (1 LSU = $1), for example 0.0675 LSU per runtime vCPU-hour and 0.009 LSU per runtime GiB-hour. ([pricing source](../sources/langsmith-tracing-sdk-and-deployment.md), [observability docs](../sources/langsmith-observability-docs.md))
 
-Synthesis: for data residency or regulated workloads, LangSmith self-hosting requires Enterprise. That is a common reason teams pick an open-source tracer instead, or export OTel to their existing APM.
+Synthesis: for data residency or regulated workloads, LangSmith self-hosting requires Enterprise. That is a common reason teams pick an open-source tracer (such as [Langfuse](langfuse.md) or [Arize Phoenix](arize-phoenix.md)) instead, or export OTel to their existing APM.
 
 ## When to use / when not
 

@@ -15,11 +15,11 @@ lastmod: 2026-11-14
 tags: ["frameworks", "agents", "langgraph"]
 ---
 
-**LangGraph** is LangChain's open-source orchestration runtime for stateful, long-running LLM applications. You declare a **typed shared state**, **nodes** (functions that read state and return partial updates) and **edges** (static or conditional control flow, cycles allowed). The compiled graph runs in discrete **super-steps** modelled on Google's Pregel, and an optional **checkpointer** saves state after every super-step. That checkpoint loop is what provides multi-turn memory, durable execution, `interrupt()`-based human-in-the-loop, and time travel. LangGraph 1.0 (22 Oct 2025) kept the core API unchanged, and LangChain's `create_agent` is itself compiled to a LangGraph graph. ([graph API docs](../sources/langgraph-graph-api-docs.md), [announcement](../sources/langchain-langgraph-1-0-announcement.md))
+**LangGraph** is [LangChain](langchain.md)'s open-source orchestration runtime for stateful, long-running LLM applications. You declare a **typed shared state**, **nodes** (functions that read state and return partial updates) and **edges** (static or conditional control flow, cycles allowed). The compiled graph runs in discrete **super-steps** modelled on Google's Pregel, and an optional **checkpointer** saves state after every super-step. That checkpoint loop is what provides multi-turn memory, [durable execution](durable-agent-execution.md), `interrupt()`-based [human-in-the-loop](human-in-the-loop.md), and time travel. LangGraph 1.0 (22 Oct 2025) kept the core API unchanged, and LangChain's `create_agent` is itself compiled to a LangGraph graph. ([graph API docs](../sources/langgraph-graph-api-docs.md), [announcement](../sources/langchain-langgraph-1-0-announcement.md))
 
 ## Why a graph rather than a chain
 
-A chain is a one-way pipe. Once an app must loop until done, branch on model output, coordinate several agents or wait for a human, it needs cycles and persisted state ([notebook](../sources/notebook-llm-apps.md)). The canonical tool agent ([agent loop](agent-loop.md)) is `START → agent ⇄ tools → END`, built with `StateGraph`, `ToolNode` and the `tools_condition` router.
+A chain is a one-way pipe. Once an app must loop until done, branch on model output, coordinate several agents or wait for a human, it needs cycles and persisted state ([notebook](../sources/notebook-llm-apps.md)). The canonical [tool](tools.md) agent ([agent loop](agent-loop.md)) is `START → agent ⇄ tools → END`, built with `StateGraph`, `ToolNode` and the `tools_condition` router.
 
 ## Execution model
 
@@ -77,7 +77,7 @@ Compile with `checkpointer=` and pass `{"configurable": {"thread_id": ...}}`. Ea
 
 All implement `put`, `put_writes`, `get_tuple` and `list`. The default serializer is `JsonPlusSerializer`. `EncryptedSerializer` encrypts state at rest with AES, keyed by `LANGGRAPH_AES_KEY`. Checkpoints grow without bound, so prune them on a schedule. ([persistence docs](../sources/langgraph-persistence-docs.md))
 
-Checkpointers are thread-scoped short-term memory. **Stores** (`put/get/search` over namespaces, with optional embedding index) hold cross-thread long-term memory such as user profiles and facts ([memory docs](../sources/langgraph-memory-docs.md)). See [agent memory](agent-memory.md).
+Checkpointers are thread-scoped short-term memory. **Stores** (`put/get/search` over namespaces, with optional [embedding](embeddings.md) index) hold cross-thread long-term memory such as user profiles and facts ([memory docs](../sources/langgraph-memory-docs.md)). See [agent memory](agent-memory.md).
 
 ## Interrupts and human-in-the-loop
 
@@ -134,8 +134,8 @@ LangGraph apps can run self-managed (your own checkpointer and server) or on **L
 
 ## When to use / when not
 
-- **Use:** long-running or resumable workflows; approval gates; multi-agent supervisors or handoffs; deterministic steps mixed with LLM steps; when you need replay or forking for debugging and evals.
-- **Avoid or defer:** stateless one-shot calls or linear RAG (use LCEL or a plain SDK); teams wanting a higher-level role abstraction ([CrewAI](crewai.md), [AutoGen](autogen.md)); or durable-execution needs already met by a workflow engine. Synthesis: in that last case, call LLM steps as activities rather than adding a second checkpoint layer.
+- **Use:** long-running or resumable workflows; approval gates; multi-agent supervisors or handoffs; deterministic steps mixed with LLM steps; when you need replay or forking for debugging and [evals](agent-evaluation.md).
+- **Avoid or defer:** stateless one-shot calls or linear [RAG](retrieval-augmented-generation.md) (use LCEL or a plain SDK); teams wanting a higher-level role abstraction ([CrewAI](crewai.md), [AutoGen](autogen.md)); or durable-execution needs already met by a workflow engine. Synthesis: in that last case, call LLM steps as activities rather than adding a second checkpoint layer.
 
 ## Sources
 

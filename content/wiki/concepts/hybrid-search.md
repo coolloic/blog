@@ -15,7 +15,7 @@ lastmod: 2026-11-14
 tags: ["retrieval", "rag", "search"]
 ---
 
-**Hybrid search** runs a lexical (keyword, usually BM25) search and a dense (embedding) search over the same corpus and merges the two result lists into one ranking. Lexical search matches exact terms: product codes, error strings, names, acronyms. Dense search matches meaning: paraphrases and synonyms. Each catches what the other misses, which is why the owner's guide recommends hybrid search wherever "exact IDs/keywords matter alongside meaning" ([Notebook](../sources/notebook-rag-cag.md)). In Anthropic's tests, adding BM25 to contextual embeddings cut retrieval failures from 3.7% to 2.9% ([Anthropic](../sources/anthropic-contextual-retrieval.md)).
+**Hybrid search** runs a lexical (keyword, usually BM25) search and a dense (embedding) search over the same corpus and merges the two result lists into one ranking. Lexical search matches exact terms: product codes, error strings, names, acronyms. Dense search matches meaning: paraphrases and synonyms. Each catches what the other misses, which is why the owner's guide recommends hybrid search wherever "exact IDs/keywords matter alongside meaning" ([Notebook](../sources/notebook-rag-cag.md)). In Anthropic's tests, adding BM25 to [contextual embeddings](contextual-retrieval.md) cut retrieval failures from 3.7% to 2.9% ([Anthropic](../sources/anthropic-contextual-retrieval.md)).
 
 ## The two retrievers
 
@@ -73,7 +73,7 @@ Synthesis: Postgres can do the same by combining full-text search and pgvector r
 
 ## Learned sparse and multi-vector alternatives
 
-Synthesis: learned sparse models (SPLADE-style term expansion) and multi-vector late interaction (see [ColBERT under reranking](reranking.md)) sit between BM25 and single-vector dense retrieval. They can replace one side of a hybrid, at the cost of larger indexes.
+Synthesis: learned sparse models (SPLADE-style term expansion) and multi-vector [late interaction](late-interaction-retrieval.md) (see [ColBERT under reranking](reranking.md)) sit between BM25 and single-vector dense retrieval. They can replace one side of a hybrid, at the cost of larger indexes.
 
 ## Failure modes
 

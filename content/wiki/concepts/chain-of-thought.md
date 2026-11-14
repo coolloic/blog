@@ -36,7 +36,7 @@ tags: ["prompting", "reasoning"]
 
 **Zero-shot CoT.** Kojima et al. used two stages: (1) append "Let's think step by step" and generate reasoning; (2) feed back prompt plus reasoning plus an answer trigger ("Therefore, the answer is…") to get a parseable answer. With text-davinci-002, MultiArith rose from 17.7% to 78.7% and GSM8K from 10.4% to 40.7%. It underperforms well-crafted few-shot CoT, gave no gain on commonsense tasks, and is sensitive to trigger wording ([Kojima et al.](../sources/kojima-2022-zero-shot-reasoners.md)).
 
-**Self-consistency.** Instead of greedy decoding of one chain, sample many and take the most common final answer. The idea is that correct reasoning paths converge while errors scatter. With 40 sampled paths, gains over CoT were GSM8K +17.9, SVAMP +11.0, AQuA +12.2, StrategyQA +6.4, ARC-challenge +3.9 points; performance saturates quickly, so 5–10 paths capture most of it ([Wang et al.](../sources/wang-2022-self-consistency.md)). The owner's experiment runs the CoT chain five times and votes on the `Answer:` lines ([Notebook 16](../sources/notebook-16-self-consistency.md)).
+**Self-consistency.** Instead of [greedy decoding](sampling-parameters.md) of one chain, sample many and take the most common final answer. The idea is that correct reasoning paths converge while errors scatter. With 40 sampled paths, gains over CoT were GSM8K +17.9, SVAMP +11.0, AQuA +12.2, StrategyQA +6.4, ARC-challenge +3.9 points; performance saturates quickly, so 5–10 paths capture most of it ([Wang et al.](../sources/wang-2022-self-consistency.md)). The owner's experiment runs the CoT chain five times and votes on the `Answer:` lines ([Notebook 16](../sources/notebook-16-self-consistency.md)).
 
 **Tree of Thoughts (ToT).** Four choices: how big a "thought" is; how to generate candidates (sample independently, or propose several in one prompt); how to evaluate states (score each as sure/maybe/impossible, or vote); and the search (BFS keeping the best *b*, or DFS with pruning and backtracking). On Game of 24 with GPT-4: CoT 4%, CoT-SC 9%, ToT (b=5) 74%, at about $0.74 per problem ([Yao et al.](../sources/yao-2023-tree-of-thoughts.md)). The owner's experiment is a simplified beam search with separate proposer and scorer models ([Notebook 17](../sources/notebook-17-tree-of-thoughts.md)).
 
@@ -96,7 +96,7 @@ Synthesis: the table below combines the vendor guidance and papers above.
 | Frontier reasoning model | Don't prompt CoT; tune effort/thinking settings |
 | Non-reasoning or small hosted model, multi-step task | Few-shot or zero-shot CoT with an answer marker |
 | Single verifiable answer, accuracy matters more than cost | Self-consistency with N=5–10 (Wang et al. sampled 40 paths but say 5–10 realises most of the gain) |
-| Search or planning with dead ends | ToT or an agent loop with backtracking |
+| Search or planning with dead ends | ToT or an [agent loop](agent-loop.md) with backtracking |
 | Simple lookup, classification or extraction | No CoT: it adds latency and variance |
 | Need an explanation users will trust as the cause | CoT is not sufficient; add grounding and citations |
 

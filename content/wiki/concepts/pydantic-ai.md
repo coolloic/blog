@@ -45,11 +45,11 @@ Synthesis: an illustrative sketch assembled from the documented APIs, not copied
 
 | Concept | Mechanism |
 |---|---|
-| **Run modes** | `run()` (async), `run_sync()`, `run_stream()` (stream text or partial structured output), `run_stream_events()` (all events), `iter()` (step through the underlying graph node by node) |
+| **Run modes** | `run()` (async), `run_sync()`, `run_stream()` ([stream](streaming.md) text or partial structured output), `run_stream_events()` (all events), `iter()` (step through the underlying graph node by node) |
 | **Dependencies** | Any type (usually a dataclass) passed as `deps=` per run and reached via `RunContext[Deps]` in tools, dynamic instructions and output validators. Type-checked, and replaceable in tests |
-| **Tools** | `@agent.tool` (gets `RunContext`) and `@agent.tool_plain`. The JSON schema comes from the signature; descriptions come from the docstring (Google, NumPy and Sphinx styles, parsed with griffe). Raising `ModelRetry` sends a message back so the model can fix its call |
-| **Toolsets / MCP** | Group tools; MCP servers plug in as toolsets ([MCP in practice](mcp-in-practice.md)) |
-| **Capabilities** | "The primary extension point": reusable bundles of tools, lifecycle hooks, instructions, model settings and model selection (memory, guardrails, cost tracking, approvals). They can be loaded on demand by the model. A separate Harness package ships prebuilt `Coder` and `Researcher` agents |
+| **[Tools](tools.md)** | `@agent.tool` (gets `RunContext`) and `@agent.tool_plain`. The JSON schema comes from the signature; descriptions come from the docstring (Google, NumPy and Sphinx styles, parsed with griffe). Raising `ModelRetry` sends a message back so the model can fix its call |
+| **Toolsets / MCP** | Group tools; [MCP](model-context-protocol.md) servers plug in as toolsets ([MCP in practice](mcp-in-practice.md)) |
+| **Capabilities** | "The primary extension point": reusable bundles of tools, lifecycle hooks, instructions, model settings and model selection ([memory](agent-memory.md), [guardrails](agent-guardrails.md), cost tracking, [approvals](human-in-the-loop.md)). They can be loaded on demand by the model. A separate Harness package ships prebuilt `Coder` and `Researcher` agents |
 | **Message history** | Pass prior messages to continue a conversation |
 
 Sources: [docs](../sources/pydantic-ai-docs.md).
@@ -61,11 +61,11 @@ Sources: [docs](../sources/pydantic-ai-docs.md).
 | Mode | How | Trade-off |
 |---|---|---|
 | **Tool Output** (default) | Each output type becomes an "output tool" whose parameters schema is the type; unions become one tool per member to keep schemas simple | Works on nearly every model with [function calling](function-calling.md) |
-| `NativeOutput` | Provider JSON-schema response format ([structured outputs](structured-outputs.md)) | Constrained decoding, but not all models support it, with schema restrictions; older Gemini models could not combine it with function tools |
+| `NativeOutput` | Provider JSON-schema response format ([structured outputs](structured-outputs.md)) | [Constrained decoding](constrained-decoding.md), but not all models support it, with schema restrictions; older Gemini models could not combine it with function tools |
 | `PromptedOutput` | Schema placed in the instructions (plus JSON mode if available), then validated | Universal but least reliable |
 | `TextOutput` | Plain text passed to a function | For free text |
 
-`@agent.output_validator` adds async or IO checks (e.g. run an EXPLAIN on generated SQL). Each `ModelRetry` raised there consumes the output retry budget, which **defaults to 1** (`retries={'output': N}`).
+`@agent.output_validator` adds async or IO checks (e.g. run an EXPLAIN on [generated SQL](text-to-sql.md)). Each `ModelRetry` raised there consumes the output retry budget, which **defaults to 1** (`retries={'output': N}`).
 
 ```mermaid
 flowchart TD
@@ -85,7 +85,7 @@ Synthesis: the diagram summarizes the documented loop; it is not drawn in the do
 ## Production features
 
 - **Usage limits.** `UsageLimits(request_limit=..., tool_calls_limit=..., token limits)` guard against runaway loops. Exceeding a limit **raises** `UsageLimitExceeded` instead of returning partial output. `tool_calls_limit` is checked before execution, so a parallel batch that would exceed it runs none of its calls ([docs](../sources/pydantic-ai-docs.md)).
-- **Durable execution.** Nine engines: Temporal, DBOS, Prefect, Restate, AWS Lambda, Absurd, pgtask, Azure Durable Task and Airflow. They journal model and tool calls, so a restarted run replays the completed ones and retries the one in flight. The docs separate this from **persistence** (saving, resuming or forking a run), which needs no engine.
+- **[Durable execution](durable-agent-execution.md).** Nine engines: Temporal, DBOS, Prefect, Restate, AWS Lambda, Absurd, pgtask, Azure Durable Task and Airflow. They journal model and tool calls, so a restarted run replays the completed ones and retries the one in flight. The docs separate this from **persistence** (saving, resuming or forking a run), which needs no engine.
 - **Observability.** OpenTelemetry instrumentation, with Pydantic Logfire as the first-party backend ([LLM observability](llm-observability.md)).
 - **Evals and graphs.** Pydantic Evals for [evaluation](llm-evaluation.md); `pydantic-graph` (typed nodes, edges from return types, persistence) when control flow is a real state machine ([comparisons](../sources/pydantic-ai-framework-comparisons.md)).
 - **Testing.** `TestModel` and `FunctionModel` replace real models, `Agent.override` swaps model, deps or toolsets, and `ALLOW_MODEL_REQUESTS=False` blocks accidental real calls in CI ([docs](../sources/pydantic-ai-docs.md)).
@@ -98,7 +98,7 @@ Synthesis: the diagram summarizes the documented loop; it is not drawn in the do
 - **A hard stop on request limits.** A run that hits `request_limit` raises even when the model has already gathered what it needs. The docs suggest a capability that warns the model as it nears the limit.
 - **Fast-moving API.** Minor releases have carried breaking changes; for example, v2.60.0 (2026-10-22) stopped recording `RetryPromptPart`, so `isinstance` checks silently match nothing ([docs](../sources/pydantic-ai-docs.md)). Pin versions and read the upgrade guide.
 - **Python only.** For a TypeScript stack, see the [Vercel AI SDK](vercel-ai-sdk.md).
-- **Vendor-written comparisons.** The feature tables comparing Pydantic AI with LangChain and Vercel are written by Pydantic ([comparisons](../sources/pydantic-ai-framework-comparisons.md)).
+- **Vendor-written comparisons.** The feature tables comparing Pydantic AI with [LangChain](langchain.md) and Vercel are written by Pydantic ([comparisons](../sources/pydantic-ai-framework-comparisons.md)).
 
 ## When to use / when not
 

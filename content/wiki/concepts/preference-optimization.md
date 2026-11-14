@@ -20,7 +20,7 @@ lastmod: 2026-11-14
 tags: ["training", "fine-tuning", "rlhf", "alignment"]
 ---
 
-**Preference optimization** is the stage of [fine-tuning](fine-tuning.md) that comes after SFT. Instead of imitating fixed demonstrations, the model learns from *comparisons* (A is better than B) or *rewards* (a score for each sampled output), and is pushed toward higher-preference behaviour while a KL constraint keeps it near a reference model. The family includes RLHF with a learned reward model and PPO ([InstructGPT](../sources/instructgpt-ouyang-2022.md)), offline methods such as DPO that skip the reward model and the RL loop ([DPO](../sources/dpo-rafailov-2023.md)), critic-free online RL such as GRPO with verifiable rewards ([GRPO](../sources/deepseekmath-grpo-2024.md), [R1](../sources/deepseek-r1-paper.md)), and variants that replace human labels with AI feedback ([Constitutional AI](../sources/constitutional-ai-bai-2022.md), [RLAIF](../sources/rlaif-vs-rlhf-lee-2023.md)).
+**Preference optimization** is the stage of [fine-tuning](fine-tuning.md) that comes after SFT. Instead of imitating fixed demonstrations, the model learns from *comparisons* (A is better than B) or *rewards* (a score for each sampled output), and is pushed toward higher-preference behaviour while a KL constraint keeps it near a reference model. The family includes RLHF with a learned reward model and PPO ([InstructGPT](../sources/instructgpt-ouyang-2022.md)), offline methods such as DPO that skip the reward model and the RL loop ([DPO](../sources/dpo-rafailov-2023.md)), critic-free online RL such as GRPO with [verifiable rewards](reinforcement-fine-tuning.md) ([GRPO](../sources/deepseekmath-grpo-2024.md), [R1](../sources/deepseek-r1-paper.md)), and variants that replace human labels with AI feedback ([Constitutional AI](../sources/constitutional-ai-bai-2022.md), [RLAIF](../sources/rlaif-vs-rlhf-lee-2023.md)).
 
 All of them optimise roughly the same objective: maximise expected reward minus β·KL(π‖π_ref). The reference model π_ref is usually the SFT checkpoint ([DPO](../sources/dpo-rafailov-2023.md)).
 
@@ -46,7 +46,7 @@ flowchart TD
 2. **Reward model (RM).** Labellers ranked 4–9 responses per prompt (~33k prompts). A 6B RM was trained on all the pairwise comparisons; 175B RMs were unstable.
 3. **PPO** against the RM (~31k prompts), with a per-token KL penalty to the SFT model to limit reward over-optimisation.
 
-Results: a 1.3B InstructGPT was preferred to 175B GPT-3. The costs: an "alignment tax" on some NLP benchmarks, reduced by mixing pre-training gradients (PPO-ptx). Inter-labeller agreement was only about 73–77%, so preference labels are noisy ([InstructGPT](../sources/instructgpt-ouyang-2022.md)). PPO needs four models in memory: policy, reference, reward model and a value model (critic) usually as large as the policy ([GRPO](../sources/deepseekmath-grpo-2024.md)).
+Results: a 1.3B InstructGPT was preferred to 175B GPT-3. The costs: an "alignment tax" on some [NLP benchmarks](benchmarks.md), reduced by mixing pre-training gradients (PPO-ptx). Inter-labeller agreement was only about 73–77%, so preference labels are noisy ([InstructGPT](../sources/instructgpt-ouyang-2022.md)). PPO needs four models in memory: policy, reference, reward model and a value model (critic) usually as large as the policy ([GRPO](../sources/deepseekmath-grpo-2024.md)).
 
 ## DPO: Direct Preference Optimization
 
@@ -69,12 +69,12 @@ L = −log σ( β·[log πθ(y_w|x)/π_ref(y_w|x) − log πθ(y_l|x)/π_ref(y_l
 
 **DeepSeek-R1** made this approach widely known:
 
-- R1-Zero ran GRPO straight on a base model with **rule-based rewards** (answer correctness via math checks or compiler tests, plus a format reward) and developed long chains of thought, self-verification and reflection.
+- R1-Zero ran GRPO straight on a base model with **rule-based rewards** (answer correctness via math checks or compiler tests, plus a format reward) and developed long [chains of thought](chain-of-thought.md), self-verification and reflection.
 - Neural reward models were avoided for reasoning because they invite **reward hacking** at scale. Process reward models (PRMs) and MCTS were tried and abandoned.
 - R1-Zero's outputs were hard to read and mixed languages. R1 fixed this with cold-start SFT, a language-consistency reward, rejection-sampling SFT and a final RL stage ([R1](../sources/deepseek-r1-paper.md)).
 - See [reasoning models](reasoning-models.md) and [test-time compute](test-time-compute.md).
 
-**TRL `GRPOTrainer` defaults** (read 2026-11-14): `num_generations=8`, `beta=0.0` (KL off, no reference model loaded), `loss_type="dapo"` (token-level normalisation; `dr_grpo` removes length bias), `epsilon=0.2` clipping, `scale_rewards="group"`, LR 1e-6. TRL notes that DeepSeek-R1 used β=0.001. Rewards are plain Python functions returning one float per completion, summed or weighted. Generation runs in vLLM, colocated or as a server ([TRL](../sources/hugging-face-trl-docs.md)). RL learns little per episode, so LoRA matches full fine-tuning here even at rank 1 ([LoRA Without Regret](../sources/lora-without-regret.md)). Unsloth suggests LR around 5e-6 for DPO/GRPO ([Unsloth](../sources/unsloth-lora-hyperparameters.md)).
+**TRL `GRPOTrainer` defaults** (read 2026-11-14): `num_generations=8`, `beta=0.0` (KL off, no reference model loaded), `loss_type="dapo"` (token-level normalisation; `dr_grpo` removes length bias), `epsilon=0.2` clipping, `scale_rewards="group"`, LR 1e-6. TRL notes that DeepSeek-R1 used β=0.001. Rewards are plain Python functions returning one float per completion, summed or weighted. Generation runs in [vLLM](llm-inference-serving.md), colocated or as a server ([TRL](../sources/hugging-face-trl-docs.md)). RL learns little per episode, so [LoRA](peft-and-lora.md) matches full fine-tuning here even at rank 1 ([LoRA Without Regret](../sources/lora-without-regret.md)). Unsloth suggests LR around 5e-6 for DPO/GRPO ([Unsloth](../sources/unsloth-lora-hyperparameters.md)).
 
 ## RLAIF and Constitutional AI
 
@@ -96,8 +96,8 @@ Sources: rows draw on [InstructGPT](../sources/instructgpt-ouyang-2022.md), [DPO
 ## Managed options (as of 2026-11-14)
 
 - **OpenAI:** DPO on gpt-4.1 and gpt-4.1-mini, for summary focus and chat tone. The platform is winding down: existing customers can't create jobs from 2027-01-06, and both base models shut down 2027-01-14 ([OpenAI](../sources/openai-model-optimization-guide.md), [deprecations](../sources/openai-deprecations-fine-tuning.md)).
-- **Vertex AI:** preference tuning on Gemini 2.5 Flash/Flash-Lite with hundreds to thousands of pairs, and RL fine-tuning with reward functions on Gemini 3.5 Flash and 3.1 Flash-Lite with dozens to a few hundred prompts ([Vertex AI](../sources/vertex-ai-gemini-tuning.md)).
-- **Bedrock:** reinforcement fine-tuning with AWS Lambda reward functions, using uploaded prompts or invocation logs ([Bedrock](../sources/bedrock-model-customization.md)).
+- **[Vertex AI](google-vertex-ai.md):** preference tuning on Gemini 2.5 Flash/Flash-Lite with hundreds to thousands of pairs, and RL fine-tuning with reward functions on Gemini 3.5 Flash and 3.1 Flash-Lite with dozens to a few hundred prompts ([Vertex AI](../sources/vertex-ai-gemini-tuning.md)).
+- **[Bedrock](amazon-bedrock.md):** reinforcement fine-tuning with AWS Lambda reward functions, using uploaded prompts or invocation logs ([Bedrock](../sources/bedrock-model-customization.md)).
 
 ## Failure modes
 

@@ -19,7 +19,7 @@ lastmod: 2026-11-14
 tags: ["frameworks", "agents", "typescript", "workflows", "memory"]
 ---
 
-**Mastra** is an open-source TypeScript framework for building AI agents and agent-powered applications. One package gives you agents with tools, graph-style workflows, memory, RAG, evals (called "scorers"), observability and a local developer UI (Studio) ([docs](../sources/mastra-docs-agents.md)). Version 1.0 went stable on 2026-01-20. At that point it reported over 300k weekly npm downloads and production users including Replit, PayPal and Sanity ([1.0 announcement](../sources/mastra-1-0-announcement.md)). By 2026-11-12 `@mastra/core` had reached 1.83.0 ([repo](../sources/mastra-github-repo.md)). Most code is Apache 2.0; anything under an `ee/` directory is under a separate enterprise licence ([repo](../sources/mastra-github-repo.md)). Mastra is to TypeScript roughly what [LangChain](langchain.md) plus [LangGraph](langgraph.md) is to Python: an opinionated, batteries-included layer above a model SDK. It is compatible with [Vercel AI SDK](vercel-ai-sdk.md) v6 models ([1.0 announcement](../sources/mastra-1-0-announcement.md)).
+**Mastra** is an open-source TypeScript framework for building AI agents and agent-powered applications. One package gives you agents with [tools](tools.md), graph-style workflows, memory, [RAG](retrieval-augmented-generation.md), evals (called "scorers"), observability and a local developer UI (Studio) ([docs](../sources/mastra-docs-agents.md)). Version 1.0 went stable on 2026-01-20. At that point it reported over 300k weekly npm downloads and production users including Replit, PayPal and Sanity ([1.0 announcement](../sources/mastra-1-0-announcement.md)). By 2026-11-12 `@mastra/core` had reached 1.83.0 ([repo](../sources/mastra-github-repo.md)). Most code is Apache 2.0; anything under an `ee/` directory is under a separate enterprise licence ([repo](../sources/mastra-github-repo.md)). Mastra is to TypeScript roughly what [LangChain](langchain.md) plus [LangGraph](langgraph.md) is to Python: an opinionated, batteries-included layer above a model SDK. It is compatible with [Vercel AI SDK](vercel-ai-sdk.md) v6 models ([1.0 announcement](../sources/mastra-1-0-announcement.md)).
 
 ## Architecture
 
@@ -55,14 +55,14 @@ Processors are Mastra's hook system around the loop ([processors](../sources/mas
 
 | Hook | Runs | Typical use |
 |---|---|---|
-| `processInput` | once, before the first model call | PII redaction, prompt-injection check |
+| `processInput` | once, before the first model call | PII redaction, [prompt-injection](prompt-injection.md) check |
 | `processInputStep` | before every loop step | swap model or tools mid-loop, trim context |
 | `processLLMRequest` / `processLLMResponse` | around each provider call | transient prompt rewrites, cache writes |
 | `processOutputStream` | per streamed chunk | drop or redact chunks |
 | `processOutputStep` / `processOutputResult` | after each step / at the end | validate and request a retry, transform final output |
 | `processAPIError` | on provider error | repair and retry |
 
-Built-ins include `ModerationProcessor`, `PromptInjectionDetector`, `PIIDetector`, `TokenLimiter`, `ToolCallFilter`, `ToolSearchProcessor` and `TokenCostControl`. `abort()` raises a **tripwire**, which reaches clients as a `tripwire` stream chunk or `result.tripwire`. Step retries only happen if `maxProcessorRetries` is set ([processors](../sources/mastra-processors-docs.md)). See [agent guardrails](agent-guardrails.md) and [guardrail tooling](guardrail-tooling.md).
+Built-ins include `ModerationProcessor` ([content moderation](content-moderation.md)), `PromptInjectionDetector`, `PIIDetector`, `TokenLimiter`, `ToolCallFilter`, `ToolSearchProcessor` and `TokenCostControl`. `abort()` raises a **tripwire**, which reaches clients as a `tripwire` stream chunk or `result.tripwire`. Step retries only happen if `maxProcessorRetries` is set ([processors](../sources/mastra-processors-docs.md)). See [agent guardrails](agent-guardrails.md) and [guardrail tooling](guardrail-tooling.md).
 
 ## Workflows
 
@@ -82,11 +82,11 @@ Workflows are typed graphs. You define steps with `createStep({ id, inputSchema,
 | Semantic recall | vector-retrieved past messages (off by default since 1.0) | resource |
 | Observational Memory | background-agent "observations" and "reflections" replacing old messages | thread |
 
-Sources: [memory](../sources/mastra-memory-docs.md), [1.0 defaults](../sources/mastra-1-0-announcement.md). Memory needs a storage adapter. Semantic recall also needs a vector store and an embedder. Since 1.0, `MastraCompositeStore` can put memory, workflows and scores on different backends ([1.0 announcement](../sources/mastra-1-0-announcement.md)). Observational Memory is a form of continuous [context engineering](context-engineering.md) compaction. See [agent memory](agent-memory.md).
+Sources: [memory](../sources/mastra-memory-docs.md), [1.0 defaults](../sources/mastra-1-0-announcement.md). Memory needs a storage adapter. Semantic recall also needs a [vector store](vector-databases.md) and an [embedder](embeddings.md). Since 1.0, `MastraCompositeStore` can put memory, workflows and scores on different backends ([1.0 announcement](../sources/mastra-1-0-announcement.md)). Observational Memory is a form of continuous [context engineering](context-engineering.md) compaction. See [agent memory](agent-memory.md).
 
 ## Evals and observability
 
-Scorers (`@mastra/evals`) attach to agents or workflow steps. Each is configured as `{ scorer, sampling: { type: 'ratio', rate } }` and samples live traffic deterministically by trace ID. Offline, `runEvals()` and dataset **experiments** run an agent or workflow over versioned test cases. Studio lists scores along with judge reasons ([evals](../sources/mastra-evals-docs.md)). Scores persist only if storage is configured and the scorer is registered on `Mastra`. The 1.0 observability schema exports to Langfuse, Braintrust, Arize and LangSmith ([1.0 announcement](../sources/mastra-1-0-announcement.md)). See [agent evaluation](agent-evaluation.md) and [LLM observability](llm-observability.md).
+Scorers (`@mastra/evals`) attach to agents or workflow steps. Each is configured as `{ scorer, sampling: { type: 'ratio', rate } }` and samples live traffic deterministically by trace ID. Offline, `runEvals()` and dataset **experiments** run an agent or workflow over versioned test cases. Studio lists scores along with [judge](llm-as-judge.md) reasons ([evals](../sources/mastra-evals-docs.md)). Scores persist only if storage is configured and the scorer is registered on `Mastra`. The 1.0 observability schema exports to [Langfuse](langfuse.md), [Braintrust](braintrust.md), Arize and [LangSmith](langsmith.md) ([1.0 announcement](../sources/mastra-1-0-announcement.md)). See [agent evaluation](agent-evaluation.md) and [LLM observability](llm-observability.md).
 
 ## Comparison
 

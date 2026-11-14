@@ -32,8 +32,8 @@ Synthesis: these numbers come from forecasts and small samples. The causes they 
 
 Synthesis, grounded in the sources: a POC usually runs on a curated handful of inputs, often anonymised or offline data. That is how OpenAI describes typical solutions-architect POCs, as opposed to FDE work on customer infrastructure ([Pragmatic Engineer](../sources/pragmatic-engineer-forward-deployed-engineers.md)). Production adds:
 
-- **Distribution shift.** Real inputs include edge cases nobody imagined. Failure modes are unpredictable, so review real traffic daily ([Applied LLMs](../sources/applied-llms-year-of-building.md)).
-- **Compounding unreliability.** At 75% per-trial success, the chance that 3 of 3 trials succeed (pass^3) is only about 42% ([Anthropic evals](../sources/anthropic-demystifying-evals-for-ai-agents.md)). Users see the pass^k behaviour, not the best-case demo.
+- **Distribution shift.** Real inputs include edge cases nobody imagined. Failure modes are unpredictable, so [review real traffic](error-analysis.md) daily ([Applied LLMs](../sources/applied-llms-year-of-building.md)).
+- **Compounding unreliability.** At 75% [per-trial success](agent-evaluation.md), the chance that 3 of 3 trials succeed (pass^3) is only about 42% ([Anthropic evals](../sources/anthropic-demystifying-evals-for-ai-agents.md)). Users see the pass^k behaviour, not the best-case demo.
 - **Persistent hallucination.** Applied LLMs puts the baseline at roughly 5-10%, which needs downstream checks ([Applied LLMs](../sources/applied-llms-year-of-building.md); see [hallucination](hallucination.md)).
 - **Integration, permissions, cost at volume, security and ownership.**
 
@@ -53,12 +53,12 @@ flowchart LR
 
 *Synthesis: the gate structure combines OpenAI's scope-validate-deliver phases, its incremental agent guidance and Applied LLMs' iteration loop.*
 
-**1. POC (validate feasibility).** Prototype with the most capable model to set an eval baseline. Hit the accuracy target first, then swap in smaller models for cost and latency ([OpenAI agents guide](../sources/openai-practical-guide-building-agents.md); see [model selection](model-selection.md)). Start with [prompting](prompt-engineering.md) and retrieval, and only [fine-tune](fine-tuning.md) once those are proven insufficient ([Applied LLMs](../sources/applied-llms-year-of-building.md)). Build the smallest end-to-end slice on real systems. OpenAI FDEs validate with evals before they commit to delivery ([Pragmatic Engineer](../sources/pragmatic-engineer-forward-deployed-engineers.md)). Exit criterion: the eval score meets the threshold agreed in [discovery](ai-use-case-discovery.md).
+**1. POC (validate feasibility).** Prototype with the most capable model to set an [eval](llm-evaluation.md) baseline. Hit the accuracy target first, then swap in smaller models for cost and latency ([OpenAI agents guide](../sources/openai-practical-guide-building-agents.md); see [model selection](model-selection.md)). Start with [prompting](prompt-engineering.md) and retrieval, and only [fine-tune](fine-tuning.md) once those are proven insufficient ([Applied LLMs](../sources/applied-llms-year-of-building.md)). Build the smallest end-to-end slice on real systems. OpenAI FDEs validate with evals before they commit to delivery ([Pragmatic Engineer](../sources/pragmatic-engineer-forward-deployed-engineers.md)). Exit criterion: the eval score meets the threshold agreed in [discovery](ai-use-case-discovery.md).
 
 **2. Hardening (make it dependable).**
 - *Evals as a regression suite.* Start with 20-50 tasks from real failures. Capability evals should begin at a low pass rate, regression evals should sit near 100%, and saturated tasks graduate into regression ([Anthropic evals](../sources/anthropic-demystifying-evals-for-ai-agents.md)). Calibrate LLM judges against a domain expert with binary pass/fail plus critique, and report true-positive and true-negative rates separately ([Husain](../sources/husain-llm-judge-critique-shadowing.md); see [LLM-as-judge](llm-as-judge.md)). Anti-patterns include vibe-based evaluation, datasets unlike production traffic, and adding evals only after shipping ([OpenAI eval best practices](../sources/openai-evaluation-best-practices.md)).
-- *Guardrails and escalation.* Layer input filters, tool-use limits and human intervention. Escalate when failure thresholds are exceeded or before high-risk actions such as cancellations, large refunds and payments ([OpenAI agents guide](../sources/openai-practical-guide-building-agents.md)). See [agent guardrails](agent-guardrails.md), [prompt injection](prompt-injection.md).
-- *Architecture restraint.* Maximise a single agent with tools before going multi-agent ([OpenAI agents guide](../sources/openai-practical-guide-building-agents.md); see [agent design patterns](agent-design-patterns.md)).
+- *Guardrails and escalation.* Layer input filters, tool-use limits and [human intervention](human-in-the-loop.md). Escalate when failure thresholds are exceeded or before high-risk actions such as cancellations, large refunds and payments ([OpenAI agents guide](../sources/openai-practical-guide-building-agents.md)). See [agent guardrails](agent-guardrails.md), [prompt injection](prompt-injection.md).
+- *Architecture restraint.* Maximise a single agent with [tools](tools.md) before going multi-agent ([OpenAI agents guide](../sources/openai-practical-guide-building-agents.md); see [agent design patterns](agent-design-patterns.md)).
 - *Cost and latency.* For example, Indeed's fine-tuned smaller model matched results with 60% fewer tokens ([OpenAI, Enterprise](../sources/openai-ai-in-the-enterprise.md)). See [cost and latency optimization](cost-and-latency-optimization.md), [prompt caching](prompt-caching.md).
 - *Observability.* Trace every call and tool step ([LLM observability](llm-observability.md)).
 
@@ -83,9 +83,9 @@ Synthesis, consolidating the sources above:
 | Area | Ready when |
 |---|---|
 | Quality | Eval suite of real cases passes the agreed threshold; regression evals run in CI |
-| Reliability | pass^k measured on critical tasks; fallbacks and retry limits defined |
+| Reliability | pass^k measured on critical tasks; [fallbacks](model-routing-and-fallbacks.md) and [retry limits](rate-limits-and-retries.md) defined |
 | Safety | Guardrails, injection defences, human approval on irreversible actions |
-| Data & access | Least-privilege credentials; PII handling approved |
+| Data & access | Least-privilege credentials; [PII handling](pii-and-data-privacy.md) approved |
 | Cost & latency | Cost per task and p95 latency within budget at forecast volume |
 | Observability | Traces, feedback capture, alerting on quality drift |
 | Ownership | A customer-side owner exists; runbooks; model-upgrade plan |

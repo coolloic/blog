@@ -24,7 +24,7 @@ tags: ["frameworks", "agents", "langchain"]
 | `langchain-<provider>` | Integrations such as `langchain-openai`, `langchain-anthropic`, `langchain-aws`, `langchain-google-genai`, `langchain-ollama` |
 | `langchain-classic` | Pre-1.0 chains, legacy retrievers, indexing API, hub, `langchain-community` re-exports |
 
-Version facts (as of 2026-11): 1.0 promises no breaking changes until 2.0 and requires Python 3.10+. Features have kept landing in minors: profile-based structured output strategy selection (1.1), `ProviderStrategy(strict=...)` (1.2), `ToolErrorMiddleware` (1.3.14), `ModelRefusalMiddleware` (1.4.9), beta model routing and auto-mode middleware (1.5.0). `langgraph.prebuilt.create_react_agent` is deprecated in favour of `create_agent`. ([announcement](../sources/langchain-langgraph-1-0-announcement.md), [docs](../sources/langchain-agents-middleware-docs.md))
+Version facts (as of 2026-11): 1.0 promises no breaking changes until 2.0 and requires Python 3.10+. Features have kept landing in minors: profile-based structured output strategy selection (1.1), `ProviderStrategy(strict=...)` (1.2), `ToolErrorMiddleware` (1.3.14), `ModelRefusalMiddleware` (1.4.9), beta [model routing](model-routing-and-fallbacks.md) and auto-mode middleware (1.5.0). `langgraph.prebuilt.create_react_agent` is deprecated in favour of `create_agent`. ([announcement](../sources/langchain-langgraph-1-0-announcement.md), [docs](../sources/langchain-agents-middleware-docs.md))
 
 ## The Runnable interface and LCEL
 
@@ -32,9 +32,9 @@ Every component is a `Runnable` with `invoke`/`ainvoke`, `batch`/`abatch`, `batc
 
 What the source shows about the "free" features:
 
-- Only `invoke` is abstract. Default `ainvoke` runs `invoke` in a thread executor, and default `stream` yields **one** final chunk. You only get real token streaming from components that override `stream`, such as chat models.
+- Only `invoke` is abstract. Default `ainvoke` runs `invoke` in a thread executor, and default `stream` yields **one** final chunk. You only get real token [streaming](streaming.md) from components that override `stream`, such as chat models.
 - Default `batch` uses a thread pool and default `abatch` uses bounded `asyncio.gather` (`max_concurrency`). Neither is a provider batch API ([batch processing](batch-processing.md) is a separate thing).
-- `with_retry()` defaults to 3 attempts with exponential jitter on any `Exception`. `with_fallbacks([...])` tries alternatives in order and can pass the exception on through `exception_key`. `bind`, `with_config`, `assign`, `pick` and `map` return wrapper runnables.
+- `with_retry()` ([retries](rate-limits-and-retries.md)) defaults to 3 attempts with exponential jitter on any `Exception`. `with_fallbacks([...])` tries alternatives in order and can pass the exception on through `exception_key`. `bind`, `with_config`, `assign`, `pick` and `map` return wrapper runnables.
 - Config (`tags`, `metadata`, `callbacks`, `max_concurrency`) is copied into every child call. That propagation is how LangSmith builds nested traces.
 - `astream_events` defaults to `version="v2"`. `"v1"` is deprecated, and `"v3"` exists only on chat models and compiled graphs.
 
@@ -61,7 +61,7 @@ For [RAG](retrieval-augmented-generation.md) the building blocks are loaders, sp
 
 - **2-step RAG:** fixed call count and predictable latency.
 - **[Agentic RAG](agentic-rag.md):** retrieval exposed as a tool, so the agent decides when to retrieve. More flexible, but latency varies.
-- **Hybrid:** adds query-rewrite and validation loops.
+- **Hybrid:** adds [query-rewrite](query-transformation.md) and validation loops.
 
 ## v1 agents: `create_agent` and middleware
 
@@ -91,15 +91,15 @@ Hooks can return `jump_to` (`"end"`, `"tools"`, `"model"`) if they declare `can_
 
 | Need | Middleware | Key knobs |
 |---|---|---|
-| Context growth | `SummarizationMiddleware`, `ContextEditingMiddleware` | `trigger`, `keep` (default 20 msgs); clear tool outputs past 100k tokens, keep 3 |
-| Human approval | `HumanInTheLoopMiddleware` | `interrupt_on={tool: {...allowed_decisions}}`; needs checkpointer |
+| [Context growth](context-engineering.md) | `SummarizationMiddleware`, `ContextEditingMiddleware` | `trigger`, `keep` (default 20 msgs); clear tool outputs past 100k tokens, keep 3 |
+| [Human approval](human-in-the-loop.md) | `HumanInTheLoopMiddleware` | `interrupt_on={tool: {...allowed_decisions}}`; needs checkpointer |
 | Runaway loops / cost | `ModelCallLimitMiddleware`, `ToolCallLimitMiddleware` | `thread_limit`, `run_limit`, `exit_behavior` |
 | Transient failures | `ModelRetryMiddleware`, `ToolRetryMiddleware`, `ModelFallbackMiddleware`, `ToolErrorMiddleware` | retry middleware: default 2 retries after the first call (3 attempts), backoff factor 2.0, jitter |
-| Data protection | `PIIMiddleware` | `strategy` = redact (default) / block / mask / hash; input, output, tool results |
+| [Data protection](pii-and-data-privacy.md) | `PIIMiddleware` | `strategy` = redact (default) / block / mask / hash; input, output, tool results |
 | Planning / tool overload | `TodoListMiddleware`, `LLMToolSelectorMiddleware` | `max_tools`, `always_include` |
 | Testing | `LLMToolEmulator` | LLM-faked tool results |
 
-`HumanInTheLoopMiddleware` and the call-limit middleware are the framework's built-in [guardrail](agent-guardrails.md) points. The sandboxing, shell and filesystem middleware (`ShellToolMiddleware`, `FilesystemFileSearchMiddleware`) and the `deepagents` add-ons (filesystem, `task` [subagents](subagents.md)) extend it towards [coding agents](coding-agents.md).
+`HumanInTheLoopMiddleware` and the call-limit middleware are the framework's built-in [guardrail](agent-guardrails.md) points. The [sandboxing](code-execution-sandboxes.md), shell and filesystem middleware (`ShellToolMiddleware`, `FilesystemFileSearchMiddleware`) and the `deepagents` add-ons (filesystem, `task` [subagents](subagents.md)) extend it towards [coding agents](coding-agents.md).
 
 **Structured output in agents.** `response_format=Schema` auto-selects a strategy from the model profile (since 1.1):
 

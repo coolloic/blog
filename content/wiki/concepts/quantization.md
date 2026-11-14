@@ -77,11 +77,11 @@ Synthesis: weight memory ≈ parameters × bits / 8. A 70B-class model is about 
 - **Smaller ≠ faster** unless kernels and hardware support the format. An INT4 model on unsupported hardware may be no quicker ([Notebook](../sources/notebook-quantization-pruning.md)). Weight-only INT4 still computes in 16-bit ([vLLM docs](../sources/vllm-quantization-docs.md)).
 - **Calibration overfitting.** Reconstruction-based methods can overfit the calibration set. AWQ avoids backprop and reconstruction partly for this reason ([AWQ](../sources/awq-paper.md)). Use calibration data that looks like production traffic.
 - **Uncalibrated FP8 KV** (scales of 1.0) can cost accuracy ([vLLM KV docs](../sources/vllm-quantized-kv-cache-docs.md)).
-- **Order matters in a compression pipeline:** distill, then prune and fine-tune, then quantize last ([Notebook](../sources/notebook-quantization-pruning.md)). See [knowledge distillation](knowledge-distillation.md).
+- **Order matters in a compression pipeline:** distill, then prune and [fine-tune](fine-tuning.md), then quantize last ([Notebook](../sources/notebook-quantization-pruning.md)). See [knowledge distillation](knowledge-distillation.md).
 
 ## When to use / when not
 
-- **Use** FP8 by default on Hopper-class GPUs for serving. Use INT4 AWQ/GPTQ to fit a model on fewer or older GPUs, and GGUF for [local LLMs](local-llms.md). Use FP8 KV when KV-bound.
+- **Use** FP8 by default on Hopper-class GPUs for [serving](llm-inference-serving.md). Use INT4 AWQ/GPTQ to fit a model on fewer or older GPUs, and GGUF for [local LLMs](local-llms.md). Use FP8 KV when KV-bound.
 - **Avoid or test hard** when a task is sensitive (math, code, long-tail facts, multilingual) or when going below about 4 bits. Also test hard when the provider's published quantized checkpoint has not been evaluated on your domain.
 - Synthesis: if a model fits comfortably at BF16 and you are compute-bound at large batch sizes, weight-only INT4 may not help. Measure.
 

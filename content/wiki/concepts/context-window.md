@@ -23,7 +23,7 @@ lastmod: 2026-11-14
 tags: ["models", "context", "fundamentals", "long-context"]
 ---
 
-The **context window** is the total number of [tokens](tokenization.md) a model can reference in a single request, including the response it generates. It is the model's working memory, distinct from what it learned in training ([Anthropic](../sources/anthropic-context-windows-docs.md)). Everything the model uses for a turn (system prompt, conversation, retrieved documents, tool definitions and results, and the output) must fit inside it ([notebook](../sources/notebook-transformers.md)). Two numbers matter: the **advertised** limit, a hard API constraint, and the **effective** limit, the length up to which the model still uses information reliably, which is usually much smaller ([RULER](../sources/ruler-benchmark.md)).
+The **context window** is the total number of [tokens](tokenization.md) a model can reference in a single request, including the response it generates. It is the model's working memory, distinct from what it learned in training ([Anthropic](../sources/anthropic-context-windows-docs.md)). Everything the model uses for a turn ([system prompt](system-prompts.md), conversation, retrieved documents, [tool](tools.md) definitions and results, and the output) must fit inside it ([notebook](../sources/notebook-transformers.md)). Two numbers matter: the **advertised** limit, a hard API constraint, and the **effective** limit, the length up to which the model still uses information reliably, which is usually much smaller ([RULER](../sources/ruler-benchmark.md)).
 
 ## What counts against the window
 

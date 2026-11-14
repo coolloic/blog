@@ -16,7 +16,7 @@ lastmod: 2026-11-14
 tags: ["models", "landscape", "pricing", "anthropic", "openai", "google", "xai"]
 ---
 
-The **frontier model landscape** is the set of most capable proprietary LLMs you reach only through a vendor API or a cloud marketplace: Anthropic's Claude, OpenAI's GPT, Google's Gemini and xAI's Grok. Each vendor ships a **tiered family**: a top reasoning model, a balanced workhorse, and one or two cheap, fast models. All of them share one API shape: token-metered pricing, a large [context window](context-window.md), tool use, and an adjustable amount of [reasoning](reasoning-models.md). This page is a dated snapshot (read **2026-11-14**). Names and prices change every few months, so check the vendor pages linked under Sources before you quote a number to a customer. For self-hostable alternatives, see [open-weight models](open-weight-models.md). For how to pick a model, see [model selection](model-selection.md).
+The **frontier model landscape** is the set of most capable proprietary LLMs you reach only through a vendor API or a cloud marketplace: Anthropic's Claude, OpenAI's GPT, Google's Gemini and xAI's Grok. Each vendor ships a **tiered family**: a top reasoning model, a balanced workhorse, and one or two cheap, fast models. All of them share one API shape: token-metered pricing, a large [context window](context-window.md), [tool use](function-calling.md), and an adjustable amount of [reasoning](reasoning-models.md). This page is a dated snapshot (read **2026-11-14**). Names and prices change every few months, so check the vendor pages linked under Sources before you quote a number to a customer. For self-hostable alternatives, see [open-weight models](open-weight-models.md). For how to pick a model, see [model selection](model-selection.md).
 
 ## The tier structure
 
@@ -95,9 +95,9 @@ See [prompt caching](prompt-caching.md), [batch processing](batch-processing.md)
 
 Synthesis: list price per token is a poor proxy for cost. Cache-read discounts range from 4x (Grok 4.7) to 40x (Fable 5.2), and long-context steps can double a bill. Reasoning models also spend tokens on thinking (Google states that output prices include thinking tokens), so measure cost per completed task instead (see [model selection](model-selection.md)).
 
-**Distribution.** Claude is served on Anthropic's API, Amazon Bedrock, Google Cloud (Google-managed and Anthropic-managed), Microsoft Foundry and Claude Platform on AWS, with platform-specific IDs (e.g. `anthropic.claude-opus-5-5` on Bedrock). Partner clouds set their own prices and retirement dates. Gemini is on AI Studio and Vertex; see [Amazon Bedrock](amazon-bedrock.md), [Google Vertex AI](google-vertex-ai.md) and [Azure AI Foundry](azure-ai-foundry.md).
+**Distribution.** Claude is served on [Anthropic's API](anthropic-messages-api.md), Amazon Bedrock, Google Cloud (Google-managed and Anthropic-managed), Microsoft Foundry and Claude Platform on AWS, with platform-specific IDs (e.g. `anthropic.claude-opus-5-5` on Bedrock). Partner clouds set their own prices and retirement dates. [Gemini](gemini-api.md) is on AI Studio and Vertex; see [Amazon Bedrock](amazon-bedrock.md), [Google Vertex AI](google-vertex-ai.md) and [Azure AI Foundry](azure-ai-foundry.md).
 
-**Modalities.** All current Claude models take text and image input and return text. Gemini 4 adds audio, video and PDF input, and has separate Live, TTS, image and video models. GPT-6.1 Terra is positioned for visual reasoning and computer use. See [multimodal models](multimodal-models.md).
+**Modalities.** All current Claude models take text and image input and return text. Gemini 4 adds audio, video and PDF input, and has separate Live, TTS, image and video models. GPT-6.1 Terra is positioned for visual reasoning and [computer use](computer-use-agents.md). See [multimodal models](multimodal-models.md).
 
 **Access restrictions.** Claude Mythos 5.2 has Fable 5.2's capabilities but is open only to organisations verified through Anthropic programmes. Gemini 4 Carbon and Argon have no free tier, and free-tier data on other Gemini models may be used to improve Google products.
 
@@ -122,7 +122,7 @@ Synthesis, grounded in each vendor's own recommendation:
 - **Hardest problems and multi-hour autonomy:** Fable 5.2, GPT-6 Astra or Gemini 4 Carbon. Only escalate here after an effort sweep on the default model shows a gap.
 - **High-volume extraction, classification and routing:** Haiku 5.5, GPT-6 Luna or Gemini 3.5 Flash-Lite. All cost about $0.10 to $0.30 per million input tokens.
 - **Native audio/video input or Google grounding:** Gemini.
-- **Self-hosting, data sovereignty or fine-tuning the weights:** use [open-weight models](open-weight-models.md) instead.
+- **Self-hosting, data sovereignty or [fine-tuning](fine-tuning.md) the weights:** use [open-weight models](open-weight-models.md) instead.
 
 ## Sources
 

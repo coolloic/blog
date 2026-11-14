@@ -16,7 +16,7 @@ lastmod: 2026-11-14
 tags: ["evaluation", "observability", "phoenix", "opentelemetry"]
 ---
 
-**Arize Phoenix** is an [LLM observability](llm-observability.md) and evaluation tool from Arize AI. It is built on **OpenTelemetry (OTel)**: applications emit spans over OTLP, and Phoenix stores them as traces. It adds LLM and code evaluators, annotations, datasets, experiments, a prompt playground and prompt management on top. Its instrumentation layer, **OpenInference** (Apache-2.0), is a set of OTel auto-instrumentors plus attribute conventions for LLM spans. Phoenix itself is under the **Elastic License 2.0**: source-available and free to self-host with no feature gates, but not OSI open source. Arize AX is the separate paid SaaS/enterprise product ([arize-phoenix-docs](../sources/arize-phoenix-docs.md), [phoenix-evals](../sources/phoenix-evals-and-self-hosting-docs.md)). Latest release at time of writing: v21.1.0 (2026-11-13).
+**Arize Phoenix** is an [LLM observability](llm-observability.md) and [evaluation](llm-evaluation.md) tool from Arize AI. It is built on **OpenTelemetry (OTel)**: applications emit spans over OTLP, and Phoenix stores them as traces. It adds LLM and code evaluators, annotations, datasets, experiments, a prompt playground and [prompt management](prompt-management.md) on top. Its instrumentation layer, **OpenInference** (Apache-2.0), is a set of OTel auto-instrumentors plus attribute conventions for LLM spans. Phoenix itself is under the **Elastic License 2.0**: source-available and free to self-host with no feature gates, but not OSI open source. Arize AX is the separate paid SaaS/enterprise product ([arize-phoenix-docs](../sources/arize-phoenix-docs.md), [phoenix-evals](../sources/phoenix-evals-and-self-hosting-docs.md)). Latest release at time of writing: v21.1.0 (2026-11-13).
 
 ## How tracing works
 
@@ -45,8 +45,8 @@ Synthesis: assembled from the tracing, evals and datasets docs ([arize-phoenix-d
 ## Evals (`arize-phoenix-evals`)
 
 - **Score model:** every evaluator returns a `Score` with `name`, `kind` (llm, code, human), `direction` (higher or lower is better), and optional `score`, `label`, `explanation`, `metadata`. Evaluators expose `evaluate` / `async_evaluate` and an `input_schema` ([phoenix-evals](../sources/phoenix-evals-and-self-hosting-docs.md)).
-- **LLM judges** answer through forced tool calling / [structured outputs](structured-outputs.md), never by parsing free text, which removes a common source of judge breakage. `ClassificationEvaluator(name, prompt_template, llm, choices, direction)` takes `choices` as a label list or a label-to-score dict. `LLM(provider, model)` returns label plus explanation. `DecisionModel` returns per-label probabilities and no explanation ([phoenix-evals](../sources/phoenix-evals-and-self-hosting-docs.md)).
-- **Input mapping:** `input_mapping` maps evaluator fields to your data by key, dot/JSONPath or callable, and `bind_evaluator` fixes the mapping. `async_evaluate_dataframe` batches with rate-limit handling, retries and dynamic concurrency (claimed up to 20x faster) ([phoenix-evals](../sources/phoenix-evals-and-self-hosting-docs.md)).
+- **LLM judges** answer through forced [tool calling](function-calling.md) / [structured outputs](structured-outputs.md), never by parsing free text, which removes a common source of judge breakage. `ClassificationEvaluator(name, prompt_template, llm, choices, direction)` takes `choices` as a label list or a label-to-score dict. `LLM(provider, model)` returns label plus explanation. `DecisionModel` returns per-label probabilities and no explanation ([phoenix-evals](../sources/phoenix-evals-and-self-hosting-docs.md)).
+- **Input mapping:** `input_mapping` maps evaluator fields to your data by key, dot/JSONPath or callable, and `bind_evaluator` fixes the mapping. `async_evaluate_dataframe` batches with [rate-limit handling, retries](rate-limits-and-retries.md) and dynamic concurrency (claimed up to 20x faster) ([phoenix-evals](../sources/phoenix-evals-and-self-hosting-docs.md)).
 - **Pre-built metrics:** faithfulness, hallucination, completeness, conciseness, correctness, retrieval relevance, tool selection, tool invocation, tool response handling, refusal, user friction, PII, toxicity. Code metrics: exact match, regex, precision/recall/F1. Arize claims 85%+ F1 on its own golden datasets, which is a vendor claim to re-validate on client data ([phoenix-evals](../sources/phoenix-evals-and-self-hosting-docs.md)). Ragas, DeepEval and Cleanlab metrics plug in as well ([arize-phoenix-docs](../sources/arize-phoenix-docs.md); see [RAGAS and DeepEval](ragas-and-deepeval.md)).
 - **Judges are traced:** each evaluator run is logged to a dedicated Phoenix project (judge prompt, reasoning, score, timing), so you can debug the judge with the same tools as the app ([phoenix-evals](../sources/phoenix-evals-and-self-hosting-docs.md)). Human annotations attach to spans and traces alongside LLM and code scores ([arize-phoenix-docs](../sources/arize-phoenix-docs.md)).
 
@@ -54,7 +54,7 @@ Synthesis: assembled from the tracing, evals and datasets docs ([arize-phoenix-d
 
 `create_dataset(name, examples)` builds a dataset, often from traces. `run_experiment(dataset, task, evaluators, experiment_name)` runs a new app version over it and scores it, with results compared in the dataset's Experiments tab. The TypeScript equivalents are in `@arizeai/phoenix-client` ([phoenix-evals](../sources/phoenix-evals-and-self-hosting-docs.md)). **Span Replay** re-runs a traced LLM call in the playground with edits ([arize-phoenix-docs](../sources/arize-phoenix-docs.md)). This supports the trace → [error analysis](error-analysis.md) → dataset → experiment loop that Husain and Shankar recommend ([husain-shankar-2026](../sources/husain-shankar-2026-ai-evals-faq.md)) and that the owner's notebook calls the eval flywheel ([notebook-llm-evaluation](../sources/notebook-llm-evaluation.md)).
 
-Recent additions include a built-in debugging agent (PXI), a remote MCP server endpoint for coding agents, and `px setup` in `@arizeai/phoenix-cli`, which hands instrumentation work to a coding agent ([arize-phoenix-docs](../sources/arize-phoenix-docs.md), [phoenix-evals](../sources/phoenix-evals-and-self-hosting-docs.md)).
+Recent additions include a built-in debugging agent (PXI), a remote [MCP](model-context-protocol.md) server endpoint for [coding agents](coding-agents.md), and `px setup` in `@arizeai/phoenix-cli`, which hands instrumentation work to a coding agent ([arize-phoenix-docs](../sources/arize-phoenix-docs.md), [phoenix-evals](../sources/phoenix-evals-and-self-hosting-docs.md)).
 
 ## Deployment and pricing (as of 2026-11-14)
 
@@ -78,15 +78,15 @@ Sources: [phoenix-evals](../sources/phoenix-evals-and-self-hosting-docs.md), [br
 Synthesis, grounded in the cited docs:
 - SQLite is the default store. Fine on a laptop, but a long-running shared instance should use Postgres plus retention policies, or trace volume will outgrow it.
 - Unflushed spans: TypeScript batching without `shutdown()`, or serverless functions that exit early, lose the last spans.
-- Missing token counts mean missing cost. Some streaming paths and custom spans do not report usage.
+- Missing token counts mean missing cost. Some [streaming](streaming.md) paths and custom spans do not report usage.
 - Pre-built judge templates come with vendor-reported accuracy. Calibrate them against human labels before using them as gates ([llm-as-judge](llm-as-judge.md)).
 - Phoenix's docs document evaluators run in code (client side) or server side, not sampled rules like Braintrust's online scoring. Plan how production traces get scored, for example a scheduled job that pulls recent spans, evaluates them and logs results back as annotations.
 
 ## When to use / when not
 
 Synthesis:
-- **Pick Phoenix** when data must stay inside the client's VPC or on-prem at no licence cost, when the stack is already OTel (it can sit beside an existing collector), when the app uses LlamaIndex/LangChain/DSPy and needs zero-code instrumentation, or for local debugging during a POC (`phoenix serve` and you have a UI in a minute).
-- **Look elsewhere** when the team's main workflow is collaborative experiment review with regression diffing and managed online scoring ([Braintrust](braintrust.md)), when the client needs an OSI licence ([Langfuse](langfuse.md)), or when the app is LangGraph-centric and the client already pays for [LangSmith](langsmith.md).
+- **Pick Phoenix** when data must stay inside the client's VPC or on-prem at no licence cost, when the stack is already OTel (it can sit beside an existing collector), when the app uses [LlamaIndex](llamaindex.md)/[LangChain](langchain.md)/[DSPy](dspy.md) and needs zero-code instrumentation, or for local debugging during a [POC](poc-to-production.md) (`phoenix serve` and you have a UI in a minute).
+- **Look elsewhere** when the team's main workflow is collaborative experiment review with regression diffing and managed online scoring ([Braintrust](braintrust.md)), when the client needs an OSI licence ([Langfuse](langfuse.md)), or when the app is [LangGraph](langgraph.md)-centric and the client already pays for [LangSmith](langsmith.md).
 
 ## Sources
 

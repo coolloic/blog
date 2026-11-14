@@ -14,7 +14,7 @@ lastmod: 2026-11-14
 tags: ["models", "streaming", "api"]
 ---
 
-**Streaming** returns a model's output incrementally while it is being generated, instead of as one response after generation ends. All three major vendor APIs implement it with **server-sent events (SSE)**: a long-lived HTTP response where each event has a name (`event:`) and a JSON payload (`data:`). You enable it with `stream: true`. Streaming doesn't change what the model generates or what you pay. It changes *when* you see it: time-to-first-token drops from "whole generation" to roughly prefill time, and long generations avoid HTTP idle timeouts ([Anthropic](../sources/anthropic-streaming-docs.md), [OpenAI](../sources/openai-streaming-responses-guide.md), [Gemini](../sources/gemini-streaming-interactions-docs.md)).
+**Streaming** returns a model's output incrementally while it is being generated, instead of as one response after generation ends. All three major vendor APIs implement it with **server-sent events (SSE)**: a long-lived HTTP response where each event has a name (`event:`) and a JSON payload (`data:`). You enable it with `stream: true`. Streaming doesn't change what the model generates or what you pay. It changes *when* you see it: time-to-first-token drops from "whole generation" to roughly [prefill](transformer-architecture.md) time, and long generations avoid HTTP idle timeouts ([Anthropic](../sources/anthropic-streaming-docs.md), [OpenAI](../sources/openai-streaming-responses-guide.md), [Gemini](../sources/gemini-streaming-interactions-docs.md)).
 
 ## Event grammars compared (as of 2026-11)
 
@@ -30,7 +30,7 @@ flowchart TD
     E --> F["Envelope end: message_stop / response.completed / interaction.completed + done"]
 ```
 
-| | Anthropic Messages | OpenAI Responses | Gemini Interactions |
+| | [Anthropic Messages](anthropic-messages-api.md) | [OpenAI Responses](openai-responses-api.md) | [Gemini Interactions](gemini-api.md) |
 |---|---|---|---|
 | Start | `message_start` (Message with empty `content`) | `response.created`, `response.in_progress` | `interaction.created`, `interaction.status_update` |
 | Item open/close | `content_block_start` / `content_block_stop` with `index` | `response.output_item.added/done`, `response.content_part.added/done` | `step.start` (typed: `thought`, `model_output`, …) / `step.stop` |
@@ -51,16 +51,16 @@ Details worth knowing:
 
 ## Streaming tool calls and structured output
 
-Tool arguments arrive as **partial JSON strings**. Anthropic's final `tool_use.input` is an object, but the deltas are string fragments: accumulate them and parse on `content_block_stop`, or use a partial-JSON parser or the SDK helpers, which expose the parsed input incrementally. By default Claude buffers each complete key/value before emitting it, which can cause pauses. Per-tool `eager_input_streaming` (fine-grained tool streaming) sends values sooner ([Anthropic](../sources/anthropic-streaming-docs.md)). OpenAI opens a call with `response.output_item.added` (carrying `call_id` and `name`), then streams `function_call_arguments.delta` keyed by `output_index` ([OpenAI function calling](../sources/openai-function-calling-guide.md)). Gemini's structured output streams as valid partial JSON chunks that concatenate to the full object ([Gemini structured outputs](../sources/gemini-structured-outputs-docs.md)).
+Tool arguments arrive as **partial JSON strings**. Anthropic's final `tool_use.input` is an object, but the deltas are string fragments: accumulate them and parse on `content_block_stop`, or use a partial-JSON parser or the SDK helpers, which expose the parsed input incrementally. By default Claude buffers each complete key/value before emitting it, which can cause pauses. Per-tool `eager_input_streaming` (fine-grained tool streaming) sends values sooner ([Anthropic](../sources/anthropic-streaming-docs.md)). OpenAI opens a call with `response.output_item.added` (carrying `call_id` and `name`), then streams `function_call_arguments.delta` keyed by `output_index` ([OpenAI function calling](../sources/openai-function-calling-guide.md)). Gemini's [structured output](structured-outputs.md) streams as valid partial JSON chunks that concatenate to the full object ([Gemini structured outputs](../sources/gemini-structured-outputs-docs.md)).
 
 Synthesis: never execute a tool from a partial argument string. Wait for the block or item `done` event, and for multi-call turns, wait for the whole message to finish so you can return all results together (see [function calling](function-calling.md)).
 
 ## Errors and recovery
 
-- **Errors inside a 200 stream.** The HTTP status is already 200 when the stream starts, so failures arrive as events. Claude can send an `error` event with `overloaded_error`, the streaming equivalent of HTTP 529 ([Anthropic](../sources/anthropic-streaming-docs.md)). OpenAI has `response.failed` and `error` ([OpenAI](../sources/openai-streaming-responses-guide.md)). Gemini's Interactions stream sends an `error` event carrying a `code` and `message` ([Gemini](../sources/gemini-streaming-interactions-docs.md)). Your retry logic must inspect events, not only status codes.
-- **Resuming an interrupted stream.** Anthropic's guidance is to keep everything received, then send a continuation request. On Claude 4.5 and earlier, the partial text goes in as the assistant turn. On Claude 4.6 and later, you add a user message asking the model to continue from the partial text. Tool-use and thinking blocks cannot be partially recovered, so resume from the last text block ([Anthropic](../sources/anthropic-streaming-docs.md)).
+- **Errors inside a 200 stream.** The HTTP status is already 200 when the stream starts, so failures arrive as events. Claude can send an `error` event with `overloaded_error`, the streaming equivalent of HTTP 529 ([Anthropic](../sources/anthropic-streaming-docs.md)). OpenAI has `response.failed` and `error` ([OpenAI](../sources/openai-streaming-responses-guide.md)). Gemini's Interactions stream sends an `error` event carrying a `code` and `message` ([Gemini](../sources/gemini-streaming-interactions-docs.md)). Your [retry logic](rate-limits-and-retries.md) must inspect events, not only status codes.
+- **Resuming an interrupted stream.** Anthropic's guidance is to keep everything received, then send a continuation request. On Claude 4.5 and earlier, the partial text goes in as the assistant turn. On Claude 4.6 and later, you add a user message asking the model to continue from the partial text. Tool-use and [thinking](extended-thinking.md) blocks cannot be partially recovered, so resume from the last text block ([Anthropic](../sources/anthropic-streaming-docs.md)).
 - **Timeouts.** Anthropic's SDKs require streaming for large `max_tokens` to avoid HTTP timeouts, and offer helpers (`get_final_message()`, `finalMessage()`) that stream internally but return a complete Message ([Anthropic](../sources/anthropic-streaming-docs.md)).
-- **Platform gaps.** Bedrock's `bedrock-runtime` endpoint does not emit plain SSE ([Anthropic](../sources/anthropic-streaming-docs.md)). Batch APIs reject `stream: true` ([Anthropic batches](../sources/anthropic-message-batches-docs.md)).
+- **Platform gaps.** [Bedrock](amazon-bedrock.md)'s `bedrock-runtime` endpoint does not emit plain SSE ([Anthropic](../sources/anthropic-streaming-docs.md)). Batch APIs reject `stream: true` ([Anthropic batches](../sources/anthropic-message-batches-docs.md)).
 
 ## Interactions and trade-offs
 

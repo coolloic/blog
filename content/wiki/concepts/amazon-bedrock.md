@@ -37,9 +37,9 @@ flowchart LR
 
 ## Inference surface
 
-- **APIs.** One `bedrock-runtime` endpoint serves several API styles. **Converse** is provider-neutral, with a common message and tool schema. **InvokeModel** takes the provider's native JSON body. The **Anthropic Messages** and **OpenAI Responses/Chat Completions** APIs are also exposed, so vendor SDKs work with a Bedrock base URL and token ([overview](../sources/aws-bedrock-overview.md)). Synthesis: use Converse when you want to swap models without code changes. Use the native APIs when you need provider-specific features first.
+- **APIs.** One `bedrock-runtime` endpoint serves several API styles. **Converse** is provider-neutral, with a common message and tool schema. **InvokeModel** takes the provider's native JSON body. The **[Anthropic Messages](anthropic-messages-api.md)** and **[OpenAI Responses](openai-responses-api.md)/Chat Completions** APIs are also exposed, so vendor SDKs work with a Bedrock base URL and token ([overview](../sources/aws-bedrock-overview.md)). Synthesis: use Converse when you want to swap models without code changes. Use the native APIs when you need provider-specific features first.
 - **Model IDs and inference profiles.** A plain ID (`anthropic.claude-opus-4-7`) runs in the calling Region. A prefixed ID (`us.`, `eu.`, `global.`) selects a **cross-Region inference profile**, and Bedrock then picks the Region for each request ([CRIS](../sources/aws-bedrock-cross-region-inference.md)).
-- **Customization.** Bedrock supports supervised [fine-tuning](fine-tuning.md), reinforcement fine-tuning with Lambda reward functions, and [distillation](knowledge-distillation.md) ([customization](../sources/bedrock-model-customization.md)). The PT page says a custom model needs Provisioned Throughput. A separate on-demand deployment option now covers models customized from Nova Lite, Micro, Pro and 2 Lite or Llama 3.3 70B Instruct on or after July 16, 2025, in specific Regions. Check that list before you budget for PT ([PT](../sources/aws-bedrock-provisioned-throughput.md)).
+- **Customization.** Bedrock supports supervised [fine-tuning](fine-tuning.md), [reinforcement fine-tuning](reinforcement-fine-tuning.md) with Lambda reward functions, and [distillation](knowledge-distillation.md) ([customization](../sources/bedrock-model-customization.md)). The PT page says a custom model needs [Provisioned Throughput](provisioned-throughput.md). A separate on-demand deployment option now covers models customized from Nova Lite, Micro, Pro and 2 Lite or Llama 3.3 70B Instruct on or after July 16, 2025, in specific Regions. Check that list before you budget for PT ([PT](../sources/aws-bedrock-provisioned-throughput.md)).
 
 ## Data residency and privacy
 
@@ -57,7 +57,7 @@ On isolation, Bedrock runs each provider's model in an AWS-owned **model deploym
 
 ## Quotas, throughput and capacity tiers
 
-On-demand use is limited by **tokens per minute (TPM)** and **tokens per day (TPD)**. The accounting is not obvious ([token quotas](../sources/aws-bedrock-token-quotas.md)):
+On-demand use is [rate-limited](rate-limits-and-retries.md) by **tokens per minute (TPM)** and **tokens per day (TPD)**. The accounting is not obvious ([token quotas](../sources/aws-bedrock-token-quotas.md)):
 
 1. **When the request is admitted**, Bedrock reserves `input + max_tokens` against your quota.
 2. **At completion**, it settles to `input + cache_write + output × burndown` and refunds the difference. Cache reads are free against quota.
@@ -88,13 +88,13 @@ Batch inference is the other cost lever, covered under [batch processing](batch-
 
 There are two flavours ([KB](../sources/aws-bedrock-knowledge-bases.md)):
 
-- **Managed Knowledge Base** (recommended). AWS runs parsing (Smart Parsing for PDFs, Office files, scans, audio and video), embedding, [reranking](reranking.md), storage auto-scaling and retrieval. It adds connectors (S3, SharePoint, Confluence, Google Drive, OneDrive, web crawler), **ACL-based document-level filtering at retrieval time**, and **agentic retrieval** that splits a query into sub-queries, iterates across KBs and checks whether the evidence is sufficient (see [agentic RAG](agentic-rag.md)). It is exposed as an MCP tool through AgentCore Gateway.
+- **Managed Knowledge Base** (recommended). AWS runs parsing (Smart Parsing for PDFs, Office files, scans, audio and video), [embedding](embeddings.md), [reranking](reranking.md), storage auto-scaling and retrieval. It adds connectors (S3, SharePoint, Confluence, Google Drive, OneDrive, web crawler), **ACL-based document-level filtering at retrieval time**, and **agentic retrieval** that splits a query into sub-queries, iterates across KBs and checks whether the evidence is sufficient (see [agentic RAG](agentic-rag.md)). It is exposed as an MCP tool through AgentCore Gateway.
 - **Customer-managed KB.** You choose the [vector store](vector-databases.md): OpenSearch Serverless or managed clusters, S3 Vectors, Aurora PostgreSQL/pgvector, Neptune Analytics ([GraphRAG](graphrag.md)), Pinecone, Redis Enterprise Cloud or MongoDB Atlas. Connectors, ACLs and the Gateway integration are Managed-only.
 
 Gotchas from the setup docs ([KB](../sources/aws-bedrock-knowledge-bases.md)):
 
 - Only OpenSearch stores binary vectors.
-- S3 Vectors caps metadata at 1 KB and 35 keys per vector. Hierarchical chunking can exceed this and fail ingestion. It also suits infrequent queries, not hot paths.
+- S3 Vectors caps metadata at 1 KB and 35 keys per vector. Hierarchical [chunking](chunking.md) can exceed this and fail ingestion. It also suits infrequent queries, not hot paths.
 - Aurora needs both an HNSW index and a GIN full-text index; the full-text index serves the keyword half of [hybrid search](hybrid-search.md). Without pgvector 0.8 iterative scans, selective metadata filters silently return too few hits, because filtering runs after the HNSW scan.
 - OpenSearch managed clusters must be publicly accessible to work with KBs.
 
@@ -105,14 +105,14 @@ A versioned policy that you attach to inference calls by ID and version, or run 
 - **Content filters**: hate, insults, sexual, violence, misconduct and prompt attack, each with a strength setting; text and image.
 - **Denied topics.**
 - **Word filters.**
-- **PII filters** that block or mask, plus custom regex.
+- **[PII](pii-and-data-privacy.md) filters** that block or mask, plus custom regex.
 - **Contextual grounding** checks against the RAG source.
 - **Automated Reasoning** checks against formal rules.
 
 The Standard tier also scans code (comments, identifiers, string literals). Two limits matter in practice:
 
 - Guardrails do **not** inspect reasoning blocks.
-- To avoid false positives from system prompts or retrieved text, wrap only the user's text in input tags. This is SDK-only.
+- To avoid false positives from [system prompts](system-prompts.md) or retrieved text, wrap only the user's text in input tags. This is SDK-only.
 
 For how this fits a defence-in-depth design, see [agent guardrails](agent-guardrails.md) and [prompt injection](prompt-injection.md).
 
@@ -131,7 +131,7 @@ For how this fits a defence-in-depth design, see [agent guardrails](agent-guardr
 | Identity | Inbound (SigV4 / OAuth JWT) and outbound (OAuth, API keys; user-delegated or autonomous) credentials |
 | Policy | Deterministic Cedar-compatible rules enforced on every Gateway tool call |
 | Code Interpreter, Browser | Managed sandboxes for [tools](tools.md) and [computer use](computer-use-agents.md) |
-| Observability, Evaluations, Optimization | OTel traces, agent evals, prompt/tool-description A/B tests |
+| Observability, Evaluations, Optimization | OTel traces ([observability](llm-observability.md)), [agent evals](agent-evaluation.md), prompt/tool-description A/B tests |
 | Registry, Payments | Catalog of agents/tools/skills; x402/MPP agent payments |
 
 Runtime internals ([runtime](../sources/aws-agentcore-runtime.md)):
@@ -158,7 +158,7 @@ Synthesis, drawn from the sources above:
   - Right-size `max_tokens`.
   - Use [prompt caching](prompt-caching.md), since cache reads are quota-free.
   - Send background work to Flex or batch.
-  - Add retries with model or Region fallback.
+  - Add retries with model or Region [fallback](model-routing-and-fallbacks.md).
   - Reserve capacity only for steady baseline load.
 
 Compare with [Google Vertex AI](google-vertex-ai.md) and [Azure AI Foundry](azure-ai-foundry.md); see also [enterprise LLM deployment](enterprise-llm-deployment.md).

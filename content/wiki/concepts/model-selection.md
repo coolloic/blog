@@ -21,10 +21,10 @@ tags: ["models", "model-selection", "routing", "cost", "latency"]
 
 **Model selection** means choosing which model, at which reasoning setting, serves each step of an LLM application. You weigh capability, latency, cost and constraints such as data residency, licence and modality. The current vendor guidance converges on four rules:
 
-1. Pick using **evals on your own prompts and data**, not public leaderboards.
+1. Pick using **evals on your own prompts and data**, not public [leaderboards](benchmarks.md).
 2. Tune the **effort/reasoning dial** on one model before you switch models.
 3. Compare **cost per completed task**, not price per token.
-4. Add multi-model **routing** only when it beats a single tuned model.
+4. Add multi-model **[routing](model-routing-and-fallbacks.md)** only when it beats a single tuned model.
 
 The models themselves are covered in [frontier model landscape](frontier-model-landscape.md) and [open-weight models](open-weight-models.md).
 
@@ -35,8 +35,8 @@ The models themselves are covered in [frontier model landscape](frontier-model-l
 | Capability | Task success on a representative eval set | Anthropic calls the eval set "the most important step" ([LLM evaluation](llm-evaluation.md), [verification and evals](verification-and-evals.md)) |
 | Latency | Time to first token, end-to-end turn time, p90 | Reasoning effort adds latency; Claude fast mode buys up to 2.5x output speed at a premium |
 | Cost | Cost per completed task, including retries, cache reads/writes and thinking tokens | List prices span 80x within one vendor (Haiku 5.5 $0.10 vs Fable 5.2 $8 input) |
-| Context | Prompt size distribution, especially the tail | Long-context price steps: OpenAI above 272K, xAI at 200K, Haiku 5.5 above 100K |
-| Modality and tools | Image, audio and video input; computer use; grounding | Differ by vendor and tier |
+| [Context](context-window.md) | Prompt size distribution, especially the tail | Long-context price steps: OpenAI above 272K, xAI at 200K, Haiku 5.5 above 100K |
+| Modality and tools | Image, audio and video input; [computer use](computer-use-agents.md); grounding | Differ by vendor and tier |
 | Constraints | Data residency, retention, licence, cloud of record | US-only Claude inference costs 1.1x; open-weight licences may forbid MaaS |
 
 ## A selection process
@@ -66,7 +66,7 @@ flowchart TD
 1. **Efficiency-first** (prototypes, tight latency, high-volume simple tasks): start with the cheapest tier and move up only for a proven gap.
 2. **Capability-first** (complex reasoning, high-autonomy agents, accuracy over cost): start with the default frontier model, optimise prompts, then lower effort or downgrade. Move to the top tier only when evals at `xhigh`/`max` still fall short.
 
-OpenAI frames the same split differently: reasoning models act as "planners" for ambiguous, multi-step work, and fast GPT models act as "workhorses" for well-defined tasks. A common pattern plans with one and executes with the other.
+OpenAI frames the same split differently: [reasoning models](reasoning-models.md) act as "planners" for ambiguous, multi-step work, and fast GPT models act as "workhorses" for well-defined tasks. A common pattern plans with one and executes with the other.
 
 ## Effort before model
 
@@ -99,7 +99,7 @@ Synthesis: caching changes the ranking. Cache reads cost 0.025x to 0.1x of input
 Synthesis: routing adds failure modes:
 
 - **Misrouting:** hard queries go to the weak model, and the router's errors are invisible without evals.
-- **Coordination overhead:** orchestrator tokens and extra tool definitions.
+- **Coordination overhead:** orchestrator tokens and extra [tool](tools.md) definitions.
 - **Cache fragmentation** across models.
 - **Behavioural drift** between models: different prompt sensitivity, tool-call formats and refusal behaviour.
 
@@ -109,7 +109,7 @@ Re-validate the routing policy whenever a vendor ships a new tier, because relat
 
 Synthesis:
 
-- **Start from the customer's constraints.** Cloud of record (Bedrock, Vertex, Foundry), residency, retention and licence often eliminate options before any capability question. See [enterprise LLM deployment](enterprise-llm-deployment.md).
+- **Start from the customer's constraints.** Cloud of record ([Bedrock](amazon-bedrock.md), [Vertex](google-vertex-ai.md), [Foundry](azure-ai-foundry.md)), residency, retention and licence often eliminate options before any capability question. See [enterprise LLM deployment](enterprise-llm-deployment.md).
 - **Make the model a config value.** Pin snapshot IDs, store effort per route, and keep the eval harness runnable in CI so a new release can be assessed in hours ([LLM-as-judge](llm-as-judge.md) for open-ended outputs).
 - **Default stack:**
   - one frontier default (e.g. Opus 5.5, GPT-6.1 Sol, Gemini 4 Argon) for agentic and reasoning steps;

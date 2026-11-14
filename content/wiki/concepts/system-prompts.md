@@ -21,10 +21,10 @@ A **system prompt** is the block of instructions an application developer (the "
 
 | Vendor / API | Field | Notes |
 |---|---|---|
-| Anthropic Messages API | top-level `system` (string or blocks) | Plus `role: "system"` messages inside `messages` on supported models ([Anthropic mid-conversation](../sources/anthropic-mid-conversation-system-messages.md)) |
-| OpenAI Responses API | `developer` role messages, or the `instructions` parameter | `instructions` applies to one request only and is not carried over via `previous_response_id` ([OpenAI guide](../sources/openai-prompt-engineering-guide.md)). Reasoning models since `o1-2024-12-17` take developer messages instead of system messages ([OpenAI reasoning](../sources/openai-reasoning-best-practices.md)) |
+| [Anthropic Messages API](anthropic-messages-api.md) | top-level `system` (string or blocks) | Plus `role: "system"` messages inside `messages` on supported models ([Anthropic mid-conversation](../sources/anthropic-mid-conversation-system-messages.md)) |
+| [OpenAI Responses API](openai-responses-api.md) | `developer` role messages, or the `instructions` parameter | `instructions` applies to one request only and is not carried over via `previous_response_id` ([OpenAI guide](../sources/openai-prompt-engineering-guide.md)). [Reasoning models](reasoning-models.md) since `o1-2024-12-17` take developer messages instead of system messages ([OpenAI reasoning](../sources/openai-reasoning-best-practices.md)) |
 | OpenAI "system" | Platform-level, written by OpenAI | Above developer; may be invisible to developers ([Model Spec](../sources/openai-model-spec.md)) |
-| Google Gemini | system instruction | For persistent behaviour: persona, verbosity, date and knowledge cutoff, grounding rules ([Google](../sources/google-gemini-prompting-strategies.md)) |
+| [Google Gemini](gemini-api.md) | system instruction | For persistent behaviour: persona, verbosity, date and knowledge cutoff, grounding rules ([Google](../sources/google-gemini-prompting-strategies.md)) |
 
 ## Precedence: the instruction hierarchy
 
@@ -47,7 +47,7 @@ This hierarchy is learned, not enforced by the runtime. OpenAI's Instruction Hie
 | Role/identity, tone, audience | The specific task instance and its variable input |
 | Hard rules and policies, refusal and escalation behaviour | End-user questions and uploaded content |
 | Output conventions (format, length, language) | Per-request documents (long ones at the top of the turn, query last) |
-| Tool-use policy, stable few-shot examples | Continuations of interrupted replies |
+| [Tool](tools.md)-use policy, stable [few-shot examples](few-shot-prompting.md) | Continuations of interrupted replies |
 | Current date, model identity, knowledge cutoff | |
 
 Sources for the table: role in system ([Anthropic](../sources/anthropic-prompting-best-practices.md)); identity → instructions → examples → context layout ([OpenAI guide](../sources/openai-prompt-engineering-guide.md)); date, cutoff and grounding rules ([Google](../sources/google-gemini-prompting-strategies.md)); role, constraints and format in the system instruction or at the start for Gemini 3 ([Google](../sources/google-gemini-prompting-strategies.md)); continuations in the user turn ([Anthropic](../sources/anthropic-prompting-best-practices.md)). Synthesis: the dividing line is *stable and privileged* (system) vs *per-request and untrusted* (user).
@@ -56,7 +56,7 @@ Sources for the table: role in system ([Anthropic](../sources/anthropic-promptin
 
 ## Changing instructions mid-conversation
 
-Editing the top-level `system` field changes the start of the prompt and invalidates the [prompt cache](prompt-caching.md) for everything after it. On many current Claude models it also invalidates earlier thinking blocks ([Anthropic best practices](../sources/anthropic-prompting-best-practices.md)). Anthropic's **mid-conversation system messages** append a `role: "system"` message instead ([Anthropic mid-conversation](../sources/anthropic-mid-conversation-system-messages.md)):
+Editing the top-level `system` field changes the start of the prompt and invalidates the [prompt cache](prompt-caching.md) for everything after it. On many current Claude models it also invalidates earlier [thinking blocks](extended-thinking.md) ([Anthropic best practices](../sources/anthropic-prompting-best-practices.md)). Anthropic's **mid-conversation system messages** append a `role: "system"` message instead ([Anthropic mid-conversation](../sources/anthropic-mid-conversation-system-messages.md)):
 
 - It applies from its position onward. Later system messages override earlier ones and the top-level field.
 - It must follow a user turn and cannot sit between `tool_use` and `tool_result` (400 error).

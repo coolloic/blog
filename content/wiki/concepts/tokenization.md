@@ -64,16 +64,16 @@ BPE as used by OpenAI is reversible and lossless, handles arbitrary text, and av
 - **Claude Opus 4.7 and later (including the Fable/Mythos families and Mythos Preview) use a newer tokenizer** that produces roughly 30% more tokens for the same text, with the exact increase depending on content ([Anthropic](../sources/anthropic-token-counting-docs.md)). On it, 1M tokens is about 555k words, versus about 750k words on earlier Claude models ([Claude models overview](../sources/anthropic-models-overview.md)). Rules of thumb are tokenizer-specific.
 - **Other languages cost more.** Translations of the same text can differ by up to 15x in token count, even with multilingual tokenizers; that means higher cost, higher latency and less content per window ([Petrov et al.](../sources/petrov-2023-tokenizer-unfairness.md)).
 - Code, numbers, rare words and unusual whitespace tokenize into more pieces ([notebook](../sources/notebook-transformers.md)).
-- **Media are tokens too.** Gemini charges 258 tokens per small image (or per 768×768 tile) and 32 tokens per second of audio ([Gemini](../sources/gemini-token-docs.md)).
+- **[Media](multimodal-models.md) are tokens too.** Gemini charges 258 tokens per small image (or per 768×768 tile) and 32 tokens per second of audio ([Gemini](../sources/gemini-token-docs.md)).
 
 ## Counting tokens across vendors (as of 2026-11)
 
 | Vendor | How to count before sending | Notes |
 |---|---|---|
 | OpenAI | Local: `tiktoken.encoding_for_model(...)`, then `len(enc.encode(text))` | Open-source library; encoding per model ([tiktoken](../sources/openai-tiktoken.md)) |
-| Anthropic | API: `POST /v1/messages/count_tokens` with the same body as a Messages request | Free, rate-limited, an **estimate**; counts tools, images, PDFs, thinking; rejects server tools (except the advisor tool), MCP connector and url/file media; does not apply prompt caching ([Anthropic](../sources/anthropic-token-counting-docs.md)) |
-| Google Gemini | API: `countTokens` (input only); response `usage` reports input, output, thought, cached and tool-use tokens | ([Gemini](../sources/gemini-token-docs.md)) |
-| Open-weight models | Load the model's own tokenizer (e.g. Hugging Face) | Synthesis: each family ships its own vocabulary |
+| [Anthropic](anthropic-messages-api.md) | API: `POST /v1/messages/count_tokens` with the same body as a Messages request | Free, rate-limited, an **estimate**; counts tools, images, PDFs, thinking; rejects server tools (except the advisor tool), [MCP](model-context-protocol.md) connector and url/file media; does not apply [prompt caching](prompt-caching.md) ([Anthropic](../sources/anthropic-token-counting-docs.md)) |
+| [Google Gemini](gemini-api.md) | API: `countTokens` (input only); response `usage` reports input, output, thought, cached and tool-use tokens | ([Gemini](../sources/gemini-token-docs.md)) |
+| [Open-weight models](open-weight-models.md) | Load the model's own tokenizer (e.g. [Hugging Face](hugging-face-ecosystem.md)) | Synthesis: each family ships its own vocabulary |
 
 Two traps:
 
@@ -83,7 +83,7 @@ Two traps:
 ## Failure modes caused by tokenization
 
 - **Arithmetic and digits.** GPT-3.5/GPT-4 tokenizers chunk numbers into up-to-3-digit tokens from the left, misaligning with place value; forcing right-to-left chunking with thousands separators markedly improves addition ([Singh & Strouse](../sources/tokenization-counts-arithmetic.md)).
-- **Character-level tasks** (spelling, counting letters, reversing strings). Synthesis: the model sees ids for multi-character chunks, not letters, so such tasks need tools or explicit decomposition. See [LLM limitations](llm-limitations.md).
+- **Character-level tasks** (spelling, counting letters, reversing strings). Synthesis: the model sees ids for multi-character chunks, not letters, so such tasks need [tools](tools.md) or explicit decomposition. See [LLM limitations](llm-limitations.md).
 - **Language inequity** in cost and context, as above ([Petrov et al.](../sources/petrov-2023-tokenizer-unfairness.md)).
 - **Budget surprises after a model upgrade** from a tokenizer change ([Anthropic](../sources/anthropic-token-counting-docs.md)).
 - **Stop sequences and token boundaries.** Synthesis: a stop string can span token boundaries; vendors match on decoded text, but behaviour around whitespace can surprise. See [sampling parameters](sampling-parameters.md).

@@ -37,7 +37,7 @@ Default effort is `high` on most models and `medium` on Claude Opus 5.5 and Haik
 
 ## What comes back: blocks, summaries, signatures
 
-- A `thinking` block has a `thinking` text field and a `signature`, which is the **encrypted full reasoning**. The visible text is never the raw chain of thought. `display: "summarized"` returns a summary written by a separate model. `display: "omitted"` (default on Claude 5-gen, Opus 4.7/4.8) returns an empty field and streams faster, because the server skips the thinking deltas ([thinking docs](../sources/anthropic-thinking-docs.md)).
+- A `thinking` block has a `thinking` text field and a `signature`, which is the **encrypted full reasoning**. The visible text is never the raw [chain of thought](chain-of-thought.md). `display: "summarized"` returns a summary written by a separate model. `display: "omitted"` (default on Claude 5-gen, Opus 4.7/4.8) returns an empty field and streams faster, because the server skips the thinking deltas ([thinking docs](../sources/anthropic-thinking-docs.md)).
 - **Billing is for the full thinking, whatever you see.** Read `usage.output_tokens_details.thinking_tokens`; it appears only on the final `message_delta` when streaming. Summaries are free ([steering docs](../sources/anthropic-steering-thinking-docs.md)).
 - `redacted_thinking` blocks hold safety-redacted reasoning in an opaque `data` field. Code that filters on `type == "thinking"` silently drops them and breaks tool-use round trips ([thinking docs](../sources/anthropic-thinking-docs.md)).
 - On recent models, prompting Claude to write its reasoning into the answer text may be refused (`reasoning_extraction`). Read the thinking blocks instead ([thinking docs](../sources/anthropic-thinking-docs.md)).
@@ -46,7 +46,7 @@ Default effort is `high` on most models and `medium` on Claude Opus 5.5 and Haik
 
 A tool-use loop is **one assistant turn**. When you send `tool_result`s back, you must include that turn's thinking blocks **complete, unmodified and in their original order**. Edited blocks get a 400. Toggling thinking mid-turn doesn't error; the API silently disables thinking for that request ([thinking docs](../sources/anthropic-thinking-docs.md)). See [function calling](function-calling.md) and the [agent loop](agent-loop.md).
 
-**Interleaved thinking** lets Claude reason after each tool result before choosing its next action. With it, the thinking allocation spans the whole turn rather than one response ([thinking docs](../sources/anthropic-thinking-docs.md)). This used to be the gap filled by the "think" tool, a no-op tool that only logs a thought. On τ-Bench airline it took pass^1 from 0.370 to 0.570 with an optimized prompt. In December 2025 Anthropic updated that post to recommend extended thinking over the think tool in most cases ([think tool](../sources/anthropic-think-tool.md)).
+**Interleaved thinking** lets Claude reason after each tool result before choosing its next action. With it, the thinking allocation spans the whole turn rather than one response ([thinking docs](../sources/anthropic-thinking-docs.md)). This used to be the gap filled by the "think" tool, a no-op tool that only logs a thought. On [τ-Bench](benchmarks.md) airline it took pass^1 from 0.370 to 0.570 with an optimized prompt. In December 2025 Anthropic updated that post to recommend extended thinking over the think tool in most cases ([think tool](../sources/anthropic-think-tool.md)).
 
 ```mermaid
 flowchart TD
@@ -61,7 +61,7 @@ flowchart TD
 
 *Diagram: one assistant turn with interleaved thinking, per the Claude thinking docs.*
 
-**Across turns:** keep-all models (Opus 4.5+, Sonnet 4.6+, Haiku 5.5, Fable/Mythos) keep earlier turns' thinking in context, billed as input. Older models strip it once a non-tool-result user message arrives. Pass everything back either way and let the API filter it. On keep-all models, long agent sessions accumulate thinking in the [context window](context-window.md). Thinking-block clearing (context editing) reclaims that space ([thinking docs](../sources/anthropic-thinking-docs.md)). Thinking blocks are readable only by their own model and certain others, so switching models mid-conversation can silently drop prior reasoning ([thinking docs](../sources/anthropic-thinking-docs.md)).
+**Across turns:** keep-all models (Opus 4.5+, Sonnet 4.6+, Haiku 5.5, Fable/Mythos) keep earlier turns' thinking in context, billed as input. Older models strip it once a non-tool-result user message arrives. Pass everything back either way and let the API filter it. On keep-all models, long agent sessions accumulate thinking in the [context window](context-window.md). Thinking-block clearing ([context editing](context-engineering.md)) reclaims that space ([thinking docs](../sources/anthropic-thinking-docs.md)). Thinking blocks are readable only by their own model and certain others, so switching models mid-conversation can silently drop prior reasoning ([thinking docs](../sources/anthropic-thinking-docs.md)).
 
 ## Interactions and gotchas
 
@@ -72,7 +72,7 @@ flowchart TD
 
 ## Cross-vendor equivalents (Nov 2026)
 
-| Concept | Claude | OpenAI | Gemini | DeepSeek |
+| Concept | [Claude](anthropic-messages-api.md) | [OpenAI](openai-responses-api.md) | [Gemini](gemini-api.md) | DeepSeek |
 |---|---|---|---|---|
 | Depth knob | `output_config.effort` | `reasoning.effort` (+ `mode`) | `thinking_level` | `reasoning_effort` |
 | Visible reasoning | Summary / omitted | Summary opt-in | Summary opt-in | Full `reasoning_content` |

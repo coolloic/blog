@@ -51,7 +51,7 @@ flowchart LR
 
 Synthesis: diagram assembled from the GRPO, DAPO, TRL and verl sources.
 
-**GRPO** (Group Relative Policy Optimization) is the default algorithm. PPO needs a learned value model (critic), usually as large as the policy. GRPO drops it: it samples a group of G outputs per prompt and uses each output's reward, normalised within its group, as the advantage. The KL penalty to a reference model is added to the loss directly. DeepSeekMath used G = 64 and KL coefficient 0.04 ([GRPO](../sources/deepseekmath-grpo-2024.md)). DeepSeek-R1-Zero ran GRPO on a base model with only rule rewards (answer correctness plus a format reward for reasoning inside think tags). Long, self-checking chains of thought emerged, and AIME 2024 pass@1 rose from 15.6% to 71.0%. Neural reward models were avoided because the policy learned to hack them ([DeepSeek-R1](../sources/deepseek-r1-paper.md)).
+**GRPO** (Group Relative Policy Optimization) is the default algorithm. PPO needs a learned value model (critic), usually as large as the policy. GRPO drops it: it samples a group of G outputs per prompt and uses each output's reward, normalised within its group, as the advantage. The KL penalty to a reference model is added to the loss directly. DeepSeekMath used G = 64 and KL coefficient 0.04 ([GRPO](../sources/deepseekmath-grpo-2024.md)). DeepSeek-R1-Zero ran GRPO on a base model with only rule rewards (answer correctness plus a format reward for reasoning inside think tags). Long, self-checking [chains of thought](chain-of-thought.md) emerged, and AIME 2024 pass@1 rose from 15.6% to 71.0%. Neural reward models were avoided because the policy learned to hack them ([DeepSeek-R1](../sources/deepseek-r1-paper.md)).
 
 ### GRPO variants and why they exist
 
@@ -92,8 +92,8 @@ Reward design is most of the work.
 | OpenAI RFT | Managed RFT of o4-mini with string, similarity, Python, model and multi graders; `reasoning_effort`, `compute_multiplier`, `eval_interval` | **Effectively ended:** o4-mini and its fine-tunes shut down 2026-10-23; the fine-tuning platform is closed to new users, and job creation ends for remaining customers 2027-01-06 ([OpenAI RFT](../sources/openai-reinforcement-fine-tuning-guide.md), [deprecations](../sources/openai-deprecations-fine-tuning.md)) |
 | [Amazon Bedrock](amazon-bedrock.md) | Reinforcement fine-tuning with reward functions such as AWS Lambda; prompts or invocation logs as data | [Bedrock](../sources/bedrock-model-customization.md) |
 | [Vertex AI](google-vertex-ai.md) | RL fine-tuning of Gemini 3.5 Flash / 3.1 Flash-Lite with reward functions; dozens to a few hundred prompts; SFT→RLFT chaining | [Vertex AI](../sources/vertex-ai-gemini-tuning.md) |
-| TRL | `GRPOTrainer`, `AsyncGRPO`, `RLOO`; vLLM colocate or server rollouts | [TRL](../sources/hugging-face-trl-docs.md) |
-| verl | Large-scale RL: PPO, GRPO, DAPO and more; FSDP/Megatron training with vLLM/SGLang rollouts; multi-turn agentic RL with tools; LoRA | [verl](../sources/verl-docs.md) |
+| [TRL](hugging-face-ecosystem.md) | `GRPOTrainer`, `AsyncGRPO`, `RLOO`; [vLLM](llm-inference-serving.md) colocate or server rollouts | [TRL](../sources/hugging-face-trl-docs.md) |
+| verl | Large-scale RL: PPO, GRPO, DAPO and more; FSDP/Megatron training with vLLM/SGLang rollouts; multi-turn agentic RL with tools; [LoRA](peft-and-lora.md) | [verl](../sources/verl-docs.md) |
 | Unsloth | Single-GPU GRPO with QLoRA; ~5 GB VRAM for ≤1.5B models (vendor claim); vLLM rollouts via `fast_inference` | [Unsloth](../sources/unsloth-rl-guide.md) |
 | Axolotl | GRPO in a YAML-driven pipeline | [Axolotl](../sources/axolotl-docs.md) |
 
@@ -107,7 +107,7 @@ OpenAI's managed-RFT workflow still shows what a good job looks like ([OpenAI RF
 - **Length drift.** Normalisation bias makes wrong answers longer ([Dr. GRPO](../sources/liu-2025-dr-grpo.md)), and truncation noise also distorts length ([DAPO](../sources/dapo-2025.md)). This affects cost and latency at inference ([test-time compute](test-time-compute.md)).
 - **Sharpening, not expanding.** RLVR models beat their base at pass@1 but lose at large pass@k. The reasoning paths were already in the base distribution, and distillation can add new ones ([Yue et al.](../sources/yue-2025-rlvr-reasoning-boundary.md), [GRPO](../sources/deepseekmath-grpo-2024.md)). Base models can also show "aha" reflection before any RL, so be wary of attributing everything to RL ([Dr. GRPO](../sources/liu-2025-dr-grpo.md)).
 - **Slow, expensive feedback.** Expect around 300 steps before reward rises, and runs of 12+ hours on one GPU ([Unsloth](../sources/unsloth-rl-guide.md)). Slow graders and model graders lengthen and raise the cost of managed jobs ([OpenAI RFT](../sources/openai-reinforcement-fine-tuning-guide.md)).
-- **Regressions elsewhere.** R1 was weaker than its base at function calling, multi-turn and JSON output ([DeepSeek-R1](../sources/deepseek-r1-paper.md)). Keep a broad regression suite ([LLM evaluation](llm-evaluation.md)).
+- **Regressions elsewhere.** R1 was weaker than its base at [function calling](function-calling.md), multi-turn and JSON output ([DeepSeek-R1](../sources/deepseek-r1-paper.md)). Keep a broad regression suite ([LLM evaluation](llm-evaluation.md)).
 
 ## When to use it
 
@@ -121,7 +121,7 @@ Do not use it when (Synthesis, except the last point):
 - The model lacks the knowledge. Use [RAG](retrieval-augmented-generation.md).
 - A stronger teacher exists. Distilling its traces may beat RL on a small model ([DeepSeek-R1](../sources/deepseek-r1-paper.md), [Thinking Machines](../sources/on-policy-distillation-thinking-machines.md)).
 
-Synthesis: for a Forward Deployed Engineer in late 2026, the practical path is open weights plus TRL, Unsloth or verl, or a cloud RFT service (Bedrock, Vertex AI). OpenAI's RFT is no longer an option. Build the grader and the eval first; they double as your [verification](verification-and-evals.md) harness whether or not you train.
+Synthesis: for a [Forward Deployed Engineer](forward-deployed-engineering.md) in late 2026, the practical path is [open weights](open-weight-models.md) plus TRL, Unsloth or verl, or a cloud RFT service (Bedrock, Vertex AI). OpenAI's RFT is no longer an option. Build the grader and the eval first; they double as your [verification](verification-and-evals.md) harness whether or not you train.
 
 ## Sources
 

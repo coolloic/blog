@@ -17,7 +17,7 @@ lastmod: 2026-11-14
 tags: ["models", "caching", "cost"]
 ---
 
-**Prompt caching** (Google calls it *context caching*) lets a model API skip recomputing the part of a prompt it has recently processed. When a request starts with exactly the same tokens as an earlier one, the provider reuses the stored attention key/value state for that prefix, so only the new suffix needs prefill. Cached tokens are billed at a steep discount, typically 90% or more off input price, and time-to-first-token drops. The output is identical to an uncached call ([Anthropic](../sources/anthropic-prompt-caching-docs.md), [OpenAI](../sources/openai-prompt-caching-guide.md), [Gemini](../sources/gemini-context-caching-docs.md)). The owner's notebook gives the core design rule: stable content first, variable content last ([Notebook](../sources/notebook-prompt-engineering.md)).
+**Prompt caching** (Google calls it *context caching*) lets a model API skip recomputing the part of a prompt it has recently processed. When a request starts with exactly the same tokens as an earlier one, the provider reuses the stored attention key/value state for that prefix, so only the new suffix needs [prefill](llm-inference-serving.md). Cached tokens are billed at a steep discount, typically 90% or more off input price, and time-to-first-token drops. The output is identical to an uncached call ([Anthropic](../sources/anthropic-prompt-caching-docs.md), [OpenAI](../sources/openai-prompt-caching-guide.md), [Gemini](../sources/gemini-context-caching-docs.md)). The owner's notebook gives the core design rule: stable content first, variable content last ([Notebook](../sources/notebook-prompt-engineering.md)).
 
 ## Mechanics
 
@@ -38,7 +38,7 @@ Synthesis: lay the prompt out from most stable to most volatile and put cache br
 
 ## Vendor comparison (as of 2026-11-14)
 
-| | Anthropic (Claude API) | OpenAI | Gemini |
+| | Anthropic ([Claude API](anthropic-messages-api.md)) | [OpenAI](openai-responses-api.md) | [Gemini](gemini-api.md) |
 |---|---|---|---|
 | Activation | Opt-in: `cache_control` on blocks (max 4 breakpoints) or top-level automatic `cache_control` | Automatic; GPT-5.6+ adds `prompt_cache_options` with implicit or explicit breakpoints (≤ 4 writes) | Implicit: automatic on 2.5+. Explicit: `cachedContents` resource (Gemini 2.5/3 only, not Gemini 4) |
 | Minimum prefix | 512 tokens (5.x models) up to 4,096 (Opus 4.5/4.6, Haiku 4.5) | 1,024 visible tokens (GPT-5.6+); model-dependent on older models | 2,048 (2.5) / 4,096 (3.x, 4) |
@@ -52,14 +52,14 @@ Sources: [Anthropic](../sources/anthropic-prompt-caching-docs.md), [OpenAI](../s
 
 ### Anthropic specifics
 
-- **Breakpoints and lookback.** Writes happen only at breakpoints. On a request, the API checks the breakpoint's prefix hash and, on a miss, walks back up to **20 blocks** looking for an entry an earlier request wrote. In a long agent loop that adds more than 20 blocks per turn, the breakpoint outruns the last write, so add a second breakpoint. A run of consecutive `tool_use` or `tool_result` blocks counts as one position ([Anthropic](../sources/anthropic-prompt-caching-docs.md)).
-- **What invalidates what.** Changing tool definitions invalidates everything. Toggling web search, citations or fast mode invalidates system and messages. Changing `tool_choice`, or adding or removing images, invalidates messages. Thinking parameters and effort are model-specific ([Anthropic](../sources/anthropic-prompt-caching-docs.md), [tool use](../sources/anthropic-tool-use-docs.md)). Changing the structured-output format also invalidates the thread's cache ([Structured outputs](../sources/anthropic-structured-outputs-docs.md)).
+- **Breakpoints and lookback.** Writes happen only at breakpoints. On a request, the API checks the breakpoint's prefix hash and, on a miss, walks back up to **20 blocks** looking for an entry an earlier request wrote. In a long [agent loop](agent-loop.md) that adds more than 20 blocks per turn, the breakpoint outruns the last write, so add a second breakpoint. A run of consecutive `tool_use` or `tool_result` blocks counts as one position ([Anthropic](../sources/anthropic-prompt-caching-docs.md)).
+- **What invalidates what.** Changing tool definitions invalidates everything. Toggling web search, citations or fast mode invalidates system and messages. Changing [`tool_choice`](function-calling.md), or adding or removing images, invalidates messages. [Thinking](extended-thinking.md) parameters and effort are model-specific ([Anthropic](../sources/anthropic-prompt-caching-docs.md), [tool use](../sources/anthropic-tool-use-docs.md)). Changing the [structured-output](structured-outputs.md) format also invalidates the thread's cache ([Structured outputs](../sources/anthropic-structured-outputs-docs.md)).
 - **Concurrency.** An entry becomes readable only after the first response *starts*. Fan-out of N parallel requests with a cold prefix pays N writes, so send one request, wait for its first token, then fan out. Alternatively, pre-warm with `max_tokens: 0` ([Anthropic](../sources/anthropic-prompt-caching-docs.md)).
 - **Silent misses.** Prefixes below the minimum are not cached and no error is returned. If both cache usage fields are 0, you missed ([Anthropic](../sources/anthropic-prompt-caching-docs.md)).
 
 ### OpenAI specifics
 
-Caches live on individual machines, and requests are routed by a hash of the leading prefix tokens plus `prompt_cache_key`. Above about **15 requests per minute** per prefix and key, traffic overflows to other machines and hit rates fall. Spread hot prefixes across several deterministic keys. Changing `tools`, `parallel_tool_calls`, `text.format`, reasoning effort, verbosity or compaction can break the prefix. Cached tokens still count toward TPM rate limits, and there is no manual cache clear ([OpenAI](../sources/openai-prompt-caching-guide.md)).
+Caches live on individual machines, and requests are routed by a hash of the leading prefix tokens plus `prompt_cache_key`. Above about **15 requests per minute** per prefix and key, traffic overflows to other machines and hit rates fall. Spread hot prefixes across several deterministic keys. Changing `tools`, `parallel_tool_calls`, `text.format`, reasoning effort, verbosity or compaction can break the prefix. Cached tokens still count toward TPM [rate limits](rate-limits-and-retries.md), and there is no manual cache clear ([OpenAI](../sources/openai-prompt-caching-guide.md)).
 
 ### Gemini specifics
 
@@ -78,7 +78,7 @@ Synthesis, using Anthropic's 5-minute multipliers: a write costs 1.25× and each
 
 ## When to use / when not
 
-- **Use** for long system prompts, tool catalogues, few-shot banks, multi-turn chat and agent loops (cache the growing history), repeated questions over one document, and **CAG**: preloading a small stable corpus instead of retrieving it ([Notebook RAG vs CAG](../sources/notebook-rag-cag.md)). See [retrieval-augmented generation](retrieval-augmented-generation.md) and [context engineering](context-engineering.md).
+- **Use** for long [system prompts](system-prompts.md), [tool](tools.md) catalogues, [few-shot](few-shot-prompting.md) banks, multi-turn chat and agent loops (cache the growing history), repeated questions over one document, and **CAG**: preloading a small stable corpus instead of retrieving it ([Notebook RAG vs CAG](../sources/notebook-rag-cag.md)). See [retrieval-augmented generation](retrieval-augmented-generation.md) and [context engineering](context-engineering.md).
 - **Don't bother** for one-shot prompts, prefixes under the minimum, or traffic sparser than the TTL (unless 1 h / 24 h tiers fit).
 - **Measure**: log the cache usage fields per request in your [observability](llm-observability.md) stack. Hit rate is the metric, and it regresses silently. See [cost and latency optimization](cost-and-latency-optimization.md).
 

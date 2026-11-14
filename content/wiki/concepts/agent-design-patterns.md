@@ -5,11 +5,11 @@ category: concept
 sources:
   - ../sources/google-cloud-choose-agentic-design-pattern.md
   - ../sources/anatomy-of-a-modern-ai-agent.md
-lastmod: 2026-11-13
+lastmod: 2026-11-14
 tags: ["agents", "patterns", "multi-agent"]
 ---
 
-**Agent design patterns** are reusable architectures for organising an agentic system: how many agents there are, what each does, and **who decides what happens next**. That last point is the most useful way to tell them apart. In some patterns, code you wrote fixes the order of steps. In others, a model decides at runtime. Model-decided patterns adapt better but cost more calls, tokens and latency.
+**Agent design patterns** are reusable architectures for organising an agentic system: how many agents there are, what each does, and **who decides what happens next**. That last point is the most useful way to tell them apart. In some patterns, code you wrote fixes the order of steps. In others, a model decides at runtime. Model-decided patterns adapt better but cost more calls, tokens and [latency](cost-and-latency-optimization.md).
 
 ## Choosing a pattern
 
@@ -41,7 +41,7 @@ flowchart TD
 
 ### Single agent
 
-One model with a set of [tools](tools.md) and a detailed system prompt. It plans and picks tools itself: the plain [agent loop](agent-loop.md).
+One model with a set of [tools](tools.md) and a detailed [system prompt](system-prompts.md). It plans and picks tools itself: the plain [agent loop](agent-loop.md).
 - **Use for:** multi-step tasks needing external data, and as the first version of any agent.
 - **Watch for:** quality drops (wrong tool choice, failures, latency) as tools and responsibilities grow. That's the signal to move to ReAct or multi-agent.
 
@@ -99,7 +99,7 @@ flowchart LR
 ```
 
 Two loop variants focus on output quality:
-- **Review and critique (generator–critic):** a generator drafts and a critic checks the draft against criteria (accuracy, format, safety), then approves it or sends it back. An example is a code generator paired with a security-auditor critic that runs tests. This is [verification](verification-and-evals.md) built into the architecture.
+- **Review and critique (generator–critic):** a generator drafts and a critic checks the draft against criteria (accuracy, format, safety), then approves it or sends it back. An example is a [code generator](coding-agents.md) paired with a security-auditor critic that runs tests. This is [verification](verification-and-evals.md) built into the architecture.
 - **Iterative refinement:** one or more agents improve a shared result over several passes until it meets a quality bar or hits an iteration limit. Good for drafting, planning and debugging code.
 
 **Review and critique**
@@ -116,7 +116,7 @@ flowchart LR
 | Pattern | Shape | Use for | Watch for |
 |---|---|---|---|
 | **Coordinator** | A model routes each request to specialist agents | Varied inputs to a structured process (e.g. support: status, return, or refund) | Extra calls for every routing decision |
-| **Hierarchical decomposition** | A root agent splits the task, sub-agents split further, workers execute | Ambiguous, open-ended work (research, planning) | Hard to design and debug; nested calls make it slow and costly |
+| **Hierarchical decomposition** | A root agent splits the task, sub-agents split further, workers execute | Ambiguous, open-ended work ([research](deep-research-agents.md), planning) | Hard to design and debug; nested calls make it slow and costly |
 | **Swarm** | Agents talk all-to-all, critique and hand off, with no central supervisor | Very complex problems that benefit from debate | The most complex and costly pattern; needs exit conditions to converge |
 
 **Coordinator**
@@ -157,7 +157,9 @@ flowchart LR
 
 ### Special requirements
 
-- **Human-in-the-loop:** the agent pauses at set checkpoints for a person to approve, correct or add input. An example is a compliance officer approving a redacted dataset before release. It's one of the strongest [guardrails](agent-guardrails.md), at the cost of building the review system.
+- **[Human-in-the-loop](human-in-the-loop.md):** the agent pauses at set checkpoints for a person to approve, correct or add input. An example is a compliance officer approving a redacted dataset before release. It's one of the strongest [guardrails](agent-guardrails.md), at the cost of building the review system.
+
+> **Contradiction:** this page, following [Google Cloud's pattern guide](../sources/google-cloud-choose-agentic-design-pattern.md), calls human-in-the-loop one of the strongest guardrails. [Human-in-the-loop](human-in-the-loop.md) cites [Meta's Rule of Two](../sources/meta-2025-agents-rule-of-two.md) ("blindly approved" confirmations still fail; HITL does not replace sandboxing or least privilege) and [Anthropic's autonomy study](../sources/anthropic-2026-measuring-agent-autonomy.md), which recommends designing for visibility and easy intervention rather than approving every action. HITL is strong only when gates are few and reviewers actually read them.
 - **Custom logic:** your own code branches between other patterns. For example, a refund agent runs parallel checks, then branches to either a refund or a sequential store-credit flow. This is the most flexible option, but also the most work to build and maintain.
 
 **Human-in-the-loop**
@@ -188,6 +190,19 @@ flowchart TD
 - **Exit conditions are mandatory** for loop, refinement and swarm patterns: an iteration cap, a time limit or a goal.
 - **Context per agent.** Isolate it, persist what later steps need, and compress large data. See [context engineering](context-engineering.md).
 - **Synthesis:** the patterns compose. Real systems often nest them, for example a coordinator whose specialists run sequential or generator–critic loops. The custom-logic pattern is the general case of that.
+
+## Going deeper
+
+- [Deep research agents](deep-research-agents.md): the reference orchestrator-worker (hierarchical) system, with token-cost data.
+- [Google ADK](google-adk.md): workflow agents (sequential, parallel, loop) and graph-based orchestration as code.
+- [CrewAI](crewai.md): sequential and hierarchical processes, and when a single agent is better.
+- [AutoGen and Microsoft Agent Framework](autogen.md): sequential, concurrent, handoff, group-chat and Magentic orchestrations.
+- [OpenAI Agents SDK](openai-agents-sdk.md): handoffs vs agents-as-tools, two ways to implement the coordinator pattern.
+- [LangGraph](langgraph.md): fixed workflows and dynamic routing as explicit state graphs.
+- [Agent2Agent protocol](agent2agent-protocol.md): delegating to agents across team, vendor or organisation boundaries.
+- [Durable agent execution](durable-agent-execution.md): pausing and resuming long workflows and human checkpoints.
+- [Agent evaluation](agent-evaluation.md): how to measure whether a more complex pattern actually pays off.
+- [Model selection](model-selection.md): the model-tier side of the cost and latency trade-off.
 
 ## Sources
 

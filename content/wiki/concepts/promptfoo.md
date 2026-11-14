@@ -15,7 +15,7 @@ lastmod: 2026-11-14
 tags: ["evaluation", "promptfoo", "ci", "red-teaming"]
 ---
 
-**promptfoo** is an open-source (MIT) command-line tool and Node library for testing LLM applications. You describe prompts, model providers and test cases in a YAML file. `promptfoo eval` runs every combination, scores each output with **assertions**, and exits with a non-zero code when tests fail, which makes it a natural regression gate in CI. The same tool generates adversarial attacks for [red teaming](llm-red-teaming.md). Evals run locally and call the model providers directly ([CLI and CI docs](../sources/promptfoo-cli-and-ci-docs.md)). OpenAI announced on 9 March 2026 that it would acquire Promptfoo to add security testing to its Frontier agent platform. The README now says Promptfoo is part of OpenAI and remains MIT-licensed open source ([TechCrunch](../sources/techcrunch-openai-acquires-promptfoo.md), [repo](../sources/promptfoo-cli-and-ci-docs.md)).
+**promptfoo** is an open-source (MIT) command-line tool and Node library for [testing LLM applications](llm-evaluation.md). You describe prompts, model providers and test cases in a YAML file. `promptfoo eval` runs every combination, scores each output with **assertions**, and exits with a non-zero code when tests fail, which makes it a natural regression gate in CI. The same tool generates adversarial attacks for [red teaming](llm-red-teaming.md). Evals run locally and call the model providers directly ([CLI and CI docs](../sources/promptfoo-cli-and-ci-docs.md)). OpenAI announced on 9 March 2026 that it would acquire Promptfoo to add security testing to its Frontier agent platform. The README now says Promptfoo is part of OpenAI and remains MIT-licensed open source ([TechCrunch](../sources/techcrunch-openai-acquires-promptfoo.md), [repo](../sources/promptfoo-cli-and-ci-docs.md)).
 
 ## Mental model: the eval matrix
 
@@ -45,13 +45,13 @@ This flow is assembled from the [config guide, CLI docs](../sources/promptfoo-cl
 | `defaultTest` | shared `assert`, `vars`, `threshold`, `options` (e.g. `options.provider` = the judge model) |
 | `assertionTemplates` | reusable assertion blocks referenced with `$ref` |
 
-Vars can come from files or from scripts: a JS function, or a Python `get_var`. Transforms run in a fixed order. The provider's `transformResponse` runs first, then the test's `options.transform`, which rewrites the output before assertions run. `contextTransform` extracts the retrieved context for RAG assertions. Keep the judge model (`defaultTest.options.provider` or `--grader`) separate from the providers under test ([config guide](../sources/promptfoo-cli-and-ci-docs.md)).
+Vars can come from files or from scripts: a JS function, or a Python `get_var`. Transforms run in a fixed order. The provider's `transformResponse` runs first, then the test's `options.transform`, which rewrites the output before assertions run. `contextTransform` extracts the retrieved context for [RAG](retrieval-augmented-generation.md) assertions. Keep the judge model (`defaultTest.options.provider` or `--grader`) separate from the providers under test ([config guide](../sources/promptfoo-cli-and-ci-docs.md)).
 
 ## Assertions
 
 - **Deterministic:** `equals`, `contains`, `regex`, `is-json`, `contains-json`, `is-sql`, `is-refusal`, `rouge-n`/`bleu`/`levenshtein`, `latency`, `cost`, and custom `javascript`/`python`/`webhook`.
 - **Agent and trace:** `is-valid-openai-tools-call`, `tool-call-f1`, and `trajectory:tool-used`, `trajectory:tool-sequence`, `trajectory:step-count`.
-- **Model-graded** ([LLM-as-judge](llm-as-judge.md)): `llm-rubric`, `g-eval`, `factuality`, `answer-relevance`, the RAG trio `context-faithfulness`/`context-recall`/`context-relevance`, `similar` (embeddings), `classifier`, `moderation`, and `select-best` for comparisons.
+- **Model-graded** ([LLM-as-judge](llm-as-judge.md)): `llm-rubric`, `g-eval`, `factuality`, `answer-relevance`, the RAG trio `context-faithfulness`/`context-recall`/`context-relevance`, `similar` ([embeddings](embeddings.md)), `classifier`, `moderation`, and `select-best` for comparisons.
 - Any assertion can be negated with a `not-` prefix. Each has a `weight` (default 1; 0 records a metric without affecting the verdict) and an optional `threshold`. A test passes when its weighted score meets the test threshold. Named `metric`s and `derivedMetrics` aggregate scores across tests ([assertions](../sources/promptfoo-assertions-docs.md)).
 
 Synthesis: put cheap deterministic checks (schema, regex, `cost`, `latency`) first and give them high weight. Reserve `llm-rubric` for qualities code can't check, and calibrate it against human labels as for any judge ([notebook](../sources/notebook-llm-evaluation.md)).
@@ -77,7 +77,7 @@ Red teaming has three steps: `redteam generate` builds attacks, `redteam run` ex
 
 ## promptfoo vs platform tools
 
-| Dimension | promptfoo | [Langfuse](langfuse.md) / [LangSmith](langsmith.md) / Braintrust |
+| Dimension | promptfoo | [Langfuse](langfuse.md) / [LangSmith](langsmith.md) / [Braintrust](braintrust.md) |
 |---|---|---|
 | Authoring | declarative YAML, 30+ assertion types | code (Python/TS) evaluators + UI judges |
 | Where results live | local files / local viewer / optional share | hosted experiments next to production traces |
@@ -86,7 +86,7 @@ Red teaming has three steps: `redteam generate` builds attacks, `redteam run` ex
 | Red teaming | built-in | not built in |
 | CI signal | exit code 100 | Langfuse: `RegressionError` in a GitHub Action |
 
-Langfuse's migration guide confirms these trade-offs. Assertion `weight`/`threshold` and per-item `latency`/`cost` checks have no direct Langfuse equivalent, red teaming has none at all, and promptfoo can read Langfuse-managed prompts through `langfuse://` ([migration guide](../sources/langfuse-migrate-from-promptfoo.md), [Langfuse CI](../sources/langfuse-evaluation-docs.md)).
+Langfuse's migration guide confirms these trade-offs. Assertion `weight`/`threshold` and per-item `latency`/`cost` checks have no direct Langfuse equivalent, red teaming has none at all, and promptfoo can read Langfuse-[managed prompts](prompt-management.md) through `langfuse://` ([migration guide](../sources/langfuse-migrate-from-promptfoo.md), [Langfuse CI](../sources/langfuse-evaluation-docs.md)).
 
 ## Failure modes and limits
 

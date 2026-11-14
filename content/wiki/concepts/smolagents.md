@@ -30,7 +30,7 @@ tags: ["frameworks", "agents", "hugging-face", "python", "code-execution"]
 
 The case for code comes from the CodeAct paper. Across 17 LLMs, writing actions as executable Python gave up to 20% higher success than JSON or text formats. It also let the agent self-debug from interpreter errors ([CodeAct](../sources/wang-2024-codeact.md)). Hugging Face's docs give four reasons code beats JSON: you can compose tools (loops, conditionals, nesting), you can keep objects such as images or dataframes in variables, code is more general, and code is heavily represented in training data ([intro guide](../sources/smolagents-intro-agents-guide.md)). The README cites about **30% fewer steps**, and so fewer LLM calls ([README](../sources/smolagents-github-readme.md)).
 
-The strongest public evidence is Hugging Face's Open Deep Research reproduction. A `CodeAgent` scored **55.15%** on GAIA validation. The same agent with JSON actions averaged about **33%**, and OpenAI Deep Research reported 67.36% ([Open Deep Research](../sources/hugging-face-open-deep-research-blog.md)). See [deep research agents](deep-research-agents.md).
+The strongest public evidence is Hugging Face's Open Deep Research reproduction. A `CodeAgent` scored **55.15%** on GAIA validation ([benchmarks](benchmarks.md)). The same agent with JSON actions averaged about **33%**, and OpenAI Deep Research reported 67.36% ([Open Deep Research](../sources/hugging-face-open-deep-research-blog.md)). See [deep research agents](deep-research-agents.md).
 
 Microsoft Agent Framework later adopted the same pattern as an opt-in `execute_code` tool ([MAF CodeAct](../sources/microsoft-agent-framework-codeact-docs.md)); see [Microsoft Agent Framework](microsoft-agent-framework.md). smolagents differs by making code the *native* action format.
 
@@ -38,7 +38,7 @@ The docs also argue against agents where they aren't needed. They describe an ag
 
 ## Architecture: the MultiStepAgent loop
 
-Every agent subclasses `MultiStepAgent`, which runs a ReAct loop over a step-structured memory ([intro guide](../sources/smolagents-intro-agents-guide.md)):
+Every agent subclasses `MultiStepAgent`, which runs a ReAct [loop](agent-loop.md) over a step-structured memory ([intro guide](../sources/smolagents-intro-agents-guide.md)):
 
 ```mermaid
 flowchart TD
@@ -74,23 +74,23 @@ Two details matter in practice:
 | Code execution | `additional_authorized_imports`, `executor_type` (`local` default, `e2b`, `docker`, `modal`, `blaxel`), `executor_kwargs`, `max_print_outputs_length` | Submodules must be authorised explicitly or with `pkg.*` |
 | Generation | `stream_outputs`, `use_structured_outputs_internally`, `code_block_tags` | Structured generation per step is optional ([structured outputs](structured-outputs.md)) |
 | Run | `run(task, stream, reset, images, additional_args, max_steps)` | `additional_args` injects Python objects (e.g. a dataframe) into the run; `reset=False` continues memory |
-| Multi-agent | `managed_agents=[...]` + `name`/`description` on sub-agents | Hierarchical only |
+| Multi-agent | `managed_agents=[...]` + `name`/`description` on [sub-agents](subagents.md) | Hierarchical only |
 | Sharing | `save()`, `push_to_hub()`, `from_hub(..., trust_remote_code=True)` | Saves `agent.json`, `prompt.yaml`, tools, `app.py` |
 
 Sources: [API reference](../sources/smolagents-agents-reference.md), [guided tour](../sources/smolagents-docs-guided-tour.md).
 
 **Models.** The model classes are `InferenceClientModel` (HF Inference Providers), `LiteLLMModel` (100+ providers), `OpenAIModel`, `AzureOpenAIModel`, `AmazonBedrockModel`, and the local backends `TransformersModel` and `MLXModel`. Extra keyword arguments pass through to the completion call. Local models served by Ollama via LiteLLM need a context larger than Ollama's 2048-token default ([guided tour](../sources/smolagents-docs-guided-tour.md)). See [local LLMs](local-llms.md) and [context window](context-window.md).
 
-**Tools.** You can define a tool in two ways: the `@tool` decorator, which needs type hints and an `Args:` docstring, or a `Tool` subclass with `name`, `description`, `inputs`, `output_type` and `forward`. Tool metadata is rendered into the system prompt ([guided tour](../sources/smolagents-docs-guided-tour.md), [tools docs](../sources/smolagents-tools-docs.md)). Tools can also come from other sources ([tools docs](../sources/smolagents-tools-docs.md)):
+**Tools.** You can define a [tool](tools.md) in two ways: the `@tool` decorator, which needs type hints and an `Args:` docstring, or a `Tool` subclass with `name`, `description`, `inputs`, `output_type` and `forward`. Tool metadata is rendered into the system prompt ([guided tour](../sources/smolagents-docs-guided-tour.md), [tools docs](../sources/smolagents-tools-docs.md)). Tools can also come from other sources ([tools docs](../sources/smolagents-tools-docs.md)):
 
-- MCP servers, through `MCPClient` or `ToolCollection.from_mcp`, over stdio or Streamable HTTP (the docs' multi-server example also passes an SSE URL). `MCPClient` accepts a list of servers.
+- [MCP](model-context-protocol.md) servers, through `MCPClient` or `ToolCollection.from_mcp`, over stdio or Streamable HTTP (the docs' multi-server example also passes an SSE URL). `MCPClient` accepts a list of servers.
 - Gradio Spaces, through `Tool.from_space`.
-- LangChain, through `Tool.from_langchain`.
+- [LangChain](langchain.md), through `Tool.from_langchain`.
 - The Hub, through `load_tool(..., trust_remote_code=True)`.
 
 With `structured_output=True`, MCP `outputSchema` is injected into the CodeAgent prompt so the model knows the shape of a tool's result before it writes code against it. This is off by default today, and the docs say the default will change later. See [MCP in practice](mcp-in-practice.md).
 
-**Memory and observability.** Memory is a list of step objects (`agent.memory.steps`) that you can read and edit. Callbacks can prune it, for example by dropping old browser screenshots to cut tokens. `agent.step()` lets you drive the loop yourself ([memory docs](../sources/smolagents-memory-docs.md)). That is the hook for hand-rolled [context engineering](context-engineering.md). Synthesis: none of the docs cited here describe a persistence layer (no checkpointer or session store), so memory lives in-process unless you serialise `memory.steps` yourself. Tracing uses OpenTelemetry: the OpenInference `SmolagentsInstrumentor` sends spans to Phoenix or [Langfuse](langfuse.md), and MLflow offers its own one-line `mlflow.smolagents.autolog()` ([inspect runs](../sources/smolagents-inspect-runs-docs.md)).
+**Memory and observability.** Memory is a list of step objects (`agent.memory.steps`) that you can read and edit. Callbacks can prune it, for example by dropping old browser screenshots to cut tokens. `agent.step()` lets you drive the loop yourself ([memory docs](../sources/smolagents-memory-docs.md)). That is the hook for hand-rolled [context engineering](context-engineering.md). Synthesis: none of the docs cited here describe a persistence layer (no checkpointer or session store), so memory lives in-process unless you serialise `memory.steps` yourself. [Tracing](llm-observability.md) uses OpenTelemetry: the OpenInference `SmolagentsInstrumentor` sends spans to [Phoenix](arize-phoenix.md) or [Langfuse](langfuse.md), and MLflow offers its own one-line `mlflow.smolagents.autolog()` ([inspect runs](../sources/smolagents-inspect-runs-docs.md)).
 
 ## Security model and failure modes
 
@@ -137,7 +137,7 @@ Sources: smolagents sources above, [LangChain/LangGraph 1.0](../sources/langchai
 
 Synthesis, grounded in the sources above:
 
-- **Use it** for research prototypes, data-analysis or deep-research agents where one step needs to chain many tool calls and transform results; for running open or local models (code actions narrowed the gap to closed models in Hugging Face's tests, per the [launch post](../sources/hugging-face-smolagents-blog.md)); and for teaching, because the whole loop is readable.
+- **Use it** for research prototypes, data-analysis or deep-research agents where one step needs to chain many tool calls and transform results; for running [open](open-weight-models.md) or local models (code actions narrowed the gap to closed models in Hugging Face's tests, per the [launch post](../sources/hugging-face-smolagents-blog.md)); and for teaching, because the whole loop is readable.
 - **Avoid it, or wrap it,** when you need durable, resumable runs ([durable agent execution](durable-agent-execution.md)), per-action approval, multi-tenant production with strict audit, or TypeScript/.NET stacks. In those cases LangGraph, MAF, Mastra or the vendor SDKs fit better. If you keep it, run it in a remote sandbox, pin the version, and add tracing from the first day.
 
 ## Sources

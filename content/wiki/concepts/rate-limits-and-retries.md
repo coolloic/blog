@@ -32,12 +32,12 @@ Every major provider meters several dimensions at once, and whichever runs out f
 
 | Provider (late 2026) | Dimensions | Scope | Notable mechanics |
 |---|---|---|---|
-| Anthropic Claude API | RPM, input TPM (ITPM), output TPM (OTPM), monthly spend cap per tier | Organisation, per model class | Token bucket refilling continuously; cache reads don't count toward ITPM; ramp limits on sharp increases ([source](../sources/anthropic-rate-limits-docs.md)) |
-| OpenAI API | RPM, RPD, TPM, TPD, IPM; Batch queue tokens | Organisation and project, per model; some models share a pool | Counted usage = max(`max_tokens`, estimated tokens); tiers Free/Build/Launch/Grow ([source](../sources/openai-rate-limits-guide.md)) |
-| Gemini Developer API | RPM, input TPM, RPD (+IPM, TPD for some models), rolling 10-minute spend | Project, not API key | RPD resets midnight Pacific; tiers by cumulative spend and account age ([source](../sources/gemini-api-rate-limits-docs.md)) |
-| Vertex AI Standard PayGo | Org-level prioritized TPM threshold per model; no RPM | Organisation | Shared pool: traffic above threshold may be served but is throttled first; 429 = contention ([source](../sources/vertex-ai-standard-paygo-usage-tiers.md)) |
-| Amazon Bedrock on-demand | TPM, TPD, RPM quotas | Account, Region, model | Reserves input + `max_tokens` up front; output burndown multipliers up to 15x ([source](../sources/aws-bedrock-token-quotas.md)) |
-| Azure OpenAI (Foundry) Standard | TPM with RPM derived from it | Subscription/region pools, per deployment type | Seven quota tiers assigned automatically ([source](../sources/microsoft-foundry-quotas-limits.md)) |
+| [Anthropic Claude API](anthropic-messages-api.md) | RPM, input TPM (ITPM), output TPM (OTPM), monthly spend cap per tier | Organisation, per model class | Token bucket refilling continuously; cache reads don't count toward ITPM; ramp limits on sharp increases ([source](../sources/anthropic-rate-limits-docs.md)) |
+| [OpenAI API](openai-responses-api.md) | RPM, RPD, TPM, TPD, IPM; Batch queue tokens | Organisation and project, per model; some models share a pool | Counted usage = max(`max_tokens`, estimated tokens); tiers Free/Build/Launch/Grow ([source](../sources/openai-rate-limits-guide.md)) |
+| [Gemini Developer API](gemini-api.md) | RPM, input TPM, RPD (+IPM, TPD for some models), rolling 10-minute spend | Project, not API key | RPD resets midnight Pacific; tiers by cumulative spend and account age ([source](../sources/gemini-api-rate-limits-docs.md)) |
+| [Vertex AI](google-vertex-ai.md) Standard PayGo | Org-level prioritized TPM threshold per model; no RPM | Organisation | Shared pool: traffic above threshold may be served but is throttled first; 429 = contention ([source](../sources/vertex-ai-standard-paygo-usage-tiers.md)) |
+| [Amazon Bedrock](amazon-bedrock.md) on-demand | TPM, TPD, RPM quotas | Account, Region, model | Reserves input + `max_tokens` up front; output burndown multipliers up to 15x ([source](../sources/aws-bedrock-token-quotas.md)) |
+| Azure OpenAI ([Foundry](azure-ai-foundry.md)) Standard | TPM with RPM derived from it | Subscription/region pools, per deployment type | Seven quota tiers assigned automatically ([source](../sources/microsoft-foundry-quotas-limits.md)) |
 
 Four mechanics matter more than the headline numbers:
 
@@ -104,11 +104,11 @@ Synthesis: the diagram combines the classification table above with the retry ru
 
 Retries are only safe when repeating the call has no extra side effects. Reads usually qualify; creates often don't ([source](../sources/aws-builders-library-timeouts-retries-backoff.md)). The standard fix is a client-generated idempotency key that the server deduplicates on, returning the saved first response for repeats ([Stripe](../sources/stripe-idempotent-requests.md)). The owner's tutorial applies the same idea to agents: give each run a key so a duplicate trigger does not start two expensive runs ([source](../sources/notebook-concurrency-design.md)).
 
-Synthesis: an LLM completion call usually has no side effects beyond billing, so retrying it is safe but costs money. The danger is in the agent loop around it. A retried step that already executed a tool (sent an email, wrote a row) must not run that tool again. Put idempotency keys on side-effecting [tools](tools.md), and checkpoint completed steps as in [durable agent execution](durable-agent-execution.md).
+Synthesis: an LLM completion call usually has no side effects beyond billing, so retrying it is safe but costs money. The danger is in the [agent loop](agent-loop.md) around it. A retried step that already executed a tool (sent an email, wrote a row) must not run that tool again. Put idempotency keys on side-effecting [tools](tools.md), and checkpoint completed steps as in [durable agent execution](durable-agent-execution.md).
 
 ## Timeouts for long generations
 
-- Long outputs and reasoning runs can take minutes. Anthropic recommends streaming or the Message Batches API, especially for requests over 10 minutes. Networks may drop idle connections, so TCP keep-alive helps. The SDK refuses non-streaming requests expected to exceed 10 minutes ([source](../sources/anthropic-api-errors-docs.md)). Errors can arrive mid-stream after a 200, so handle `error` events in the stream as well as status codes. See [streaming](streaming.md).
+- Long outputs and [reasoning](reasoning-models.md) runs can take minutes. Anthropic recommends streaming or the Message Batches API, especially for requests over 10 minutes. Networks may drop idle connections, so TCP keep-alive helps. The SDK refuses non-streaming requests expected to exceed 10 minutes ([source](../sources/anthropic-api-errors-docs.md)). Errors can arrive mid-stream after a 200, so handle `error` events in the stream as well as status codes. See [streaming](streaming.md).
 - OpenAI SDKs default to a 10-minute timeout and retry 408s twice; flex requests warrant longer timeouts (the docs' examples use 15 minutes) ([source](../sources/openai-flex-processing-guide.md)).
 - Set timeouts from measured latency percentiles: pick an acceptable false-timeout rate and use the matching downstream percentile ([source](../sources/aws-builders-library-timeouts-retries-backoff.md)). Synthesis: LLM latency scales with output tokens and thinking effort, so time to first token and total time need separate budgets per route ([extended thinking](extended-thinking.md) routes need much longer totals).
 

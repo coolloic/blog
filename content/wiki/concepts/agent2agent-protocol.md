@@ -17,7 +17,7 @@ The **Agent2Agent (A2A) protocol** is an open standard that lets one agent (the 
 
 ## Why it exists, and how it differs from MCP
 
-[MCP](model-context-protocol.md) is **vertical**: it connects one agent to tools, which have structured inputs and outputs and are usually stateless. A2A is **horizontal**: it connects agents, which reason, plan and hold multi-turn state ([A2A and MCP](../sources/a2a-and-mcp-docs.md)). The design principles say agents should collaborate without being reduced to a tool. They also call for building on HTTP, SSE and JSON-RPC, being secure by default, supporting tasks that run for hours or days with humans in the loop, and staying modality agnostic ([announcement](../sources/google-a2a-announcement.md)).
+[MCP](model-context-protocol.md) is **vertical**: it connects one agent to [tools](tools.md), which have structured inputs and outputs and are usually stateless. A2A is **horizontal**: it connects agents, which reason, plan and hold multi-turn state ([A2A and MCP](../sources/a2a-and-mcp-docs.md)). The design principles say agents should collaborate without being reduced to a tool. They also call for building on HTTP, SSE and JSON-RPC, being secure by default, supporting tasks that run for hours or days with [humans in the loop](human-in-the-loop.md), and staying modality agnostic ([announcement](../sources/google-a2a-announcement.md)).
 
 | | MCP | A2A |
 |---|---|---|
@@ -83,7 +83,7 @@ The abstract operations are SendMessage, SendStreamingMessage, GetTask, ListTask
 There are three ways to follow long work ([builder's guide](../sources/aaif-a2a-v1-builders-guide.md)):
 
 1. **Polling** `GetTask` works everywhere, including behind firewalls that block inbound traffic.
-2. **Streaming** over SSE needs `capabilities.streaming`. A task stream opens with the Task, then sends status and artifact updates, and closes at a terminal state.
+2. **[Streaming](streaming.md)** over SSE needs `capabilities.streaming`. A task stream opens with the Task, then sends status and artifact updates, and closes at a terminal state.
 3. **Push notifications:** the agent POSTs `StreamResponse` payloads to the client's webhook. The client needs no open connection. The agent authenticates the call, uses 10–30 s timeouts with backoff, and refuses private address ranges. The receiver returns 2xx and deduplicates.
 
 **Versioning:** clients send `A2A-Version: 1.0`. A missing header is treated as 0.3, which makes a 1.0-only agent answer `VersionNotSupportedError`. To fix this, add a second interface entry that declares 0.3 and enable the SDK's compatibility flag ([builder's guide](../sources/aaif-a2a-v1-builders-guide.md)). Migrating from 0.3 to 1.0 also changed the card: `supportedInterfaces` replaces the single `url` + `preferredTransport` ([spec](../sources/a2a-specification-v1.md)). The well-known path had already moved from `agent.json` to `agent-card.json` in 0.3 (July 2025), and v1.0 registered it as a well-known URI ([builder's guide](../sources/aaif-a2a-v1-builders-guide.md)). The owner's [notebook](../sources/notebook-webmcp-a2a.md) still shows the older pre-0.3 `agent.json` shape.

@@ -59,16 +59,16 @@ Synthesis: the diagram assembles the stages described by [Anthropic](../sources/
 
 | Technique | Fixes | Mechanism | Cost |
 |---|---|---|---|
-| Query rewriting (Rewrite-Retrieve-Read) | Vague, conversational or multi-part queries | An LLM rewrites the query before search; a small rewriter can be RL-trained on reader feedback ([Ma et al.](../sources/ma-2023-query-rewriting.md)) | One extra LLM call |
+| [Query rewriting](query-transformation.md) (Rewrite-Retrieve-Read) | Vague, conversational or multi-part queries | An LLM rewrites the query before search; a small rewriter can be RL-trained on reader feedback ([Ma et al.](../sources/ma-2023-query-rewriting.md)) | One extra LLM call |
 | HyDE | Short queries embed poorly next to long documents | An LLM writes a hypothetical answer; embed *that* and search ([Gao et al.](../sources/gao-2022-hyde.md)) | One generation per query; fake details can steer retrieval |
 | Decomposition / multi-query | Questions needing several facts | Split into sub-queries, retrieve for each, merge ([Notebook](../sources/notebook-rag-cag.md)) | N retrievals |
-| Contextual retrieval | Chunks that lost their document context | Prepend an LLM-written 50-100 token blurb to each chunk before embedding and BM25 ([Anthropic](../sources/anthropic-contextual-retrieval.md)) | One-time, about $1.02 per M doc tokens (2024 pricing, with prompt caching) |
+| [Contextual retrieval](contextual-retrieval.md) | Chunks that lost their document context | Prepend an LLM-written 50-100 token blurb to each chunk before embedding and BM25 ([Anthropic](../sources/anthropic-contextual-retrieval.md)) | One-time, about $1.02 per M doc tokens (2024 pricing, with prompt caching) |
 
 Anthropic's measurements (failure rate = 1 - recall@20) show how the stages stack: 5.7% baseline, 3.7% with contextual embeddings, 2.9% adding contextual BM25, 1.9% adding a reranker, a 67% reduction overall ([source](../sources/anthropic-contextual-retrieval.md)).
 
 ## RAG vs CAG vs long context
 
-**Cache-augmented generation (CAG)** skips retrieval: preload the whole (small) knowledge base into the prompt once, precompute its KV cache, and answer every query from that cached prefix ([Chan et al.](../sources/chan-2024-cache-augmented-generation.md)). With hosted APIs this is long context plus [prompt caching](prompt-caching.md) ([Notebook](../sources/notebook-rag-cag.md)). Anthropic's rule of thumb: under about 200k tokens (about 500 pages), just put it all in the prompt ([source](../sources/anthropic-contextual-retrieval.md)).
+**Cache-augmented generation (CAG)** skips retrieval: preload the whole (small) knowledge base into the prompt once, precompute its [KV cache](kv-cache.md), and answer every query from that cached prefix ([Chan et al.](../sources/chan-2024-cache-augmented-generation.md)). With hosted APIs this is long context plus [prompt caching](prompt-caching.md) ([Notebook](../sources/notebook-rag-cag.md)). Anthropic's rule of thumb: under about 200k tokens (about 500 pages), just put it all in the prompt ([source](../sources/anthropic-contextual-retrieval.md)).
 
 | | RAG | CAG |
 |---|---|---|
@@ -83,7 +83,7 @@ Evidence: on HotPotQA and SQuAD subsets up to 85k tokens with Llama 3.1 8B, CAG 
 ## Variants for harder questions
 
 - **[GraphRAG](graphrag.md)** for multi-hop and whole-corpus ("main themes?") questions that no single chunk answers.
-- **[Agentic RAG](agentic-rag.md)**: retrieval becomes a tool the model calls iteratively; includes corrective RAG (grade, then fall back) and Self-RAG (model decides when to retrieve and critiques support). Agents increasingly retrieve "just in time" with tools such as grep instead of only pre-computed embeddings, at the cost of speed ([Anthropic](../sources/anthropic-effective-context-engineering.md)).
+- **[Agentic RAG](agentic-rag.md)**: retrieval becomes a [tool](tools.md) the model calls iteratively; includes corrective RAG (grade, then fall back) and Self-RAG (model decides when to retrieve and critiques support). Agents increasingly retrieve "just in time" with tools such as grep instead of only pre-computed embeddings, at the cost of speed ([Anthropic](../sources/anthropic-effective-context-engineering.md)).
 
 ## Evaluating RAG
 

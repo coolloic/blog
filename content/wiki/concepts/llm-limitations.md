@@ -19,14 +19,14 @@ lastmod: 2026-11-14
 tags: ["models", "reliability"]
 ---
 
-**LLM limitations** are the predictable ways large language models fail, rooted in how they are built: next-token prediction over [tokens](tokenization.md), trained on a fixed snapshot of data, then shaped by preference training, and served on batched GPU inference. They are not random bugs. Each has a known mechanism, so each has a known class of mitigation, usually outside the model (retrieval, tools, verification, evaluation) rather than inside the prompt. This page is the map; [hallucination](hallucination.md) and [long-context degradation](long-context-degradation.md) have their own pages.
+**LLM limitations** are the predictable ways large language models fail, rooted in how they are built: next-token prediction over [tokens](tokenization.md), trained on a fixed snapshot of data, then shaped by [preference training](preference-optimization.md), and served on [batched GPU inference](llm-inference-serving.md). They are not random bugs. Each has a known mechanism, so each has a known class of mitigation, usually outside the model (retrieval, tools, verification, evaluation) rather than inside the prompt. This page is the map; [hallucination](hallucination.md) and [long-context degradation](long-context-degradation.md) have their own pages.
 
 ## Overview
 
 | Limitation | Root cause | Symptom | Primary mitigation |
 |---|---|---|---|
-| [Hallucination](hallucination.md) | Pretraining can't separate valid from invalid for rare facts; benchmarks reward guessing | Confident false claims, fake citations | Grounding, citations, verification, allow abstention |
-| Knowledge cutoff | Frozen training snapshot; uneven data recency | Stale or missing recent facts | Retrieval / web search, date in prompt |
+| [Hallucination](hallucination.md) | Pretraining can't separate valid from invalid for rare facts; [benchmarks](benchmarks.md) reward guessing | Confident false claims, fake citations | Grounding, citations, verification, allow abstention |
+| Knowledge cutoff | Frozen training snapshot; uneven data recency | Stale or missing recent facts | Retrieval / [web search](web-search-apis.md), date in prompt |
 | Tokenization artifacts | Model sees subword tokens, not characters or digits | Letter counting, digit arithmetic errors | Tools (code execution), reasoning, formatting |
 | Non-determinism | Batch-size-dependent kernels, sampling | Different output for same input at temperature 0 | Evals over repeated runs; batch-invariant serving |
 | Sycophancy | Preference data rewards agreement | Caves when challenged, flatters user's view | Neutral prompts, independent verification |
@@ -44,7 +44,7 @@ Mitigation (Synthesis): put the current date in the [system prompt](system-promp
 
 Models operate on subword tokens, so character- and digit-level operations are indirect ([tokenization](tokenization.md)). GPT-3.5/GPT-4 tokenizers chunk numbers into up-to-3-digit tokens from the left, misaligned with place value; forcing right-to-left chunking with comma separators substantially improved addition accuracy, the errors were systematic, and the gap shrinks with scale ([Singh & Strouse](../sources/tokenization-counts-arithmetic.md)). Letter counting is the classic case: DeepSeek-V3 miscounted the Ds in "DEEPSEEK" while the [reasoning model](reasoning-models.md) R1 got it right ([Kalai et al.](../sources/why-language-models-hallucinate.md)).
 
-Mitigation (Synthesis): any exact computation (arithmetic, counting, dates, sorting long lists) belongs in a code-execution or calculator tool via [function calling](function-calling.md); [chain-of-thought](chain-of-thought.md) helps but is not a guarantee.
+Mitigation (Synthesis): any exact computation (arithmetic, counting, dates, sorting long lists) belongs in a [code-execution](code-execution-sandboxes.md) or calculator tool via [function calling](function-calling.md); [chain-of-thought](chain-of-thought.md) helps but is not a guarantee.
 
 ## Non-determinism
 
@@ -56,7 +56,7 @@ Consequences (Synthesis): treat every eval score as a distribution (run each cas
 
 Sycophancy is telling users what they want to hear. Anthropic found five production assistants consistently sycophantic: biased feedback toward work the user likes, abandoning correct answers when challenged, mirroring user beliefs and mistakes. Human preference data favours responses that match the user's views, and both humans and preference models sometimes prefer a convincing sycophantic answer to a correct one, so optimising against them trades truth for agreement ([Sharma et al.](../sources/towards-understanding-sycophancy.md)). It is a form of RLHF "belief misalignment" and a hallucination cause ([Huang et al.](../sources/survey-on-hallucination-in-llms.md)).
 
-Mitigation (Synthesis): avoid leading questions ("isn't it true that..."); ask for critique before asking for agreement; verify with an independent call that doesn't see the user's opinion; don't let "are you sure?" be a correction mechanism in an agent loop.
+Mitigation (Synthesis): avoid leading questions ("isn't it true that..."); ask for critique before asking for agreement; verify with an independent call that doesn't see the user's opinion; don't let "are you sure?" be a correction mechanism in an [agent loop](agent-loop.md).
 
 ## Position and order bias
 
@@ -65,11 +65,11 @@ Order changes answers in two settings:
 - **Inside a long input:** information in the middle is used worst ([Liu et al.](../sources/lost-in-the-middle.md)); see [long-context degradation](long-context-degradation.md).
 - **When comparing options**, notably [LLM-as-judge](llm-as-judge.md): swapping two answers changed GPT-4's verdict in 35% of cases (65.0% consistency), GPT-3.5's in 54%, and Claude-v1's in 76%, with Claude-v1 picking the first answer 75% of the time. Judges also showed **verbosity bias** (a padded list fooled GPT-3.5 and Claude-v1 in 91.3% of cases) and possible self-preference ([Zheng et al.](../sources/judging-llm-as-a-judge.md)).
 
-Mitigation: judge twice with order swapped and call disagreements a tie; few-shot examples raised GPT-4 consistency to 77.5% at about 4x prompt cost; give the judge a reference answer ([Zheng et al.](../sources/judging-llm-as-a-judge.md)).
+Mitigation: judge twice with order swapped and call disagreements a tie; [few-shot examples](few-shot-prompting.md) raised GPT-4 consistency to 77.5% at about 4x prompt cost; give the judge a reference answer ([Zheng et al.](../sources/judging-llm-as-a-judge.md)).
 
 ## Long context and context rot
 
-Accuracy declines as input grows, even for trivial tasks, and near-miss distractors make it worse ([Chroma](../sources/chroma-context-rot.md)). The mechanism is a finite **attention budget** spread across n-squared token pairs plus little long-sequence training data ([Anthropic](../sources/anthropic-effective-context-engineering.md)). Full treatment: [long-context degradation](long-context-degradation.md); remedies: [context engineering](context-engineering.md).
+Accuracy declines as input grows, even for trivial tasks, and near-miss distractors make it worse ([Chroma](../sources/chroma-context-rot.md)). The mechanism is a finite **[attention](transformer-architecture.md) budget** spread across n-squared token pairs plus little long-sequence training data ([Anthropic](../sources/anthropic-effective-context-engineering.md)). Full treatment: [long-context degradation](long-context-degradation.md); remedies: [context engineering](context-engineering.md).
 
 ## Refusals and over-refusal
 

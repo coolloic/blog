@@ -16,7 +16,7 @@ lastmod: 2026-11-14
 tags: ["models", "structured-outputs", "api"]
 ---
 
-**Structured outputs** constrain a model's generation so the result is guaranteed to parse and to match a developer-supplied JSON Schema. Vendors implement this with **constrained decoding**: the schema is compiled into a grammar or automaton, and at each decoding step tokens that would violate it are masked out before sampling. This differs from **JSON mode**, which only guarantees syntactically valid JSON of no particular shape, and from prompting ("respond in JSON"), which guarantees nothing ([OpenAI](../sources/openai-structured-outputs-guide.md), [Anthropic](../sources/anthropic-structured-outputs-docs.md), [Gemini](../sources/gemini-structured-outputs-docs.md)). For any output a program consumes, the owner's tutorial gives the rule of thumb: ask for a schema, not prose ([Notebook](../sources/notebook-prompt-engineering.md)).
+**Structured outputs** constrain a model's generation so the result is guaranteed to parse and to match a developer-supplied JSON Schema. Vendors implement this with **[constrained decoding](constrained-decoding.md)**: the schema is compiled into a grammar or automaton, and at each decoding step tokens that would violate it are masked out before sampling. This differs from **JSON mode**, which only guarantees syntactically valid JSON of no particular shape, and from prompting ("respond in JSON"), which guarantees nothing ([OpenAI](../sources/openai-structured-outputs-guide.md), [Anthropic](../sources/anthropic-structured-outputs-docs.md), [Gemini](../sources/gemini-structured-outputs-docs.md)). For any output a program consumes, the owner's tutorial gives the rule of thumb: ask for a schema, not prose ([Notebook](../sources/notebook-prompt-engineering.md)).
 
 ## How constrained decoding works
 
@@ -31,7 +31,7 @@ flowchart LR
     U --> M
 ```
 
-- **FSM indexing (Outlines).** Willard and Louf model generation as moving through a finite-state machine compiled from a regex or grammar. They precompute an index from each state to the vocabulary tokens valid from that state, so the per-step cost is a lookup plus a mask ([Willard & Louf 2023](../sources/efficient-guided-generation-outlines.md)).
+- **FSM indexing ([Outlines](instructor-and-outlines.md)).** Willard and Louf model generation as moving through a finite-state machine compiled from a regex or grammar. They precompute an index from each state to the vocabulary tokens valid from that state, so the per-step cost is a lookup plus a mask ([Willard & Louf 2023](../sources/efficient-guided-generation-outlines.md)).
 - **CFGs and XGrammar.** JSON's nesting needs a context-free grammar, and with it a parser stack, which makes naive per-token checks expensive. XGrammar splits the vocabulary into context-independent tokens (prechecked ahead of time) and context-dependent tokens (checked at runtime with a persistent stack), and overlaps this work with GPU execution. It reports up to 100× speedups and near-zero serving overhead ([XGrammar](../sources/xgrammar-structured-generation.md)).
 - **Vendor practice.** Anthropic compiles schemas into grammars cached for 24 h from last use. Gemini compiles them into a state machine with limits on states, branching and depth. OpenAI notes extra latency on the first request with a new schema ([Anthropic](../sources/anthropic-structured-outputs-docs.md), [Gemini](../sources/gemini-structured-outputs-docs.md), [OpenAI](../sources/openai-structured-outputs-guide.md)).
 
@@ -39,7 +39,7 @@ Synthesis: the guarantee is syntactic and structural. The grammar can force a `"
 
 ## API surface (as of 2026-11)
 
-| | Anthropic | OpenAI | Gemini |
+| | [Anthropic](anthropic-messages-api.md) | [OpenAI](openai-responses-api.md) | [Gemini](gemini-api.md) |
 |---|---|---|---|
 | Final-answer schema | `output_config.format: {type:"json_schema", schema}` (SDK `messages.parse(output_format=Model)`) | Responses `text.format: {type:"json_schema", strict:true, schema}`; Chat Completions `response_format` generateContent: `response_mime_type: "application/json"` + `response_json_schema`; Interactions API: `response_format: {mime_type:"application/json", schema}` (Pydantic/Zod in SDKs) |
 | Tool-argument schema | `strict: true` on a tool | `strict: true` on a function | `ANY` / `VALIDATED` function-calling modes |
@@ -63,7 +63,7 @@ Synthesis: the same Pydantic model can be enforced on OpenAI, rejected on Anthro
 ## Failure modes: when "guaranteed" output isn't
 
 1. **Refusals.** Claude returns `stop_reason: "refusal"` with HTTP 200, bills the tokens, and the output may not match the schema. OpenAI puts a refusal in a `refusal` content part ([Anthropic](../sources/anthropic-structured-outputs-docs.md), [OpenAI](../sources/openai-structured-outputs-guide.md)).
-2. **Truncation.** Hitting `max_tokens` (Claude) or `status: "incomplete"` with `max_output_tokens` (OpenAI) yields cut-off JSON. Check the stop reason before parsing.
+2. **Truncation.** Hitting [`max_tokens`](sampling-parameters.md) (Claude) or `status: "incomplete"` with `max_output_tokens` (OpenAI) yields cut-off JSON. Check the stop reason before parsing.
 3. **Enum casing.** Claude may return an enum value that differs only in capitalisation, with no error. Compare case-insensitively ([Anthropic](../sources/anthropic-structured-outputs-docs.md)).
 4. **Hallucination to fit.** If the input doesn't contain what the schema asks for, the model may invent values. Tell it what to emit for unfit input, for example nulls or a flag ([OpenAI](../sources/openai-structured-outputs-guide.md)). See [hallucination](hallucination.md).
 5. **JSON mode pitfalls.** OpenAI's JSON mode errors if "JSON" doesn't appear in the context, and without an instruction it can emit whitespace until the token limit ([OpenAI](../sources/openai-structured-outputs-guide.md)).
@@ -75,7 +75,7 @@ Synthesis: the same Pydantic model can be enforced on OpenAI, rejected on Anthro
 - **Prompt caching.** Changing `output_config.format` invalidates Claude's prompt cache for the thread ([Anthropic](../sources/anthropic-structured-outputs-docs.md)). On OpenAI, changing `text.format` can break the cached prefix ([OpenAI caching](../sources/openai-prompt-caching-guide.md)). See [prompt caching](prompt-caching.md).
 - **Streaming.** It works on all three vendors. Gemini streams valid partial JSON strings that concatenate to the final object ([Gemini](../sources/gemini-structured-outputs-docs.md)). See [streaming](streaming.md).
 - **Incompatibilities (Claude).** Citations (400) and assistant prefill ([Anthropic](../sources/anthropic-structured-outputs-docs.md)).
-- **Data handling.** Claude's compiled schemas are cached separately from prompts for up to 24 h, so keep PHI out of property names, enums and patterns ([Anthropic](../sources/anthropic-structured-outputs-docs.md)).
+- **Data handling.** Claude's compiled schemas are cached separately from prompts for up to 24 h, so keep [PHI](pii-and-data-privacy.md) out of property names, enums and patterns ([Anthropic](../sources/anthropic-structured-outputs-docs.md)).
 
 ## When to use / when not
 

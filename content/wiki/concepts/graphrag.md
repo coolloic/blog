@@ -44,11 +44,11 @@ Sources: [Edge et al.](../sources/edge-2024-graphrag.md), [Microsoft docs](../so
 
 ## Evidence
 
-On two corpora (podcast transcripts about 1M tokens, news about 1.7M tokens), global GraphRAG beat vector RAG on **comprehensiveness** (72-83% win rates) and **diversity** (62-82%), judged by an LLM and cross-checked with claim counting. Vector RAG still won on **directness**. Root-level (C0) summaries needed over 97% fewer tokens than map-reducing the raw text while still winning 72% on comprehensiveness ([Edge et al.](../sources/edge-2024-graphrag.md)). Limits of the evidence: only two corpora, LLM judges, and fabrication rates not measured ([Edge et al.](../sources/edge-2024-graphrag.md)).
+On two corpora (podcast transcripts about 1M tokens, news about 1.7M tokens), global GraphRAG beat vector RAG on **comprehensiveness** (72-83% win rates) and **diversity** (62-82%), judged by an LLM ([LLM-as-judge](llm-as-judge.md)) and cross-checked with claim counting. Vector RAG still won on **directness**. Root-level (C0) summaries needed over 97% fewer tokens than map-reducing the raw text while still winning 72% on comprehensiveness ([Edge et al.](../sources/edge-2024-graphrag.md)). Limits of the evidence: only two corpora, LLM judges, and fabrication rates not measured ([Edge et al.](../sources/edge-2024-graphrag.md)).
 
 ## Cost and LazyGraphRAG
 
-The big cost is indexing: an LLM pass over the entire corpus, far more expensive than embedding chunks, and the graph must be kept fresh ([Notebook](../sources/notebook-rag-cag.md)). Microsoft's **LazyGraphRAG** (Nov 2024) attacks this ([LazyGraphRAG](../sources/microsoft-lazygraphrag.md)):
+The big cost is indexing: an LLM pass over the entire corpus, far more expensive than [embedding](embeddings.md) chunks, and the graph must be kept fresh ([Notebook](../sources/notebook-rag-cag.md)). Microsoft's **LazyGraphRAG** (Nov 2024) attacks this ([LazyGraphRAG](../sources/microsoft-lazygraphrag.md)):
 
 | | GraphRAG | LazyGraphRAG | Vector RAG |
 |---|---|---|---|
@@ -61,7 +61,7 @@ LazyGraphRAG results come from Microsoft's own evaluation on 5,590 AP news artic
 
 ## Operational notes
 
-- **Prompt tuning is expected.** Microsoft strongly recommends tuning the extraction prompts to your domain; default prompts may not give the best results ([Microsoft docs](../sources/microsoft-graphrag-docs.md)).
+- **Prompt tuning is expected.** Microsoft strongly recommends [tuning the extraction prompts](prompt-engineering.md) to your domain; default prompts may not give the best results ([Microsoft docs](../sources/microsoft-graphrag-docs.md)).
 - **Upgrades are disruptive.** Minor version bumps require `graphrag init --force`, which overwrites config and prompts, so back them up ([Microsoft docs](../sources/microsoft-graphrag-docs.md)).
 - **Extraction quality drives everything** ([Notebook](../sources/notebook-rag-cag.md)). Synthesis: entity resolution (merging "IBM" and "International Business Machines") is a frequent silent failure that fragments the graph.
 

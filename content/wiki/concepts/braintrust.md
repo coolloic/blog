@@ -50,7 +50,7 @@ Synthesis: the diagram stitches together the experiment, dataset and online-scor
 
 A scorer receives `input`, `output`, `expected`, `metadata` and `trace`, and returns a number in [0, 1]. Classifier scorers return labels instead ([braintrust-platform-docs](../sources/braintrust-platform-docs.md)). There are three kinds:
 
-- **autoevals**: LLM-classifier scorers (Factuality, ClosedQA, Battle, Summarization, SQL, Translation, Moderation, Security, Humor), Ragas-style RAG scorers (context precision/recall/relevancy, faithfulness, answer relevancy), embedding similarity, and heuristics (Levenshtein, ExactMatch, NumericDiff, JSONDiff, JSON validity). An LLM classifier is a template over `{{input}}`, `{{output}}` and `{{expected}}`. `choice_scores` maps the judge's chosen option to a number, and `use_cot` makes it reason first. Any OpenAI-compatible endpoint works through `OPENAI_BASE_URL` ([autoevals](../sources/braintrust-autoevals-github.md)).
+- **autoevals**: LLM-classifier scorers (Factuality, ClosedQA, Battle, Summarization, SQL, Translation, Moderation, Security, Humor), Ragas-style [RAG](retrieval-augmented-generation.md) scorers (context precision/recall/relevancy, faithfulness, answer relevancy), [embedding](embeddings.md) similarity, and heuristics (Levenshtein, ExactMatch, NumericDiff, JSONDiff, JSON validity). An LLM classifier is a template over `{{input}}`, `{{output}}` and `{{expected}}`. `choice_scores` maps the judge's chosen option to a number, and `use_cot` makes it reason first ([chain-of-thought](chain-of-thought.md)). Any OpenAI-compatible endpoint works through `OPENAI_BASE_URL` ([autoevals](../sources/braintrust-autoevals-github.md)).
 - **LLM-as-judge** scorers defined in the UI or in code (see [LLM-as-judge](llm-as-judge.md)).
 - **Custom code** (Python/TS functions).
 
@@ -98,7 +98,7 @@ Overage is $4/GB and $2.50 per 1K scores on Starter, $3/GB and $1.50 per 1K scor
 | Licence | Closed platform, MIT scorers | Open source (self-hosted OSS free) | Closed | Elastic License 2.0 |
 | Free self-host | No (BYOC/on-prem on Enterprise) | Yes | No (Enterprise self-host) | Yes, no feature gates |
 | Paid entry (2026-11) | Pro $249/mo, unlimited users | Core $29/mo | Plus $39/seat/mo | Arize AX Pro $50/mo |
-| Centre of gravity | Experiment comparison, online scoring | Tracing, prompt mgmt | LangChain/LangGraph tracing and deployment | OTel/OpenInference tracing, evals |
+| Centre of gravity | Experiment comparison, online scoring | Tracing, prompt mgmt | [LangChain](langchain.md)/[LangGraph](langgraph.md) tracing and deployment | OTel/OpenInference tracing, evals |
 
 Sources: [langfuse-pricing](../sources/langfuse-pricing-and-v4.md), [langsmith-tracing](../sources/langsmith-tracing-sdk-and-deployment.md), [phoenix-evals](../sources/phoenix-evals-and-self-hosting-docs.md), [braintrust-platform-docs](../sources/braintrust-platform-docs.md).
 
@@ -106,7 +106,7 @@ Sources: [langfuse-pricing](../sources/langfuse-pricing-and-v4.md), [langsmith-t
 
 Synthesis:
 - **Pick Braintrust** when the client's bottleneck is iteration speed on prompts and models: many people (PMs and domain experts included, since seats are unlimited) comparing experiments, curating datasets from production, and reusing one set of scorers in CI and online. It fits the recommendation to feed production failures back into CI datasets and run cheap checks on all traffic and expensive judges on a sample ([husain-shankar-2026](../sources/husain-shankar-2026-ai-evals-faq.md)).
-- **Avoid it** when data cannot leave the client's network and they will not buy Enterprise BYOC (use Phoenix or Langfuse self-hosted), when OTel-native tracing into an existing observability stack is the main need, or for a one-off POC where a pytest suite with [DeepEval](ragas-and-deepeval.md) or a [promptfoo](promptfoo.md) config is enough.
+- **Avoid it** when data cannot leave the client's network and they will not buy Enterprise BYOC (use Phoenix or Langfuse self-hosted), when OTel-native tracing into an existing observability stack is the main need, or for a one-off [POC](poc-to-production.md) where a pytest suite with [DeepEval](ragas-and-deepeval.md) or a [promptfoo](promptfoo.md) config is enough.
 - Watch the score meter: set the sampling rate per rule and keep deterministic scorers (JSON validity, ExactMatch) ahead of LLM judges.
 
 ## Sources

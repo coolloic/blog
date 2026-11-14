@@ -85,7 +85,7 @@ The paper's **Mem0g** variant stored entity-relation triplets in Neo4j. A confli
 
 | Claim | Who | Number |
 |---|---|---|
-| Mem0 / Mem0g on LoCoMo (J) | Mem0 paper, 2025 | 66.88% / 68.44%; full context 72.90%; Zep 65.99% |
+| Mem0 / Mem0g on [LoCoMo](benchmarks.md) (J) | Mem0 paper, 2025 | 66.88% / 68.44%; full context 72.90%; Zep 65.99% |
 | p95 total latency | Mem0 paper | Mem0 1.44 s, Mem0g 2.59 s, full context 17.12 s |
 | Zep rerun on LoCoMo | Zep, May 2025 | 75.14% ± 0.17 |
 | Filesystem-only agent (GPT-4o mini) | Letta, Aug 2025 | 74.0% |
@@ -96,8 +96,8 @@ Sources: [paper](../sources/chhikara-2025-mem0.md), [Zep](../sources/zep-2025-is
 The disputes in brief:
 
 - **Baseline configuration.** Zep says Mem0 misconfigured Zep: both speakers were given the user role, timestamps were put in the text instead of `created_at`, and searches ran sequentially, inflating latency ([Zep](../sources/zep-2025-is-mem0-sota.md)). Letta says it could not reproduce how Mem0 ran MemGPT on LoCoMo, and that Mem0 did not answer requests to explain ([Letta](../sources/letta-2025-filesystem-memory-benchmark.md)).
-- **The benchmark itself.** LoCoMo conversations are about 16k–26k tokens and fit in a context window, which is why full context beat every memory system in the 2025 paper. It has no knowledge-update questions, and it has label noise ([Zep](../sources/zep-2025-is-mem0-sota.md)). An agent with only generic file tools (grep plus a semantic `search_files` over the embedded history) beating specialised systems suggests LoCoMo mostly measures agent search behaviour ([Letta](../sources/letta-2025-filesystem-memory-benchmark.md)). LongMemEval is longer and tests knowledge updates, temporal reasoning and abstention ([Wu et al.](../sources/wu-2024-longmemeval.md)).
-- **The 2026 numbers** are self-reported, come from the Platform (which has proprietary optimisations not in OSS), don't name the answer or judge model, and carry about ±1 point of judge noise. Mem0 itself says LoCoMo and LongMemEval can be inflated, and points to BEAM, where it scores 64.1 at 1M tokens and 48.6 at 10M ([Mem0 2026](../sources/mem0-2026-token-efficient-algorithm.md)).
+- **The benchmark itself.** LoCoMo conversations are about 16k–26k tokens and fit in a [context window](context-window.md), which is why full context beat every memory system in the 2025 paper. It has no knowledge-update questions, and it has label noise ([Zep](../sources/zep-2025-is-mem0-sota.md)). An agent with only generic file tools (grep plus a semantic `search_files` over the embedded history) beating specialised systems suggests LoCoMo mostly measures agent search behaviour ([Letta](../sources/letta-2025-filesystem-memory-benchmark.md)). LongMemEval is longer and tests knowledge updates, temporal reasoning and abstention ([Wu et al.](../sources/wu-2024-longmemeval.md)).
+- **The 2026 numbers** are self-reported, come from the Platform (which has proprietary optimisations not in OSS), don't name the answer or [judge model](llm-as-judge.md), and carry about ±1 point of judge noise. Mem0 itself says LoCoMo and LongMemEval can be inflated, and points to BEAM, where it scores 64.1 at 1M tokens and 48.6 at 10M ([Mem0 2026](../sources/mem0-2026-token-efficient-algorithm.md)).
 
 Synthesis: no vendor memory benchmark here is independently replicated. The durable result is about cost, not accuracy: putting about 7k tokens of retrieved facts in the prompt is much cheaper and faster than the full history. On short histories it is not more accurate than full context. Run your own [evaluation](agent-evaluation.md) on your own conversation logs.
 
@@ -128,7 +128,7 @@ Synthesis:
 
 - **Use Mem0** for user-level personalisation across sessions in chat assistants, support bots and copilots, when you want memory as a service call rather than an agent behaviour. It also fits when your agent framework has no long-term memory, or when you need per-user facts with low added prompt tokens.
 - **Prefer [Letta](letta.md)** when the agent itself should decide what to remember, keep a curated, always-in-context profile, or run as a long-lived stateful service.
-- **Roll your own** with a [vector database](vector-databases.md), or a LangGraph store, when memory is document-like (that is [RAG](retrieval-augmented-generation.md)), when you need strict schemas (a typed profile table beats free-text facts), or when compliance demands that you control exactly what is stored. Mem0's extraction prompt is the main thing you'd be reimplementing.
+- **Roll your own** with a [vector database](vector-databases.md), or a [LangGraph](langgraph.md) store, when memory is document-like (that is [RAG](retrieval-augmented-generation.md)), when you need strict schemas (a typed profile table beats free-text facts), or when compliance demands that you control exactly what is stored. Mem0's extraction prompt is the main thing you'd be reimplementing.
 - **Skip memory entirely** when histories fit comfortably in context: full context beat Mem0 on LoCoMo ([paper](../sources/chhikara-2025-mem0.md)). Use [prompt caching](prompt-caching.md) to make that cheap.
 
 ## Sources

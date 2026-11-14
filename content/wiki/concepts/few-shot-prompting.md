@@ -39,8 +39,8 @@ flowchart TD
 | Vendor | Guidance (as of 2026-11) |
 |---|---|
 | Anthropic | 3–5 examples; relevant to the real use case, diverse enough to avoid accidental patterns; wrap in `<example>` inside `<examples>`. You can ask the model to critique or extend your set ([Anthropic](../sources/anthropic-prompting-best-practices.md)). |
-| OpenAI (GPT models) | Cover a diverse range of inputs; place examples in the developer message ([OpenAI](../sources/openai-prompt-engineering-guide.md)). |
-| OpenAI (reasoning models) | Start zero-shot; add few-shot only if needed and make examples match the instructions closely ([OpenAI reasoning](../sources/openai-reasoning-best-practices.md)). |
+| OpenAI (GPT models) | Cover a diverse range of inputs; place examples in the developer message ([system prompts](system-prompts.md)) ([OpenAI](../sources/openai-prompt-engineering-guide.md)). |
+| OpenAI ([reasoning models](reasoning-models.md)) | Start zero-shot; add few-shot only if needed and make examples match the instructions closely ([OpenAI reasoning](../sources/openai-reasoning-best-practices.md)). |
 | Google Gemini | Always include few-shot examples; a few usually suffice; too many risk overfitting; clear examples can replace instructions ([Google](../sources/google-gemini-prompting-strategies.md)). |
 | Notebook | 2–5 examples, used when a pattern or format keeps coming out wrong ([Notebook](../sources/notebook-prompt-engineering.md)). |
 
@@ -49,7 +49,7 @@ flowchart TD
 ## Formatting rules
 
 - **Identical structure** across examples: same tags, separators, whitespace and newlines. Inconsistent examples produce inconsistent outputs ([Google](../sources/google-gemini-prompting-strategies.md)).
-- **Separate examples from instructions and from the live input** with tags ([Anthropic](../sources/anthropic-prompting-best-practices.md)); fence the real input so it can't inject instructions ([Notebook](../sources/notebook-prompt-engineering.md)).
+- **Separate examples from instructions and from the live input** with tags ([Anthropic](../sources/anthropic-prompting-best-practices.md)); fence the real input so it can't [inject instructions](prompt-injection.md) ([Notebook](../sources/notebook-prompt-engineering.md)).
 - **Cover edge cases**, including the "none of the above" or refusal case, so the model sees the full label space ([Anthropic](../sources/anthropic-prompting-best-practices.md), [Min et al.](../sources/min-2022-rethinking-demonstrations.md)).
 - **Stable prefix:** examples rarely change, so place them early to benefit from [prompt caching](prompt-caching.md) ([OpenAI](../sources/openai-prompt-engineering-guide.md)).
 
@@ -58,7 +58,7 @@ A compact pattern (from the Notebook): a system line defining the one-word label
 ## Variants
 
 - **Few-shot chain-of-thought:** examples include the reasoning steps, not just answers. PaLM 540B with eight such exemplars set the GSM8K state of the art in 2022 ([Wei et al.](../sources/wei-2022-chain-of-thought.md)). See [chain-of-thought](chain-of-thought.md).
-- **Examples with thinking models:** on Claude, worked examples shaped as problem → method → answer influence how the model reasons in its thinking blocks ([Anthropic](../sources/anthropic-prompting-best-practices.md)).
+- **Examples with thinking models:** on Claude, worked examples shaped as problem → method → answer influence how the model reasons in its [thinking blocks](extended-thinking.md) ([Anthropic](../sources/anthropic-prompting-best-practices.md)).
 - **Dynamic few-shot:** Synthesis: retrieve the most similar labelled examples per input with [embeddings](embeddings.md) instead of a fixed set. This trades cache hits for relevance.
 
 ## Failure modes

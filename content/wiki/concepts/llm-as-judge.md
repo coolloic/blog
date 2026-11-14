@@ -17,6 +17,8 @@ sources:
   - ../sources/chiang-2024-chatbot-arena.md
   - ../sources/es-2023-ragas.md
   - ../sources/notebook-llm-evaluation.md
+  - ../sources/muller-2024-grouse.md
+  - ../sources/oliva-2025-illusion-of-perfect-metric.md
 lastmod: 2026-11-14
 tags: ["evaluation", "testing"]
 ---
@@ -37,12 +39,12 @@ Sources: [Zheng et al.](../sources/judging-llm-as-a-judge.md), [OpenAI](../sourc
 ## How a good judge prompt works
 
 - **Explicit rubric** with concrete pass conditions, possibly several rubrics per criterion ([Claude docs](../sources/anthropic-define-success-criteria-and-evals.md)).
-- **Reason, then score.** Let the judge reason (or use thinking) before the verdict; this helps on complex judgments ([Claude docs](../sources/anthropic-define-success-criteria-and-evals.md), [OpenAI](../sources/openai-evaluation-best-practices.md)). G-Eval automates this: the model first writes its own evaluation steps from the criterion, then fills in a score form ([G-Eval](../sources/liu-2023-g-eval.md)).
-- **Structured output**, e.g. JSON `{score, reason}` so scores parse and reasons can be audited ([notebook](../sources/notebook-llm-evaluation.md)).
+- **Reason, then score.** Let the judge [reason](chain-of-thought.md) (or use [thinking](extended-thinking.md)) before the verdict; this helps on complex judgments ([Claude docs](../sources/anthropic-define-success-criteria-and-evals.md), [OpenAI](../sources/openai-evaluation-best-practices.md)). G-Eval automates this: the model first writes its own evaluation steps from the criterion, then fills in a score form ([G-Eval](../sources/liu-2023-g-eval.md)).
+- **[Structured output](structured-outputs.md)**, e.g. JSON `{score, reason}` so scores parse and reasons can be audited ([notebook](../sources/notebook-llm-evaluation.md)).
 - **An "Unknown" escape** so the judge is not forced to guess when information is missing ([Anthropic](../sources/anthropic-demystifying-evals-for-ai-agents.md)).
 - **A different model from the generator**, to reduce self-preference ([Claude docs](../sources/anthropic-define-success-criteria-and-evals.md)); the most capable judge available ([OpenAI](../sources/openai-evaluation-best-practices.md)).
 - **Probability-weighted scores.** Integer scores bunch on one value and tie; G-Eval computes Σ p(s)·s over score tokens (estimated from 20 samples when log-probs are unavailable) for a continuous score, reaching Spearman 0.514 with humans on SummEval versus 0.474 for UniEval, the best prior evaluator ([G-Eval](../sources/liu-2023-g-eval.md)).
-- **Few-shot examples from expert critiques.** Few-shot raised GPT-4's position consistency from 65.0% to 77.5% at ~4x prompt cost ([Zheng et al.](../sources/judging-llm-as-a-judge.md)); expert critiques double as examples ([Husain](../sources/husain-llm-judge-critique-shadowing.md)).
+- **[Few-shot](few-shot-prompting.md) examples from expert critiques.** Few-shot raised GPT-4's position consistency from 65.0% to 77.5% at ~4x prompt cost ([Zheng et al.](../sources/judging-llm-as-a-judge.md)); expert critiques double as examples ([Husain](../sources/husain-llm-judge-critique-shadowing.md)).
 
 ## Known biases
 
@@ -74,7 +76,8 @@ flowchart TD
 - Measure **true positive and true negative rates separately**, not raw agreement: if 5% of outputs fail, an always-pass judge has 95% agreement and catches nothing ([Husain](../sources/husain-llm-judge-critique-shadowing.md)).
 - Sizing: start around 30 labelled examples, aim for ~100 per failure mode; under ~60 the confidence intervals are too wide ([Husain](../sources/husain-llm-judge-critique-shadowing.md)). The Honeycomb case passed 90% agreement in three prompt iterations, but its data were roughly balanced (about half failures), which is the case where raw agreement is meaningful.
 - Criteria drift: labelling changes the expert's own criteria, so expect to revise the rubric and re-validate ([Shankar et al.](../sources/shankar-2024-who-validates-the-validators.md)).
-- Human-in-the-loop calibration: route examples where position-swapped verdicts disagree to humans ([Wang](../sources/wang-2023-llms-not-fair-evaluators.md)).
+- Correlation is not validation: in GroUSE's 144 unit tests over seven grounded-QA failure modes, automated RAG evaluation frameworks missed important failures even with GPT-4 as judge, and open-weight judges that correlated well with GPT-4 still failed the tests, so add per-failure-mode unit tests rather than relying on agreement with a reference judge ([Muller et al.](../sources/muller-2024-grouse.md)). A 2025 survey finds the same validation gap for every generation of automatic metric, LLM judges included, and recommends combining complementary evaluations ([Oliva et al.](../sources/oliva-2025-illusion-of-perfect-metric.md)).
+- [Human-in-the-loop](human-in-the-loop.md) calibration: route examples where position-swapped verdicts disagree to humans ([Wang](../sources/wang-2023-llms-not-fair-evaluators.md)).
 
 Synthesis: once TPR/TNR are known, a judge's raw pass rate can be corrected for its error rates, and a judge prompt change should be treated like any other change: re-run the judge eval before trusting new numbers.
 
@@ -87,8 +90,8 @@ Synthesis: once TPR/TNR are known, a judge's raw pass rate can be corrected for 
 
 ## When to use, when not
 
-- **Use** for open-ended qualities (tone, helpfulness, faithfulness, rubric adherence), for sampled online scoring of production traces, and to triage transcripts for human review ([Anthropic](../sources/anthropic-demystifying-evals-for-ai-agents.md), [notebook](../sources/notebook-llm-evaluation.md)).
-- **Do not use** when code can decide: schema validity, exact labels, unit tests, database state, tool-call arguments. Code graders are faster, cheaper and deterministic ([Claude docs](../sources/anthropic-define-success-criteria-and-evals.md), [Husain](../sources/husain-llm-judge-critique-shadowing.md)).
+- **Use** for open-ended qualities (tone, helpfulness, faithfulness, rubric adherence), for sampled online scoring of production traces ([LLM observability](llm-observability.md)), and to triage transcripts for human review ([Anthropic](../sources/anthropic-demystifying-evals-for-ai-agents.md), [notebook](../sources/notebook-llm-evaluation.md)).
+- **Do not use** when code can decide: schema validity, exact labels, unit tests, database state, [tool-call](function-calling.md) arguments. Code graders are faster, cheaper and deterministic ([Claude docs](../sources/anthropic-define-success-criteria-and-evals.md), [Husain](../sources/husain-llm-judge-critique-shadowing.md)).
 - **Pairwise** when choosing between two prompts or models; **pointwise pass/fail** for regression gates and monitoring. Synthesis: pairwise results do not tell you whether either version is good enough to ship, so pair them with a pointwise gate.
 
 ## Sources
@@ -107,3 +110,5 @@ Synthesis: once TPR/TNR are known, a judge's raw pass rate can be corrected for 
 - [Chatbot Arena (Chiang et al.)](../sources/chiang-2024-chatbot-arena.md)
 - [RAGAS (Es et al.)](../sources/es-2023-ragas.md)
 - [Notebook: LLM Evaluation & Observability](../sources/notebook-llm-evaluation.md)
+- [GroUSE (Muller et al.)](../sources/muller-2024-grouse.md)
+- [The illusion of a perfect metric (Oliva et al.)](../sources/oliva-2025-illusion-of-perfect-metric.md)

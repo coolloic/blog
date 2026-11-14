@@ -45,7 +45,7 @@ A **benchmark** is a fixed, public dataset plus a scoring procedure used to comp
 | [Chatbot Arena](../sources/chiang-2024-chatbot-arena.md) | human preference in open chat | anonymous pairwise battles | crowd votes → rating | gameable via private variant testing ([Singh](../sources/singh-2025-leaderboard-illusion.md)) |
 | [LiveBench](../sources/white-2024-livebench.md) | math, code, reasoning, language, IF, data | monthly refreshed recent questions | objective ground truth, no judge | contamination-limited by design |
 
-Other agent benchmarks named by Anthropic: Terminal-Bench (coding), BrowseComp (research), WebArena and OSWorld (computer use) ([Anthropic](../sources/anthropic-demystifying-evals-for-ai-agents.md)). Inspect ships 200+ benchmark implementations for running these yourself ([Inspect](../sources/inspect-ai-docs.md)).
+Other [agent benchmarks](agent-evaluation.md) named by Anthropic: Terminal-Bench ([coding](coding-agents.md)), BrowseComp ([research](deep-research-agents.md)), WebArena and OSWorld ([computer use](computer-use-agents.md)) ([Anthropic](../sources/anthropic-demystifying-evals-for-ai-agents.md)). Inspect ships 200+ benchmark implementations for running these yourself ([Inspect](../sources/inspect-ai-docs.md)).
 
 ## How each family works
 
@@ -76,7 +76,7 @@ Evidence: SWE-bench Verified went from about 30-40% to over 80% in roughly a yea
 
 ## Contamination
 
-Contamination is test data (questions, and worse, answers) appearing in pretraining or fine-tuning data, so the score measures recall instead of capability.
+Contamination is test data (questions, and worse, answers) appearing in [pretraining](llm-training-pipeline.md) or fine-tuning data, so the score measures recall instead of capability.
 
 - **Detection by fresh replica.** GSM1k re-created GSM8k's style and difficulty from scratch; some model families dropped up to 8 points, and the gap correlated (r² = 0.36) with how likely the model was to generate GSM8k items verbatim. Many frontier models showed little overfitting ([GSM1k](../sources/zhang-2024-gsm1k.md)).
 - **Memorised solutions.** Frontier models in 2026 could reproduce some SWE-bench Verified gold patches from memory, one reason OpenAI stopped reporting the benchmark and moved to non-public tests ([Decoder](../sources/decoder-openai-retires-swe-bench-verified.md)). Its suggested successor, SWE-bench Pro, has since drawn similar audits of flawed tasks; OpenAI reportedly dropped it in July 2026 (secondary sources only) ([Decoder](../sources/decoder-openai-retires-swe-bench-verified.md)).
@@ -88,7 +88,7 @@ Contamination is test data (questions, and worse, answers) appearing in pretrain
 - **Harness matters.** Agent scores test model plus scaffold together; a better scaffold or fixed grader can move a score dramatically (CORE-Bench 42% → 95%) ([Anthropic](../sources/anthropic-demystifying-evals-for-ai-agents.md)).
 - **Selective reporting.** Arena providers tested many private variants and published the best (27 for Llama 4); access to Arena data was unequal and extra Arena data gave up to 112% relative gains on that distribution ([Singh](../sources/singh-2025-leaderboard-illusion.md)).
 - **Judge-graded benchmarks** inherit [judge biases](llm-as-judge.md); objectively scored ones avoid them ([LiveBench](../sources/white-2024-livebench.md)).
-- **Compute and cost.** Reasoning-model scores depend on test-time compute; compare at equal budget where possible ([ARC-AGI-2](../sources/chollet-2025-arc-agi-2.md)). See [test-time compute](test-time-compute.md).
+- **Compute and cost.** [Reasoning-model](reasoning-models.md) scores depend on test-time compute; compare at equal budget where possible ([ARC-AGI-2](../sources/chollet-2025-arc-agi-2.md)). See [test-time compute](test-time-compute.md).
 - **pass@1 vs pass^k.** A model with good average accuracy can still be unreliable across repeated trials ([τ-bench](../sources/yao-2024-tau-bench.md)).
 
 ## When to use benchmarks

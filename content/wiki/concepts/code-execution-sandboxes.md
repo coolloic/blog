@@ -31,7 +31,7 @@ A **code execution sandbox** is an isolated, resource-limited environment in whi
 
 - **Code as the action format.** CodeAct showed that agents emitting executable Python, rather than JSON tool calls, reached up to 20% higher success across 17 LLMs. Code gives loops, composition and libraries, and interpreter errors drive self-debugging ([CodeAct](../sources/wang-2024-codeact.md)). AutoGen treats code execution as a first-class part of its conversation-driven agents ([notebook](../sources/notebook-autogen-crewai.md); see [AutoGen](autogen.md)).
 - **Context economy.** If MCP tools are presented as importable code, the agent filters and joins data in the sandbox and returns only the result. Anthropic reports one workflow falling from about 150k to about 2k tokens. Intermediate data (including PII, which can be tokenized) never enters the context ([code execution with MCP](../sources/anthropic-code-execution-with-mcp.md); see [context engineering](context-engineering.md), [MCP](model-context-protocol.md)).
-- **Exact computation.** Arithmetic, statistics, charts and file conversion are things LLMs do badly in-token and an interpreter does exactly.
+- **Exact computation.** Arithmetic, statistics, charts and file conversion are things [LLMs do badly](llm-limitations.md) in-token and an interpreter does exactly.
 
 The cost is that the agent now runs arbitrary code. Anthropic's own caveat: you need a secure sandbox, resource limits and monitoring, which direct tool calls avoid ([code execution with MCP](../sources/anthropic-code-execution-with-mcp.md)).
 

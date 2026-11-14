@@ -50,7 +50,7 @@ Every scheme normalises the token mix into one "input-token-equivalent" currency
 - **Anthropic Priority Tier:** cache reads 0.1, 5-minute cache writes 1.25, 1-hour writes 2.0, US-only inference 1.1 ([source](../sources/anthropic-service-tiers-docs.md)).
 - **Bedrock Reserved:** sizing must include cache-write tokens ([source](../sources/aws-bedrock-service-tiers.md)). Bedrock's on-demand quotas use separate output burndown multipliers of 2.5x–15x for Claude models depending on version ([source](../sources/aws-bedrock-token-quotas.md)).
 
-Consequence: output-heavy workloads such as reasoning, long generation and agents burn capacity far faster than their raw token counts suggest. A high cache-hit rate shrinks the reservation you need, which makes [prompt caching](prompt-caching.md) a sizing lever as well as a cost lever.
+Consequence: output-heavy workloads such as [reasoning](reasoning-models.md), long generation and agents burn capacity far faster than their raw token counts suggest. A high cache-hit rate shrinks the reservation you need, which makes [prompt caching](prompt-caching.md) a sizing lever as well as a cost lever.
 
 ## Sizing it
 
@@ -90,7 +90,7 @@ Synthesis: treat provisioned throughput as buying **reliability and latency**, n
 
 - Contractual SLAs or user-facing latency need guaranteed capacity.
 - Peak traffic regularly hits shared-pool 429s, or OpenAI ramp limits push you toward Scale Tier ([source](../sources/openai-fast-mode-priority-processing.md)), or Reserved Tier for GPT-5.6 onward, whose purchases raise rate limits ([source](../sources/openai-scale-and-reserved-tier.md)).
-- A custom or fine-tuned model can only be served that way ([source](../sources/aws-bedrock-provisioned-throughput.md)).
+- A custom or [fine-tuned](fine-tuning.md) model can only be served that way ([source](../sources/aws-bedrock-provisioned-throughput.md)).
 - Utilization of the reserved baseline stays high around the clock, for example global traffic or background agents filling troughs.
 
 Reserve the floor of your daily curve and spill the peaks, rather than reserving the peak.

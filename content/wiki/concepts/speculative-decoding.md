@@ -46,12 +46,12 @@ Synthesis, worked example: with α = 0.8, γ = 4 and c = 0.05, a pass yields (1 
 
 | Method | Drafter | Pros | Cons |
 |---|---|---|---|
-| **Draft model** | Small model from the same family (shared tokenizer) | No training if a sibling exists; lossless | Extra weights and KV in memory; tokenizer must match |
-| **N-gram / prompt lookup** | Copies continuations from the prompt or context | Free, no extra model; strong on code edits, RAG and extraction where output repeats input | Modest gains on open-ended text |
+| **Draft model** | Small model from the same family (shared [tokenizer](tokenization.md)) | No training if a sibling exists; lossless | Extra weights and KV in memory; tokenizer must match |
+| **N-gram / prompt lookup** | Copies continuations from the prompt or context | Free, no extra model; strong on code edits, [RAG](retrieval-augmented-generation.md) and extraction where output repeats input | Modest gains on open-ended text |
 | **Suffix decoding** | Suffix structures over prompts and prior outputs | No model; no extra load at peak traffic | Modest gains |
 | **Medusa** | Extra decoding heads on the target predict t+1, t+2, …; tree attention verifies several candidate branches at once | No separate model; Medusa-1 (frozen backbone) reaches over 2.2x and the paper calls it lossless; Medusa-2 (joint fine-tune) reaches 2.3-3.6x | Heads need training; its "typical acceptance" is not exactly distribution-preserving |
 | **EAGLE / EAGLE-3** | Light head that reuses the target's hidden features; EAGLE-3 fuses low, mid and top layer features and predicts tokens directly | Up to 6.5x over vanilla, about 1.4x over EAGLE-2; 1.38x throughput at batch 64 in SGLang | Needs a trained head per target model |
-| **MTP (multi-token prediction)** | Prediction heads trained into the model itself | Native to models that ship them | Only for models trained with MTP |
+| **MTP (multi-token prediction)** | Prediction heads trained into the model itself | Native to [models that ship them](open-weight-models.md) | Only for models trained with MTP |
 
 Sources: [vLLM docs](../sources/vllm-speculative-decoding-docs.md), [Medusa](../sources/medusa-multiple-decoding-heads.md), [EAGLE-3](../sources/eagle-3-speculative-decoding.md), [TensorRT-LLM](../sources/tensorrt-llm-overview.md). Synthesis: the pros/cons for draft models and n-gram summarize the general mechanism and are not stated in a single source.
 
@@ -64,7 +64,7 @@ Sources: [vLLM docs](../sources/vllm-speculative-decoding-docs.md), [Medusa](../
 ## Limitations and failure modes
 
 - **Load dependence.** The gain comes from idle compute during memory-bound decode. vLLM targets medium-to-low QPS. At high QPS, EAGLE and MTP still give medium-to-high gains, draft models, n-gram and suffix decoding only medium gains, because batching already uses the compute ([vLLM docs](../sources/vllm-speculative-decoding-docs.md), [Leviathan et al.](../sources/leviathan-speculative-decoding.md)).
-- **Low acceptance hurts.** When α is low (a drafter mismatched to the domain, or high temperature), you pay for drafting and wasted verification for little gain. Synthesis: sharper distributions accept more. The paper notes α rises as the adjusted distribution gets sharper ([Leviathan et al.](../sources/leviathan-speculative-decoding.md)).
+- **Low acceptance hurts.** When α is low (a drafter mismatched to the domain, or high [temperature](sampling-parameters.md)), you pay for drafting and wasted verification for little gain. Synthesis: sharper distributions accept more. The paper notes α rises as the adjusted distribution gets sharper ([Leviathan et al.](../sources/leviathan-speculative-decoding.md)).
 - **Lossy variants.** Typical acceptance (Medusa) and FLy (vLLM) trade exactness for speed. Know which one is enabled ([Medusa](../sources/medusa-multiple-decoding-heads.md), [vLLM docs](../sources/vllm-speculative-decoding-docs.md)).
 - **Memory.** Draft models add weights and their own KV cache, which competes with the target's [KV cache](kv-cache.md). Synthesis.
 - **Version gaps.** Some combinations were historically unsupported, for example pipeline parallelism with speculation in vLLM ≤ 0.15 ([vLLM docs](../sources/vllm-speculative-decoding-docs.md)).

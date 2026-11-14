@@ -29,11 +29,11 @@ tags: ["agents", "memory", "context"]
 |---|---|---|
 | Scope | One thread or task run | Across threads, sessions, users |
 | Typical content | Message history, tool results, scratch state, uploaded files | Facts about the user, past episodes, learned rules |
-| Lives in | The prompt, plus a checkpoint of graph state | An external store (files, KV/JSON docs, vector DB, graph DB) |
+| Lives in | The prompt, plus a checkpoint of graph state | An external store (files, KV/JSON docs, [vector DB](vector-databases.md), graph DB) |
 | Main problem | Growth: window overflow, cost, [context rot](long-context-degradation.md) | Deciding what to write, retrieving the right item, keeping it correct |
 | Tools | Trimming, summarisation/compaction, tool-result clearing | Extraction pipelines, memory tools, semantic search |
 
-LangGraph makes this split concrete. Short-term memory is the state of one `thread_id`, persisted by a **checkpointer** (`InMemorySaver` in development; Postgres, Redis or MongoDB savers in production). Long-term memory is a **store** of JSON documents addressed by `(namespace, key)`, for example `("user-123", "memories")`, with `put`, `get` and `search(namespace, query=..., filter=...)`. Semantic search is enabled by an embedding `index` config ([LangGraph docs](../sources/langgraph-memory-docs.md)). The owner's [experiment 25](../sources/notebook-25-memory-agent.md) shows the short-term half: two calls on the same `thread_id` with a `MemorySaver`, where the second recalls the first.
+LangGraph makes this split concrete. Short-term memory is the state of one `thread_id`, persisted by a **checkpointer** (`InMemorySaver` in development; Postgres, Redis or MongoDB savers in production). Long-term memory is a **store** of JSON documents addressed by `(namespace, key)`, for example `("user-123", "memories")`, with `put`, `get` and `search(namespace, query=..., filter=...)`. Semantic search is enabled by an [embedding](embeddings.md) `index` config ([LangGraph docs](../sources/langgraph-memory-docs.md)). The owner's [experiment 25](../sources/notebook-25-memory-agent.md) shows the short-term half: two calls on the same `thread_id` with a `MemorySaver`, where the second recalls the first.
 
 ## Episodic, semantic, procedural
 
@@ -65,11 +65,11 @@ flowchart LR
   C --> P
 ```
 
-Synthesis: the diagram combines the write paths described by LangGraph and Mem0 with the retrieval and compaction steps described by Mem0, Letta and Anthropic.
+Synthesis: the diagram combines the write paths described by LangGraph and [Mem0](mem0.md) with the retrieval and compaction steps described by Mem0, [Letta](letta.md) and Anthropic.
 
 ### Writing memories
 
-- **Hot path vs background.** Writing during the interaction (for example, the agent calls a `save_memory` tool) makes memories available immediately but adds latency and splits the agent's attention. Background writing removes that cost but needs a trigger: per turn, on a timer, or on compaction ([LangGraph docs](../sources/langgraph-memory-docs.md)). Letta's "dreaming" runs background subagents that consolidate memory every N user messages or on compaction ([Letta docs](../sources/letta-memory-docs.md)).
+- **Hot path vs background.** Writing during the interaction (for example, the agent calls a `save_memory` tool) makes memories available immediately but adds latency and splits the agent's attention. Background writing removes that cost but needs a trigger: per turn, on a timer, or on compaction ([LangGraph docs](../sources/langgraph-memory-docs.md)). Letta's "dreaming" runs background [subagents](subagents.md) that consolidate memory every N user messages or on compaction ([Letta docs](../sources/letta-memory-docs.md)).
 - **Extract-then-update (Mem0).** For each new message pair, an LLM extracts candidate facts. Its inputs are a rolling conversation summary, the last 10 messages and the new pair. Each fact is compared with the 10 most similar stored memories, and the LLM picks **ADD**, **UPDATE**, **DELETE** (contradicted) or **NOOP** through a tool call. Mem0g adds an entity graph in Neo4j and marks outdated edges invalid instead of deleting them, which helps temporal questions ([Chhikara et al.](../sources/chhikara-2025-mem0.md)). The current Mem0 docs describe `add` as additive extraction into SQL + vector + entity stores, with corrections made through explicit `update`/`delete` calls. `infer=False` stores text verbatim ([Mem0 docs](../sources/mem0-docs-memory.md)).
 - **Reflection.** Generative Agents periodically turn raw observations into higher-level insights. A reflection runs when the summed importance of recent events passes 150, and each insight cites the memories it came from ([Park et al.](../sources/park-2023-generative-agents.md)).
 
@@ -102,7 +102,7 @@ Sources: [Anthropic memory tool](../sources/anthropic-memory-tool-docs.md), [Let
 ## Evidence on what works
 
 - MemGPT raised GPT-4's Deep Memory Retrieval accuracy on multi-session chat from 32.1% to 92.5% (GPT-4 Turbo 35.3% to 93.4%). The approach depends on reliable [function calling](function-calling.md): GPT-3.5 Turbo gained less (38.7% to 66.9%), and on nested key-value retrieval MemGPT with GPT-3.5 or GPT-4 Turbo degraded from two nesting levels while MemGPT with GPT-4 held up ([Packer et al.](../sources/packer-2023-memgpt.md)).
-- On LOCOMO, full context scored highest (J 72.9%), but Mem0 reached 66.9% with p95 latency of 1.44 s against 17.12 s and about 7k memory tokens against 26k. The benchmark is vendor-run on 10 conversations with the adversarial category dropped, so treat it as directional ([Chhikara et al.](../sources/chhikara-2025-mem0.md)).
+- On LOCOMO, full context scored highest (J 72.9%), but Mem0 reached 66.9% with p95 latency of 1.44 s against 17.12 s and about 7k memory tokens against 26k. The [benchmark](benchmarks.md) is vendor-run on 10 conversations with the adversarial category dropped, so treat it as directional ([Chhikara et al.](../sources/chhikara-2025-mem0.md)).
 - LongMemEval reports that commercial assistants and long-context LLMs lose about 30% accuracy on sustained cross-session memory. It tests extraction, multi-session reasoning, temporal reasoning, knowledge updates and abstention ([Wu et al.](../sources/wu-2024-longmemeval.md)).
 - In Generative Agents ablations, removing memory, reflection and planning dropped believability from 29.89 to 21.21 TrueSkill ([Park et al.](../sources/park-2023-generative-agents.md)).
 
