@@ -125,13 +125,13 @@ For how this fits a defence-in-depth design, see [agent guardrails](agent-guardr
 | Service | What it does |
 |---|---|
 | Runtime | Serverless host for agent/tool containers; HTTP, [MCP](model-context-protocol.md), [A2A](agent2agent-protocol.md), WebSocket |
-| Harness | Managed [agent loop](agent-loop.md) defined in one API call |
+| [Harness](harness-engineering.md) | Managed [agent loop](agent-loop.md) defined in one API call |
 | Memory | Short- and long-term [agent memory](agent-memory.md), shareable |
 | Gateway | Turns APIs/Lambda into MCP tools; fronts MCP servers |
 | Identity | Inbound (SigV4 / OAuth JWT) and outbound (OAuth, API keys; user-delegated or autonomous) credentials |
 | Policy | Deterministic Cedar-compatible rules enforced on every Gateway tool call |
 | Code Interpreter, Browser | Managed sandboxes for [tools](tools.md) and [computer use](computer-use-agents.md) |
-| Observability, Evaluations, Optimization | OTel traces ([observability](llm-observability.md)), [agent evals](agent-evaluation.md), prompt/tool-description A/B tests |
+| Observability, Evaluations, Optimization | [OTel](opentelemetry-genai.md) traces ([observability](llm-observability.md)), [agent evals](agent-evaluation.md), prompt/tool-description A/B tests |
 | Registry, Payments | Catalog of agents/tools/skills; x402/MPP agent payments |
 
 Runtime internals ([runtime](../sources/aws-agentcore-runtime.md)):

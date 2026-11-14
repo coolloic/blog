@@ -19,7 +19,7 @@ lastmod: 2026-11-14
 tags: ["models", "model-selection", "routing", "cost", "latency"]
 ---
 
-**Model selection** means choosing which model, at which reasoning setting, serves each step of an LLM application. You weigh capability, latency, cost and constraints such as data residency, licence and modality. The current vendor guidance converges on four rules:
+**Model selection** means choosing which model, at which reasoning setting, serves each step of an LLM application. You weigh capability, latency, cost and constraints such as [data residency](data-retention-and-residency.md), licence and modality. The current vendor guidance converges on four rules:
 
 1. Pick using **evals on your own prompts and data**, not public [leaderboards](benchmarks.md).
 2. Tune the **effort/reasoning dial** on one model before you switch models.

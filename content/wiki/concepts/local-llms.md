@@ -85,7 +85,7 @@ The [KV cache](kv-cache.md) comes on top and grows with context. In Ollama, memo
 
 ## Local runtime vs serving engine vs API
 
-Local runtimes optimise for one machine and a few users: easy install, quantized GGUF/MLX weights, CPU and Apple support. [Serving engines](llm-inference-serving.md) such as vLLM and SGLang optimise for GPU throughput across many concurrent requests. Hugging Face itself now steers server workloads to vLLM/SGLang and local ones to llama.cpp/MLX, and TGI is in maintenance mode ([TGI docs](../sources/tgi-docs.md)).
+Local runtimes optimise for one machine and a few users: easy install, quantized GGUF/MLX weights, CPU and Apple support. [Serving engines](llm-inference-serving.md) such as [vLLM](vllm.md) and SGLang optimise for GPU throughput across many concurrent requests. Hugging Face itself now steers server workloads to vLLM/SGLang and local ones to llama.cpp/MLX, and TGI is in maintenance mode ([TGI docs](../sources/tgi-docs.md)).
 
 **When to use local:**
 - Data cannot leave the device or network ([regulated data](pii-and-data-privacy.md), air-gapped sites, offline field work). LM Studio and llama.cpp run fully offline ([LM Studio](../sources/lm-studio-docs.md)).

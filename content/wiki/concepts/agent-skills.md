@@ -69,7 +69,7 @@ The open spec requires two fields ([spec](../sources/agent-skills-specification.
 
 Optional fields are `license`, `compatibility` (≤500 characters), `metadata` (a string map) and an experimental `allowed-tools`. Anthropic's API also rejects XML tags in either required field, and rejects names containing `anthropic` or `claude` ([best practices](../sources/anthropic-skill-authoring-best-practices.md)). By convention, `scripts/` holds executables, `references/` holds on-demand docs and `assets/` holds templates and data. References should sit one level deep from `SKILL.md`.
 
-Harnesses extend the frontmatter in different ways:
+[Harnesses](harness-engineering.md) extend the frontmatter in different ways:
 
 | Harness | Locations | Invocation | Notable extensions |
 |---|---|---|---|
@@ -108,7 +108,7 @@ Mark skills with side effects (deploy, send, delete) `disable-model-invocation: 
 | [Agent instruction file](agent-instruction-files.md) (CLAUDE.md/AGENTS.md) | always-on rules | every request | no (model may ignore) |
 | Skill | on-demand procedure/knowledge + scripts | description always, body on match | no |
 | [Tool](tools.md) / [MCP](model-context-protocol.md) server | new actions and data access | tool names (schemas often deferred) | the action is; choosing it is not |
-| Hook | handler run by the harness at a lifecycle event | nothing unless it returns output | yes |
+| [Hook](agent-hooks-and-middleware.md) | handler run by the harness at a lifecycle event | nothing unless it returns output | yes |
 | [Subagent](subagents.md) | isolated context window | when spawned | no |
 | Plugin / extension | packaging of all the above | n/a | n/a |
 
@@ -148,7 +148,7 @@ From [best practices](../sources/anthropic-skill-authoring-best-practices.md) un
 - **Keep references one level deep.** The model may only preview nested files (e.g. `head -100`). Add a table of contents to any reference file over 100 lines.
 - **Set degrees of freedom by fragility.** Use prose heuristics for judgement calls and an exact script with "do not modify" for migrations.
 - **Prefer scripts for deterministic steps.** Scripts should handle errors themselves and avoid magic constants. Say explicitly whether the model should *run* or *read* each one. A validator loop (run, fix, repeat) or a plan-validate-execute step with an intermediate file catches errors before destructive changes.
-- **Put the most important rules at the top.** In Claude Code, an invoked skill stays in the conversation and is never re-read. After compaction, only its first 5,000 tokens are re-attached ([Claude Code skills](../sources/claude-code-skills-docs.md)).
+- **Put the most important rules at the top.** In Claude Code, an invoked skill stays in the conversation and is never re-read. After [compaction](context-compaction.md), only its first 5,000 tokens are re-attached ([Claude Code skills](../sources/claude-code-skills-docs.md)).
 - **Develop eval-first.** Find the gaps without a skill, write at least three evals, measure a baseline, then write minimal instructions. Test with every model tier you'll deploy on. Claude Code's skill-creator automates with/without-skill benchmarks and description tuning with should-trigger and should-not-trigger prompts ([Claude Code skills](../sources/claude-code-skills-docs.md)). See [verification and evals](verification-and-evals.md).
 - **Encode verification in skills.** The owner's loop tutorial treats a skill as the place where the agent's self-check criteria live, so unattended loops can tell when they're done ([notebook](../sources/notebook-loops.md)).
 
@@ -158,7 +158,7 @@ From [best practices](../sources/anthropic-skill-authoring-best-practices.md) un
 - **Over-triggering or overlap.** Vague or overlapping descriptions make the model load the wrong skill. Fix by narrowing the descriptions or making the skill manual-only ([extend overview](../sources/claude-code-extend-features-overview.md)).
 - **Mistaking `allowed-tools` for a sandbox.** In Claude Code it pre-approves tools for the invoking turn and restricts nothing ([Claude Code skills](../sources/claude-code-skills-docs.md)).
 - **Supply-chain and [prompt injection](prompt-injection.md) risk.** A skill is instructions plus code running with the agent's permissions. A malicious one can exfiltrate data, and a skill that fetches external URLs can pull in hostile instructions even if its author is trustworthy. Audit skills like any software you install ([overview](../sources/anthropic-agent-skills-overview.md), [Anthropic](../sources/anthropic-equipping-agents-with-skills.md)). Gemini CLI's per-activation consent prompt and Codex's hook trust are partial mitigations. See [LLM security risks](llm-security-risks.md).
-- **Compliance.** As of 2026-11, Agent Skills on Anthropic's API are not eligible for zero data retention (ZDR) or HIPAA (see [PII and data privacy](pii-and-data-privacy.md)) ([overview](../sources/anthropic-agent-skills-overview.md)). Custom API skills are workspace-wide, so multitenant apps need one workspace per tenant ([API guide](../sources/anthropic-skills-api-guide.md)).
+- **Compliance.** As of 2026-11, Agent Skills on Anthropic's API are not eligible for [zero data retention](data-retention-and-residency.md) (ZDR) or HIPAA (see [PII and data privacy](pii-and-data-privacy.md)) ([overview](../sources/anthropic-agent-skills-overview.md)). Custom API skills are workspace-wide, so multitenant apps need one workspace per tenant ([API guide](../sources/anthropic-skills-api-guide.md)).
 
 ## When to use / when not
 

@@ -93,7 +93,7 @@ check_unsafe_link_neutralised() {
 }
 
 check_mermaid_rendered() {
-  local with=public/wiki/concepts/agent-design-patterns/index.html without=public/wiki/concepts/tools/index.html n
+  local with=public/wiki/concepts/agent-design-patterns/index.html without=public/posts/hello-world/index.html n
   n=$(grep -o 'mermaid@[0-9.]*/dist/mermaid.esm.min.mjs' "$with" 2>/dev/null | wc -l | tr -d ' ')
   if ! grep -Eq '<pre class="?mermaid' "$with" 2>/dev/null; then fail check_mermaid_rendered "no <pre class=mermaid> in agent-design-patterns"
   elif grep -Eq '&amp;(#34|gt|lt|quot);' "$with"; then fail check_mermaid_rendered "diagram source is double-escaped (Mermaid will show syntax errors)"

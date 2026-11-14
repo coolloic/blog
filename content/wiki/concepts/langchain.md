@@ -13,7 +13,7 @@ lastmod: 2026-11-14
 tags: ["frameworks", "agents", "langchain"]
 ---
 
-**LangChain** is an open-source framework (Python and JavaScript) for building LLM applications from standard, provider-neutral components: chat models, messages, prompts, [tools](tools.md), retrievers and output parsers, all implementing one `Runnable` interface. Since **v1.0 (22 October 2025)** its centre of gravity is a single agent harness, `create_agent`, which runs a model-calls-tools loop on top of [LangGraph](langgraph.md) and is customised through **middleware**. Legacy chains moved to `langchain-classic`, and observability comes from [LangSmith](langsmith.md). ([announcement](../sources/langchain-langgraph-1-0-announcement.md), [agents docs](../sources/langchain-agents-middleware-docs.md))
+**LangChain** is an open-source framework (Python and JavaScript) for building LLM applications from standard, provider-neutral components: chat models, messages, prompts, [tools](tools.md), retrievers and output parsers, all implementing one `Runnable` interface. Since **v1.0 (22 October 2025)** its centre of gravity is a single [agent harness](harness-engineering.md), `create_agent`, which runs a model-calls-tools loop on top of [LangGraph](langgraph.md) and is customised through **[middleware](agent-hooks-and-middleware.md)**. Legacy chains moved to `langchain-classic`, and observability comes from [LangSmith](langsmith.md). ([announcement](../sources/langchain-langgraph-1-0-announcement.md), [agents docs](../sources/langchain-agents-middleware-docs.md))
 
 ## Package layout and versions
 

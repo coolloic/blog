@@ -51,7 +51,7 @@ flowchart LR
 Synthesis: the diagram assembles the stages described by [Anthropic](../sources/anthropic-contextual-retrieval.md) and the [Notebook](../sources/notebook-rag-cag.md); no single source shows exactly this graph.
 
 1. **Ingestion.** Parse documents ([document processing](document-processing.md)), split them into [chunks](chunking.md), embed each chunk with an [embedding model](embeddings.md) into a [vector database](vector-databases.md) and, for hybrid search, also build a keyword index. The owner's [experiment 13](../sources/notebook-13-rag.md) is the minimal version: split, embed, FAISS, top-k, grounded answer.
-2. **Retrieval.** Encode the query and find nearest chunks with an [ANN index](ann-indexes.md), ideally fused with BM25 ([hybrid search](hybrid-search.md)), then [rerank](reranking.md) a wide candidate set down to a few.
+2. **Retrieval.** Encode the query and find nearest chunks with an [ANN index](ann-indexes.md), ideally fused with [BM25](bm25.md) ([hybrid search](hybrid-search.md)), then [rerank](reranking.md) a wide candidate set down to a few.
 3. **Augmentation.** Put the chunks in the prompt with an instruction to answer only from them and to cite. Order matters: models use information at the start and end of the context better than the middle ([Lost in the Middle](../sources/lost-in-the-middle.md)), so put the best chunks at the edges and don't pad with marginal ones.
 4. **Generation.** The LLM answers; citations let users and evaluators check grounding.
 
@@ -64,7 +64,7 @@ Synthesis: the diagram assembles the stages described by [Anthropic](../sources/
 | Decomposition / multi-query | Questions needing several facts | Split into sub-queries, retrieve for each, merge ([Notebook](../sources/notebook-rag-cag.md)) | N retrievals |
 | [Contextual retrieval](contextual-retrieval.md) | Chunks that lost their document context | Prepend an LLM-written 50-100 token blurb to each chunk before embedding and BM25 ([Anthropic](../sources/anthropic-contextual-retrieval.md)) | One-time, about $1.02 per M doc tokens (2024 pricing, with prompt caching) |
 
-Anthropic's measurements (failure rate = 1 - recall@20) show how the stages stack: 5.7% baseline, 3.7% with contextual embeddings, 2.9% adding contextual BM25, 1.9% adding a reranker, a 67% reduction overall ([source](../sources/anthropic-contextual-retrieval.md)).
+Anthropic's measurements (failure rate = 1 - [recall@20](retrieval-metrics.md)) show how the stages stack: 5.7% baseline, 3.7% with contextual embeddings, 2.9% adding contextual BM25, 1.9% adding a reranker, a 67% reduction overall ([source](../sources/anthropic-contextual-retrieval.md)).
 
 ## RAG vs CAG vs long context
 

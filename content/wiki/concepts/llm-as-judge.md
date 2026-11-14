@@ -83,7 +83,7 @@ Synthesis: once TPR/TNR are known, a judge's raw pass rate can be corrected for 
 
 ## Limitations and failure modes
 
-- **Non-determinism and cost**: each grade is a model call, scores vary between runs, and pairwise or multi-sample schemes multiply cost ([Anthropic](../sources/anthropic-demystifying-evals-for-ai-agents.md)).
+- **[Non-determinism](llm-non-determinism.md) and cost**: each grade is a model call, scores vary between runs, and pairwise or multi-sample schemes multiply cost ([Anthropic](../sources/anthropic-demystifying-evals-for-ai-agents.md)).
 - **Shared blind spots**: a judge from the same family can share the generator's concepts of quality; using judges as reward signals risks self-reinforcement ([G-Eval](../sources/liu-2023-g-eval.md), [Panickssery](../sources/panickssery-2024-self-preference.md)).
 - **Hard questions**: on items beyond the judge's ability, the judge is easily misled ([Zheng](../sources/judging-llm-as-a-judge.md)); this is why contamination-limited benchmarks such as LiveBench avoid judges entirely (see [benchmarks](benchmarks.md)).
 - **Gaming**: verbosity and formatting tricks inflate scores when the judge is the target ([Zheng](../sources/judging-llm-as-a-judge.md), [Dubois](../sources/dubois-2024-length-controlled-alpacaeval.md)).

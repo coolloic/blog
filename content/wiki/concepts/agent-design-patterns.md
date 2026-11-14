@@ -5,11 +5,27 @@ category: concept
 sources:
   - ../sources/google-cloud-choose-agentic-design-pattern.md
   - ../sources/anatomy-of-a-modern-ai-agent.md
+  - ../sources/openai-practical-guide-building-agents.md
+  - ../sources/anthropic-building-effective-agents.md
+  - ../sources/google-why-we-built-adk-2.md
+  - ../sources/google-adk-workflows-docs.md
+  - ../sources/google-adk-a2a-docs.md
+  - ../sources/crewai-processes-docs.md
+  - ../sources/microsoft-agent-framework-workflows-docs.md
+  - ../sources/langgraph-graph-api-docs.md
+  - ../sources/openai-agents-sdk-handoffs-docs.md
+  - ../sources/anthropic-multi-agent-research-system.md
+  - ../sources/cemri-2025-mast-multi-agent-failures.md
+  - ../sources/anthropic-prompting-best-practices.md
+  - ../sources/wang-2022-self-consistency.md
+  - ../sources/yao-2023-tree-of-thoughts.md
+  - ../sources/meta-2025-agents-rule-of-two.md
+  - ../sources/anthropic-2026-measuring-agent-autonomy.md
 lastmod: 2026-11-14
 tags: ["agents", "patterns", "multi-agent"]
 ---
 
-**Agent design patterns** are reusable architectures for organising an agentic system: how many agents there are, what each does, and **who decides what happens next**. That last point is the most useful way to tell them apart. In some patterns, code you wrote fixes the order of steps. In others, a model decides at runtime. Model-decided patterns adapt better but cost more calls, tokens and [latency](cost-and-latency-optimization.md).
+**Agent design patterns** are reusable architectures for organising an agentic system: how many agents there are, what each does, and **who decides what happens next**. That last point is the most useful way to tell them apart. In some patterns, code you wrote fixes the order of steps. In others, a model decides at runtime. Model-decided patterns adapt better but cost more calls, tokens and [latency](cost-and-latency-optimization.md). Anthropic draws the same line in its own vocabulary: **workflows** run LLMs and tools through predefined code paths, while **agents** direct their own process and tool use, and agentic systems trade latency and cost for task performance ([Anthropic](../sources/anthropic-building-effective-agents.md)).
 
 ## Choosing a pattern
 
@@ -21,6 +37,8 @@ Start from the requirements, not the pattern:
 4. **Human judgment.** Are some decisions high-stakes, safety-critical or subjective?
 
 If the task is predictable or fits in a single model call (summarising, translating, classifying), **don't use an agent at all**. Otherwise, **start with a single agent** and add structure only when a requirement forces it. Revisit the choice as the workload changes.
+
+OpenAI's guide gives a positive **fit test**. Agents suit workflows that have resisted deterministic automation: complex decisions with exceptions (refund approval), unwieldy rule sets (vendor security review) and heavy unstructured data (insurance claims). If a use case does not clearly fit, a deterministic solution may be enough ([OpenAI guide](../sources/openai-practical-guide-building-agents.md)). Anthropic likewise says to find the simplest solution first, since an optimised single LLM call with retrieval and examples often suffices ([Anthropic](../sources/anthropic-building-effective-agents.md)). Both favour growing incrementally: OpenAI reports that customers succeed more by maximising a single agent before splitting into several than by starting fully autonomous ([OpenAI guide](../sources/openai-practical-guide-building-agents.md)).
 
 Synthesis: the guide gives criteria, not a flowchart. This is one way to read them as a decision path:
 
@@ -43,7 +61,7 @@ flowchart TD
 
 One model with a set of [tools](tools.md) and a detailed [system prompt](system-prompts.md). It plans and picks tools itself: the plain [agent loop](agent-loop.md).
 - **Use for:** multi-step tasks needing external data, and as the first version of any agent.
-- **Watch for:** quality drops (wrong tool choice, failures, latency) as tools and responsibilities grow. That's the signal to move to ReAct or multi-agent.
+- **Watch for:** quality drops (wrong tool choice, failures, latency) as tools and responsibilities grow. That's the signal to move to ReAct or multi-agent. OpenAI's advice is the same: get the most out of one agent first ([OpenAI guide](../sources/openai-practical-guide-building-agents.md)).
 
 ```mermaid
 flowchart LR
@@ -54,7 +72,7 @@ flowchart LR
 
 ### ReAct (reason and act)
 
-A single agent that cycles explicitly through **Thought** (reason about the next step), **Action** (call a tool or answer) and **Observation** (record the result), until it reaches an answer, an iteration limit or an error.
+See [ReAct](react-pattern.md) for the full pattern. A single agent that cycles explicitly through **Thought** (reason about the next step), **Action** (call a tool or answer) and **Observation** (record the result), until it reaches an answer, an iteration limit or an error.
 - **Use for:** dynamic tasks that need continual re-planning.
 - **Trade-off:** cheaper than multi-agent, and the reasoning trace helps debugging. But the loop adds latency, quality depends on the model's reasoning, and one bad tool result can mislead the final answer.
 
@@ -66,7 +84,9 @@ flowchart LR
 
 ### Fixed workflows (code decides the order)
 
-These [subagent](subagents.md) arrangements use predefined control flow with no model orchestration. They're cheaper, faster and predictable, but rigid.
+These [subagent](subagents.md) arrangements use predefined control flow with no model orchestration. They're cheaper, faster and predictable, but rigid. At its smallest, a fixed workflow is **prompt chaining**: split a task into sequential calls when you need to inspect, log or branch on intermediate outputs, such as Anthropic's draft → critique against criteria → refine chain ([Anthropic prompting](../sources/anthropic-prompting-best-practices.md); see [prompt engineering](prompt-engineering.md)).
+
+Google's case for fixed workflows is that model-led routing, scheduling and error handling are slow, costly and variable. In its illustrative refund benchmark (Gemini Flash with mock APIs, not a production measurement), routing with a workflow instead of a free agent cut tokens from 5,152 to 2,265 and latency from 7.2 s to 5.7 s. It also argues a graph narrows [prompt-injection](prompt-injection.md) impact, because no edge exists for unauthorised actions ([Why ADK 2.0](../sources/google-why-we-built-adk-2.md)).
 
 | Pattern | Shape | Use for | Watch for |
 |---|---|---|---|
@@ -102,6 +122,8 @@ Two loop variants focus on output quality:
 - **Review and critique (generator–critic):** a generator drafts and a critic checks the draft against criteria (accuracy, format, safety), then approves it or sends it back. An example is a [code generator](coding-agents.md) paired with a security-auditor critic that runs tests. This is [verification](verification-and-evals.md) built into the architecture.
 - **Iterative refinement:** one or more agents improve a shared result over several passes until it meets a quality bar or hits an iteration limit. Good for drafting, planning and debugging code.
 
+Two reasoning techniques from [chain-of-thought](chain-of-thought.md) are really parallel and search patterns run in your own code. **Self-consistency** samples N reasoning paths and majority-votes the final answer (gains saturate at about 5–10 paths, and it needs comparable answers such as numbers or options) ([Wang et al.](../sources/wang-2022-self-consistency.md)). **Tree of Thoughts** has a model propose and score steps, then searches them with BFS or DFS and backtracking. On Game of 24 with GPT-4 it reached 74% against 4% for CoT, at 5–100x CoT tokens ([Yao et al.](../sources/yao-2023-tree-of-thoughts.md)). See [test-time compute](test-time-compute.md).
+
 **Review and critique**
 
 ```mermaid
@@ -118,6 +140,12 @@ flowchart LR
 | **Coordinator** | A model routes each request to specialist agents | Varied inputs to a structured process (e.g. support: status, return, or refund) | Extra calls for every routing decision |
 | **Hierarchical decomposition** | A root agent splits the task, sub-agents split further, workers execute | Ambiguous, open-ended work ([research](deep-research-agents.md), planning) | Hard to design and debug; nested calls make it slow and costly |
 | **Swarm** | Agents talk all-to-all, critique and hand off, with no central supervisor | Very complex problems that benefit from debate | The most complex and costly pattern; needs exit conditions to converge |
+
+There are two ways to delegate in these patterns ([OpenAI Agents SDK handoffs](../sources/openai-agents-sdk-handoffs-docs.md); see [agent handoffs](agent-handoffs.md)):
+- **Handoff (decentralised):** the model calls a `transfer_to_<agent>` tool, and the target agent takes over the conversation, by default with the full history. This is how swarm-style and triage coordinators pass control.
+- **Agent as tool (manager):** a manager agent calls a specialist like a tool and keeps control of the conversation. This fits coordinators and hierarchical decomposition.
+
+**Deep research is the reference hierarchical (orchestrator-worker) system.** In Anthropic's research system, a lead agent plans and spawns parallel subagents, each with its own context window. An Opus 4 lead with Sonnet 4 subagents beat a single Opus 4 agent by 90.2% on Anthropic's internal eval, and token usage alone explained about 80% of performance variance on BrowseComp. The price is about 15x chat-level tokens ([Anthropic](../sources/anthropic-multi-agent-research-system.md); see [deep research agents](deep-research-agents.md)).
 
 **Coordinator**
 
@@ -157,9 +185,9 @@ flowchart LR
 
 ### Special requirements
 
-- **[Human-in-the-loop](human-in-the-loop.md):** the agent pauses at set checkpoints for a person to approve, correct or add input. An example is a compliance officer approving a redacted dataset before release. It's one of the strongest [guardrails](agent-guardrails.md), at the cost of building the review system.
+- **[Human-in-the-loop](human-in-the-loop.md):** the agent pauses at set checkpoints for a person to approve, correct or add input. An example is a compliance officer approving a redacted dataset before release. It's one of the strongest [guardrails](agent-guardrails.md), at the cost of building the review system. OpenAI's guide names two triggers for intervention: exceeding **failure thresholds** (too many retries, repeated misunderstanding) and **high-risk actions** (cancellations, large refunds, payments). It also recommends planning for intervention especially early in deployment, to find failures and build the eval cycle ([OpenAI guide](../sources/openai-practical-guide-building-agents.md)).
 
-> **Contradiction:** this page, following [Google Cloud's pattern guide](../sources/google-cloud-choose-agentic-design-pattern.md), calls human-in-the-loop one of the strongest guardrails. [Human-in-the-loop](human-in-the-loop.md) cites [Meta's Rule of Two](../sources/meta-2025-agents-rule-of-two.md) ("blindly approved" confirmations still fail; HITL does not replace sandboxing or least privilege) and [Anthropic's autonomy study](../sources/anthropic-2026-measuring-agent-autonomy.md), which recommends designing for visibility and easy intervention rather than approving every action. HITL is strong only when gates are few and reviewers actually read them.
+> **Contradiction:** this page, following [Google Cloud's pattern guide](../sources/google-cloud-choose-agentic-design-pattern.md), calls human-in-the-loop one of the strongest guardrails. [Human-in-the-loop](human-in-the-loop.md) cites [Meta's Rule of Two](../sources/meta-2025-agents-rule-of-two.md) ("blindly approved" confirmations still fail; HITL does not replace sandboxing or least privilege) and [Anthropic's autonomy study](../sources/anthropic-2026-measuring-agent-autonomy.md), which recommends designing for visibility and easy intervention rather than approving every action. HITL is strong only when gates are few and reviewers actually read them. Newer sources narrow rather than resolve this: OpenAI's guide places gates at failure thresholds and high-risk actions, not on every step ([OpenAI guide](../sources/openai-practical-guide-building-agents.md)), which is consistent with the few-gates reading.
 - **Custom logic:** your own code branches between other patterns. For example, a refund agent runs parallel checks, then branches to either a refund or a sequential store-credit flow. This is the most flexible option, but also the most work to build and maintain.
 
 **Human-in-the-loop**
@@ -189,7 +217,23 @@ flowchart TD
 - **Cost and latency grow with every added agent, loop or cycle.** Most patterns trade extra model calls for quality.
 - **Exit conditions are mandatory** for loop, refinement and swarm patterns: an iteration cap, a time limit or a goal.
 - **Context per agent.** Isolate it, persist what later steps need, and compress large data. See [context engineering](context-engineering.md).
+- **Multi-agent systems fail in their own ways.** MAST labelled 1,642 multi-agent traces into 14 failure modes across system design, inter-agent misalignment and task verification. The most common were step repetition (15.7%), reasoning-action mismatch (13.2%), unawareness of termination conditions (12.4%) and disobeying the task spec (11.8%) ([MAST](../sources/cemri-2025-mast-multi-agent-failures.md)). Several of these map to the exit-condition and verification points above. Use [error analysis](error-analysis.md) on real traces to find which ones hit your system.
+- **Crossing boundaries.** When a specialist is a separate service, owned by another team, or written in another language or framework, delegate over [Agent2Agent (A2A)](agent2agent-protocol.md) rather than a local sub-agent. Keep local sub-agents for internal structure, latency-sensitive paths and shared state, because A2A adds network and serialisation overhead ([ADK A2A docs](../sources/google-adk-a2a-docs.md)).
 - **Synthesis:** the patterns compose. Real systems often nest them, for example a coordinator whose specialists run sequential or generator–critic loops. The custom-logic pattern is the general case of that.
+
+## Patterns in frameworks
+
+The major frameworks implement these patterns directly:
+
+| Framework | Fixed workflows | Model-orchestrated |
+|---|---|---|
+| [Google ADK](google-adk.md) | 1.x `SequentialAgent`, `ParallelAgent`, `LoopAgent` (stops at `max_iterations` or `escalate`); 2.0 graph and dynamic workflows | 2.0 collaborative workflows: a coordinator with `sub_agents` in `chat`, `task` or `single_turn` mode ([workflows](../sources/google-adk-workflows-docs.md)) |
+| [CrewAI](crewai.md) | `sequential` process | `hierarchical` process: a manager agent allocates and validates tasks, at the cost of extra calls and possible mis-delegation ([processes](../sources/crewai-processes-docs.md)) |
+| [Microsoft Agent Framework](microsoft-agent-framework.md) (successor to [AutoGen](autogen.md)) | Sequential and concurrent orchestrations | Handoff, group chat and Magentic (a manager agent coordinates specialists) ([workflows](../sources/microsoft-agent-framework-workflows-docs.md)) |
+| [LangGraph](langgraph.md) | Explicit nodes and edges, subgraphs | Conditional routing and `Command` handoffs; `graph=Command.PARENT` routes from a subgraph into its parent ([graph docs](../sources/langgraph-graph-api-docs.md)) |
+| [OpenAI Agents SDK](openai-agents-sdk.md) | Your own code around `Runner` | Handoffs and agents-as-tools ([handoffs](../sources/openai-agents-sdk-handoffs-docs.md)) |
+
+Synthesis: ADK 2.0 graphs, LangGraph and Agent Framework workflows all make the same move, a deterministic skeleton with LLM calls at the leaves, which is the custom-logic pattern turned into a framework feature.
 
 ## Going deeper
 
@@ -208,3 +252,13 @@ flowchart TD
 
 - [Choose a design pattern for your agentic AI system (Google Cloud)](../sources/google-cloud-choose-agentic-design-pattern.md): all 12 patterns, selection criteria and trade-offs
 - [The Anatomy of a Modern AI Agent](../sources/anatomy-of-a-modern-ai-agent.md): the single agent loop and subagent trade-offs
+- [A Practical Guide to Building Agents (OpenAI)](../sources/openai-practical-guide-building-agents.md): the agent fit test, single agent first, human-intervention triggers
+- [Building effective agents (Anthropic)](../sources/anthropic-building-effective-agents.md): workflows vs agents, simplest solution first
+- [Why we built ADK 2.0 (Google)](../sources/google-why-we-built-adk-2.md): the workflow vs free-agent token and latency benchmark
+- [ADK workflows docs](../sources/google-adk-workflows-docs.md) · [ADK A2A docs](../sources/google-adk-a2a-docs.md)
+- [CrewAI processes](../sources/crewai-processes-docs.md) · [Microsoft Agent Framework workflows](../sources/microsoft-agent-framework-workflows-docs.md) · [LangGraph graph API](../sources/langgraph-graph-api-docs.md) · [OpenAI Agents SDK handoffs](../sources/openai-agents-sdk-handoffs-docs.md)
+- [How we built our multi-agent research system (Anthropic)](../sources/anthropic-multi-agent-research-system.md): the orchestrator-worker reference case
+- [Why Do Multi-Agent LLM Systems Fail? (Cemri et al., 2025)](../sources/cemri-2025-mast-multi-agent-failures.md): multi-agent failure taxonomy
+- [Prompting best practices (Anthropic)](../sources/anthropic-prompting-best-practices.md): prompt chaining
+- [Self-consistency (Wang et al.)](../sources/wang-2022-self-consistency.md) · [Tree of Thoughts (Yao et al.)](../sources/yao-2023-tree-of-thoughts.md)
+- [Agents Rule of Two (Meta)](../sources/meta-2025-agents-rule-of-two.md) · [Measuring agent autonomy (Anthropic)](../sources/anthropic-2026-measuring-agent-autonomy.md): limits of human-in-the-loop, cited in the Contradiction note

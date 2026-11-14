@@ -21,7 +21,7 @@ lastmod: 2026-11-14
 tags: ["inference", "serving", "vllm", "sglang", "tensorrt-llm", "gpu"]
 ---
 
-**LLM inference serving** is the systems work of turning a trained model into an endpoint that many users can call at the same time, with acceptable latency and cost. A request runs in two phases. **Prefill** processes the whole prompt in parallel and builds the [KV cache](kv-cache.md). **Decode** then generates output tokens one at a time, and each step reads all the weights plus that request's KV cache. A serving engine (vLLM, SGLang, TensorRT-LLM, and formerly TGI) decides which requests share each GPU forward pass, where their KV cache lives, and how the model is split across GPUs. Its job is to keep the GPU busy without breaking latency targets ([NVIDIA](../sources/nvidia-mastering-llm-inference-optimization.md), [Kwon et al.](../sources/vllm-pagedattention-paper.md)).
+**LLM inference serving** is the systems work of turning a trained model into an endpoint that many users can call at the same time, with acceptable latency and cost. A request runs in two phases. **Prefill** processes the whole prompt in parallel and builds the [KV cache](kv-cache.md). **Decode** then generates output tokens one at a time, and each step reads all the weights plus that request's KV cache. A serving engine ([vLLM](vllm.md), SGLang, TensorRT-LLM, and formerly TGI) decides which requests share each GPU forward pass, where their KV cache lives, and how the model is split across GPUs. Its job is to keep the GPU busy without breaking latency targets ([NVIDIA](../sources/nvidia-mastering-llm-inference-optimization.md), [Kwon et al.](../sources/vllm-pagedattention-paper.md)).
 
 ## Prefill vs decode: two different workloads
 

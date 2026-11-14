@@ -89,7 +89,7 @@ Knowledge cutoffs: June 2026 for all current Claude models; 2026-04-30 to 2026-0
 | Batch | 50% off | Batch/Flex 50% off | Batch/Flex 50% off | n/a on page |
 | Premium speed | Fast mode, up to 2.5x output speed (Opus 5.5 at $8/$40, Fable 5.2 at $16/$80) | Fast mode (renamed from Priority on 2026-07-30), 2x | Priority about 1.8x | n/a |
 | Long-context step | None on 4.6+ (except Haiku 5.5 above 100K) | Above 272K input (e.g. Astra $20/$75) | 3.1 Pro above 200K | ≥200K prompt doubles the rate for *all* tokens |
-| Data residency | `inference_geo: "us"` costs 1.1x | Regional endpoints +10% (models released on or after 2026-03-05) | n/a | n/a |
+| [Data residency](data-retention-and-residency.md) | `inference_geo: "us"` costs 1.1x | Regional endpoints +10% (models released on or after 2026-03-05) | n/a | n/a |
 
 See [prompt caching](prompt-caching.md), [batch processing](batch-processing.md) and [cost and latency optimization](cost-and-latency-optimization.md).
 
@@ -110,7 +110,7 @@ Synthesis: list price per token is a poor proxy for cost. Cache-read discounts r
 
 ## Limitations and failure modes
 
-- **Vendor benchmarks are not comparable.** Each vendor picks its own harnesses and effort settings. Use [benchmarks](benchmarks.md) only as a shortlist filter, then run your own [evals](llm-evaluation.md).
+- **Vendor benchmarks are not comparable.** Each vendor picks its own [harnesses](harness-engineering.md) and effort settings. Use [benchmarks](benchmarks.md) only as a shortlist filter, then run your own [evals](llm-evaluation.md).
 - **A large context window does not guarantee recall.** A 1M-token window still suffers [long-context degradation](long-context-degradation.md).
 - **The snapshot decays fast.** In 2026 each vendor shipped several generations. Synthesis: treat any model name in a design document as configuration, not architecture.
 

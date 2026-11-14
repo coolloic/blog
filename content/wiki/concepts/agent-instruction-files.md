@@ -17,7 +17,7 @@ lastmod: 2026-11-14
 tags: ["agents", "coding", "context-engineering", "system-prompts"]
 ---
 
-An **agent instruction file** is a plain Markdown file that a coding agent's harness finds by convention and injects into context at the start of every session. It carries the build commands, conventions and constraints the agent can't infer from the code. The cross-vendor name is **AGENTS.md**, a "README for agents" with no required schema. Codex, Cursor, Jules, Gemini CLI, GitHub Copilot's coding agent and many others read it, and it is now stewarded by the Agentic AI Foundation under the Linux Foundation ([AGENTS.md](../sources/agents-md-spec.md)). Some vendors have their own name: Claude Code uses **CLAUDE.md**, Gemini CLI uses **GEMINI.md** and Cursor uses **rules** ([Claude Code memory](../sources/claude-code-memory-docs.md), [Gemini CLI](../sources/gemini-cli-context-files-docs.md), [Cursor rules](../sources/cursor-rules-docs.md)). Functionally these files are a user-editable extension of the [system prompt](system-prompts.md). They are *context*, not configuration: the model reads them and may still not follow them.
+An **agent instruction file** is a plain Markdown file that a coding agent's [harness](harness-engineering.md) finds by convention and injects into context at the start of every session. It carries the build commands, conventions and constraints the agent can't infer from the code. The cross-vendor name is **AGENTS.md**, a "README for agents" with no required schema. Codex, Cursor, Jules, Gemini CLI, GitHub Copilot's coding agent and many others read it, and it is now stewarded by the Agentic AI Foundation under the Linux Foundation ([AGENTS.md](../sources/agents-md-spec.md)). Some vendors have their own name: Claude Code uses **CLAUDE.md**, Gemini CLI uses **GEMINI.md** and Cursor uses **rules** ([Claude Code memory](../sources/claude-code-memory-docs.md), [Gemini CLI](../sources/gemini-cli-context-files-docs.md), [Cursor rules](../sources/cursor-rules-docs.md)). Functionally these files are a user-editable extension of the [system prompt](system-prompts.md). They are *context*, not configuration: the model reads them and may still not follow them.
 
 ## Discovery and merge
 
@@ -79,7 +79,7 @@ Synthesis: every line costs tokens on every request, and it also costs *behaviou
 | Fact or rule every session needs | instruction file |
 | Rule only for some paths (e.g. `*.sql`) | path-scoped rule (`.claude/rules` with `paths:`, Cursor `globs`) or nested file |
 | Long procedure or reference needed sometimes | [agent skill](agent-skills.md) (loaded on demand) |
-| Rule that must hold 100% of the time | hook or permission deny rule |
+| Rule that must hold 100% of the time | [hook](agent-hooks-and-middleware.md) or permission deny rule |
 | Agent-learned notes across sessions | auto memory (Claude Code `MEMORY.md`, first 200 lines / 25 KB loaded); see [agent memory](agent-memory.md) |
 
 Sources: [extend overview](../sources/claude-code-extend-features-overview.md), [best practices](../sources/claude-code-best-practices.md), [Claude Code memory](../sources/claude-code-memory-docs.md).

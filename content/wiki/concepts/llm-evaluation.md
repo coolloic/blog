@@ -37,7 +37,7 @@ Anthropic's agent-eval post gives a precise vocabulary ([Anthropic, Jan 2026](..
 | Transcript (trace, trajectory) | Full record of a trial: outputs, tool calls, reasoning |
 | Outcome | Final environment state (e.g. does the booking exist in the DB), which may differ from what the agent *says* it did |
 | Eval harness | Runs tasks, records, grades, aggregates |
-| Agent harness (scaffold) | What lets the model act; agent evals test model + scaffold together |
+| [Agent harness](harness-engineering.md) (scaffold) | What lets the model act; agent evals test model + scaffold together |
 | Suite | Tasks measuring one capability or behaviour |
 
 ## The eval loop
@@ -77,14 +77,14 @@ flowchart LR
 |---|---|---|---|
 | Code-based | exact/regex match, JSON-schema valid, unit tests pass, tool-call args, DB state, latency/cost | fast, cheap, deterministic, debuggable | brittle to valid variation; no nuance |
 | Reference-based metric | ROUGE-L, BLEU, embedding cosine, F1 | cheap, needs a gold answer | weak proxy for quality; generic metrics alone are an anti-pattern |
-| Model-based ([LLM-as-judge](llm-as-judge.md)) | rubric, pairwise, reference-guided, natural-language assertions | scalable, handles open-ended output | non-deterministic, biased, must be calibrated to humans |
+| Model-based ([LLM-as-judge](llm-as-judge.md)) | rubric, pairwise, reference-guided, natural-language assertions | scalable, handles open-ended output | [non-deterministic](llm-non-determinism.md), biased, must be calibrated to humans |
 | Human | SME review, spot checks, A/B tests | gold standard; calibrates judges | slow, expensive |
 
 Sources: [Anthropic](../sources/anthropic-demystifying-evals-for-ai-agents.md), [OpenAI](../sources/openai-evaluation-best-practices.md), [Claude docs](../sources/anthropic-define-success-criteria-and-evals.md). The Claude docs order the choice: code first, then LLM grading (after testing its reliability), and humans only where unavoidable; they also prefer many automatically graded cases over few hand-graded ones. Combine graders as weighted (score above a threshold), binary (all must pass) or hybrid ([Anthropic](../sources/anthropic-demystifying-evals-for-ai-agents.md)).
 
 **Grade outcomes, not paths.** For [agents](agent-evaluation.md), check the end state (files, database rows, page state) rather than demanding a specific tool sequence; give partial credit; harden graders against shortcuts. Grader bugs are common: one CORE-Bench run moved from 42% to 95% after grading fixes and a less constrained scaffold; one bug was a check that rejected "96.12" against "96.124991…" ([Anthropic](../sources/anthropic-demystifying-evals-for-ai-agents.md)). τ-bench shows the pattern: an open-ended conversation graded deterministically by comparing final database state to an annotated goal ([τ-bench](../sources/yao-2024-tau-bench.md)).
 
-**Where to put evals** depends on architecture: single-turn calls need instruction-following and correctness evals; workflows need each call evaluated in isolation; agents add tool-selection and argument-precision evals; multi-agent systems add handoff accuracy ([OpenAI](../sources/openai-evaluation-best-practices.md)). For [RAG](retrieval-augmented-generation.md), score retrieval (recall, MRR, context precision) separately from generation (faithfulness to retrieved context), so a bad answer can be blamed on the right stage; see [RAGAS and DeepEval](ragas-and-deepeval.md) for metric libraries ([notebook](../sources/notebook-llm-evaluation.md), [Ragas](../sources/es-2023-ragas.md), [Ragas docs](../sources/ragas-docs-metrics.md)).
+**Where to put evals** depends on architecture: single-turn calls need instruction-following and correctness evals; workflows need each call evaluated in isolation; agents add tool-selection and argument-precision evals; multi-agent systems add [handoff](agent-handoffs.md) accuracy ([OpenAI](../sources/openai-evaluation-best-practices.md)). For [RAG](retrieval-augmented-generation.md), score retrieval (recall, [MRR](retrieval-metrics.md), context precision) separately from generation (faithfulness to retrieved context), so a bad answer can be blamed on the right stage; see [RAGAS and DeepEval](ragas-and-deepeval.md) for metric libraries ([notebook](../sources/notebook-llm-evaluation.md), [Ragas](../sources/es-2023-ragas.md), [Ragas docs](../sources/ragas-docs-metrics.md)).
 
 ## Non-determinism: trials, pass@k and pass^k
 

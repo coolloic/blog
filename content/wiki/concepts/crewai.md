@@ -67,7 +67,7 @@ A unified `Memory` class replaces the older short-term, long-term, entity and ex
 
 | Dimension | CrewAI | [AutoGen](autogen.md) (AgentChat) | [Google ADK](google-adk.md) | [OpenAI Agents SDK](openai-agents-sdk.md) |
 |---|---|---|---|---|
-| Mental model | Team with roles and tasks | Agents in a conversation | Agents + workflow graph | Agents + handoffs |
+| Mental model | Team with roles and tasks | Agents in a conversation | Agents + workflow graph | Agents + [handoffs](agent-handoffs.md) |
 | Unit of work | `Task` with `expected_output` | Message/turn | Node / agent invocation | Run turn |
 | Deterministic layer | Flows | GraphFlow (now Agent Framework workflows) | Workflow agents / 2.0 graphs | None built in |
 | Signature feature | Role/task scaffolding, guardrails per task | Code-executing agents | Multi-language, [A2A](agent2agent-protocol.md), eval | Guardrails, tracing |

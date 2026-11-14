@@ -32,7 +32,7 @@ tags: ["security", "red-teaming", "evaluation", "agents"]
 
 ## What is under test
 
-The model is the smallest part of the attack surface. OWASP's GenAI Red Teaming Guide splits the work into four layers ([OWASP guide](../sources/owasp-genai-red-teaming-guide.md)):
+The model is the smallest part of the attack surface. [OWASP](owasp-top-10-for-llm.md)'s GenAI Red Teaming Guide splits the work into four layers ([OWASP guide](../sources/owasp-genai-red-teaming-guide.md)):
 
 | Layer | Questions | Typical findings |
 |---|---|---|

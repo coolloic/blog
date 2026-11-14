@@ -79,7 +79,7 @@ Prefilling means supplying the start of the assistant's reply so the model conti
 | Classification | Tool with an `enum` field, or structured outputs ([function calling](function-calling.md)) |
 | Skip preamble | System instruction "respond directly without preamble"; strip leftovers |
 | Continue a cut-off reply | Put the partial text in the user turn and ask to continue |
-| Re-inject reminders | User-turn reminders, tools, compaction, or [mid-conversation system messages](system-prompts.md) |
+| Re-inject reminders | User-turn reminders, tools, [compaction](context-compaction.md), or [mid-conversation system messages](system-prompts.md) |
 
 ## Model-generation drift
 

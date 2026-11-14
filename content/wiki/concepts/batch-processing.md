@@ -49,7 +49,7 @@ Sources: [Anthropic](../sources/anthropic-message-batches-docs.md), [OpenAI](../
 - **Partial completion.** At expiry, unfinished requests fail (`expired` / `batch_expired`). Completed results stay available and are billed ([OpenAI](../sources/openai-batch-api-guide.md), [Anthropic](../sources/anthropic-message-batches-docs.md)). Gemini differs: a job pending or running for more than 48 hours moves to `JOB_STATE_EXPIRED` and produces no results ([Gemini](../sources/gemini-batch-api-docs.md)). Under heavy demand, more requests can expire ([Anthropic](../sources/anthropic-message-batches-docs.md)).
 - **Unsupported in batch (Claude).** `stream: true`, fast-mode `speed`, server-side `fallbacks`, and `max_tokens: 0` cache pre-warming ([Anthropic](../sources/anthropic-message-batches-docs.md)).
 - **Spend control.** Anthropic batches can slightly exceed a workspace spend limit because of concurrent processing ([Anthropic](../sources/anthropic-message-batches-docs.md)).
-- **Data retention.** Anthropic batches are not Zero-Data-Retention eligible (29-day storage) ([Anthropic](../sources/anthropic-message-batches-docs.md)). Check this for regulated customers. See [AI governance and compliance](ai-governance-and-compliance.md).
+- **[Data retention](data-retention-and-residency.md).** Anthropic batches are not Zero-Data-Retention eligible (29-day storage) ([Anthropic](../sources/anthropic-message-batches-docs.md)). Check this for regulated customers. See [AI governance and compliance](ai-governance-and-compliance.md).
 
 ## Stacking discounts with caching
 

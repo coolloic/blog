@@ -27,7 +27,7 @@ lastmod: 2026-11-14
 tags: ["security", "prompt-injection", "agents"]
 ---
 
-**Prompt injection** is an attack in which text that the application developer did not write (a user message, a web page, an email, a tool result, an MCP tool description) contains instructions that the model follows, changing its behaviour in ways the developer did not intend. It exists because an LLM receives instructions and data in one token stream and has no hard boundary between them: an application that concatenates trusted prompts with untrusted input inherits the problem ([Willison 2024](../sources/willison-2024-prompt-injection-vs-jailbreaking.md), [Greshake et al.](../sources/greshake-2023-indirect-prompt-injection.md)). It is LLM01, the top risk, in both the 2025 and 2026 OWASP Top 10 for LLM applications ([OWASP 2025](../sources/owasp-llm-top-10-2025.md), [OWASP 2026](../sources/owasp-llm-top-10-2026.md)). Its damage scales with what the application can reach, which is why it matters most for agents with [tools](tools.md).
+**Prompt injection** is an attack in which text that the application developer did not write (a user message, a web page, an email, a tool result, an MCP tool description) contains instructions that the model follows, changing its behaviour in ways the developer did not intend. It exists because an LLM receives instructions and data in one token stream and has no hard boundary between them: an application that concatenates trusted prompts with untrusted input inherits the problem ([Willison 2024](../sources/willison-2024-prompt-injection-vs-jailbreaking.md), [Greshake et al.](../sources/greshake-2023-indirect-prompt-injection.md)). It is LLM01, the top risk, in both the 2025 and 2026 [OWASP Top 10 for LLM applications](owasp-top-10-for-llm.md) ([OWASP 2025](../sources/owasp-llm-top-10-2025.md), [OWASP 2026](../sources/owasp-llm-top-10-2026.md)). Its damage scales with what the application can reach, which is why it matters most for agents with [tools](tools.md).
 
 ## Direct vs indirect
 
@@ -46,7 +46,7 @@ The 2026 OWASP edition widens LLM01 to [cross-modal](multimodal-models.md) paylo
 
 ## The lethal trifecta and exfiltration
 
-Willison's **lethal trifecta**: an agent that has (1) access to private data, (2) exposure to untrusted content, and (3) a way to communicate externally can be made to steal that data ([Willison 2025](../sources/willison-2025-lethal-trifecta.md)). Meta's **Agents Rule of Two** turns this into a design rule: in one session an agent may hold at most two of [A] untrustworthy input, [B] sensitive data or systems, [C] state change or external communication. If all three are needed, it must not run autonomously ([Meta](../sources/meta-2025-agents-rule-of-two.md)).
+Willison's **[lethal trifecta](lethal-trifecta.md)**: an agent that has (1) access to private data, (2) exposure to untrusted content, and (3) a way to communicate externally can be made to steal that data ([Willison 2025](../sources/willison-2025-lethal-trifecta.md)). Meta's **Agents Rule of Two** turns this into a design rule: in one session an agent may hold at most two of [A] untrustworthy input, [B] sensitive data or systems, [C] state change or external communication. If all three are needed, it must not run autonomously ([Meta](../sources/meta-2025-agents-rule-of-two.md)).
 
 Synthesis: the diagram combines the attack paths described in the trifecta, GitHub MCP and markdown-exfiltration sources.
 

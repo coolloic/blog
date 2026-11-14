@@ -14,7 +14,7 @@ lastmod: 2026-11-14
 tags: ["retrieval", "rag", "search"]
 ---
 
-**Reranking** is the second stage of a two-stage retriever: a fast first stage ([BM25, dense or hybrid search](hybrid-search.md)) fetches a wide candidate set (often 50-150 chunks), and a slower, more accurate model re-scores each candidate against the query so that only the best few reach the LLM. The first stage optimizes recall cheaply; the reranker buys precision. In Anthropic's experiments, adding a reranker on top of [contextual embeddings](contextual-retrieval.md) plus BM25 lowered the retrieval failure rate from 2.9% to 1.9% ([Anthropic](../sources/anthropic-contextual-retrieval.md)), and the owner's guide lists it as the fix for "relevant docs buried low" ([Notebook](../sources/notebook-rag-cag.md)).
+**Reranking** is the second stage of a two-stage retriever: a fast first stage ([BM25, dense or hybrid search](hybrid-search.md)) fetches a wide candidate set (often 50-150 chunks), and a slower, more accurate model re-scores each candidate against the query so that only the best few reach the LLM. The first stage optimizes recall cheaply; the reranker buys precision. In Anthropic's experiments, adding a reranker on top of [contextual embeddings](contextual-retrieval.md) plus [BM25](bm25.md) lowered the retrieval failure rate from 2.9% to 1.9% ([Anthropic](../sources/anthropic-contextual-retrieval.md)), and the owner's guide lists it as the fix for "relevant docs buried low" ([Notebook](../sources/notebook-rag-cag.md)).
 
 ## Why a second stage: bi-encoder vs cross-encoder
 

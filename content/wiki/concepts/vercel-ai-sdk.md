@@ -15,7 +15,7 @@ The **AI SDK** (npm package `ai`, often called the Vercel AI SDK) is an open-sou
 
 - **AI SDK Core:** one API for text, structured output, [tool calls](function-calling.md) and agents across providers. Each provider package (`@ai-sdk/openai`, `@ai-sdk/anthropic`, `@ai-sdk/google`, `@ai-sdk/amazon-bedrock`, ...) implements a shared language-model specification.
 - **AI SDK UI:** hooks such as `useChat` that manage chat state and render streamed messages.
-- **Harnesses:** run existing agents (Claude Code, Codex, Pi) behind the same agent interface.
+- **[Harnesses](harness-engineering.md):** run existing agents (Claude Code, Codex, Pi) behind the same agent interface.
 
 Version as of 2026-11-14: **7.0.172** on npm. Major releases landed on npm as 5.0.0 (2025-07-31), 6.0.0 (2025-12-22) and 7.0.0 (2026-06-25) ([docs](../sources/ai-sdk-docs.md)).
 
@@ -38,7 +38,7 @@ A **step** is one model generation plus the execution of any local tools it requ
 
 - `stopWhen`: `isStepCount(n)`, `hasToolCall('finalAnswer')`, `isLoopFinished()` (no limit), an array (stop when **any** condition is met), or a custom predicate over all steps. Conditions are evaluated only when the last step contains tool results.
 - The loop also ends when the model finishes for a reason other than tool calls, when a called tool has no `execute`, or when a tool call needs approval.
-- `prepareStep` runs before each step and can swap the model, the active tools, `toolChoice`, [sampling settings](sampling-parameters.md) (`temperature`, `maxOutputTokens`, `reasoning`, ...) or the `messages`. A returned `messages` array persists as the base for later steps, which is the hook for [context](context-engineering.md) compaction with `pruneMessages`.
+- `prepareStep` runs before each step and can swap the model, the active tools, `toolChoice`, [sampling settings](sampling-parameters.md) (`temperature`, `maxOutputTokens`, `reasoning`, ...) or the `messages`. A returned `messages` array persists as the base for later steps, which is the hook for [context](context-engineering.md) [compaction](context-compaction.md) with `pruneMessages`.
 - Parallel tool calls in one step run **concurrently** by default; `toolCallConcurrency: 1` forces model order when calls have side effects.
 
 `ToolLoopAgent` packages model, tools, instructions and loop settings for reuse (`agent.generate()` / `agent.stream()`), with a safety default of **`isStepCount(20)`** that logs a warning when it cuts a loop short. `WorkflowAgent.stream()` has **no** default step limit, while `WorkflowAgent.generate()` stops after 20 steps like `ToolLoopAgent` ([docs](../sources/ai-sdk-docs.md)).

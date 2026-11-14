@@ -58,7 +58,7 @@ Synthesis: put cheap deterministic checks (schema, regex, `cost`, `latency`) fir
 
 ## CLI and CI gating
 
-- `promptfoo eval` flags: `--repeat N` (repeat each case to measure non-determinism), `-j/--max-concurrency`, `--delay`, `--filter-failing <evalId|path>`, `--filter-pattern`, `--no-cache`, `-o results.{json,html,csv,yaml,junit.xml}`, `--share/--no-share`, `--grader`, `-w/--watch`, `--table`. `promptfoo retry <evalId>` re-runs only the results that errored, and `promptfoo view` opens the local web UI.
+- `promptfoo eval` flags: `--repeat N` (repeat each case to measure [non-determinism](llm-non-determinism.md)), `-j/--max-concurrency`, `--delay`, `--filter-failing <evalId|path>`, `--filter-pattern`, `--no-cache`, `-o results.{json,html,csv,yaml,junit.xml}`, `--share/--no-share`, `--grader`, `-w/--watch`, `--table`. `promptfoo retry <evalId>` re-runs only the results that errored, and `promptfoo view` opens the local web UI.
 - **Exit codes:** **100** when any test fails or the pass rate is below `PROMPTFOO_PASS_RATE_THRESHOLD` (a percentage, default 100). **1** for other errors. `PROMPTFOO_FAILED_TEST_EXIT_CODE` changes the 100.
 - **Cache:** responses are cached on disk (`PROMPTFOO_CACHE_PATH`, `PROMPTFOO_CACHE_TTL`). Persisting the cache between CI runs makes unchanged cases free.
 - **GitHub Action** `promptfoo/promptfoo-action@v1`: triggered on `pull_request` with a path filter on prompt files. Inputs are `github-token`, `prompts` (globs), `config` and an optional `cache-path`. It posts a PR comment that links to a before/after comparison.

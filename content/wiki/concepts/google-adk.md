@@ -17,7 +17,7 @@ lastmod: 2026-11-14
 tags: ["frameworks", "agents", "google", "multi-agent"]
 ---
 
-**Google ADK (Agent Development Kit)** is Google's open-source, code-first framework for building, evaluating and deploying agents. It has SDKs for Python (`google-adk`), TypeScript (`@google/adk`), Go, Java and Kotlin, and its docs now live at adk.dev ([ADK docs](../sources/google-adk-docs-overview.md)). It puts model-driven agents (`LlmAgent`) and deterministic orchestration in one framework, and it ships sessions, state, memory, artifacts, callbacks, a web dev UI (`adk web`), an [evaluation framework](agent-evaluation.md) and one-command deployment to Google Cloud (Agent Runtime, Cloud Run, GKE). [Gemini](gemini-api.md) is the default model, and adapters cover Claude, OpenAI, Ollama, vLLM and [LiteLLM](llm-gateways.md) ([ADK docs](../sources/google-adk-docs-overview.md)). The biggest recent change is **ADK 2.0**, which went GA for Python on 2026-05-19, Go on 2026-06-30 and TypeScript on 2026-08-21. It replaced the hierarchical agent executor with a graph-based **Workflow Runtime** in which agents, tools and functions are all nodes ([ADK 2.0](../sources/google-adk-2-0-release-notes.md)).
+**Google ADK (Agent Development Kit)** is Google's open-source, code-first framework for building, evaluating and deploying agents. It has SDKs for Python (`google-adk`), TypeScript (`@google/adk`), Go, Java and Kotlin, and its docs now live at adk.dev ([ADK docs](../sources/google-adk-docs-overview.md)). It puts model-driven agents (`LlmAgent`) and deterministic orchestration in one framework, and it ships sessions, state, memory, artifacts, callbacks, a web dev UI (`adk web`), an [evaluation framework](agent-evaluation.md) and one-command deployment to Google Cloud (Agent Runtime, Cloud Run, GKE). [Gemini](gemini-api.md) is the default model, and adapters cover Claude, OpenAI, Ollama, [vLLM](vllm.md) and [LiteLLM](litellm.md) ([ADK docs](../sources/google-adk-docs-overview.md)). The biggest recent change is **ADK 2.0**, which went GA for Python on 2026-05-19, Go on 2026-06-30 and TypeScript on 2026-08-21. It replaced the hierarchical agent executor with a graph-based **Workflow Runtime** in which agents, tools and functions are all nodes ([ADK 2.0](../sources/google-adk-2-0-release-notes.md)).
 
 ## Core primitives
 
@@ -29,7 +29,7 @@ tags: ["frameworks", "agents", "google", "multi-agent"]
 | Graph / dynamic workflows (2.0) | Nodes and edges with code-based routing, or orchestration in plain async code |
 | `Runner` | Drives one invocation, commits events through services |
 | `SessionService`, `ArtifactService`, `MemoryService` | Conversation and state persistence, binary artifacts, [cross-session memory](agent-memory.md) |
-| Callbacks / plugins | Before/after agent, model and tool hooks, used for [guardrails](agent-guardrails.md) and logging |
+| Callbacks / plugins | Before/after agent, model and tool [hooks](agent-hooks-and-middleware.md), used for [guardrails](agent-guardrails.md) and logging |
 
 ## The runtime: events, Runner and state commits
 

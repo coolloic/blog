@@ -16,7 +16,7 @@ lastmod: 2026-11-14
 tags: ["evaluation", "observability", "phoenix", "opentelemetry"]
 ---
 
-**Arize Phoenix** is an [LLM observability](llm-observability.md) and [evaluation](llm-evaluation.md) tool from Arize AI. It is built on **OpenTelemetry (OTel)**: applications emit spans over OTLP, and Phoenix stores them as traces. It adds LLM and code evaluators, annotations, datasets, experiments, a prompt playground and [prompt management](prompt-management.md) on top. Its instrumentation layer, **OpenInference** (Apache-2.0), is a set of OTel auto-instrumentors plus attribute conventions for LLM spans. Phoenix itself is under the **Elastic License 2.0**: source-available and free to self-host with no feature gates, but not OSI open source. Arize AX is the separate paid SaaS/enterprise product ([arize-phoenix-docs](../sources/arize-phoenix-docs.md), [phoenix-evals](../sources/phoenix-evals-and-self-hosting-docs.md)). Latest release at time of writing: v21.1.0 (2026-11-13).
+**Arize Phoenix** is an [LLM observability](llm-observability.md) and [evaluation](llm-evaluation.md) tool from Arize AI. It is built on **[OpenTelemetry](opentelemetry-genai.md) (OTel)**: applications emit spans over OTLP, and Phoenix stores them as traces. It adds LLM and code evaluators, annotations, datasets, experiments, a prompt playground and [prompt management](prompt-management.md) on top. Its instrumentation layer, **OpenInference** (Apache-2.0), is a set of OTel auto-instrumentors plus attribute conventions for LLM spans. Phoenix itself is under the **Elastic License 2.0**: source-available and free to self-host with no feature gates, but not OSI open source. Arize AX is the separate paid SaaS/enterprise product ([arize-phoenix-docs](../sources/arize-phoenix-docs.md), [phoenix-evals](../sources/phoenix-evals-and-self-hosting-docs.md)). Latest release at time of writing: v21.1.0 (2026-11-13).
 
 ## How tracing works
 
@@ -40,7 +40,7 @@ Synthesis: assembled from the tracing, evals and datasets docs ([arize-phoenix-d
 
 **Privacy.** The OTel GenAI spec says instrumentations should not capture prompt/response content by default, and recommends storing content externally and recording references ([otel-genai](../sources/opentelemetry-genai-semantic-conventions.md)). OpenInference instrumentors are built to show full messages, so for regulated clients decide explicitly what content is captured (see [PII and data privacy](pii-and-data-privacy.md)). Synthesis.
 
-**Cost tracking** (since 2025-06): per-span cost = token counts × a per-model price table (built in, overridable in Settings > Models), rolled up to trace and project. It is not retroactive, and spans without token counts get no cost. Built-in prices now update from LiteLLM's model price list (blog, 2026-11-02) ([arize-phoenix-docs](../sources/arize-phoenix-docs.md)).
+**Cost tracking** (since 2025-06): per-span cost = token counts × a per-model price table (built in, overridable in Settings > Models), rolled up to trace and project. It is not retroactive, and spans without token counts get no cost. Built-in prices now update from [LiteLLM](litellm.md)'s model price list (blog, 2026-11-02) ([arize-phoenix-docs](../sources/arize-phoenix-docs.md)).
 
 ## Evals (`arize-phoenix-evals`)
 

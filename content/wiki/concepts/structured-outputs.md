@@ -82,7 +82,7 @@ Synthesis: the same Pydantic model can be enforced on OpenAI, rejected on Anthro
 - **Use** for extraction, classification, form filling, routing decisions, or any output parsed by code ([Document processing](document-processing.md) and [text-to-SQL](text-to-sql.md) pipelines). Structured outputs remove the retry-on-parse-failure loop.
 - **Use strict tools instead** when the structure is the *argument to an action* ([function calling](function-calling.md)).
 - **Avoid** heavy constraints on open-ended reasoning or long prose. Keep schemas flat, mostly required, with few unions, to stay under the compile limits and reduce first-call latency.
-- **Self-hosted:** engines such as vLLM and SGLang expose the same technique through Outlines- or XGrammar-style backends ([XGrammar](../sources/xgrammar-structured-generation.md)). See [LLM inference serving](llm-inference-serving.md).
+- **Self-hosted:** engines such as [vLLM](vllm.md) and SGLang expose the same technique through Outlines- or XGrammar-style backends ([XGrammar](../sources/xgrammar-structured-generation.md)). See [LLM inference serving](llm-inference-serving.md).
 
 ## Sources
 

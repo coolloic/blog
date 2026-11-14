@@ -57,7 +57,7 @@ Sources: [vLLM docs](../sources/vllm-speculative-decoding-docs.md), [Medusa](../
 
 ## In serving engines (as of 2026-11)
 
-- **vLLM:** set `speculative_config={"method": ..., "model": ..., "num_speculative_tokens": k}` (or the `--speculative-config` JSON flag). Use `draft_tensor_parallel_size` for the drafter. Methods include EAGLE, MTP, draft model, n-gram, suffix decoding, dynamic speculation, adaptive verification and a lossy "FLy" verifier (selected via `rejection_sample_method`, and not distribution-preserving). The rejection sampler is lossless up to hardware numerics, but logprobs are not guaranteed stable across runs ([vLLM docs](../sources/vllm-speculative-decoding-docs.md)).
+- **[vLLM](vllm.md):** set `speculative_config={"method": ..., "model": ..., "num_speculative_tokens": k}` (or the `--speculative-config` JSON flag). Use `draft_tensor_parallel_size` for the drafter. Methods include EAGLE, MTP, draft model, n-gram, suffix decoding, dynamic speculation, adaptive verification and a lossy "FLy" verifier (selected via `rejection_sample_method`, and not distribution-preserving). The rejection sampler is lossless up to hardware numerics, but logprobs are not guaranteed stable across runs ([vLLM docs](../sources/vllm-speculative-decoding-docs.md)).
 - **TensorRT-LLM:** EAGLE, MTP and n-gram ([TensorRT-LLM](../sources/tensorrt-llm-overview.md)).
 - **SGLang:** the EAGLE-3 paper reports results inside SGLang ([EAGLE-3](../sources/eagle-3-speculative-decoding.md)).
 

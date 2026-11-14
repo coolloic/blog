@@ -60,7 +60,7 @@ An adapter turns a signature, the inputs and the demos into chat messages (`Adap
 | `ChatAdapter` | `[[ ## field ## ]]` markers; JSON schema shown for complex types | Was the default before 3.5; falls back to `JSONAdapter` on parse failure |
 | `JSONAdapter` | Provider `response_format` [structured outputs](structured-outputs.md) | Avoid for models without native structured output |
 
-`dspy.inspect_history()` shows the exact rendered prompt. Since 3.5, LiteLLM ([LLM gateways](llm-gateways.md)) is optional: DSPy calls providers through the lightweight lm15 engine. The release reports install size falling from 206.7 MiB to 30.9 MiB and import time from 1.01 s to 0.49 s ([3.5 notes](../sources/dspy-3-5-release.md)).
+`dspy.inspect_history()` shows the exact rendered prompt. Since 3.5, [LiteLLM](litellm.md) ([LLM gateways](llm-gateways.md)) is optional: DSPy calls providers through the lightweight lm15 engine. The release reports install size falling from 206.7 MiB to 30.9 MiB and import time from 1.01 s to 0.49 s ([3.5 notes](../sources/dspy-3-5-release.md)).
 
 ## Optimizers
 
@@ -96,7 +96,7 @@ Sources: [docs](../sources/dspy-docs.md), [MIPRO](../sources/opsahl-ong-2024-mip
 - The original paper reports compiled pipelines beating standard few-shot prompting by generally over 25% (GPT-3.5) and 65% (llama2-13b-chat) ([Khattab et al.](../sources/khattab-2023-dspy.md)).
 - MIPRO beat baselines on five of seven programs, by up to 13% with Llama-3-8B ([MIPRO](../sources/opsahl-ong-2024-mipro.md)).
 - GEPA beat GRPO by 6% on average across six tasks (up to 20%) with up to 35x fewer rollouts, and beat MIPROv2 by over 10%. These are the February 2026 v2 figures; the July 2025 v1 reported a 10% average over four tasks, so check which version a citation uses ([GEPA](../sources/agrawal-2025-gepa.md)).
-- The docs cite a ReAct agent on HotPotQA going from 24% to 51% with MIPROv2 "light" (an informal run on DSPy 2.5.29).
+- The docs cite a [ReAct](react-pattern.md) agent on HotPotQA going from 24% to 51% with MIPROv2 "light" (an informal run on DSPy 2.5.29).
 
 A typical simple optimization run costs on the order of $2 and ten minutes, ranging from cents to tens of dollars ([docs](../sources/dspy-docs.md)).
 

@@ -103,7 +103,7 @@ A compiled graph can be added directly as a node if it shares state keys with th
 | Per-thread | `checkpointer=True` | Accumulates state across calls on the thread. Cannot be called in parallel |
 | Stateless | `checkpointer=False` | No checkpoints, so no interrupts |
 
-Interrupts propagate to the root from any depth. `get_state(config, subgraphs=True)` shows nested state, but only for subgraphs LangGraph can discover statically (not ones invoked inside a tool). Supervisor, swarm and hierarchical patterns ([agent design patterns](agent-design-patterns.md), [subagents](subagents.md)) are built from these pieces plus `Command` handoffs.
+Interrupts propagate to the root from any depth. `get_state(config, subgraphs=True)` shows nested state, but only for subgraphs LangGraph can discover statically (not ones invoked inside a tool). Supervisor, swarm and hierarchical patterns ([agent design patterns](agent-design-patterns.md), [subagents](subagents.md)) are built from these pieces plus `Command` [handoffs](agent-handoffs.md).
 
 ## Streaming and the Functional API
 

@@ -22,7 +22,7 @@ tags: ["retrieval", "rag", "prompting"]
 ## Why the raw query is often the wrong search key
 
 - **Query/document mismatch.** Queries are short and phrased as questions; passages are long and declarative. HyDE gets around this by searching with a fake answer instead of the question ([Gao et al.](../sources/gao-2022-hyde.md)).
-- **Vocabulary gap.** BM25 only matches terms the user typed. LLM-written expansions add the missing terms ([Query2doc](../sources/wang-2023-query2doc.md)).
+- **Vocabulary gap.** [BM25](bm25.md) only matches terms the user typed. LLM-written expansions add the missing terms ([Query2doc](../sources/wang-2023-query2doc.md)).
 - **Multi-hop questions.** Models can answer each sub-question yet fail the composed question, and this "compositionality gap" does not close as models scale ([Press et al.](../sources/press-2022-self-ask.md)). One embedding of the whole question rarely lands near all the needed passages (Synthesis).
 - **Hidden constraints.** "Pop songs under 3 minutes by Taylor Swift" mixes a semantic need with exact attribute filters that vector similarity handles badly ([LangChain self-query](../sources/langchain-self-query-retriever.md)).
 - **Conversation.** Follow-ups like "and what about Q3?" are not searchable until they are rewritten as standalone questions. Synthesis: this condense-the-question rewrite is the most common production use.
@@ -33,7 +33,7 @@ tags: ["retrieval", "rag", "prompting"]
 |---|---|---|---|---|
 | Rewrite (Rewrite-Retrieve-Read) | One better query | 1 / 1 | Consistent QA gains; a small rewriter can be RL-trained on reader feedback ([Ma et al.](../sources/ma-2023-query-rewriting.md)) | Rewriter drops or changes user intent |
 | Expansion (Query2doc) | Query + LLM pseudo-document | 1 / 1 | BM25 +3-15% on MS MARCO / TREC DL ([Wang et al.](../sources/wang-2023-query2doc.md)) | Hallucinated terms add noise |
-| HyDE | Hypothetical answer, embedded in place of the query | 1-N / 1 | Unsupervised Contriever nDCG@10 on DL19: 44.5 to 61.3 ([Gao et al.](../sources/gao-2022-hyde.md)) | Fake specifics pull in wrong documents; weak if the LLM knows nothing about the domain |
+| HyDE | Hypothetical answer, embedded in place of the query | 1-N / 1 | Unsupervised Contriever [nDCG@10](retrieval-metrics.md) on DL19: 44.5 to 61.3 ([Gao et al.](../sources/gao-2022-hyde.md)) | Fake specifics pull in wrong documents; weak if the LLM knows nothing about the domain |
 | Multi-query / RAG-Fusion | 3+ paraphrases, results fused | 1 / k | More complete answers in a manual study ([Rackauckas](../sources/rackauckas-2024-rag-fusion.md)) | Off-topic variants cause drift; k x retrieval cost |
 | Step-back | A more general question, retrieved alongside the original | 1-2 / 2 | PaLM-2L TimeQA +27%, MuSiQue +7% ([Zheng et al.](../sources/zheng-2023-step-back-prompting.md)) | Over-abstraction retrieves textbook context, not the fact |
 | Decomposition (self-ask) | Ordered sub-questions, each retrieved | many / many, sequential | Beats [chain-of-thought](chain-of-thought.md); adding search helps further ([Press et al.](../sources/press-2022-self-ask.md)) | Latency; one wrong intermediate answer poisons later hops |

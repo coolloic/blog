@@ -55,7 +55,7 @@ flowchart TD
   G --> CALL
   FB -- "none left" --> ERR["Return last error"]
 ```
-Synthesis: a composite of the LiteLLM, Portkey, OpenRouter and Vercel flows described below.
+Synthesis: a composite of the [LiteLLM](litellm.md), Portkey, OpenRouter and Vercel flows described below.
 
 - **Load balancing across deployments.** LiteLLM's default `simple-shuffle` does weighted random selection. The alternatives are latency-based, usage-based (lowest current-minute TPM), least-busy and cost-based ([LiteLLM](../sources/litellm-router-docs.md)). Kong's lowest-latency balancer uses an EWMA and still sends roughly 0.1-5% of traffic to slower targets so their scores stay fresh ([Kong](../sources/kong-ai-gateway-docs.md)). OpenRouter's default weighting does the same across providers of one model, scoring price, throughput, TTFT, 429 rate and tool-call quality ([OpenRouter](../sources/openrouter-provider-routing-docs.md)).
 - **Retries with backoff.** Portkey retries up to 5 times on 429/500/502/503/504/529 with exponential 1-16 s waits. Optionally it honours `retry-after`, capping total wait at 60 s ([Portkey](../sources/portkey-gateway-docs.md)). LiteLLM backs off exponentially only on rate-limit errors, sets per-exception retry counts with `retry_policy`, and, for calls through its router, pins the provider client's own retries to 0 so retries do not multiply ([LiteLLM](../sources/litellm-router-docs.md)).

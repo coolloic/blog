@@ -31,7 +31,7 @@ tags: ["agents", "memory", "context"]
 | Typical content | Message history, tool results, scratch state, uploaded files | Facts about the user, past episodes, learned rules |
 | Lives in | The prompt, plus a checkpoint of graph state | An external store (files, KV/JSON docs, [vector DB](vector-databases.md), graph DB) |
 | Main problem | Growth: window overflow, cost, [context rot](long-context-degradation.md) | Deciding what to write, retrieving the right item, keeping it correct |
-| Tools | Trimming, summarisation/compaction, tool-result clearing | Extraction pipelines, memory tools, semantic search |
+| Tools | Trimming, summarisation/[compaction](context-compaction.md), tool-result clearing | Extraction pipelines, memory tools, semantic search |
 
 LangGraph makes this split concrete. Short-term memory is the state of one `thread_id`, persisted by a **checkpointer** (`InMemorySaver` in development; Postgres, Redis or MongoDB savers in production). Long-term memory is a **store** of JSON documents addressed by `(namespace, key)`, for example `("user-123", "memories")`, with `put`, `get` and `search(namespace, query=..., filter=...)`. Semantic search is enabled by an [embedding](embeddings.md) `index` config ([LangGraph docs](../sources/langgraph-memory-docs.md)). The owner's [experiment 25](../sources/notebook-25-memory-agent.md) shows the short-term half: two calls on the same `thread_id` with a `MemorySaver`, where the second recalls the first.
 
@@ -118,7 +118,7 @@ Sources: [Anthropic memory tool](../sources/anthropic-memory-tool-docs.md), [Let
 | Memory poisoning | Attacker queries plant records later retrieved as demonstrations: 98.2% injection, 76.8% attack success in MINJA | Treat memory as untrusted input, provenance per record, per-user isolation, review writes ([Dong et al.](../sources/dong-2025-minja.md)). A follow-up study finds success rates drop sharply when the memory bank already holds legitimate records, so the headline numbers are an upper bound ([Dong et al. source page](../sources/dong-2025-minja.md)); see [prompt injection](prompt-injection.md) |
 | Cross-user leakage | Unscoped search or shared namespace | Mandatory `user_id`/namespace filters ([Mem0 docs](../sources/mem0-docs-memory.md)) |
 | Path traversal / unbounded growth | Model-chosen paths and sizes | Canonicalise paths under `/memories`, cap sizes, expire stale files ([memory tool](../sources/anthropic-memory-tool-docs.md)) |
-| Sensitive data retention | Personal data written to long-lived store | Strip before write; client-side storage makes the tool ZDR- and HIPAA-eligible, though ZDR excludes Anthropic's "Covered Models" ([memory tool](../sources/anthropic-memory-tool-docs.md)) |
+| Sensitive [data retention](data-retention-and-residency.md) | Personal data written to long-lived store | Strip before write; client-side storage makes the tool ZDR- and HIPAA-eligible, though ZDR excludes Anthropic's "Covered Models" ([memory tool](../sources/anthropic-memory-tool-docs.md)) |
 | Procedural drift | Agent rewrites its own instructions badly | Gate prompt self-edits behind review and evals ([CoALA](../sources/sumers-2023-coala.md)) |
 
 ## When to use what

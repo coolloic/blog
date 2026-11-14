@@ -21,7 +21,7 @@ tags: ["models", "caching", "cost"]
 
 ## Mechanics
 
-What is cached is the [KV cache](kv-cache.md) of the prefix, not the text. OpenAI states that it stores key/value tensors, possibly in GPU-local storage, for at most 24 h ([OpenAI](../sources/openai-prompt-caching-guide.md)). Open-source engines show the same idea from the inside. vLLM hashes each full KV block chained to its parent block, so a lookup matches the longest identical prefix ([vLLM APC](../sources/vllm-automatic-prefix-caching-docs.md)). SGLang keeps finished requests' KV in a radix tree keyed by token sequence with LRU eviction ([SGLang RadixAttention](../sources/lmsys-sglang-radixattention-blog.md)). Two consequences follow:
+What is cached is the [KV cache](kv-cache.md) of the prefix, not the text. OpenAI states that it stores key/value tensors, possibly in GPU-local storage, for at most 24 h ([OpenAI](../sources/openai-prompt-caching-guide.md)). Open-source engines show the same idea from the inside. [vLLM](vllm.md) hashes each full KV block chained to its parent block, so a lookup matches the longest identical prefix ([vLLM APC](../sources/vllm-automatic-prefix-caching-docs.md)). SGLang keeps finished requests' KV in a radix tree keyed by token sequence with LRU eviction ([SGLang RadixAttention](../sources/lmsys-sglang-radixattention-blog.md)). Two consequences follow:
 
 1. **Prefix-exact.** A single changed token invalidates everything after it. Anthropic requires a 100% identical prefix, text and images included, up to the breakpoint ([Anthropic](../sources/anthropic-prompt-caching-docs.md)).
 2. **Order matters.** Anthropic hashes `tools` → `system` → `messages`, so editing a tool definition invalidates the whole cache ([Anthropic](../sources/anthropic-prompt-caching-docs.md)).
@@ -59,7 +59,7 @@ Sources: [Anthropic](../sources/anthropic-prompt-caching-docs.md), [OpenAI](../s
 
 ### OpenAI specifics
 
-Caches live on individual machines, and requests are routed by a hash of the leading prefix tokens plus `prompt_cache_key`. Above about **15 requests per minute** per prefix and key, traffic overflows to other machines and hit rates fall. Spread hot prefixes across several deterministic keys. Changing `tools`, `parallel_tool_calls`, `text.format`, reasoning effort, verbosity or compaction can break the prefix. Cached tokens still count toward TPM [rate limits](rate-limits-and-retries.md), and there is no manual cache clear ([OpenAI](../sources/openai-prompt-caching-guide.md)).
+Caches live on individual machines, and requests are routed by a hash of the leading prefix tokens plus `prompt_cache_key`. Above about **15 requests per minute** per prefix and key, traffic overflows to other machines and hit rates fall. Spread hot prefixes across several deterministic keys. Changing `tools`, `parallel_tool_calls`, `text.format`, reasoning effort, verbosity or [compaction](context-compaction.md) can break the prefix. Cached tokens still count toward TPM [rate limits](rate-limits-and-retries.md), and there is no manual cache clear ([OpenAI](../sources/openai-prompt-caching-guide.md)).
 
 ### Gemini specifics
 

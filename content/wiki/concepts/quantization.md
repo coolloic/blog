@@ -65,7 +65,7 @@ flowchart TD
 
 Synthesis: this decision tree combines the hardware matrix in the [vLLM docs](../sources/vllm-quantization-docs.md), the FP8/FP4 support in [TensorRT-LLM](../sources/tensorrt-llm-overview.md) and the method trade-offs above. It is not a recipe taken from any single source.
 
-Engine support (as of 2026-11): vLLM loads AWQ, GPTQ, bitsandbytes, GGUF, FP8, INT8 W8A8 and LLM Compressor / ModelOpt / Quark checkpoints. AWQ needs Turing or newer, Marlin kernels need Turing/Ampere or newer, and FP8 W8A8 needs Ada/Hopper (or AMD) ([vLLM docs](../sources/vllm-quantization-docs.md)). TensorRT-LLM targets FP8 on Hopper and FP4 on Blackwell ([TensorRT-LLM](../sources/tensorrt-llm-overview.md)). TGI supported bitsandbytes and GPTQ but is now in maintenance mode ([TGI docs](../sources/tgi-docs.md)).
+Engine support (as of 2026-11): [vLLM](vllm.md) loads AWQ, GPTQ, bitsandbytes, GGUF, FP8, INT8 W8A8 and LLM Compressor / ModelOpt / Quark checkpoints. AWQ needs Turing or newer, Marlin kernels need Turing/Ampere or newer, and FP8 W8A8 needs Ada/Hopper (or AMD) ([vLLM docs](../sources/vllm-quantization-docs.md)). TensorRT-LLM targets FP8 on Hopper and FP4 on Blackwell ([TensorRT-LLM](../sources/tensorrt-llm-overview.md)). TGI supported bitsandbytes and GPTQ but is now in maintenance mode ([TGI docs](../sources/tgi-docs.md)).
 
 ## Sizing impact
 

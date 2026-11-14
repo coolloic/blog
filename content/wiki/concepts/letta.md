@@ -49,7 +49,7 @@ flowchart TB
 
 - **Memory blocks** (Letta's name for MemGPT's working context, called "core memory"). Each block has a `label`, a `description` (what the agent mainly uses to decide how to use the block), a `value`, a character `limit` and an optional `read_only` flag. Blocks are rendered into the prompt in a `<memory_blocks>` section showing current/limit character counts, so they never need retrieval. A block can be attached to several agents as **shared memory**. Writes replace the whole value, so concurrent writers get last-write-wins ([Letta memory docs](../sources/letta-memory-docs.md)).
 - **Archival memory**: an effectively unlimited, taggable, semantically searchable store the agent curates through `archival_memory_insert` and `archival_memory_search` (tag filters, pagination). It cannot be pinned in context. Use it for documents, logs and history ([Letta memory docs](../sources/letta-memory-docs.md)).
-- **Conversation (recall) search.** All state (messages, reasoning, tool calls) is persisted in a database. Messages evicted by compaction remain retrievable by the agent and through the API ([Letta memory docs](../sources/letta-memory-docs.md)).
+- **Conversation (recall) search.** All state (messages, reasoning, tool calls) is persisted in a database. Messages evicted by [compaction](context-compaction.md) remain retrievable by the agent and through the API ([Letta memory docs](../sources/letta-memory-docs.md)).
 
 Synthesis: blocks are the expensive tier, paid in tokens on every call. Keep them small and high-value, like a profile or a task state. Archival is the cheap tier, but the agent has to remember to search it. That is the same trade-off as [context engineering](context-engineering.md) generally.
 
@@ -79,7 +79,7 @@ Letta says keeping agents "in-distribution" for models like GPT-5 and Claude Son
 
 ## Deployment and products
 
-As of November 2026 Letta offers Letta Code (an open-source harness: CLI, web app, GitHub Action), the Letta Agent SDK, a self-hostable Letta App Server with channel integrations (Slack, Telegram, Discord and others), Letta Cloud, and Letta Desktop ([Letta MemFS docs](../sources/letta-memfs-docs.md)). The classic Docker server (`letta/letta`, port 8283, REST under `/v1`, Postgres with pgvector via `LETTA_PG_URI`, `SECURE=true` plus a password and E2B tool [sandboxing](code-execution-sandboxes.md) for untrusted users) is now marked as not actively maintained. Docker agents need an explicit [`embedding`](embeddings.md) model in `client.agents.create`, and they keep legacy memory blocks rather than MemFS by default ([Letta Docker docs](../sources/letta-docker-selfhosting-docs.md)).
+As of November 2026 Letta offers Letta Code (an open-source [harness](harness-engineering.md): CLI, web app, GitHub Action), the Letta Agent SDK, a self-hostable Letta App Server with channel integrations (Slack, Telegram, Discord and others), Letta Cloud, and Letta Desktop ([Letta MemFS docs](../sources/letta-memfs-docs.md)). The classic Docker server (`letta/letta`, port 8283, REST under `/v1`, Postgres with pgvector via `LETTA_PG_URI`, `SECURE=true` plus a password and E2B tool [sandboxing](code-execution-sandboxes.md) for untrusted users) is now marked as not actively maintained. Docker agents need an explicit [`embedding`](embeddings.md) model in `client.agents.create`, and they keep legacy memory blocks rather than MemFS by default ([Letta Docker docs](../sources/letta-docker-selfhosting-docs.md)).
 
 Synthesis: the product surface moved quickly (MemGPT, then the Letta server and ADE, then Letta Code and MemFS). Pin versions and check the docs for which surface a feature lives on before you design around it.
 
@@ -99,7 +99,7 @@ Synthesis:
 
 - **Use Letta** for long-lived, individually identifiable agents: personal assistants, AI coworkers, coding agents with project memory, or customer-specific agents that must evolve. It also fits when you want the server to own persistence, history and compaction, and when an always-visible, agent-curated profile beats retrieved fragments.
 - **Prefer [Mem0](mem0.md)** when you already have an agent framework and just need per-user facts injected, with no agent-side tool calls and memory as an API.
-- **Prefer [LangGraph](langgraph.md) checkpointers plus a store, or a [vector database](vector-databases.md) you run yourself,** when you need full control of schema, tenancy and data residency, or when memory is really document retrieval ([RAG](retrieval-augmented-generation.md)).
+- **Prefer [LangGraph](langgraph.md) checkpointers plus a store, or a [vector database](vector-databases.md) you run yourself,** when you need full control of schema, tenancy and [data residency](data-retention-and-residency.md), or when memory is really document retrieval ([RAG](retrieval-augmented-generation.md)).
 - **Durability is a different problem.** Letta persists *memory*. For crash-safe *execution* of long workflows, see [durable agent execution](durable-agent-execution.md).
 
 ## Sources

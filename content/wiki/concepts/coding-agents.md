@@ -28,7 +28,7 @@ lastmod: 2026-11-14
 tags: ["agents", "coding", "harness", "benchmarks", "sandboxing"]
 ---
 
-A **coding agent** is an LLM running in an [agent loop](agent-loop.md) inside a software repository. It gathers context (search, read files), acts (edit files, run shell commands, use git) and verifies (run tests, builds, linters, screenshots), repeating until the task is done or it hands back to a human. The model supplies the reasoning. The **harness** around it (Claude Code, OpenAI Codex, Cursor's agent, GitHub Copilot's cloud agent, Devin) supplies the tools, decides what enters the context, enforces permissions and [sandboxing](code-execution-sandboxes.md), and persists state across sessions ([How Claude Code works](../sources/claude-code-how-it-works.md)). Benchmark scores and real-world results measure the model and harness together ([Anthropic SWE-bench post](../sources/anthropic-swe-bench-sonnet.md)).
+A **coding agent** is an LLM running in an [agent loop](agent-loop.md) inside a software repository. It gathers context (search, read files), acts (edit files, run shell commands, use git) and verifies (run tests, builds, linters, screenshots), repeating until the task is done or it hands back to a human. The model supplies the reasoning. The **[harness](harness-engineering.md)** around it (Claude Code, OpenAI Codex, Cursor's agent, GitHub Copilot's cloud agent, Devin) supplies the tools, decides what enters the context, enforces permissions and [sandboxing](code-execution-sandboxes.md), and persists state across sessions ([How Claude Code works](../sources/claude-code-how-it-works.md)). Benchmark scores and real-world results measure the model and harness together ([Anthropic SWE-bench post](../sources/anthropic-swe-bench-sonnet.md)).
 
 ## Anatomy of a harness
 
@@ -46,7 +46,7 @@ flowchart LR
   V -->|"pass"| O["Diff / commit / PR → human review"]
 ```
 
-Synthesis: the diagram merges the Claude Code loop description, its permission/hook/sandbox layering, and the Codex and Copilot equivalents described below.
+Synthesis: the diagram merges the Claude Code loop description, its permission/[hook](agent-hooks-and-middleware.md)/sandbox layering, and the Codex and Copilot equivalents described below.
 
 **Core tools.** Claude Code groups its built-in tools into file operations, search (glob/regex), execution (shell, tests, git), web, and code intelligence (diagnostics, go-to-definition), plus tools for subagents and asking the user ([How it works](../sources/claude-code-how-it-works.md)). Anthropic's SWE-bench scaffold showed how far a minimal set goes: a bash tool and one view/edit tool reached 49% on SWE-bench Verified with Claude 3.5 Sonnet in January 2025 ([SWE-bench post](../sources/anthropic-swe-bench-sonnet.md)). See [tools](tools.md) and [function calling](function-calling.md).
 
@@ -59,7 +59,7 @@ Synthesis: the diagram merges the Claude Code loop description, its permission/h
 | Lint check rejects broken edits | Failed edits cascade: success odds fall from 90.5% to 57.2% after one failed edit | [SWE-agent](../sources/swe-agent-yang-2024.md) |
 | Capped, summarised search output (e.g. 50 hits) and truncated tool results (Claude Code default 25k tokens) | Keeps context high-signal; truncation message steers to narrower queries | [SWE-agent](../sources/swe-agent-yang-2024.md), [writing tools](../sources/anthropic-writing-tools-for-agents.md) |
 | Grep **plus** semantic ([embedding](embeddings.md)) search | Cursor: +12.5% average offline accuracy; in an online A/B, code retention rose most (+2.6%) on 1,000+ file repos | [Cursor](../sources/cursor-semantic-search.md) |
-| Collapse old observations / compact history | Bounded context growth | [SWE-agent](../sources/swe-agent-yang-2024.md), [How it works](../sources/claude-code-how-it-works.md) |
+| Collapse old observations / [compact](context-compaction.md) history | Bounded context growth | [SWE-agent](../sources/swe-agent-yang-2024.md), [How it works](../sources/claude-code-how-it-works.md) |
 
 Single-model edits replaced the 2024 pattern where a large model wrote edit instructions and a small "apply" model executed them, which was fragile ([Cognition](../sources/cognition-dont-build-multi-agents.md)).
 

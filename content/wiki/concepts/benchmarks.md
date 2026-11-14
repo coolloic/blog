@@ -85,7 +85,7 @@ Contamination is test data (questions, and worse, answers) appearing in [pretrai
 ## Reading a leaderboard critically
 
 - **Error bars.** A difference smaller than about two paired standard errors is noise. GPQA's few hundred questions give wide intervals; Miller's example needed ~1,000 questions to detect a 3-point gap ([Miller](../sources/miller-2024-adding-error-bars-to-evals.md)).
-- **Harness matters.** Agent scores test model plus scaffold together; a better scaffold or fixed grader can move a score dramatically (CORE-Bench 42% → 95%) ([Anthropic](../sources/anthropic-demystifying-evals-for-ai-agents.md)).
+- **[Harness](harness-engineering.md) matters.** Agent scores test model plus scaffold together; a better scaffold or fixed grader can move a score dramatically (CORE-Bench 42% → 95%) ([Anthropic](../sources/anthropic-demystifying-evals-for-ai-agents.md)).
 - **Selective reporting.** Arena providers tested many private variants and published the best (27 for Llama 4); access to Arena data was unequal and extra Arena data gave up to 112% relative gains on that distribution ([Singh](../sources/singh-2025-leaderboard-illusion.md)).
 - **Judge-graded benchmarks** inherit [judge biases](llm-as-judge.md); objectively scored ones avoid them ([LiveBench](../sources/white-2024-livebench.md)).
 - **Compute and cost.** [Reasoning-model](reasoning-models.md) scores depend on test-time compute; compare at equal budget where possible ([ARC-AGI-2](../sources/chollet-2025-arc-agi-2.md)). See [test-time compute](test-time-compute.md).

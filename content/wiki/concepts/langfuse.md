@@ -14,7 +14,7 @@ lastmod: 2026-11-14
 tags: ["evaluation", "observability", "langfuse", "prompt-management"]
 ---
 
-**Langfuse** is an open-source LLM engineering platform that combines three things usually bought separately: tracing ([LLM observability](llm-observability.md)), [prompt management](prompt-management.md), and [evaluation](llm-evaluation.md) (scores, datasets, experiments, [LLM-as-judge](llm-as-judge.md)). Its SDKs are built on OpenTelemetry, so any OTel instrumentation can feed it. The code is MIT licensed outside the `ee/` directories, and it runs either as Langfuse Cloud or self-hosted. That makes it the default open alternative to [LangSmith](langsmith.md) when data must stay in your own VPC ([observability docs](../sources/langfuse-observability-docs.md)).
+**Langfuse** is an open-source LLM engineering platform that combines three things usually bought separately: tracing ([LLM observability](llm-observability.md)), [prompt management](prompt-management.md), and [evaluation](llm-evaluation.md) (scores, datasets, experiments, [LLM-as-judge](llm-as-judge.md)). Its SDKs are built on [OpenTelemetry](opentelemetry-genai.md), so any OTel instrumentation can feed it. The code is MIT licensed outside the `ee/` directories, and it runs either as Langfuse Cloud or self-hosted. That makes it the default open alternative to [LangSmith](langsmith.md) when data must stay in your own VPC ([observability docs](../sources/langfuse-observability-docs.md)).
 
 ## Data model
 
@@ -90,7 +90,7 @@ Langfuse's own migration guide lists the trade-offs of moving from promptfoo. Yo
 
 ## When to use / when not
 
-- **Use** when you need self-hosting or data residency, want tracing, prompts and evals in one OSS tool, use several frameworks (OTel-first ingestion means you aren't locked into one), or want non-engineers to edit prompts and review results.
+- **Use** when you need self-hosting or [data residency](data-retention-and-residency.md), want tracing, prompts and evals in one OSS tool, use several frameworks (OTel-first ingestion means you aren't locked into one), or want non-engineers to edit prompts and review results.
 - **Consider [LangSmith](langsmith.md)** if the stack is entirely [LangChain](langchain.md)/[LangGraph](langgraph.md) and SaaS is acceptable.
 - **Pair with [promptfoo](promptfoo.md)** for declarative CI assertions and [red teaming](llm-red-teaming.md).
 - Synthesis: running it yourself means operating four stateful systems (Postgres, ClickHouse, Redis, S3), so for small teams without residency constraints, Cloud is usually cheaper in engineer time.

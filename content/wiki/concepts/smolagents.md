@@ -38,7 +38,7 @@ The docs also argue against agents where they aren't needed. They describe an ag
 
 ## Architecture: the MultiStepAgent loop
 
-Every agent subclasses `MultiStepAgent`, which runs a ReAct [loop](agent-loop.md) over a step-structured memory ([intro guide](../sources/smolagents-intro-agents-guide.md)):
+Every agent subclasses `MultiStepAgent`, which runs a [ReAct](react-pattern.md) [loop](agent-loop.md) over a step-structured memory ([intro guide](../sources/smolagents-intro-agents-guide.md)):
 
 ```mermaid
 flowchart TD
@@ -79,7 +79,7 @@ Two details matter in practice:
 
 Sources: [API reference](../sources/smolagents-agents-reference.md), [guided tour](../sources/smolagents-docs-guided-tour.md).
 
-**Models.** The model classes are `InferenceClientModel` (HF Inference Providers), `LiteLLMModel` (100+ providers), `OpenAIModel`, `AzureOpenAIModel`, `AmazonBedrockModel`, and the local backends `TransformersModel` and `MLXModel`. Extra keyword arguments pass through to the completion call. Local models served by Ollama via LiteLLM need a context larger than Ollama's 2048-token default ([guided tour](../sources/smolagents-docs-guided-tour.md)). See [local LLMs](local-llms.md) and [context window](context-window.md).
+**Models.** The model classes are `InferenceClientModel` (HF Inference Providers), `LiteLLMModel` (100+ providers), `OpenAIModel`, `AzureOpenAIModel`, `AmazonBedrockModel`, and the local backends `TransformersModel` and `MLXModel`. Extra keyword arguments pass through to the completion call. Local models served by Ollama via [LiteLLM](litellm.md) need a context larger than Ollama's 2048-token default ([guided tour](../sources/smolagents-docs-guided-tour.md)). See [local LLMs](local-llms.md) and [context window](context-window.md).
 
 **Tools.** You can define a [tool](tools.md) in two ways: the `@tool` decorator, which needs type hints and an `Args:` docstring, or a `Tool` subclass with `name`, `description`, `inputs`, `output_type` and `forward`. Tool metadata is rendered into the system prompt ([guided tour](../sources/smolagents-docs-guided-tour.md), [tools docs](../sources/smolagents-tools-docs.md)). Tools can also come from other sources ([tools docs](../sources/smolagents-tools-docs.md)):
 
@@ -90,7 +90,7 @@ Sources: [API reference](../sources/smolagents-agents-reference.md), [guided tou
 
 With `structured_output=True`, MCP `outputSchema` is injected into the CodeAgent prompt so the model knows the shape of a tool's result before it writes code against it. This is off by default today, and the docs say the default will change later. See [MCP in practice](mcp-in-practice.md).
 
-**Memory and observability.** Memory is a list of step objects (`agent.memory.steps`) that you can read and edit. Callbacks can prune it, for example by dropping old browser screenshots to cut tokens. `agent.step()` lets you drive the loop yourself ([memory docs](../sources/smolagents-memory-docs.md)). That is the hook for hand-rolled [context engineering](context-engineering.md). Synthesis: none of the docs cited here describe a persistence layer (no checkpointer or session store), so memory lives in-process unless you serialise `memory.steps` yourself. [Tracing](llm-observability.md) uses OpenTelemetry: the OpenInference `SmolagentsInstrumentor` sends spans to [Phoenix](arize-phoenix.md) or [Langfuse](langfuse.md), and MLflow offers its own one-line `mlflow.smolagents.autolog()` ([inspect runs](../sources/smolagents-inspect-runs-docs.md)).
+**Memory and observability.** Memory is a list of step objects (`agent.memory.steps`) that you can read and edit. Callbacks can prune it, for example by dropping old browser screenshots to cut tokens. `agent.step()` lets you drive the loop yourself ([memory docs](../sources/smolagents-memory-docs.md)). That is the hook for hand-rolled [context engineering](context-engineering.md). Synthesis: none of the docs cited here describe a persistence layer (no checkpointer or session store), so memory lives in-process unless you serialise `memory.steps` yourself. [Tracing](llm-observability.md) uses [OpenTelemetry](opentelemetry-genai.md): the OpenInference `SmolagentsInstrumentor` sends spans to [Phoenix](arize-phoenix.md) or [Langfuse](langfuse.md), and MLflow offers its own one-line `mlflow.smolagents.autolog()` ([inspect runs](../sources/smolagents-inspect-runs-docs.md)).
 
 ## Security model and failure modes
 
@@ -126,7 +126,7 @@ Other failure modes:
 | | smolagents | [LangGraph](langgraph.md) | [OpenAI Agents SDK](openai-agents-sdk.md) | [Claude Agent SDK](claude-agent-sdk.md) | [Microsoft Agent Framework](microsoft-agent-framework.md) | [Mastra](mastra.md) |
 |---|---|---|---|---|---|---|
 | Language | Python | Python, JS | Python, TS | Python, TS | .NET, Python | TypeScript |
-| Native action | Python code (or JSON) | Tool calls in graph nodes | Tool calls, handoffs | Claude Code tools (bash, files) | Tool calls; CodeAct opt-in | Tool calls |
+| Native action | Python code (or JSON) | Tool calls in graph nodes | Tool calls, [handoffs](agent-handoffs.md) | Claude Code tools (bash, files) | Tool calls; CodeAct opt-in | Tool calls |
 | State / durability | In-memory step list | Checkpointers | Sessions | Sessions | Workflow checkpoints, sessions | Storage-backed memory, suspendable workflows |
 | Multi-agent | Managed agents (hierarchy) | Arbitrary graphs | Handoffs, agents-as-tools | Subagents | Workflows + orchestrations | Supervisor agents, workflows |
 | Models | Any (HF, LiteLLM, local) | Any | OpenAI-first | Claude | Any chat client | Any (AI SDK) |

@@ -85,7 +85,7 @@ Why, mechanically: attention spreads a finite budget over n² token pairs, train
 | Technique | What it does | Source |
 |---|---|---|
 | Count first | Use the vendor's token counter on the exact model | [Anthropic token counting](../sources/anthropic-token-counting-docs.md) |
-| Server-side compaction | Summarises earlier turns so a conversation can continue past the limit (beta, Claude 4.6+ and Mythos Preview) | [Anthropic](../sources/anthropic-context-windows-docs.md) |
+| Server-side [compaction](context-compaction.md) | Summarises earlier turns so a conversation can continue past the limit (beta, Claude 4.6+ and Mythos Preview) | [Anthropic](../sources/anthropic-context-windows-docs.md) |
 | Context editing | Clears old tool results or thinking blocks | [Anthropic](../sources/anthropic-context-windows-docs.md) |
 | Just-in-time retrieval, notes, sub-agents | Keep only high-signal tokens in the window | [Anthropic engineering](../sources/anthropic-effective-context-engineering.md) |
 | Put key material at the edges | Exploits primacy/recency | [Lost in the Middle](../sources/lost-in-the-middle.md) |

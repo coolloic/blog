@@ -102,7 +102,7 @@ Base URL `.../v1beta/openai/`. It supports Chat Completions (tools, images, audi
 Synthesis:
 - **Use Interactions** for new work, agents, Deep Research, and long-running background jobs, but decide deliberately between server-side state (55-day retention by default on paid tier) and stateless replay.
 - **Stay on generateContent** when you need the Batch API, explicit caching on Gemini 3.x, or Python automatic function calling.
-- **Use Vertex AI** instead of AI Studio keys for enterprise IAM, VPC-SC, data residency and [provisioned throughput](provisioned-throughput.md).
+- **Use Vertex AI** instead of AI Studio keys for enterprise IAM, VPC-SC, [data residency](data-retention-and-residency.md) and [provisioned throughput](provisioned-throughput.md).
 - **Prefer Gemini** for very long [multimodal](multimodal-models.md) inputs (video/audio) and Google Search grounding ([web search APIs](web-search-apis.md)). Compare with the [OpenAI Responses API](openai-responses-api.md) and the [Anthropic Messages API](anthropic-messages-api.md); [Google ADK](google-adk.md) is the agent framework on top.
 
 ## Sources

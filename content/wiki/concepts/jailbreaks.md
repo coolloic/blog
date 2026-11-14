@@ -22,7 +22,7 @@ lastmod: 2026-11-14
 tags: ["security", "jailbreaks", "safety"]
 ---
 
-A **jailbreak** is an input crafted to make a model produce output that its safety training is meant to prevent, such as dangerous instructions or disallowed content. The target is the model's own refusal behaviour, not an application's instructions; that distinguishes it from [prompt injection](prompt-injection.md), which hijacks an app by mixing untrusted text with trusted prompts ([Willison 2024](../sources/willison-2024-prompt-injection-vs-jailbreaking.md)). OWASP treats jailbreaking as a form of prompt injection (LLM01) whose goal is to make the model disregard its safety protocols ([OWASP 2025](../sources/owasp-llm-top-10-2025.md)). For an application, the attacker is usually the user ([Anthropic docs](../sources/anthropic-mitigate-jailbreaks-docs.md)).
+A **jailbreak** is an input crafted to make a model produce output that its safety training is meant to prevent, such as dangerous instructions or disallowed content. The target is the model's own refusal behaviour, not an application's instructions; that distinguishes it from [prompt injection](prompt-injection.md), which hijacks an app by mixing untrusted text with trusted prompts ([Willison 2024](../sources/willison-2024-prompt-injection-vs-jailbreaking.md)). [OWASP](owasp-top-10-for-llm.md) treats jailbreaking as a form of prompt injection (LLM01) whose goal is to make the model disregard its safety protocols ([OWASP 2025](../sources/owasp-llm-top-10-2025.md)). For an application, the attacker is usually the user ([Anthropic docs](../sources/anthropic-mitigate-jailbreaks-docs.md)).
 
 ## Why safety training fails
 

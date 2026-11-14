@@ -16,7 +16,7 @@ lastmod: 2026-11-14
 tags: ["models", "agents", "computer-use", "browser", "security"]
 ---
 
-A **computer-use agent** is an [agent loop](agent-loop.md) whose tools are the human interface itself: it observes a screen (screenshots, and for browsers often the accessibility tree), and acts with mouse clicks, typing, scrolling and key presses. It lets a model operate software that has no API: legacy desktop apps, web portals, internal tools. The model only *proposes* actions; your harness executes them in a sandboxed VM, container or browser and returns the new observation. Vendors ship the model side (Anthropic's computer-use and browser-use toolsets, OpenAI's computer tool behind CUA/Operator); open tooling such as Playwright MCP supplies the browser side. They are the most general [tools](tools.md) an agent can have, and the most error-prone and attack-exposed.
+A **computer-use agent** is an [agent loop](agent-loop.md) whose tools are the human interface itself: it observes a screen (screenshots, and for browsers often the accessibility tree), and acts with mouse clicks, typing, scrolling and key presses. It lets a model operate software that has no API: legacy desktop apps, web portals, internal tools. The model only *proposes* actions; your [harness](harness-engineering.md) executes them in a sandboxed VM, container or browser and returns the new observation. Vendors ship the model side (Anthropic's computer-use and browser-use toolsets, OpenAI's computer tool behind CUA/Operator); open tooling such as Playwright MCP supplies the browser side. They are the most general [tools](tools.md) an agent can have, and the most error-prone and attack-exposed.
 
 ## The loop
 

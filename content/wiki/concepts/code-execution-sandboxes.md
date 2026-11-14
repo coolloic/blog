@@ -79,7 +79,7 @@ Mechanics worth knowing:
 
 - **Server-side loop.** Anthropic runs every command server-side inside one API request and returns `server_tool_use` blocks. Long turns can end with `pause_turn`, which you resend to continue ([Anthropic](../sources/anthropic-code-execution-tool-docs.md)).
 - **Files.** Upload through a Files API and download generated outputs by file ID. OpenAI cites generated files as `container_file_citation` annotations ([OpenAI](../sources/openai-code-interpreter-docs.md)).
-- **Retention.** Anthropic code execution is not ZDR-eligible: container data is kept up to 30 days. Including files bills container time even if the tool is never called ([Anthropic](../sources/anthropic-code-execution-tool-docs.md)).
+- **Retention.** Anthropic code execution is not [ZDR](data-retention-and-residency.md)-eligible: container data is kept up to 30 days. Including files bills container time even if the tool is never called ([Anthropic](../sources/anthropic-code-execution-tool-docs.md)).
 
 ## Sandbox platforms (as of 2026-11)
 

@@ -34,7 +34,7 @@ v0.4 was a ground-up rewrite. v0.2 users had complained about architectural limi
 | Layer | What it is |
 |---|---|
 | **Core** (`autogen-core`) | Asynchronous, event-driven message passing between agents (`RoutedAgent` + message handlers), with local and experimental distributed runtimes, Python and .NET |
-| **AgentChat** (`autogen-agentchat`) | High-level API: `AssistantAgent`, `UserProxyAgent`, teams such as `RoundRobinGroupChat`, `SelectorGroupChat` (an LLM picks the next speaker), `Swarm` (handoffs), `MagenticOneGroupChat`, experimental `GraphFlow`, plus termination conditions |
+| **AgentChat** (`autogen-agentchat`) | High-level API: `AssistantAgent`, `UserProxyAgent`, teams such as `RoundRobinGroupChat`, `SelectorGroupChat` (an LLM picks the next speaker), `Swarm` ([handoffs](agent-handoffs.md)), `MagenticOneGroupChat`, experimental `GraphFlow`, plus termination conditions |
 | **Extensions** (`autogen-ext`) | Model clients (OpenAI, Azure, Anthropic, Ollama), [code executors](code-execution-sandboxes.md) (Docker, Azure), [MCP](model-context-protocol.md) |
 
 Sources for the table: [README](../sources/autogen-github-readme.md), [v0.4 blog](../sources/microsoft-autogen-v0-4-blog.md), [migration guide](../sources/microsoft-agent-framework-autogen-migration-guide.md) (class names), [Notebook](../sources/notebook-autogen-crewai.md) (SelectorGroupChat).
@@ -47,8 +47,8 @@ The coordination style is **emergent**. Agents post to a shared conversation, a 
 
 MAF has four areas ([MAF overview](../sources/microsoft-agent-framework-overview.md)):
 
-- **Agents.** An `Agent` wraps a chat client with instructions and tools (`@tool`, hosted tools, MCP). Unlike AutoGen's `AssistantAgent`, which is single-turn unless `max_tool_iterations` is raised, an MAF `Agent` keeps calling tools until it can answer ([migration guide](../sources/microsoft-agent-framework-autogen-migration-guide.md)). `AgentSession` holds conversation state, context providers supply [memory](agent-memory.md), and middleware intercepts agent actions.
-- **Harness agent.** An opinionated long-task agent with planning and todos, [context compaction](context-engineering.md), file access and memory, and tool approval.
+- **Agents.** An `Agent` wraps a chat client with instructions and tools (`@tool`, hosted tools, MCP). Unlike AutoGen's `AssistantAgent`, which is single-turn unless `max_tool_iterations` is raised, an MAF `Agent` keeps calling tools until it can answer ([migration guide](../sources/microsoft-agent-framework-autogen-migration-guide.md)). `AgentSession` holds conversation state, context providers supply [memory](agent-memory.md), and [middleware](agent-hooks-and-middleware.md) intercepts agent actions.
+- **[Harness](harness-engineering.md) agent.** An opinionated long-task agent with planning and todos, [context compaction](context-compaction.md), file access and memory, and tool approval.
 - **Workflows.** Explicit execution paths. **Graph** workflows (`WorkflowBuilder`) connect typed **executors** with **edges** (conditional, fan-out, fan-in), emit events, and [checkpoint](durable-agent-execution.md) at **superstep** boundaries. Python also has an experimental **functional** `@workflow` API that uses native control flow ([workflows](../sources/microsoft-agent-framework-workflows-docs.md)).
 - **Integrations.** Model providers, memory stores, evaluation and UI adapters.
 

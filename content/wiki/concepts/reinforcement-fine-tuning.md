@@ -92,7 +92,7 @@ Reward design is most of the work.
 | OpenAI RFT | Managed RFT of o4-mini with string, similarity, Python, model and multi graders; `reasoning_effort`, `compute_multiplier`, `eval_interval` | **Effectively ended:** o4-mini and its fine-tunes shut down 2026-10-23; the fine-tuning platform is closed to new users, and job creation ends for remaining customers 2027-01-06 ([OpenAI RFT](../sources/openai-reinforcement-fine-tuning-guide.md), [deprecations](../sources/openai-deprecations-fine-tuning.md)) |
 | [Amazon Bedrock](amazon-bedrock.md) | Reinforcement fine-tuning with reward functions such as AWS Lambda; prompts or invocation logs as data | [Bedrock](../sources/bedrock-model-customization.md) |
 | [Vertex AI](google-vertex-ai.md) | RL fine-tuning of Gemini 3.5 Flash / 3.1 Flash-Lite with reward functions; dozens to a few hundred prompts; SFT→RLFT chaining | [Vertex AI](../sources/vertex-ai-gemini-tuning.md) |
-| [TRL](hugging-face-ecosystem.md) | `GRPOTrainer`, `AsyncGRPO`, `RLOO`; [vLLM](llm-inference-serving.md) colocate or server rollouts | [TRL](../sources/hugging-face-trl-docs.md) |
+| [TRL](hugging-face-ecosystem.md) | `GRPOTrainer`, `AsyncGRPO`, `RLOO`; [vLLM](vllm.md) colocate or server rollouts | [TRL](../sources/hugging-face-trl-docs.md) |
 | verl | Large-scale RL: PPO, GRPO, DAPO and more; FSDP/Megatron training with vLLM/SGLang rollouts; multi-turn agentic RL with tools; [LoRA](peft-and-lora.md) | [verl](../sources/verl-docs.md) |
 | Unsloth | Single-GPU GRPO with QLoRA; ~5 GB VRAM for ≤1.5B models (vendor claim); vLLM rollouts via `fast_inference` | [Unsloth](../sources/unsloth-rl-guide.md) |
 | Axolotl | GRPO in a YAML-driven pipeline | [Axolotl](../sources/axolotl-docs.md) |

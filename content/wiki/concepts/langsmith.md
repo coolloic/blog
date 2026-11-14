@@ -12,7 +12,7 @@ lastmod: 2026-11-14
 tags: ["frameworks", "observability", "evaluation", "langsmith"]
 ---
 
-**LangSmith** is [LangChain](langchain.md)'s commercial platform for [LLM observability](llm-observability.md) and [evaluation](llm-evaluation.md). It records every step of an application as a tree of **runs** grouped into **traces** and **threads**. It also stores **datasets** of test examples, runs **experiments** that score an application version with evaluators, and (as **LangSmith Deployment**, formerly LangGraph Platform) hosts [LangGraph](langgraph.md) agents on an Agent Server. LangSmith is framework-agnostic: LangChain and LangGraph are traced automatically, and other code is traced through the SDK or OpenTelemetry. ([observability docs](../sources/langsmith-observability-docs.md), [tracing/deployment source](../sources/langsmith-tracing-sdk-and-deployment.md))
+**LangSmith** is [LangChain](langchain.md)'s commercial platform for [LLM observability](llm-observability.md) and [evaluation](llm-evaluation.md). It records every step of an application as a tree of **runs** grouped into **traces** and **threads**. It also stores **datasets** of test examples, runs **experiments** that score an application version with evaluators, and (as **LangSmith Deployment**, formerly LangGraph Platform) hosts [LangGraph](langgraph.md) agents on an Agent Server. LangSmith is framework-agnostic: LangChain and LangGraph are traced automatically, and other code is traced through the SDK or [OpenTelemetry](opentelemetry-genai.md). ([observability docs](../sources/langsmith-observability-docs.md), [tracing/deployment source](../sources/langsmith-tracing-sdk-and-deployment.md))
 
 ## Data model
 
@@ -80,7 +80,7 @@ Offline evaluation runs on datasets that have references and supports benchmarki
 
 Base traces are kept for 14 days and extended traces (an upgrade billed separately) for 180 days. The SaaS deletes trace data 180 days after ingestion, but examples saved to datasets persist. Agent Server usage is metered in LSUs (1 LSU = $1), for example 0.0675 LSU per runtime vCPU-hour and 0.009 LSU per runtime GiB-hour. ([pricing source](../sources/langsmith-tracing-sdk-and-deployment.md), [observability docs](../sources/langsmith-observability-docs.md))
 
-Synthesis: for data residency or regulated workloads, LangSmith self-hosting requires Enterprise. That is a common reason teams pick an open-source tracer (such as [Langfuse](langfuse.md) or [Arize Phoenix](arize-phoenix.md)) instead, or export OTel to their existing APM.
+Synthesis: for [data residency](data-retention-and-residency.md) or regulated workloads, LangSmith self-hosting requires Enterprise. That is a common reason teams pick an open-source tracer (such as [Langfuse](langfuse.md) or [Arize Phoenix](arize-phoenix.md)) instead, or export OTel to their existing APM.
 
 ## When to use / when not
 

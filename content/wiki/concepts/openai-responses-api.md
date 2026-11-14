@@ -63,12 +63,12 @@ flowchart TD
 ```
 
 - **`previous_response_id`** chains to an earlier stored response. It does **not** carry `instructions` forward and does **not** save money: every earlier token in the chain is billed as input again ([migration guide](../sources/openai-migrate-to-responses-guide.md), [conversation state](../sources/openai-conversation-state-guide.md)). Savings come from [prompt caching](prompt-caching.md), not from chaining.
-- **Conversations API** gives a durable `conversation` object whose items are not subject to the 30-day response TTL ([conversation state](../sources/openai-conversation-state-guide.md)). Conversations are not ZDR-eligible ([data controls](../sources/openai-your-data-controls.md)).
+- **Conversations API** gives a durable `conversation` object whose items are not subject to the 30-day response TTL ([conversation state](../sources/openai-conversation-state-guide.md)). Conversations are not [ZDR](data-retention-and-residency.md)-eligible ([data controls](../sources/openai-your-data-controls.md)).
 - **Manual (stateless)**: `store: false` and replay the full `output` array each turn. Reasoning items then carry `encrypted_content`, which must be passed back in order; ZDR organizations have `store: false` forced ([reasoning guide](../sources/openai-reasoning-guide.md), [data controls](../sources/openai-your-data-controls.md)).
 
 `reasoning.context` (`auto` / `current_turn` / `all_turns`; GPT-5.6 defaults to `all_turns`) decides whether earlier turns' reasoning is reused; reuse works only within one model family ([reasoning guide](../sources/openai-reasoning-guide.md)).
 
-**Compaction** keeps long conversations inside the [window](context-window.md): `context_management: [{type: "compaction", compact_threshold: N}]` compacts server-side when the prompt crosses N tokens, or `POST /responses/compact` returns a smaller window statelessly. The result is an opaque encrypted compaction item; with `previous_response_id` chaining you must not prune manually ([compaction guide](../sources/openai-compaction-guide.md)).
+**[Compaction](context-compaction.md)** keeps long conversations inside the [window](context-window.md): `context_management: [{type: "compaction", compact_threshold: N}]` compacts server-side when the prompt crosses N tokens, or `POST /responses/compact` returns a smaller window statelessly. The result is an opaque encrypted compaction item; with `previous_response_id` chaining you must not prune manually ([compaction guide](../sources/openai-compaction-guide.md)).
 
 **Background mode** (`background: true`) runs long reasoning or agent jobs asynchronously: poll while `queued`/`in_progress`, cancel via `/cancel`, and resume a dropped stream with `starting_after` a saved `sequence_number`. It stores data temporarily even with `store: false` (about 10 minutes for ZDR projects) ([background guide](../sources/openai-background-mode-guide.md)).
 

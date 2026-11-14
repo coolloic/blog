@@ -73,7 +73,7 @@ Synthesis: `refine` with `similarity_top_k=10` means about ten sequential LLM ca
 
 ## Agents and Workflows
 
-Agents are prebuilt workflows: `FunctionAgent` (native [function calling](function-calling.md)), `ReActAgent`, `CodeActAgent`, and `AgentWorkflow` for multi-agent handoffs. [Tools](tools.md) are plain Python functions, described to the model by name, docstring and type hints, or **whole query engines wrapped as tools**. That last option is how LlamaIndex does [agentic RAG](agentic-rag.md). The APIs are async (`await agent.run(user_msg=...)`), and the docs warn that agents need capable models ([docs](../sources/llamaindex-framework-docs.md)).
+Agents are prebuilt workflows: `FunctionAgent` (native [function calling](function-calling.md)), `ReActAgent`, `CodeActAgent`, and `AgentWorkflow` for multi-agent [handoffs](agent-handoffs.md). [Tools](tools.md) are plain Python functions, described to the model by name, docstring and type hints, or **whole query engines wrapped as tools**. That last option is how LlamaIndex does [agentic RAG](agentic-rag.md). The APIs are async (`await agent.run(user_msg=...)`), and the docs warn that agents need capable models ([docs](../sources/llamaindex-framework-docs.md)).
 
 **Workflows** are the lower-level layer ([Workflows docs](../sources/llamaindex-workflows-docs.md)):
 

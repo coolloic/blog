@@ -87,7 +87,7 @@ On OmniDocBench (CVPR 2025; leaderboard read 2026-11-14), specialized document V
 
 ### Skipping parsing: retrieve page images
 
-ColPali embeds each page image as about 1,030 patch vectors and retrieves with [late interaction](late-interaction-retrieval.md). On ViDoRe it scored nDCG@5 81.3 versus 67.0 for an Unstructured + captioning + BGE-M3 text pipeline. It indexed pages in 0.39 s versus 7.22 s on an L4 GPU, but stores about 257 KB per page ([ColPali](../sources/colpali-2024.md)). It solves retrieval only; you still need a [multimodal model](multimodal-models.md) to read the retrieved page, or text extracted from it.
+ColPali embeds each page image as about 1,030 patch vectors and retrieves with [late interaction](late-interaction-retrieval.md). On ViDoRe it scored [nDCG@5](retrieval-metrics.md) 81.3 versus 67.0 for an Unstructured + captioning + BGE-M3 text pipeline. It indexed pages in 0.39 s versus 7.22 s on an L4 GPU, but stores about 257 KB per page ([ColPali](../sources/colpali-2024.md)). It solves retrieval only; you still need a [multimodal model](multimodal-models.md) to read the retrieved page, or text extracted from it.
 
 ## Comparison
 

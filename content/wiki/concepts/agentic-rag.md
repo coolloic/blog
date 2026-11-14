@@ -39,7 +39,7 @@ Synthesis: this diagram combines the routing, corrective and self-reflective loo
 
 | Pattern | What the agent decides | Source |
 |---|---|---|
-| Retrieval-as-tool (ReAct) | Whether and what to retrieve, across several turns | [Notebook exp. 22](../sources/notebook-22-agentic-rag.md) |
+| Retrieval-as-tool ([ReAct](react-pattern.md)) | Whether and what to retrieve, across several turns | [Notebook exp. 22](../sources/notebook-22-agentic-rag.md) |
 | Single-agent router | Which source fits the query: vector store, SQL, web, recommender | [Singh et al.](../sources/singh-2025-agentic-rag-survey.md) |
 | Adaptive RAG | A classifier picks no retrieval, single-step or multi-step by query complexity | [Singh et al.](../sources/singh-2025-agentic-rag-survey.md) |
 | Corrective RAG (CRAG) | Grade retrieved docs; refine, replace with [web search](web-search-apis.md), or both | [Yan et al.](../sources/yan-2024-corrective-rag.md) |

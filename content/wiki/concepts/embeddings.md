@@ -25,7 +25,7 @@ An **embedding** is a fixed-length vector of numbers (typically 256 to 3072 floa
 
 Modern embedders are [transformer](transformer-architecture.md) encoders. One call runs: [tokenize](tokenization.md), produce a context-aware vector per token, **pool** them into one vector (mean pooling or a special `[CLS]` token), then **L2-normalize** so only direction matters ([notebook](../sources/notebook-embeddings.md)). Because the whole input is collapsed into one vector, text beyond the model's max length is silently truncated, and a long chunk blurs into an average of its topics.
 
-The space is learned by **contrastive training**: pull known-similar pairs together and push others apart, with losses such as InfoNCE ([notebook](../sources/notebook-embeddings.md)). E5 showed that a large, filtered corpus of naturally occurring pairs (CCPairs) is enough for contrastive pre-training that beats BM25 zero-shot on BEIR, before [fine-tuning](fine-tuning.md) on labelled data ([E5](../sources/e5-text-embeddings.md)). BAAI's BGE family followed the same pattern with an integrated pipeline and open data ([C-Pack](../sources/c-pack-bge.md)).
+The space is learned by **contrastive training**: pull known-similar pairs together and push others apart, with losses such as InfoNCE ([notebook](../sources/notebook-embeddings.md)). E5 showed that a large, filtered corpus of naturally occurring pairs (CCPairs) is enough for contrastive pre-training that beats [BM25](bm25.md) zero-shot on BEIR, before [fine-tuning](fine-tuning.md) on labelled data ([E5](../sources/e5-text-embeddings.md)). BAAI's BGE family followed the same pattern with an integrated pipeline and open data ([C-Pack](../sources/c-pack-bge.md)).
 
 ```mermaid
 flowchart LR
@@ -88,7 +88,7 @@ Synthesis, back-of-envelope: 10M chunks at 1536 float32 dims is about 61 GB of r
 
 MTEB scores embedders across task types (retrieval, reranking, clustering, classification, STS and more); its core finding is that no model wins every task, so read the column for your task, usually retrieval ([MTEB](../sources/mteb-benchmark.md)). MMTEB expanded it to 500+ tasks and 250+ languages and introduced the leaner MTEB(eng, v2). Its best public model at the time was the 560M-parameter multilingual-e5-large-instruct, and small multilingual models often beat 7B LLM-based embedders on low-resource languages ([MMTEB](../sources/mmteb-benchmark.md)). Synthesis: treat the leaderboard as a shortlist, then run a small retrieval eval on your own queries and documents ([LLM evaluation](llm-evaluation.md)), since domain, language and chunking change rankings.
 
-Selection criteria: retrieval quality on your data, max input length versus your [chunk](chunking.md) size, dimensions and supported compression, languages and modalities, hosted versus self-hosted (data residency), price and throughput ([notebook](../sources/notebook-embeddings.md)).
+Selection criteria: retrieval quality on your data, max input length versus your [chunk](chunking.md) size, dimensions and supported compression, languages and modalities, hosted versus self-hosted ([data residency](data-retention-and-residency.md)), price and throughput ([notebook](../sources/notebook-embeddings.md)).
 
 ## Failure modes and limits
 

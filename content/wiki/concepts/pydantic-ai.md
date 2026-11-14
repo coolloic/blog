@@ -49,7 +49,7 @@ Synthesis: an illustrative sketch assembled from the documented APIs, not copied
 | **Dependencies** | Any type (usually a dataclass) passed as `deps=` per run and reached via `RunContext[Deps]` in tools, dynamic instructions and output validators. Type-checked, and replaceable in tests |
 | **[Tools](tools.md)** | `@agent.tool` (gets `RunContext`) and `@agent.tool_plain`. The JSON schema comes from the signature; descriptions come from the docstring (Google, NumPy and Sphinx styles, parsed with griffe). Raising `ModelRetry` sends a message back so the model can fix its call |
 | **Toolsets / MCP** | Group tools; [MCP](model-context-protocol.md) servers plug in as toolsets ([MCP in practice](mcp-in-practice.md)) |
-| **Capabilities** | "The primary extension point": reusable bundles of tools, lifecycle hooks, instructions, model settings and model selection ([memory](agent-memory.md), [guardrails](agent-guardrails.md), cost tracking, [approvals](human-in-the-loop.md)). They can be loaded on demand by the model. A separate Harness package ships prebuilt `Coder` and `Researcher` agents |
+| **Capabilities** | "The primary extension point": reusable bundles of tools, lifecycle [hooks](agent-hooks-and-middleware.md), instructions, model settings and model selection ([memory](agent-memory.md), [guardrails](agent-guardrails.md), cost tracking, [approvals](human-in-the-loop.md)). They can be loaded on demand by the model. A separate [Harness](harness-engineering.md) package ships prebuilt `Coder` and `Researcher` agents |
 | **Message history** | Pass prior messages to continue a conversation |
 
 Sources: [docs](../sources/pydantic-ai-docs.md).
@@ -86,7 +86,7 @@ Synthesis: the diagram summarizes the documented loop; it is not drawn in the do
 
 - **Usage limits.** `UsageLimits(request_limit=..., tool_calls_limit=..., token limits)` guard against runaway loops. Exceeding a limit **raises** `UsageLimitExceeded` instead of returning partial output. `tool_calls_limit` is checked before execution, so a parallel batch that would exceed it runs none of its calls ([docs](../sources/pydantic-ai-docs.md)).
 - **[Durable execution](durable-agent-execution.md).** Nine engines: Temporal, DBOS, Prefect, Restate, AWS Lambda, Absurd, pgtask, Azure Durable Task and Airflow. They journal model and tool calls, so a restarted run replays the completed ones and retries the one in flight. The docs separate this from **persistence** (saving, resuming or forking a run), which needs no engine.
-- **Observability.** OpenTelemetry instrumentation, with Pydantic Logfire as the first-party backend ([LLM observability](llm-observability.md)).
+- **Observability.** [OpenTelemetry](opentelemetry-genai.md) instrumentation, with Pydantic Logfire as the first-party backend ([LLM observability](llm-observability.md)).
 - **Evals and graphs.** Pydantic Evals for [evaluation](llm-evaluation.md); `pydantic-graph` (typed nodes, edges from return types, persistence) when control flow is a real state machine ([comparisons](../sources/pydantic-ai-framework-comparisons.md)).
 - **Testing.** `TestModel` and `FunctionModel` replace real models, `Agent.override` swaps model, deps or toolsets, and `ALLOW_MODEL_REQUESTS=False` blocks accidental real calls in CI ([docs](../sources/pydantic-ai-docs.md)).
 - **UI interop.** `VercelAIAdapter` speaks the Vercel AI data stream protocol, so a React `useChat` frontend can drive a Python agent; AG-UI is also supported ([comparisons](../sources/pydantic-ai-framework-comparisons.md)).

@@ -15,13 +15,13 @@ lastmod: 2026-11-14
 tags: ["evaluation", "observability", "opentelemetry", "langsmith", "langfuse", "phoenix"]
 ---
 
-**LLM observability** is the practice of recording what an LLM application actually did on each request (the prompts and context sent, every model, tool and retrieval call, tokens, cost, latency, errors and outcome) as structured traces, then aggregating, searching and scoring them. Classic APM tells you a request was slow or failed; LLM observability also has to tell you *why the answer was wrong*, because outputs are open-ended and non-deterministic, and a prompt tweak or model upgrade can quietly break cases that used to work ([notebook](../sources/notebook-llm-evaluation.md)). Synthesis: a wrong answer usually still returns HTTP 200, so error-rate dashboards alone miss it. It is the production half of the eval loop: offline [evaluation](llm-evaluation.md) gates a change, observability shows what real traffic does and feeds failures back into the test set.
+**LLM observability** is the practice of recording what an LLM application actually did on each request (the prompts and context sent, every model, tool and retrieval call, tokens, cost, latency, errors and outcome) as structured traces, then aggregating, searching and scoring them. Classic APM tells you a request was slow or failed; LLM observability also has to tell you *why the answer was wrong*, because outputs are open-ended and [non-deterministic](llm-non-determinism.md), and a prompt tweak or model upgrade can quietly break cases that used to work ([notebook](../sources/notebook-llm-evaluation.md)). Synthesis: a wrong answer usually still returns HTTP 200, so error-rate dashboards alone miss it. It is the production half of the eval loop: offline [evaluation](llm-evaluation.md) gates a change, observability shows what real traffic does and feeds failures back into the test set.
 
 ## The data model: traces, spans, sessions
 
 Every tool in this space uses the same shape as distributed tracing:
 
-| Concept | OpenTelemetry GenAI | LangSmith | Langfuse | Phoenix / OpenInference |
+| Concept | [OpenTelemetry](opentelemetry-genai.md) GenAI | LangSmith | Langfuse | Phoenix / OpenInference |
 |---|---|---|---|---|
 | One step (LLM call, tool, retrieval) | span | run | observation | span |
 | One request end to end | trace | trace (root run) | trace | trace |

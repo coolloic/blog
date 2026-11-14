@@ -28,7 +28,7 @@ tags: ["models", "reliability"]
 | [Hallucination](hallucination.md) | Pretraining can't separate valid from invalid for rare facts; [benchmarks](benchmarks.md) reward guessing | Confident false claims, fake citations | Grounding, citations, verification, allow abstention |
 | Knowledge cutoff | Frozen training snapshot; uneven data recency | Stale or missing recent facts | Retrieval / [web search](web-search-apis.md), date in prompt |
 | Tokenization artifacts | Model sees subword tokens, not characters or digits | Letter counting, digit arithmetic errors | Tools (code execution), reasoning, formatting |
-| Non-determinism | Batch-size-dependent kernels, sampling | Different output for same input at temperature 0 | Evals over repeated runs; batch-invariant serving |
+| [Non-determinism](llm-non-determinism.md) | Batch-size-dependent kernels, sampling | Different output for same input at temperature 0 | Evals over repeated runs; batch-invariant serving |
 | Sycophancy | Preference data rewards agreement | Caves when challenged, flatters user's view | Neutral prompts, independent verification |
 | Position bias | Primacy/recency in attention; order effects | Judge favours first answer; mid-context ignored | Swap order, place key content at edges |
 | [Long-context degradation](long-context-degradation.md) | Attention dilution, short training sequences | Accuracy falls with length; lost in the middle | Smaller, curated context; retrieval |
@@ -48,7 +48,7 @@ Mitigation (Synthesis): any exact computation (arithmetic, counting, dates, sort
 
 ## Non-determinism
 
-Temperature 0 does not give identical outputs from hosted APIs or vLLM/SGLang. The cause is not "floating-point plus concurrency" in general: kernels are run-to-run deterministic for a fixed shape, but reduction order in RMSNorm, matmul and attention changes with **batch size**, which depends on other users' load. In one test, 1,000 temperature-0 completions from Qwen3-235B produced 80 distinct outputs, diverging at token 103; batch-invariant kernels made all 1,000 identical at a throughput cost (42 s vs 26 s for 1,000 Qwen3-8B sequences) ([Thinking Machines](../sources/defeating-nondeterminism-llm-inference.md)). Sampling settings add deliberate randomness on top ([sampling parameters](sampling-parameters.md)).
+Temperature 0 does not give identical outputs from hosted APIs or [vLLM](vllm.md)/SGLang. The cause is not "floating-point plus concurrency" in general: kernels are run-to-run deterministic for a fixed shape, but reduction order in RMSNorm, matmul and attention changes with **batch size**, which depends on other users' load. In one test, 1,000 temperature-0 completions from Qwen3-235B produced 80 distinct outputs, diverging at token 103; batch-invariant kernels made all 1,000 identical at a throughput cost (42 s vs 26 s for 1,000 Qwen3-8B sequences) ([Thinking Machines](../sources/defeating-nondeterminism-llm-inference.md)). Sampling settings add deliberate randomness on top ([sampling parameters](sampling-parameters.md)).
 
 Consequences (Synthesis): treat every eval score as a distribution (run each case several times); don't build tests that assert exact strings; log full inputs and outputs for reproduction ([observability](llm-observability.md)); for exactness, constrain the output ([structured outputs](structured-outputs.md)) rather than relying on determinism.
 

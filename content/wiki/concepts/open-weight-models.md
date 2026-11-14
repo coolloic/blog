@@ -88,13 +88,13 @@ Most open-weight vendors also sell hosted inference: DeepSeek's API, `mistral-la
 
 Synthesis: what self-hosting costs you in practice:
 
-- **Hardware.** DeepSeek's V4-Pro vLLM recipe targets a 4xGB300 node, and frontier-scale MoEs (0.8T to 2.8T parameters) need multi-GPU nodes even at 4-bit. Single-GPU or laptop deployment is realistic only for about 30B-class models: Gemma 4 31B needs ~17.5GB at 4-bit (weights only, before KV cache), gpt-oss-120b fits one 80GB GPU, and the gpt-oss-20b and Gemma E2B/E4B models run on device. See [local LLMs](local-llms.md) and [LLM inference serving](llm-inference-serving.md).
+- **Hardware.** DeepSeek's V4-Pro [vLLM](vllm.md) recipe targets a 4xGB300 node, and frontier-scale MoEs (0.8T to 2.8T parameters) need multi-GPU nodes even at 4-bit. Single-GPU or laptop deployment is realistic only for about 30B-class models: Gemma 4 31B needs ~17.5GB at 4-bit (weights only, before KV cache), gpt-oss-120b fits one 80GB GPU, and the gpt-oss-20b and Gemma E2B/E4B models run on device. See [local LLMs](local-llms.md) and [LLM inference serving](llm-inference-serving.md).
 - **Prompt formats.** gpt-oss works only with the harmony format. DeepSeek V4 ships no Jinja chat template, just a Python encoder. Recommended [sampling settings](sampling-parameters.md) differ by mode (Qwen thinking vs non-thinking). A wrong template silently degrades quality.
 - **Ops ownership.** You own scaling, upgrades, evals and safety filtering. Meta notes it added extra safety post-training to Muse Spark Open specifically because open weights may run without system guardrails. See [guardrail tooling](guardrail-tooling.md).
 
 ## Limitations and failure modes
 
-- **[Benchmarks](benchmarks.md) are vendor-reported**, usually in a chosen harness (often [Claude Code](coding-agents.md)) at max effort. DeepSeek's and Qwen's own tables still show the top proprietary models of mid-2026 ahead on several agentic benchmarks (Qwen's table reports the hosted Qwen3.8-Max, not the open checkpoint). Re-run on your own tasks ([LLM evaluation](llm-evaluation.md)).
+- **[Benchmarks](benchmarks.md) are vendor-reported**, usually in a chosen [harness](harness-engineering.md) (often [Claude Code](coding-agents.md)) at max effort. DeepSeek's and Qwen's own tables still show the top proprietary models of mid-2026 ahead on several agentic benchmarks (Qwen's table reports the hosted Qwen3.8-Max, not the open checkpoint). Re-run on your own tasks ([LLM evaluation](llm-evaluation.md)).
 - **"Extensible to 1M"** (Qwen3.8) means context extension beyond the native 262K. Expect weaker recall there ([long-context degradation](long-context-degradation.md)).
 - **Thinking-only models** can't serve low-latency routes.
 - **Version churn.** DeepSeek has already retired the `deepseek-v4-flash` names, and Mistral lists deprecations for Large 3 (retires 2027-04-30) and others. Pin checkpoint hashes.

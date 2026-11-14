@@ -40,7 +40,7 @@ Anthropic's terms, now widely used ([source](../sources/anthropic-demystifying-e
 | Transcript / trace | Every message, tool call and result in the trial |
 | Outcome | Final environment state, which can differ from what the agent claims |
 | Grader | Logic that scores one aspect (code, model or human) |
-| Eval harness | Runs tasks, isolates environments, records and grades; distinct from the agent harness |
+| Eval harness | Runs tasks, isolates environments, records and grades; distinct from the [agent harness](harness-engineering.md) |
 
 ## Outcome vs trajectory grading
 
@@ -77,7 +77,7 @@ Synthesis: grade the outcome as the pass/fail signal, and use relaxed trajectory
 
 ## Tool-call correctness
 
-A [tool call](function-calling.md) can fail at several independent layers, so check them separately ([FAQ](../sources/husain-shankar-2026-ai-evals-faq.md)): **selection** (right tool, or correctly no tool), **arguments** (extracted correctly, not guessed), **result handling** (empty results, API errors), **resulting state**, and **authorisation and preconditions**, since a syntactically valid call can still be the wrong action. OpenAI's guidance likewise adds tool-selection and argument-precision evals for agents and handoff accuracy for multi-agent systems ([source](../sources/openai-evaluation-best-practices.md)).
+A [tool call](function-calling.md) can fail at several independent layers, so check them separately ([FAQ](../sources/husain-shankar-2026-ai-evals-faq.md)): **selection** (right tool, or correctly no tool), **arguments** (extracted correctly, not guessed), **result handling** (empty results, API errors), **resulting state**, and **authorisation and preconditions**, since a syntactically valid call can still be the wrong action. OpenAI's guidance likewise adds tool-selection and argument-precision evals for agents and [handoff](agent-handoffs.md) accuracy for multi-agent systems ([source](../sources/openai-evaluation-best-practices.md)).
 
 BFCL shows how to grade this at scale ([source](../sources/bfcl-v3-multi-turn.md)): V1 parsed single calls into an AST and matched parameter values against acceptable answers; V3's multi-turn tasks combine a **state check** after every turn (verifies writes) with a **subset-matched response check** (the required read calls must appear, which catches the model guessing facts it should have looked up). Its categories double as a checklist of behaviours to test: missing parameters (should ask), missing functions (should say it cannot), long context, and composites.
 

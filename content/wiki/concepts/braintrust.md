@@ -37,7 +37,7 @@ Synthesis: the diagram stitches together the experiment, dataset and online-scor
 
 `Eval(name, data, task, scores, ...)` is the entry point in Python and TypeScript. `data` is inline records or `init_dataset(...)`. `task` is the function under test. `scores` is a list of scorers. Useful parameters ([braintrust-platform-docs](../sources/braintrust-platform-docs.md)):
 
-- `trial_count`: run each case N times and average, which addresses non-determinism.
+- `trial_count`: run each case N times and average, which addresses [non-determinism](llm-non-determinism.md).
 - `max_concurrency`: unset by default. Set it, or large evals hit provider 429s (see [rate limits](rate-limits-and-retries.md)).
 - `parameters`: values exposed for editing in the playground.
 - `metadata` and an experiment name.
@@ -98,7 +98,7 @@ Overage is $4/GB and $2.50 per 1K scores on Starter, $3/GB and $1.50 per 1K scor
 | Licence | Closed platform, MIT scorers | Open source (self-hosted OSS free) | Closed | Elastic License 2.0 |
 | Free self-host | No (BYOC/on-prem on Enterprise) | Yes | No (Enterprise self-host) | Yes, no feature gates |
 | Paid entry (2026-11) | Pro $249/mo, unlimited users | Core $29/mo | Plus $39/seat/mo | Arize AX Pro $50/mo |
-| Centre of gravity | Experiment comparison, online scoring | Tracing, prompt mgmt | [LangChain](langchain.md)/[LangGraph](langgraph.md) tracing and deployment | OTel/OpenInference tracing, evals |
+| Centre of gravity | Experiment comparison, online scoring | Tracing, prompt mgmt | [LangChain](langchain.md)/[LangGraph](langgraph.md) tracing and deployment | [OTel](opentelemetry-genai.md)/OpenInference tracing, evals |
 
 Sources: [langfuse-pricing](../sources/langfuse-pricing-and-v4.md), [langsmith-tracing](../sources/langsmith-tracing-sdk-and-deployment.md), [phoenix-evals](../sources/phoenix-evals-and-self-hosting-docs.md), [braintrust-platform-docs](../sources/braintrust-platform-docs.md).
 

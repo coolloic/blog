@@ -13,7 +13,7 @@ lastmod: 2026-11-14
 tags: ["retrieval", "rag", "chunking"]
 ---
 
-**Contextual retrieval** fixes a specific defect of [chunking](chunking.md): once a document is cut into pieces, a chunk like "revenue grew by 3% over the previous quarter" no longer says *which* company or quarter it is about, so neither its [embedding](embeddings.md) nor its keywords match the question that needs it. The fix runs at index time. Before indexing, prepend to each chunk a short piece of text that places it in its source document, then embed *and* BM25-index the combined text. Anthropic's version has a small LLM read the whole document and write a 50-100 token context for each chunk ([Anthropic](../sources/anthropic-contextual-retrieval.md)). A cheaper variant, **contextual chunk headers**, prepends templated document and section titles or summaries instead ([dsRAG](../sources/dsrag-github.md)). The owner's guide lists it as the fix for "chunks lose their document context", paired with [prompt caching](prompt-caching.md) ([Notebook](../sources/notebook-rag-cag.md)).
+**Contextual retrieval** fixes a specific defect of [chunking](chunking.md): once a document is cut into pieces, a chunk like "revenue grew by 3% over the previous quarter" no longer says *which* company or quarter it is about, so neither its [embedding](embeddings.md) nor its keywords match the question that needs it. The fix runs at index time. Before indexing, prepend to each chunk a short piece of text that places it in its source document, then embed *and* [BM25](bm25.md)-index the combined text. Anthropic's version has a small LLM read the whole document and write a 50-100 token context for each chunk ([Anthropic](../sources/anthropic-contextual-retrieval.md)). A cheaper variant, **contextual chunk headers**, prepends templated document and section titles or summaries instead ([dsRAG](../sources/dsrag-github.md)). The owner's guide lists it as the fix for "chunks lose their document context", paired with [prompt caching](prompt-caching.md) ([Notebook](../sources/notebook-rag-cag.md)).
 
 ## Mechanics (Anthropic's recipe)
 
@@ -42,7 +42,7 @@ flowchart LR
 
 ## Measured gains
 
-Anthropic, averaged over codebases, fiction, arXiv and science papers; metric = 1 - recall@20 ([Anthropic](../sources/anthropic-contextual-retrieval.md)):
+Anthropic, averaged over codebases, fiction, arXiv and science papers; metric = 1 - [recall@20](retrieval-metrics.md) ([Anthropic](../sources/anthropic-contextual-retrieval.md)):
 
 | Pipeline | Top-20 failure rate | Reduction vs baseline |
 |---|---|---|

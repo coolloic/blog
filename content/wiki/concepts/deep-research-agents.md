@@ -87,7 +87,7 @@ Synthesis: the market has moved from dedicated "deep research models" to two for
 - **Cap the budget.** Use `max_uses` per search tool ([Claude](../sources/anthropic-web-search-tool-docs.md)), `max_tool_calls` (OpenAI cookbook) and step budgets (Perplexity presets). Expect about 15x chat-level tokens for multi-agent research ([Anthropic](../sources/anthropic-multi-agent-research-system.md)).
 - **Keep worker context lean.** Use pre-chunked results or dynamic filtering so subagents return conclusions, not page dumps ([Claude search](../sources/anthropic-web-search-tool-docs.md)). See [context engineering](context-engineering.md).
 - **Verify citations separately.** A final pass checks that each claim is supported by the cited span. Anthropic uses a dedicated agent for this ([Anthropic](../sources/anthropic-multi-agent-research-system.md)); see [verification and evals](verification-and-evals.md).
-- **Trace everything.** Paths are non-deterministic, so full production tracing is the only way to debug ([Anthropic](../sources/anthropic-multi-agent-research-system.md)). See [LLM observability](llm-observability.md).
+- **Trace everything.** Paths are [non-deterministic](llm-non-determinism.md), so full production tracing is the only way to debug ([Anthropic](../sources/anthropic-multi-agent-research-system.md)). See [LLM observability](llm-observability.md).
 
 ## Evaluation
 

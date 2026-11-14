@@ -43,7 +43,7 @@ flowchart TB
   - A batch of managed open-model (`-maas`) endpoints was deprecated July 21 and retired October 21, 2026. It covered DeepSeek, GLM, GPT-OSS, Kimi, Llama, MiniMax, Qwen and multilingual E5.
 
   Pin versions and track the notes ([release notes](../sources/gemini-enterprise-agent-platform-release-notes.md)).
-- **Model Garden** catalogues foundation, fine-tunable and task-specific models. [Open models](open-weight-models.md) self-deploy to your own endpoints on vLLM (GPU), Hex-LLM (TPU), xDiT or Hugging Face DLCs, billed for compute. Org policies can allowlist vetted models. Models that can execute remote code can still be deployed, so review them ([Model Garden](../sources/vertex-ai-model-garden.md); see [LLM inference serving](llm-inference-serving.md)).
+- **Model Garden** catalogues foundation, fine-tunable and task-specific models. [Open models](open-weight-models.md) self-deploy to your own endpoints on [vLLM](vllm.md) (GPU), Hex-LLM (TPU), xDiT or Hugging Face DLCs, billed for compute. Org policies can allowlist vetted models. Models that can execute remote code can still be deployed, so review them ([Model Garden](../sources/vertex-ai-model-garden.md); see [LLM inference serving](llm-inference-serving.md)).
 - **Tuning** for Gemini: SFT, [preference tuning](preference-optimization.md) and [RL fine-tuning](reinforcement-fine-tuning.md), with continuous tuning from checkpoints ([tuning](../sources/vertex-ai-gemini-tuning.md); [fine-tuning](fine-tuning.md)).
 
 ## Endpoints and data residency
@@ -60,7 +60,7 @@ Data handling beyond the endpoint ([data governance](../sources/vertex-ai-data-g
 
 - **No training use.** Customer data isn't used for training without permission.
 - **Implicit caching is on by default.** It lives in memory and on a durable store, is project-scoped, and is deleted within 24 h. The durable tier has no CMEK and can be disabled per project.
-- **Zero data retention (ZDR)** ([data privacy](pii-and-data-privacy.md)) requires all of the following:
+- **[Zero data retention](data-retention-and-residency.md) (ZDR)** ([data privacy](pii-and-data-privacy.md)) requires all of the following:
   - request-response logging off;
   - Live API session resumption off;
   - Interactions API `store=false`;

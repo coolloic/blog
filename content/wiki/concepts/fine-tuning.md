@@ -131,7 +131,7 @@ Sources: [TRL](../sources/hugging-face-trl-docs.md), [Unsloth](../sources/unslot
 
 ## Open-source tooling
 
-- **Hugging Face TRL.** The reference post-training library: `SFTTrainer`, `DPOTrainer`, `GRPOTrainer`, `RewardTrainer`, `KTOTrainer`, distillation trainers, PEFT and vLLM integration ([TRL](../sources/hugging-face-trl-docs.md)). See [Hugging Face ecosystem](hugging-face-ecosystem.md).
+- **Hugging Face TRL.** The reference post-training library: `SFTTrainer`, `DPOTrainer`, `GRPOTrainer`, `RewardTrainer`, `KTOTrainer`, distillation trainers, PEFT and [vLLM](vllm.md) integration ([TRL](../sources/hugging-face-trl-docs.md)). See [Hugging Face ecosystem](hugging-face-ecosystem.md).
 - **Unsloth.** Single-node speed and memory. It claims about 2× faster training and up to 70% less VRAM, and sells itself on QLoRA and GRPO on consumer GPUs. It exports to GGUF for [local LLMs](local-llms.md) ([Unsloth](../sources/unsloth-lora-hyperparameters.md)).
 - **Axolotl.** A whole pipeline in one YAML file. Supports full, LoRA, QLoRA, DPO/KTO/ORPO and GRPO, and scales across GPUs with FSDP2 and DeepSpeed ([Axolotl](../sources/axolotl-docs.md)).
 
