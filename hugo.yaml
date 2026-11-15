@@ -40,6 +40,9 @@ params:
     Content: "Technical writing on cutting-edge AI: models, agents, tooling, and what I learn building with them."
 
   socialIcons:
+    - name: cv
+      title: CV
+      url: "https://coolloic.github.io/"
     - name: github
       url: "https://github.com/coolloic"
     - name: rss
@@ -80,6 +83,10 @@ menu:
       name: About
       url: /about/
       weight: 50
+    - identifier: cv
+      name: CV
+      url: https://coolloic.github.io/
+      weight: 60
 
 markup:
   highlight:

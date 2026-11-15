@@ -92,6 +92,15 @@ check_unsafe_link_neutralised() {
   rm -rf "$out"
 }
 
+check_cv_linked() {
+  # The CV lives at the site root; the blog's menu (every page) and About page must link to it.
+  local cv='href="?https://coolloic.github.io/"?[ >]' f bad=""
+  for f in public/index.html public/posts/hello-world/index.html public/about/index.html; do
+    grep -Eq "$cv" "$f" 2>/dev/null || bad+="$f "
+  done
+  if [[ -z "$bad" ]]; then pass check_cv_linked; else fail check_cv_linked "no link to the CV on: $bad"; fi
+}
+
 check_mermaid_loaded_everywhere() {
   # Every page whose source has a mermaid block must ship the loader (the old Store-flag approach dropped it at random).
   local f rel out missing=""
@@ -127,7 +136,7 @@ check_all_wiki_pages_rendered() {
   else pass check_all_wiki_pages_rendered; fi
 }
 
-for c in check_build check_wiki_section check_raw_ignored check_home_posts_only check_broken_link_fails check_index_complete check_search_includes_wiki check_concepts_cite_sources check_rss_posts_only check_ci_strict check_unsafe_link_neutralised check_mermaid_rendered check_mermaid_loaded_everywhere check_all_wiki_pages_rendered; do $c; done
+for c in check_build check_wiki_section check_raw_ignored check_home_posts_only check_broken_link_fails check_index_complete check_search_includes_wiki check_concepts_cite_sources check_rss_posts_only check_ci_strict check_unsafe_link_neutralised check_mermaid_rendered check_mermaid_loaded_everywhere check_cv_linked check_all_wiki_pages_rendered; do $c; done
 # rebuild cleanly so later checks see real output
 hugo --gc --minify --quiet >/dev/null 2>&1
 [[ $FAILS -eq 0 ]] && echo "ALL PASS" || { echo "$FAILS FAILED"; exit 1; }
