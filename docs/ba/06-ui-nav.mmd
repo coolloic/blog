@@ -1,0 +1,41 @@
+flowchart LR
+  NAV(["顶栏导航<br/>首页 · 科普 · 技术笔记 · 归档 · 搜索 · 关于"]):::nav
+  FOOT(["页脚<br/>CV · Now · RSS · GitHub"]):::nav
+  P01["01 首页<br/>🎬 精选卡视频位"]:::zh
+  P02["02 科普列表 / 分类页<br/>/articles/ · /categories/&lt;slug&gt;/"]:::zh
+  P03["03 科普文章页<br/>🎬 封面视频位 · 🎬 正文视频块"]:::zh
+  P04["04 技术笔记首页 /notes/"]:::en
+  P05["05 技术文章页 /posts/&lt;slug&gt;/"]:::en
+  P06["06 Wiki 索引与概念页 /wiki/"]:::en
+  P07["07 归档 /archives/"]:::zh
+  P08["08 搜索 /search/"]:::zh
+  P09["09 关于 /about/"]:::zh
+  P10["10 404"]:::zh
+  WX(["公众号原文 / 二维码"]):::ext
+  NAV --> P01
+  NAV --> P02
+  NAV --> P04
+  NAV --> P07
+  NAV --> P08
+  NAV --> P09
+  P01 --> P02
+  P01 --> P03
+  P01 -.-> P04
+  P02 --> P03
+  P03 --> P03
+  P03 --> WX
+  P01 --> WX
+  P09 --> WX
+  P04 --> P05
+  P04 --> P06
+  P05 --> P06
+  P07 --> P03
+  P07 --> P05
+  P08 --> P03
+  P08 --> P05
+  P08 --> P06
+  P10 --> P01
+  classDef zh fill:#fff4e6,stroke:#e8590c
+  classDef en fill:#e7f5ff,stroke:#1971c2
+  classDef nav fill:#f1f3f5,stroke:#868e96
+  classDef ext fill:#ebfbee,stroke:#2f9e44

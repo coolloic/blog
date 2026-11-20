@@ -1,0 +1,26 @@
+flowchart LR
+  subgraph R1["读者 A：微信来的"]
+    A1["在公众号读到一篇文章"] --> A2["想翻旧文 / 转发链接给微信外的朋友"]
+  end
+  subgraph R2["读者 B：搜索引擎来的"]
+    B1["搜索一个 AI 概念<br/>（如：什么是 MCP）"] --> B2["落地到科普文章页"]
+  end
+  subgraph R3["读者 C：技术读者"]
+    C1["GitHub / CV / 英文搜索"] --> C2["技术笔记首页 /notes/"]
+  end
+  A2 --> H["首页<br/>精选 + 最新科普 + 分类"]
+  H --> CAT["分类页"]
+  CAT --> ART["科普文章页"]
+  H --> ART
+  B2 --> ART
+  ART -- "相关文章 / 上下篇" --> ART
+  ART -- "文末公众号卡" --> WX(["关注公众号 / 读原文"])
+  ART -- "看 60 秒视频版" --> VID(["竖版短视频"])
+  H -- "关注卡" --> WX
+  C2 --> POST["技术文章页（英文）"]
+  C2 --> WIKI["Wiki 索引与概念页"]
+  POST --> WIKI
+  H -. "次要入口" .-> C2
+  S["搜索 /search/<br/>中英混合"] --> ART
+  S --> POST
+  S --> WIKI
