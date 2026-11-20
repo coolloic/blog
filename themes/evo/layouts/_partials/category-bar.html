@@ -1,0 +1,7 @@
+{{- /* Category switcher. .current = slug or "" for all. */ -}}
+<nav class="cat-bar" aria-label="{{ partial "t.html" (dict "page" .page "key" "categories_label") }}">
+  <a href="{{ "articles/" | relURL }}"{{ if not .current }} aria-current="page"{{ end }}>{{ partial "t.html" (dict "page" .page "key" "all_articles") }}</a>
+  {{- range partial "categories.html" . }}
+  <a href="{{ printf "categories/%s/" .slug | relURL }}"{{ if eq .slug $.current }} aria-current="page"{{ end }}>{{ .name }}</a>
+  {{- end }}
+</nav>

@@ -1,0 +1,10 @@
+{{ define "main" }}
+{{- if eq .Data.Plural "categories" }}
+{{ partial "article-list.html" (dict "page" . "pages" .Pages "current" .Data.Term) }}
+{{- else }}
+<div class="container stack-section">
+  <header class="page-head"><h1>#{{ .Title }}</h1><p class="meta-line">{{ printf (partial "t.html" (dict "page" . "key" "total_count")) (len .Pages) }}</p></header>
+  <ul class="row-list">{{ range .Pages.ByDate.Reverse }}<li><a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ if not .Date.IsZero }}<time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006-01-02" }}</time>{{ end }}</li>{{ end }}</ul>
+</div>
+{{- end }}
+{{ end }}

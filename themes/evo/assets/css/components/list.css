@@ -1,0 +1,34 @@
+.page-head { display: grid; gap: var(--space-s); }
+.page-head__desc { color: var(--color-muted); max-inline-size: 40em; }
+.cat-bar { display: flex; gap: var(--space-s); overflow-x: auto; padding-block-end: var(--space-xs); scrollbar-width: thin; }
+.cat-bar a { flex: none; padding: var(--space-xs) var(--space-m); border: 1px solid color-mix(in srgb, var(--color-border) 60%, transparent); border-radius: var(--radius-pill); color: var(--color-text); font-size: var(--size-small); text-decoration: none; white-space: nowrap; }
+.cat-bar a:hover { border-color: var(--color-accent); }
+.cat-bar a[aria-current] { border-color: var(--color-accent-fill); background: var(--color-accent-fill); color: var(--color-on-accent-fill); font-weight: 700; }
+.pager { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-s); font-family: var(--font-mono); font-size: var(--size-small); }
+.pager a { padding: var(--space-xs) var(--space-m); border: 1px solid color-mix(in srgb, var(--color-border) 60%, transparent); border-radius: var(--radius-card); color: var(--color-text); text-decoration: none; }
+.pager a[aria-current] { border-color: var(--color-accent); color: var(--color-accent); }
+.button { display: inline-block; padding: var(--space-s) var(--space-l); border-radius: var(--radius-card); background: var(--color-accent-fill); color: var(--color-on-accent-fill); font-weight: 700; text-decoration: none; }
+.row-list { display: grid; gap: var(--space-s); padding: 0; list-style: none; }
+.row-list li { display: flex; justify-content: space-between; gap: var(--space-m); line-height: 1.6; }
+.row-list a { color: var(--color-text); text-decoration: none; }
+.row-list a:hover { color: var(--color-accent); }
+.row-list time { flex: none; font-family: var(--font-mono); font-size: 13px; color: var(--color-muted); }
+.cat-overview { display: grid; gap: var(--space-l); grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); }
+.cat-overview__item { display: grid; gap: var(--space-s); align-content: start; padding: var(--space-l); border: 1px solid color-mix(in srgb, var(--color-border) 60%, transparent); border-radius: var(--radius-card); background: var(--color-surface); }
+.cat-overview__item h2 { display: flex; justify-content: space-between; align-items: baseline; font-size: var(--size-h3); }
+.cat-overview__item h2 a { color: var(--color-text); text-decoration: none; }
+.cat-overview__empty { font-size: var(--size-small); color: var(--color-muted); }
+.tag-cloud { display: flex; flex-wrap: wrap; gap: var(--space-s); padding: 0; list-style: none; }
+.tag-cloud a { display: inline-block; padding: var(--space-xs) var(--space-m); border-radius: var(--radius-pill); background: var(--color-surface); color: var(--color-text); font-family: var(--font-mono); font-size: var(--size-small); text-decoration: none; }
+.tag-cloud span { color: var(--color-muted); }
+.archive__year { display: grid; gap: var(--space-m); padding-inline-start: var(--space-l); border-inline-start: 2px solid color-mix(in srgb, var(--color-border) 60%, transparent); }
+.archive__year h2 { font-size: var(--size-h2-mobile); }
+.archive__month { font-family: var(--font-mono); font-size: var(--size-small); color: var(--color-accent); }
+.archive__list { display: grid; gap: var(--space-s); padding: 0; list-style: none; }
+.archive__list li { display: grid; grid-template-columns: auto 1fr auto; align-items: baseline; gap: var(--space-m); line-height: 1.6; }
+.archive__list time { font-family: var(--font-mono); font-size: 13px; color: var(--color-muted); }
+.archive__list a { color: var(--color-text); text-decoration: none; }
+.archive__list a:hover { color: var(--color-accent); }
+.badge { padding: 0 var(--space-s); border-radius: var(--radius-chip); font-family: var(--font-mono); font-size: var(--size-label); white-space: nowrap; }
+.badge--articles { background: color-mix(in srgb, var(--color-accent) 15%, transparent); color: var(--color-accent); }
+.badge--posts, .badge--wiki { background: color-mix(in srgb, var(--color-accent2) 15%, transparent); color: var(--color-accent2); }

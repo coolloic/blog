@@ -1,0 +1,11 @@
+{{ define "main" }}
+{{- if eq .Section "articles" }}
+{{ partial "article-list.html" (dict "page" . "pages" .RegularPages "current" "") }}
+{{- else }}
+<div class="container stack-section">
+  <header class="page-head"><h1>{{ .Title }}</h1>{{ with .Params.summary }}<p class="page-head__desc">{{ . }}</p>{{ end }}</header>
+  {{ with .Content }}<div class="prose">{{ . }}</div>{{ end }}
+  <ul class="row-list">{{ range .RegularPages.ByDate.Reverse }}<li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>{{ end }}</ul>
+</div>
+{{- end }}
+{{ end }}

@@ -1,0 +1,20 @@
+{{ define "main" }}
+{{- $pages := where site.RegularPages "Section" "in" site.Params.mainSections }}
+<div class="container stack-section archive">
+  <header class="page-head"><h1>{{ .Title }}</h1><p class="meta-line">{{ printf (partial "t.html" (dict "page" . "key" "total_count")) (len $pages) }}</p></header>
+  {{- range $pages.GroupByDate "2006" }}
+  <section class="archive__year" aria-labelledby="y-{{ .Key }}">
+    <h2 id="y-{{ .Key }}">{{ .Key }}</h2>
+    {{- range .Pages.GroupByDate "2006-01" }}
+    {{- $m := (index .Pages 0).Date }}
+    <h3 class="archive__month">{{ $m.Format (partial "t.html" (dict "page" $ "key" "month_format")) }}</h3>
+    <ul class="archive__list">
+      {{- range .Pages }}
+      <li><time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "01-02" }}</time><a href="{{ .RelPermalink }}">{{ .Title }}</a><span class="badge badge--{{ .Section }}">{{ partial "t.html" (dict "page" $ "key" (printf "section_%s" .Section)) }}</span></li>
+      {{- end }}
+    </ul>
+    {{- end }}
+  </section>
+  {{- end }}
+</div>
+{{ end }}

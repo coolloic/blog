@@ -30,3 +30,15 @@ notes_desc: Long-form English engineering posts & an AI knowledge-base Wiki.
 notes_enter: Open Tech Notes →
 no_articles: Articles are on their way from the WeChat account.
 no_articles_title: No articles yet
+all_articles: All articles
+total_count: "%d articles"
+no_category_articles: No articles in this category yet.
+no_category_articles_title: Nothing here yet
+see_all_articles: See all articles
+prev_page: Previous
+next_page: Next
+pagination: Pagination
+section_articles: Articles
+section_posts: Tech Notes
+section_wiki: Wiki
+month_format: "January"

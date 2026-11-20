@@ -1,0 +1,9 @@
+{{- with .pager }}{{ if gt .TotalPages 1 }}
+<nav class="pager" aria-label="{{ partial "t.html" (dict "page" $.page "key" "pagination") }}">
+  {{ with .Prev }}<a href="{{ .URL }}" rel="prev">← {{ partial "t.html" (dict "page" $.page "key" "prev_page") }}</a>{{ end }}
+  {{- range .Pagers }}
+  <a href="{{ .URL }}"{{ if eq . $.pager }} aria-current="page"{{ end }}>{{ .PageNumber }}</a>
+  {{- end }}
+  {{ with .Next }}<a href="{{ .URL }}" rel="next">{{ partial "t.html" (dict "page" $.page "key" "next_page") }} →</a>{{ end }}
+</nav>
+{{ end }}{{ end -}}

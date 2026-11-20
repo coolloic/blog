@@ -30,3 +30,15 @@ notes_desc: Long-form English engineering posts & an AI knowledge-base Wiki.
 notes_enter: 进入技术笔记 →
 no_articles: 文章正在从公众号搬过来，先关注公众号吧。
 no_articles_title: 还没有文章
+all_articles: 全部科普
+total_count: "共 %d 篇"
+no_category_articles: 这个分类还没有文章。
+no_category_articles_title: 还没有文章
+see_all_articles: 看全部科普
+prev_page: 上一页
+next_page: 下一页
+pagination: 分页
+section_articles: 科普
+section_posts: 技术笔记
+section_wiki: Wiki
+month_format: "1月"

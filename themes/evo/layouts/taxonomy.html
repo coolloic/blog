@@ -1,0 +1,21 @@
+{{ define "main" }}
+<div class="container stack-section">
+  <header class="page-head"><h1>{{ .Title }}</h1>{{ with .Params.summary }}<p class="page-head__desc">{{ . }}</p>{{ end }}</header>
+  {{- if eq .Data.Plural "categories" }}
+  {{- $articles := where site.RegularPages "Section" "articles" }}
+  <div class="cat-overview">
+    {{- range partial "categories.html" . }}
+    {{- $in := where $articles "Params.categories" "intersect" (slice .slug) }}
+    <section class="cat-overview__item">
+      <h2><a href="{{ printf "categories/%s/" .slug | relURL }}">{{ .name }}</a> <span class="cat-tile__count">{{ printf (partial "t.html" (dict "page" $ "key" "article_count")) (len $in) }}</span></h2>
+      <p class="cat-tile__desc">{{ .desc }}</p>
+      {{- if $in }}<ul class="row-list">{{ range first 3 $in.ByDate.Reverse }}<li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>{{ end }}</ul>
+      {{- else }}<p class="cat-overview__empty">{{ partial "t.html" (dict "page" $ "key" "no_category_articles") }}</p>{{ end }}
+    </section>
+    {{- end }}
+  </div>
+  {{- else }}
+  <ul class="tag-cloud">{{ range .Data.Terms.ByCount }}<li><a href="{{ .Page.RelPermalink }}">#{{ .Page.Title }} <span>{{ .Count }}</span></a></li>{{ end }}</ul>
+  {{- end }}
+</div>
+{{ end }}

@@ -166,6 +166,38 @@ check_category_order() {
   else fail check_category_order "category tiles in wrong order: $order"; fi
 }
 
-CHECKS=(check_theme_evo check_html_lang check_tokens_css check_light_dark_fallback check_theme_script_first check_nav check_skip_link check_wrap check_toggle_button check_tokens_unescaped check_home_featured check_home_featured_fallback check_home_lists_articles_not_wiki check_home_empty check_cover_box check_cover_video_slot check_follow_card check_no_format_errors check_category_order)
+check_category_urls() {
+  local f="$OUT/categories/concepts/index.html" h; h=$(html1 "$f" 2>/dev/null)
+  if [[ -f "$f" && "$h" == *"/blog/articles/sample-1/"* && "$h" == *"/blog/articles/sample-3/"* && "$h" == *"<title>概念科普"* && ! -e "$OUT/categories/概念科普" ]]; then pass check_category_urls
+  else fail check_category_urls "categories/concepts missing, wrong title, or missing samples"; fi
+}
+
+check_category_empty() {
+  local h bad=""; h=$(html1 "$OUT/categories/index.html" 2>/dev/null)
+  for c in models concepts tools industry; do [[ "$h" =~ href=\"?/blog/categories/$c/ ]] || bad+="index:$c "; done
+  grep -qE 'data-empty="?no_category_articles' "$OUT/categories/tools/index.html" 2>/dev/null || bad+="tools:empty-state "
+  if [[ -z "$bad" ]]; then pass check_category_empty; else fail check_category_empty "$bad"; fi
+}
+
+check_archives() {
+  local h; h=$(html1 "$OUT/archives/index.html" 2>/dev/null)
+  if [[ "$h" == *"/blog/articles/sample-1/"* && "$h" == *"/blog/posts/hello-world/"* && "$h" != *"/blog/wiki/concepts/"* ]]; then pass check_archives
+  else fail check_archives "archive must list articles and posts, not wiki"; fi
+}
+
+check_old_urls() {
+  local u bad=""
+  for u in posts/hello-world posts/harness-engineering posts/modern-web-guidelines posts/anatomy-of-an-ai-agent tags about now archives search wiki; do
+    [[ -f "$OUT/$u/index.html" ]] || bad+="$u "
+  done
+  if [[ -z "$bad" ]]; then pass check_old_urls; else fail check_old_urls "missing: $bad"; fi
+}
+
+check_internal_links() {
+  local r; r=$(python3 scripts/check-links.py "$OUT" /blog/ 2>&1)
+  if [[ $? -eq 0 ]]; then pass check_internal_links; else fail check_internal_links "$(echo "$r" | head -5 | tr '\n' ';')"; fi
+}
+
+CHECKS=(check_theme_evo check_html_lang check_tokens_css check_light_dark_fallback check_theme_script_first check_nav check_skip_link check_wrap check_toggle_button check_tokens_unescaped check_home_featured check_home_featured_fallback check_home_lists_articles_not_wiki check_home_empty check_cover_box check_cover_video_slot check_follow_card check_no_format_errors check_category_order check_category_urls check_category_empty check_archives check_old_urls check_internal_links)
 for c in "${@:-${CHECKS[@]}}"; do $c; done
 [[ $FAILS -eq 0 ]] && echo "SITE ALL PASS" || { echo "$FAILS SITE CHECKS FAILED"; exit 1; }
