@@ -1,4 +1,6 @@
-import { makeSearch } from "./search-core.js";
+import { makeSearch, meetsMinLength, debounce } from "./search-core.js";
+
+const DEBOUNCE_MS = 250;
 
 const form = document.querySelector("[data-search]");
 const input = form.querySelector("input");
@@ -28,6 +30,7 @@ function render() {
   history.replaceState(null, "", url);
   idle.hidden = Boolean(q);
   if (!q || !search) { list.innerHTML = ""; status.textContent = ""; return; }
+  if (!meetsMinLength(q)) { list.innerHTML = ""; status.textContent = labels.short; return; }
   const terms = q.split(/\s+/);
   const results = search(q).slice(0, 30);
   status.textContent = results.length ? labels.count.replace("%d", results.length) : labels.none;
@@ -39,7 +42,8 @@ let loading = null;
 const load = () => (loading ??= fetch(form.dataset.index).then((r) => r.json()).then((idx) => { search = makeSearch(idx); render(); }));
 input.addEventListener("focus", load, { once: true });
 input.addEventListener("pointerdown", load, { once: true });
-input.addEventListener("input", () => { load(); render(); });
+const renderSoon = debounce(render, DEBOUNCE_MS);
+input.addEventListener("input", () => { load(); renderSoon(); });
 form.addEventListener("submit", (e) => e.preventDefault());
 input.value = new URL(location.href).searchParams.get("q") || "";
 if (input.value) load();

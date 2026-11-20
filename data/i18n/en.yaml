@@ -71,3 +71,4 @@ og_locale: en_US
 not_found_title: This page was hallucinated away
 not_found_body: The page you are looking for does not exist. Try searching, or go back home.
 back_home: Back to home
+search_short: Type at least 3 letters (or 2 Chinese characters).

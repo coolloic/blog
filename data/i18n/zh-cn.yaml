@@ -71,3 +71,4 @@ og_locale: zh_CN
 not_found_title: 这页被 AI 幻觉掉了
 not_found_body: 你要找的页面不存在，可能已经搬家。试试搜索，或者回到首页。
 back_home: 回到首页
+search_short: 请至少输入 3 个字母，或 2 个汉字。
