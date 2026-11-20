@@ -1,0 +1,19 @@
+{{ define "main" }}
+{{- $t := dict "count" (partial "t.html" (dict "page" . "key" "search_count")) "none" (partial "t.html" (dict "page" . "key" "search_none")) "articles" (partial "t.html" (dict "page" . "key" "section_articles")) "posts" (partial "t.html" (dict "page" . "key" "section_posts")) "wiki" (partial "t.html" (dict "page" . "key" "section_wiki")) }}
+<div class="container stack-section search">
+  <header class="page-head"><h1>{{ .Title }}</h1></header>
+  <form class="search__form" role="search" data-search data-index="{{ "index.json" | relURL }}" data-labels="{{ $t | jsonify }}" hidden>
+    <label class="visually-hidden" for="q">{{ .Title }}</label>
+    <input id="q" name="q" type="search" placeholder="{{ partial "t.html" (dict "page" . "key" "search_placeholder") }}" autocomplete="off" autofocus>
+  </form>
+  <noscript><p class="search__nojs">{{ partial "t.html" (dict "page" . "key" "search_nojs") }}</p></noscript>
+  <p class="meta-line" data-search-status role="status" aria-live="polite"></p>
+  <ol class="results" data-search-results></ol>
+  <div data-search-idle>
+    <p class="search__idle">{{ partial "t.html" (dict "page" . "key" "search_idle") }}</p>
+    <div class="cat-bar">{{ range partial "categories.html" . }}<a href="{{ printf "categories/%s/" .slug | relURL }}">{{ .name }}</a>{{ end }}</div>
+  </div>
+</div>
+{{- $js := resources.Get "js/search.js" | js.Build (dict "minify" true "format" "esm") | fingerprint }}
+<script type="module" src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}"></script>
+{{ end }}

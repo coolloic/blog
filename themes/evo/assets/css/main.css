@@ -6,6 +6,7 @@
 @import "components/prose.css" layer(components);
 @import "components/code.css" layer(components);
 @import "components/chroma.css" layer(components);
+@import "components/search.css" layer(components);
 
 @layer reset {
   *, *::before, *::after { box-sizing: border-box; }

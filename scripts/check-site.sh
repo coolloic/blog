@@ -296,6 +296,21 @@ check_wiki_concept_page() {
   if [[ -z "$bad" ]]; then pass check_wiki_concept_page; else fail check_wiki_concept_page "$bad"; fi
 }
 
-CHECKS=(check_theme_evo check_html_lang check_tokens_css check_light_dark_fallback check_theme_script_first check_nav check_skip_link check_wrap check_toggle_button check_tokens_unescaped check_home_featured check_home_featured_fallback check_home_lists_articles_not_wiki check_home_empty check_cover_box check_cover_video_slot check_follow_card check_no_format_errors check_category_order check_category_urls check_category_empty check_archives check_old_urls check_internal_links check_article_page check_wechat_footer check_video_vertical check_video_shortcode check_required_fields check_jsonld check_prev_next check_notes_page check_en_chrome check_code_copy check_wiki_body check_wiki_concept_page)
+check_search_index() {
+  local f="$OUT/index.json" r
+  if ! grep -q '/articles/sample-1/' "$f" 2>/dev/null || ! grep -q '/wiki/concepts/' "$f"; then fail check_search_index "index.json lacks articles or wiki concepts"; return; fi
+  local kb; kb=$(( $(gzip -c "$f" | wc -c) / 1024 ))
+  [[ $kb -le 400 ]] || { fail check_search_index "index.json is ${kb}KB gzipped (budget 400KB)"; return; }
+  r=$(node scripts/test-search.mjs "$f" 2>&1)
+  if [[ $? -eq 0 ]]; then pass check_search_index; else fail check_search_index "$(echo "$r" | grep -v '^ok' | tr '\n' ';')"; fi
+}
+
+check_search_page() {
+  local h; h=$(html1 "$OUT/search/index.html")
+  if echo "$h" | grep -qE '<input[^>]*type="?search' && echo "$h" | grep -qE '<noscript' && echo "$h" | grep -qE 'search[.a-f0-9]*\.js'; then pass check_search_page
+  else fail check_search_page "search page needs a search input, a <noscript> notice and the search script"; fi
+}
+
+CHECKS=(check_theme_evo check_html_lang check_tokens_css check_light_dark_fallback check_theme_script_first check_nav check_skip_link check_wrap check_toggle_button check_tokens_unescaped check_home_featured check_home_featured_fallback check_home_lists_articles_not_wiki check_home_empty check_cover_box check_cover_video_slot check_follow_card check_no_format_errors check_category_order check_category_urls check_category_empty check_archives check_old_urls check_internal_links check_article_page check_wechat_footer check_video_vertical check_video_shortcode check_required_fields check_jsonld check_prev_next check_notes_page check_en_chrome check_code_copy check_wiki_body check_wiki_concept_page check_search_index check_search_page)
 for c in "${@:-${CHECKS[@]}}"; do $c; done
 [[ $FAILS -eq 0 ]] && echo "SITE ALL PASS" || { echo "$FAILS SITE CHECKS FAILED"; exit 1; }

@@ -62,3 +62,8 @@ updated: Updated
 suggest_changes: Suggest changes
 wiki_card_title: AI Wiki — an LLM-maintained knowledge base
 wiki_card_stats: "%d concepts · %d sources"
+search_placeholder: Search articles, notes and the Wiki…
+search_count: "%d results"
+search_none: Nothing found. Try another keyword.
+search_nojs: "Search needs JavaScript. You can browse by category instead:"
+search_idle: "Not sure what to search? Start with a category:"
