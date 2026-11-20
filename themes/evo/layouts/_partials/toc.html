@@ -1,0 +1,12 @@
+{{- /* partial "toc.html" (dict "page" . "where" "inline|side"): a collapsible TOC under the title (phones)
+     or a sticky sidebar (desktop). Renders nothing when the page has no headings. */ -}}
+{{- $p := .page -}}
+{{- $list := $p.TableOfContents | replaceRE `^<nav id="TableOfContents">|</nav>$` "" | strings.TrimSpace -}}
+{{- if $list }}
+{{- $label := partial "t.html" (dict "page" $p "key" "toc") }}
+{{- if eq .where "inline" }}
+<details class="toc-inline"><summary>{{ $label }}</summary><nav class="toc" aria-label="{{ $label }}">{{ $list | safeHTML }}</nav></details>
+{{- else }}
+<aside class="toc-side"><nav class="toc" aria-label="{{ $label }}"><p class="toc__title">{{ $label }}</p>{{ $list | safeHTML }}</nav></aside>
+{{- end }}
+{{- end -}}

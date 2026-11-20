@@ -1,0 +1,16 @@
+{{- $img := slice -}}{{- with .Params.cover }}{{ $img = slice (partial "abs-img-url.html" .) }}{{ end -}}
+{{- $d := dict
+  "@context" "https://schema.org"
+  "@type" "Article"
+  "headline" .Title
+  "description" (.Summary | plainify | strings.TrimSpace)
+  "datePublished" (.Date.Format "2006-01-02T15:04:05Z07:00")
+  "dateModified" (.Lastmod.Format "2006-01-02T15:04:05Z07:00")
+  "image" $img
+  "inLanguage" (index hugo.Data.i18n (partial "lang.html" .) "html_lang")
+  "mainEntityOfPage" .Permalink
+  "author" (dict "@type" "Person" "name" (site.Params.author | default "Loic") "url" ("about/" | absURL))
+  "publisher" (dict "@type" "Organization" "name" site.Title "logo" (dict "@type" "ImageObject" "url" ("images/wechat-qr.png" | absURL)))
+-}}
+{{- with .Params.wechat_url }}{{ $d = merge $d (dict "isBasedOn" .) }}{{ end -}}
+<script type="application/ld+json">{{ $d | jsonify | safeJS }}</script>

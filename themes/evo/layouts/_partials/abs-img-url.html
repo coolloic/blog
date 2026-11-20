@@ -1,0 +1,3 @@
+{{- $u := string . -}}
+{{- if or (strings.HasPrefix $u "http://") (strings.HasPrefix $u "https://") }}{{ return $u }}{{ end -}}
+{{- return (strings.TrimPrefix "/" $u | absURL) -}}

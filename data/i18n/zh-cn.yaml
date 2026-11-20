@@ -42,3 +42,17 @@ section_articles: 科普
 section_posts: 技术笔记
 section_wiki: Wiki
 month_format: "1月"
+toc: 目录
+from_wechat: 原文发于公众号
+wechat_footer_title: 原文发于公众号「AI进化调研员」
+wechat_footer_sub: 扫码关注，第一时间读到新文章。
+read_original: 阅读原文
+watch_vertical: 看 60 秒视频版
+related: 相关文章
+prev_article: 上一篇
+next_article: 下一篇
+tags: 标签
+callout_tip: 划重点
+callout_note: 注意
+callout_warning: 小心
+post_nav: 上下篇

@@ -1,0 +1,27 @@
+{{ define "main" }}
+{{- if not .Draft }}
+  {{- range slice "cover" "wechat_url" }}{{ if not (index $.Params .) }}{{ errorf "%s: missing %s" $.File.Path . }}{{ end }}{{ end }}
+{{- end }}
+<article class="article">
+  <div class="container">
+    {{ partial "cover.html" (dict "page" . "size" "hero") }}
+    <header class="article__head">
+      {{ partial "article-meta.html" . }}
+      <h1>{{ .Title }}</h1>
+      {{ with .Params.summary }}<p class="article__summary">{{ . }}</p>{{ end }}
+      {{ partial "toc.html" (dict "page" . "where" "inline") }}
+    </header>
+    <div class="article__layout">
+      <div class="prose">{{ .Content }}</div>
+      {{ partial "toc.html" (dict "page" . "where" "side") }}
+    </div>
+    <div class="article__after">
+      {{ partial "wechat-footer.html" . }}
+      {{ with .Params.tags }}<ul class="tag-cloud" aria-label="{{ partial "t.html" (dict "page" $ "key" "tags") }}">{{ range . }}<li><a href="{{ printf "tags/%s/" (urlize .) | relURL }}">#{{ . }}</a></li>{{ end }}</ul>{{ end }}
+      {{ partial "post-nav.html" . }}
+      {{ partial "related.html" . }}
+    </div>
+  </div>
+</article>
+{{ partial "jsonld-article.html" . }}
+{{ end }}

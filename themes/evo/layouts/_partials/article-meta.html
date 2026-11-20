@@ -1,0 +1,7 @@
+<div class="article-meta">
+  {{- with index (.Params.categories | default slice) 0 }}{{ $c := index hugo.Data.categories . }}
+  <a class="chip" href="{{ printf "categories/%s/" . | relURL }}">{{ with $c }}{{ .name }}{{ else }}{{ . }}{{ end }}</a>
+  {{- end }}
+  {{ partial "meta-line.html" . }}
+  {{- with .Params.wechat_url }}<a class="meta-line" href="{{ . }}" rel="noopener">· {{ partial "t.html" (dict "page" $ "key" "from_wechat") }}</a>{{ end }}
+</div>

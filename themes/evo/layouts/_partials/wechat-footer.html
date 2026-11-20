@@ -1,0 +1,11 @@
+<section class="wechat-footer" aria-label="{{ partial "t.html" (dict "page" . "key" "from_wechat") }}">
+  <img class="follow-card__qr" src="{{ "images/wechat-qr.png" | relURL }}" width="96" height="96" alt="{{ partial "t.html" (dict "page" . "key" "follow_qr_alt") }}" loading="lazy">
+  <div class="wechat-footer__text">
+    <p class="wechat-footer__title">{{ partial "t.html" (dict "page" . "key" "wechat_footer_title") }}</p>
+    <p>{{ partial "t.html" (dict "page" . "key" "wechat_footer_sub") }}</p>
+  </div>
+  <div class="wechat-footer__actions">
+    {{- with .Params.wechat_url }}<a class="button" href="{{ . }}" rel="noopener">{{ partial "t.html" (dict "page" $ "key" "read_original") }}</a>{{ end }}
+    {{- with .Params.video_vertical }}<a class="button button--ghost" href="{{ partial "img-url.html" . }}" rel="noopener">{{ partial "icon.html" "play" }}{{ partial "t.html" (dict "page" $ "key" "watch_vertical") }}</a>{{ end }}
+  </div>
+</section>

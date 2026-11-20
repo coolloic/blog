@@ -17,6 +17,8 @@ draft: true
 
 示例段落。示例段落。一个超长的英文链接用来测试换行：https://example.com/a/very/long/path/that/should/wrap/instead/of/causing/horizontal/scrolling/on/a/phone
 
+{{< video src="https://example.com/a.mp4" poster="/images/placeholder-cover.svg" caption="演示" >}}
+
 ## 第二节：另一个小标题
 
 - 示例列表项一

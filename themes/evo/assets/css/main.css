@@ -3,6 +3,7 @@
 @import "layout.css" layer(layout);
 @import "components/card.css" layer(components);
 @import "components/list.css" layer(components);
+@import "components/prose.css" layer(components);
 
 @layer reset {
   *, *::before, *::after { box-sizing: border-box; }

@@ -1,0 +1,8 @@
+{{- $cats := .Params.categories | default slice -}}
+{{- $rel := complement (slice .) (where (where site.RegularPages "Section" "articles") "Params.categories" "intersect" $cats) -}}
+{{- with first 3 $rel.ByDate.Reverse }}
+<section class="stack" aria-labelledby="related-heading">
+  <div class="section-head"><h2 id="related-heading">{{ partial "t.html" (dict "page" $ "key" "related") }}</h2></div>
+  <div class="card-grid card-grid--small">{{ range . }}{{ partial "card.html" . }}{{ end }}</div>
+</section>
+{{- end }}

@@ -1,0 +1,7 @@
+{{- /* {{< video src="…" poster="…" caption="…" >}}: an explainer clip (e.g. rendered by Remotion). Click to play. */ -}}
+{{- $src := .Get "src" | default "" -}}
+{{- if not $src }}{{ errorf "%s: video shortcode needs src" .Position }}{{ end -}}
+<figure class="video">
+  <video src="{{ partial "img-url.html" $src }}"{{ with .Get "poster" }} poster="{{ partial "img-url.html" . }}"{{ end }} width="1600" height="900" controls playsinline preload="none"></video>
+  {{- with .Get "caption" }}<figcaption>{{ . }}</figcaption>{{ end }}
+</figure>

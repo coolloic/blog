@@ -42,3 +42,17 @@ section_articles: Articles
 section_posts: Tech Notes
 section_wiki: Wiki
 month_format: "January"
+toc: Contents
+from_wechat: First published on WeChat
+wechat_footer_title: First published on the WeChat account 「AI进化调研员」
+wechat_footer_sub: Scan to follow for new articles.
+read_original: Read the original
+watch_vertical: Watch the 60-second video
+related: Related
+prev_article: Previous
+next_article: Next
+tags: Tags
+callout_tip: Key point
+callout_note: Note
+callout_warning: Warning
+post_nav: More posts

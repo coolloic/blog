@@ -1,0 +1,7 @@
+{{- /* GitHub-style alerts become callouts: > [!TIP] renders as a 划重点 box. Plain quotes stay quotes. */ -}}
+{{- if eq .Type "alert" }}
+{{- $kind := lower .AlertType }}{{ $key := cond (in (slice "tip" "important") $kind) "callout_tip" (cond (eq $kind "warning") "callout_warning" "callout_note") }}
+<aside class="callout callout--{{ $kind }}"><p class="callout__title">{{ with .AlertTitle }}{{ . }}{{ else }}{{ partial "t.html" (dict "page" $.Page "key" $key) }}{{ end }}</p>{{ .Text }}</aside>
+{{- else }}
+<blockquote>{{ .Text }}</blockquote>
+{{- end }}

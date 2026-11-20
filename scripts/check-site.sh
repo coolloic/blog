@@ -198,6 +198,68 @@ check_internal_links() {
   if [[ $? -eq 0 ]]; then pass check_internal_links; else fail check_internal_links "$(echo "$r" | head -5 | tr '\n' ';')"; fi
 }
 
-CHECKS=(check_theme_evo check_html_lang check_tokens_css check_light_dark_fallback check_theme_script_first check_nav check_skip_link check_wrap check_toggle_button check_tokens_unescaped check_home_featured check_home_featured_fallback check_home_lists_articles_not_wiki check_home_empty check_cover_box check_cover_video_slot check_follow_card check_no_format_errors check_category_order check_category_urls check_category_empty check_archives check_old_urls check_internal_links)
+check_article_page() {
+  local f="$OUT/articles/sample-1/index.html" h bad=""; h=$(html1 "$f")
+  [[ "$h" == *"<article"* ]] || bad+="article "
+  echo "$h" | grep -qE 'class="?cover cover--hero' || bad+="hero-cover "
+  echo "$h" | grep -qE 'href="?/blog/categories/concepts/"?[^>]*>概念科普' || bad+="category-link "
+  [[ "$h" == *"阅读 "*" 分钟"* ]] || bad+="reading-time "
+  echo "$h" | grep -qE '<nav[^>]*class="?toc' || bad+="toc "
+  if [[ -z "$bad" ]]; then pass check_article_page; else fail check_article_page "missing: $bad"; fi
+}
+
+check_wechat_footer() {
+  local h; h=$(html1 "$OUT/articles/sample-1/index.html")
+  if [[ "$h" == *"https://mp.weixin.qq.com/s/placeholder"* && "$h" == *"wechat-qr.png"* && "$h" == *"原文发于公众号"* ]]; then pass check_wechat_footer
+  else fail check_wechat_footer "article lacks WeChat footer (original link, QR, 原文发于公众号)"; fi
+}
+
+addvertical() { sed -i '' 's|^featured: false|featured: false\nvideo_vertical: "https://example.com/v.mp4"|' articles/sample-1/index.md; }
+check_video_vertical() {
+  local o; o=$(mktemp -d)
+  build_variant "$o" addvertical || { fail check_video_vertical "variant build failed"; rm -rf "$o"; return; }
+  local with without; with=$(html1 "$o/articles/sample-1/index.html"); without=$(html1 "$OUT/articles/sample-1/index.html")
+  if [[ "$with" == *"看 60 秒视频版"* && "$with" == *"example.com/v.mp4"* && "$without" != *"看 60 秒视频版"* ]]; then pass check_video_vertical
+  else fail check_video_vertical "vertical video link wrong (should appear only with video_vertical)"; fi
+  rm -rf "$o"
+}
+
+check_video_shortcode() {
+  local fig; fig=$(perl -0777 -ne 'print $1 if /(<figure class="?video.*?<\/figure>)/s' "$OUT/articles/sample-3/index.html")
+  if [[ -n "$fig" && "$fig" == *preload=*none* && "$fig" == *"演示"* ]] && ! echo "$fig" | grep -qE '[ "]autoplay([ =>]|$)'; then pass check_video_shortcode
+  else fail check_video_shortcode "bad video figure: ${fig:0:200}"; fi
+}
+
+addmissing() { mkdir -p articles/zz-missing; printf -- '---\ntitle: zz\ndate: 2026-11-01\ncover: "/images/placeholder-cover.svg"\ndraft: false\n---\nx\n' > articles/zz-missing/index.md; }
+check_required_fields() {
+  local o cdir log rc; o=$(mktemp -d); cdir=$(mktemp -d)
+  cp -R content/. "$cdir"/; ( cd "$cdir" && addmissing )
+  log=$(hugo --contentDir "$cdir" -d "$o" 2>&1); rc=$?
+  rm -rf "$o" "$cdir"
+  if [[ $rc -ne 0 && "$log" == *"missing wechat_url"* ]]; then pass check_required_fields
+  else fail check_required_fields "build should fail with 'missing wechat_url' (rc=$rc)"; fi
+}
+
+check_jsonld() {
+  local r; r=$(perl -0777 -ne 'print $1 if /<script type="?application\/ld\+json"?>(.*?)<\/script>/s' "$OUT/articles/sample-1/index.html" | python3 -c '
+import json,sys
+d=json.loads(sys.stdin.read()); items=d if isinstance(d,list) else d.get("@graph",[d])
+a=[x for x in items if x.get("@type")=="Article"]
+assert a, "no Article"; a=a[0]
+for k in ("headline","datePublished","image"): assert a.get(k), k
+img=a["image"] if isinstance(a["image"],str) else a["image"][0]
+assert img.startswith("http"), "image must be absolute"
+print("ok")' 2>&1)
+  if [[ "$r" == ok ]]; then pass check_jsonld; else fail check_jsonld "$r"; fi
+}
+
+check_prev_next() {
+  local nav; nav=$(perl -0777 -ne 'print $1 if /(<nav[^>]*class="?post-nav.*?<\/nav>)/s' "$OUT/articles/sample-2/index.html")
+  local links; links=$(echo "$nav" | grep -oE 'href="?[^" >]+' | sed -E 's/href="?//')
+  if [[ -n "$links" ]] && ! echo "$links" | grep -vq '^/blog/articles/'; then pass check_prev_next
+  else fail check_prev_next "prev/next missing or leaves articles: $links"; fi
+}
+
+CHECKS=(check_theme_evo check_html_lang check_tokens_css check_light_dark_fallback check_theme_script_first check_nav check_skip_link check_wrap check_toggle_button check_tokens_unescaped check_home_featured check_home_featured_fallback check_home_lists_articles_not_wiki check_home_empty check_cover_box check_cover_video_slot check_follow_card check_no_format_errors check_category_order check_category_urls check_category_empty check_archives check_old_urls check_internal_links check_article_page check_wechat_footer check_video_vertical check_video_shortcode check_required_fields check_jsonld check_prev_next)
 for c in "${@:-${CHECKS[@]}}"; do $c; done
 [[ $FAILS -eq 0 ]] && echo "SITE ALL PASS" || { echo "$FAILS SITE CHECKS FAILED"; exit 1; }
