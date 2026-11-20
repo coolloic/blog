@@ -8,3 +8,6 @@ raw/*
 # Remotion (sub-project 3): rendered videos and dependencies
 video/out/
 video/node_modules/
+
+# Hugo writes this for editors when js.Build runs
+/assets/jsconfig.json

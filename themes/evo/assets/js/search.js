@@ -34,8 +34,12 @@ function render() {
   list.innerHTML = results.map((d) => `<li class="result"><a href="${esc(d.permalink)}"><span class="badge badge--${esc(d.section)}">${esc(labels[d.section] || d.section)}</span><span class="result__title"${d.lang === "en" ? ' lang="en"' : ""}>${mark(d.title, terms)}</span><span class="result__snippet">${mark(snippet(d, terms), terms)}</span></a></li>`).join("");
 }
 
-fetch(form.dataset.index).then((r) => r.json()).then((idx) => { search = makeSearch(idx); render(); });
-input.addEventListener("input", render);
+// The index (~240KB gzipped) loads only when someone is about to search, so it never competes with first paint.
+let loading = null;
+const load = () => (loading ??= fetch(form.dataset.index).then((r) => r.json()).then((idx) => { search = makeSearch(idx); render(); }));
+input.addEventListener("focus", load, { once: true });
+input.addEventListener("pointerdown", load, { once: true });
+input.addEventListener("input", () => { load(); render(); });
 form.addEventListener("submit", (e) => e.preventDefault());
 input.value = new URL(location.href).searchParams.get("q") || "";
-form.hidden = false;
+if (input.value) load();

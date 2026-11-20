@@ -6,7 +6,8 @@
 
 .progress { display: none; }
 
-/* Scroll-driven animations. The hidden starting state lives only inside this guard. */
+/* Scroll-driven animations, only inside this guard. The rise-in moves cards but never fades them,
+   so text below the fold is never transparent (contrast audits, screenshots, slow scrollers). */
 @supports (animation-timeline: scroll()) {
   .progress {
     display: block; position: fixed; inset-block-start: 0; inset-inline: 0; z-index: 60;
@@ -18,7 +19,7 @@
   .card, .cat-tile, .note-list__item, .result {
     animation: evo-rise linear both; animation-timeline: view(); animation-range: entry 0% entry 70%;
   }
-  @keyframes evo-rise { from { opacity: 0; translate: 0 24px; } to { opacity: 1; translate: 0 0; } }
+  @keyframes evo-rise { from { translate: 0 32px; } to { translate: 0 0; } }
 }
 
 @media (prefers-reduced-motion: reduce) {
