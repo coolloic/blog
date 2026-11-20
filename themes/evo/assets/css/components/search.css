@@ -9,3 +9,6 @@
 .result__title { font-weight: 700; }
 .result__snippet { font-size: var(--size-small); line-height: 1.6; color: var(--color-muted); }
 .result mark { border-radius: 2px; background: color-mix(in srgb, var(--color-accent-fill) 30%, transparent); color: inherit; }
+.not-found__hero { display: grid; gap: var(--space-m); justify-items: start; max-inline-size: 40rem; }
+.not-found__code { font-family: var(--font-display); font-size: clamp(5rem, 15vw, 9rem); font-weight: 700; line-height: 1; color: var(--color-accent); }
+.not-found .search__form { position: static; inline-size: 100%; }

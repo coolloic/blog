@@ -1,0 +1,17 @@
+{{ define "main" }}
+<div class="container stack-section not-found">
+  <div class="not-found__hero">
+    <p class="not-found__code">404</p>
+    <h1>{{ partial "t.html" (dict "page" . "key" "not_found_title") }}</h1>
+    <p>{{ partial "t.html" (dict "page" . "key" "not_found_body") }}</p>
+    <form class="search__form" role="search" action="{{ "search/" | relURL }}">
+      <label class="visually-hidden" for="nf-q">{{ partial "t.html" (dict "page" . "key" "nav_search") }}</label>
+      <input id="nf-q" name="q" type="search" placeholder="{{ partial "t.html" (dict "page" . "key" "search_placeholder") }}">
+    </form>
+    <a class="button" href="{{ "" | relURL }}">{{ partial "t.html" (dict "page" . "key" "back_home") }}</a>
+  </div>
+  {{- with first 3 (where site.RegularPages "Section" "articles").ByDate.Reverse }}
+  <div class="card-grid">{{ range . }}{{ partial "card.html" . }}{{ end }}</div>
+  {{- end }}
+</div>
+{{ end }}

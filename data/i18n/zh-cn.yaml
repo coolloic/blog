@@ -67,3 +67,7 @@ search_count: "找到 %d 条结果"
 search_none: 没有找到相关内容，换个关键词试试。
 search_nojs: 搜索需要启用 JavaScript。也可以按分类浏览：
 search_idle: 不知道搜什么？从分类开始：
+og_locale: zh_CN
+not_found_title: 这页被 AI 幻觉掉了
+not_found_body: 你要找的页面不存在，可能已经搬家。试试搜索，或者回到首页。
+back_home: 回到首页

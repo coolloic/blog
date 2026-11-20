@@ -4,3 +4,7 @@ resources/_gen/
 .DS_Store
 raw/*
 !raw/README.md
+
+# Remotion (sub-project 3): rendered videos and dependencies
+video/out/
+video/node_modules/

@@ -11,7 +11,8 @@ for root, _, files in os.walk(out):
         for u in re.findall(r'(?:href|src|poster)=(?:"([^"]*)"|([^\s>]+))', html):
             u = u[0] or u[1]
             p = urlsplit(u)
-            if p.scheme or p.netloc or not p.path.startswith(base): continue
+            if p.scheme or p.netloc or not p.path.startswith('/'): continue
+            if not p.path.startswith(base): bad.setdefault(p.path, os.path.relpath(page, out)); continue  # root path missing the base
             rel = unquote(p.path[len(base):])
             target = os.path.join(out, rel)
             if rel == '' or rel.endswith('/'): target = os.path.join(target, 'index.html')

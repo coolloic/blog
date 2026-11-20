@@ -67,3 +67,7 @@ search_count: "%d results"
 search_none: Nothing found. Try another keyword.
 search_nojs: "Search needs JavaScript. You can browse by category instead:"
 search_idle: "Not sure what to search? Start with a category:"
+og_locale: en_US
+not_found_title: This page was hallucinated away
+not_found_body: The page you are looking for does not exist. Try searching, or go back home.
+back_home: Back to home

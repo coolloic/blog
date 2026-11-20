@@ -241,9 +241,11 @@ check_required_fields() {
 }
 
 check_jsonld() {
-  local r; r=$(perl -0777 -ne 'print $1 if /<script type="?application\/ld\+json"?>(.*?)<\/script>/s' "$OUT/articles/sample-1/index.html" | python3 -c '
+  local r; r=$(perl -0777 -ne 'print "$1\n\x1e" while /<script type="?application\/ld\+json"?>(.*?)<\/script>/sg' "$OUT/articles/sample-1/index.html" | python3 -c '
 import json,sys
-d=json.loads(sys.stdin.read()); items=d if isinstance(d,list) else d.get("@graph",[d])
+items=[]
+for block in sys.stdin.read().split("\x1e"):
+    if block.strip(): d=json.loads(block); items+=d if isinstance(d,list) else d.get("@graph",[d])
 a=[x for x in items if x.get("@type")=="Article"]
 assert a, "no Article"; a=a[0]
 for k in ("headline","datePublished","image"): assert a.get(k), k
@@ -345,6 +347,63 @@ check_progress_bar() {
   else fail check_progress_bar "reading progress bar should be on articles only"; fi
 }
 
-CHECKS=(check_theme_evo check_html_lang check_tokens_css check_light_dark_fallback check_theme_script_first check_nav check_skip_link check_wrap check_toggle_button check_tokens_unescaped check_home_featured check_home_featured_fallback check_home_lists_articles_not_wiki check_home_empty check_cover_box check_cover_video_slot check_follow_card check_no_format_errors check_category_order check_category_urls check_category_empty check_archives check_old_urls check_internal_links check_article_page check_wechat_footer check_video_vertical check_video_shortcode check_required_fields check_jsonld check_prev_next check_notes_page check_en_chrome check_code_copy check_wiki_body check_wiki_concept_page check_search_index check_search_page check_view_transitions check_scroll_driven_guarded check_reduced_motion check_js_budget check_progress_bar)
+check_seo() {
+  local h bad=""; h=$(html1 "$OUT/articles/sample-1/index.html")
+  echo "$h" | grep -qE '<link rel="?canonical"? href="?https://coolloic.github.io/blog/articles/sample-1/' || bad+="canonical "
+  echo "$h" | grep -qE '<meta name="?description"? content="?示例文章' || bad+="description "
+  echo "$h" | grep -qE 'property="?og:title"? content=' || bad+="og:title "
+  echo "$h" | grep -qE 'property="?og:image"? content="?https://' || bad+="og:image(absolute) "
+  echo "$h" | grep -qE 'property="?og:locale"? content="?zh_CN' || bad+="og:locale "
+  echo "$h" | grep -qE 'property="?og:type"? content="?article' || bad+="og:type "
+  echo "$h" | grep -qE 'name="?twitter:card"? content="?summary_large_image' || bad+="twitter:card "
+  html1 "$OUT/posts/hello-world/index.html" | grep -qE 'property="?og:locale"? content="?en_US' || bad+="og:locale(en) "
+  html1 "$OUT/index.html" | grep -qE 'property="?og:image"? content="?https://[^" >]+\.png' || bad+="home-og:image "
+  html1 "$OUT/index.html" | grep -qE '<link rel="?alternate"? type="?application/rss\+xml' || bad+="rss-link "
+  if [[ -z "$bad" ]]; then pass check_seo; else fail check_seo "missing: $bad"; fi
+}
+
+check_structured_data() {
+  local r; r=$(python3 - "$OUT" 2>&1 <<'PY'
+import json, re, sys
+out = sys.argv[1]
+def ld(path):
+    html = open(f"{out}/{path}", encoding="utf-8").read()
+    items = []
+    for block in re.findall(r'<script type="?application/ld\+json"?>(.*?)</script>', html, re.S):
+        d = json.loads(block); items += d if isinstance(d, list) else d.get("@graph", [d])
+    return {i.get("@type"): i for i in items}
+home = ld("index.html"); art = ld("articles/sample-1/index.html")
+w = home.get("WebSite"); assert w, "home: no WebSite"
+assert "{search_term_string}" in w["potentialAction"]["target"]["urlTemplate"], "home: no SearchAction"
+b = art.get("BreadcrumbList"); assert b and len(b["itemListElement"]) >= 2, "article: no BreadcrumbList"
+assert all(i["item"].startswith("http") for i in b["itemListElement"]), "breadcrumb items must be absolute"
+print("ok")
+PY
+)
+  if [[ "$r" == ok ]]; then pass check_structured_data; else fail check_structured_data "$r"; fi
+}
+
+check_sitemap() {
+  local f="$OUT/sitemap.xml"
+  if grep -q '/articles/sample-1/' "$f" && grep -q '/posts/hello-world/' "$f" && grep -q '<lastmod>' "$f" && grep -qE '^Sitemap: https://coolloic.github.io/blog/sitemap.xml' "$OUT/robots.txt"; then pass check_sitemap
+  else fail check_sitemap "sitemap lacks pages/lastmod or robots.txt lacks the Sitemap line"; fi
+}
+
+check_rss_scope() {
+  local f="$OUT/index.xml"
+  if grep -q '/articles/sample-1/' "$f" && grep -q '/posts/hello-world/' "$f" && ! grep -qE '<link>[^<]*/wiki/' "$f"; then pass check_rss_scope
+  else fail check_rss_scope "RSS must list articles and posts, not wiki"; fi
+}
+
+check_404() {
+  if [[ -f "$OUT/404.html" ]] && html1 "$OUT/404.html" | grep -qE 'href="?/blog/"?[ >]' && html1 "$OUT/404.html" | grep -qE 'type="?search'; then pass check_404
+  else fail check_404 "404 page missing, or without home link and search box"; fi
+}
+
+check_video_dir() {
+  if git check-ignore -q video/out/x.mp4 && [[ -f video/README.md ]]; then pass check_video_dir; else fail check_video_dir "video/out not ignored or video/README.md missing"; fi
+}
+
+CHECKS=(check_theme_evo check_html_lang check_tokens_css check_light_dark_fallback check_theme_script_first check_nav check_skip_link check_wrap check_toggle_button check_tokens_unescaped check_home_featured check_home_featured_fallback check_home_lists_articles_not_wiki check_home_empty check_cover_box check_cover_video_slot check_follow_card check_no_format_errors check_category_order check_category_urls check_category_empty check_archives check_old_urls check_internal_links check_article_page check_wechat_footer check_video_vertical check_video_shortcode check_required_fields check_jsonld check_prev_next check_notes_page check_en_chrome check_code_copy check_wiki_body check_wiki_concept_page check_search_index check_search_page check_view_transitions check_scroll_driven_guarded check_reduced_motion check_js_budget check_progress_bar check_seo check_structured_data check_sitemap check_rss_scope check_404 check_video_dir)
 for c in "${@:-${CHECKS[@]}}"; do $c; done
 [[ $FAILS -eq 0 ]] && echo "SITE ALL PASS" || { echo "$FAILS SITE CHECKS FAILED"; exit 1; }

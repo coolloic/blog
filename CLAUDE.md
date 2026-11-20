@@ -1,8 +1,9 @@
-# Loic's Blog + LLM Wiki
+# AI进化调研员 · Blog + LLM Wiki
 
-A Hugo (PaperMod) site with two kinds of content:
+A Hugo site (custom theme `themes/evo`, designs in `design/`) with three kinds of content:
 
-- **Blog posts** in `content/posts/`: dated essays written by the owner. Edit them only when asked.
+- **科普 articles** in `content/articles/<slug>/index.md`: Chinese explainers archived from the owner's WeChat account 「AI进化调研员」. They are written by the sync workflow (sub-project 2), not by hand. Non-draft articles must have `cover` and `wechat_url`, or the build fails. Categories use the fixed slugs in `data/categories.yaml`.
+- **Blog posts** in `content/posts/` (the English "Tech Notes"): dated essays written by the owner. Edit them only when asked.
 - **The wiki** in `content/wiki/`: a knowledge base on cutting-edge AI that **you (the LLM) maintain** from sources the owner collects. This follows Karpathy's "LLM Wiki" pattern.
 
 Preview with `hugo server -D` (served at `http://localhost:1313/blog/`). Pushing to `main` publishes the site. The owner has approved committing and pushing directly once `scripts/check-wiki.sh` passes; no need to ask first.
@@ -85,4 +86,6 @@ Append `- YYYY-MM-DD · lint · N issues` to the log. Fix issues only after the 
 
 ## Checks
 
-`bash scripts/check-wiki.sh` builds the site and verifies: the build passes with no warnings (so no broken links), the wiki section renders, `raw/` is ignored, wiki pages stay off the home page and archive, every wiki page is in the index, wiki pages are searchable, and every concept page cites a source. Run it after every change to the wiki.
+`bash scripts/check-wiki.sh` builds the site and verifies: the build passes with no warnings (so no broken links), the wiki section renders, `raw/` is ignored, wiki pages stay off the home page and archive, every wiki page is in the index, wiki pages are searchable, and every concept page cites a source. Run it after every change to the wiki. It also runs `scripts/check-site.sh` (theme checks: page language, tokens, home, cards, articles, search, motion guards, JS budget, SEO, internal links).
+
+The theme reads design tokens from `data/tokens.yaml` (shared with the future Remotion videos) and UI strings from `data/i18n/<lang>.yaml`. Pages under `posts/`, `wiki/` and `notes/` get `ui_lang: en` through cascade; everything else is Chinese.
