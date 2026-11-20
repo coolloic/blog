@@ -7,7 +7,7 @@
 | 1 | 读者画像与路径（微信来的 / 搜索来的 / 技术读者） | `01-reader-flow.mmd` | `01-reader-flow.png` | ✅ 已审（2026-11-21） |
 | 6 | 页面跳转（10 个页面、3 个视频位 🎬、中文页橙 / 英文页蓝） | `06-ui-nav.mmd` | `06-ui-nav.png` | ✅ 已审（2026-11-21） |
 
-功能说明书：`functional-spec.md`（待写）· UI 设计稿：`../../design/`（Stitch）· 待决问题：`open-questions.md`
+功能说明书：`functional-spec.md`（✅ 已审 2026-11-21）· UI 设计稿：`../../design/`（Stitch）· 待决问题：`open-questions.md`
 
 编号沿用 slack-off：状态机（02）、时序（03）、组件（04）、ER（05）对内容站不适用，省略。
 
