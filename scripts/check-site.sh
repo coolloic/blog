@@ -311,6 +311,40 @@ check_search_page() {
   else fail check_search_page "search page needs a search input, a <noscript> notice and the search script"; fi
 }
 
-CHECKS=(check_theme_evo check_html_lang check_tokens_css check_light_dark_fallback check_theme_script_first check_nav check_skip_link check_wrap check_toggle_button check_tokens_unescaped check_home_featured check_home_featured_fallback check_home_lists_articles_not_wiki check_home_empty check_cover_box check_cover_video_slot check_follow_card check_no_format_errors check_category_order check_category_urls check_category_empty check_archives check_old_urls check_internal_links check_article_page check_wechat_footer check_video_vertical check_video_shortcode check_required_fields check_jsonld check_prev_next check_notes_page check_en_chrome check_code_copy check_wiki_body check_wiki_concept_page check_search_index check_search_page)
+check_view_transitions() {
+  local css; css=$(css_all)
+  local card hero
+  card=$(perl -0777 -ne 'print $1 if /view-transition-name:\s*(cover-sample-1)/' "$OUT/index.html")
+  hero=$(perl -0777 -ne 'print $1 if /view-transition-name:\s*(cover-sample-1)/' "$OUT/articles/sample-1/index.html")
+  if [[ "$css" == *"@view-transition{navigation:auto"* && -n "$card" && "$card" == "$hero" ]]; then pass check_view_transitions
+  else fail check_view_transitions "need @view-transition{navigation:auto} and matching cover names (card=$card hero=$hero)"; fi
+}
+
+check_scroll_driven_guarded() {
+  local css="$OUT"/css/*.css r
+  if ! cat $css | tr -d ' \n' | grep -q 'animation-timeline'; then fail check_scroll_driven_guarded "no scroll-driven animations found"; return; fi
+  r=$(python3 scripts/check-css-guard.py $css 2>&1)
+  if [[ $? -eq 0 ]]; then pass check_scroll_driven_guarded; else fail check_scroll_driven_guarded "$(echo "$r" | head -3 | tr '\n' ';')"; fi
+}
+
+check_reduced_motion() {
+  local css; css=$(css_all)
+  local js; js=$(cat themes/evo/assets/js/video-inview.js 2>/dev/null)
+  if [[ "$css" == *"@media(prefers-reduced-motion:reduce)"* && "$css" == *"navigation:none"* && "$js" == *"matchMedia(\"(prefers-reduced-motion: reduce)\")"* ]]; then pass check_reduced_motion
+  else fail check_reduced_motion "need reduced-motion CSS (incl. @view-transition navigation:none) and a reduced-motion guard in video-inview.js"; fi
+}
+
+check_js_budget() {
+  local r; r=$(python3 scripts/check-js-budget.py "$OUT" /blog/ 20480 2>&1)
+  if [[ $? -eq 0 ]] && grep -rqE 'video-inview[.a-f0-9]*\.js' "$OUT/index.html"; then pass check_js_budget
+  else fail check_js_budget "$(echo "$r" | tr '\n' ';') (video-inview loaded on home: $(grep -c video-inview "$OUT/index.html"))"; fi
+}
+
+check_progress_bar() {
+  if html1 "$OUT/articles/sample-1/index.html" | grep -qE 'class="?progress' && ! html1 "$OUT/index.html" | grep -qE 'class="?progress'; then pass check_progress_bar
+  else fail check_progress_bar "reading progress bar should be on articles only"; fi
+}
+
+CHECKS=(check_theme_evo check_html_lang check_tokens_css check_light_dark_fallback check_theme_script_first check_nav check_skip_link check_wrap check_toggle_button check_tokens_unescaped check_home_featured check_home_featured_fallback check_home_lists_articles_not_wiki check_home_empty check_cover_box check_cover_video_slot check_follow_card check_no_format_errors check_category_order check_category_urls check_category_empty check_archives check_old_urls check_internal_links check_article_page check_wechat_footer check_video_vertical check_video_shortcode check_required_fields check_jsonld check_prev_next check_notes_page check_en_chrome check_code_copy check_wiki_body check_wiki_concept_page check_search_index check_search_page check_view_transitions check_scroll_driven_guarded check_reduced_motion check_js_budget check_progress_bar)
 for c in "${@:-${CHECKS[@]}}"; do $c; done
 [[ $FAILS -eq 0 ]] && echo "SITE ALL PASS" || { echo "$FAILS SITE CHECKS FAILED"; exit 1; }

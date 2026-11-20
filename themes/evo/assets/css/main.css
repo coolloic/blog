@@ -7,6 +7,7 @@
 @import "components/code.css" layer(components);
 @import "components/chroma.css" layer(components);
 @import "components/search.css" layer(components);
+@import "motion.css" layer(motion);
 
 @layer reset {
   *, *::before, *::after { box-sizing: border-box; }

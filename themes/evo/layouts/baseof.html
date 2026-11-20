@@ -11,5 +11,7 @@
 {{ block "main" . }}{{ end }}
 </main>
 {{ partial "footer.html" . }}
+{{- $vjs := resources.Get "js/video-inview.js" | js.Build (dict "minify" true "format" "esm") | fingerprint }}
+<script type="module" src="{{ $vjs.RelPermalink }}" integrity="{{ $vjs.Data.Integrity }}"></script>
 </body>
 </html>
