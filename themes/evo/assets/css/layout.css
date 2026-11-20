@@ -1,0 +1,45 @@
+.container { inline-size: min(100% - 2 * var(--space-m), 1200px); margin-inline: auto; }
+@media (min-width: 768px) { .container { inline-size: min(100% - 2 * var(--space-xl), 1200px); } }
+
+.skip-link { position: absolute; inset-inline-start: var(--space-m); inset-block-start: -10rem; z-index: 100; padding: var(--space-s) var(--space-m); border-radius: var(--radius-card); background: var(--color-accent-fill); color: var(--color-on-accent-fill); font-weight: 700; }
+.skip-link:focus { inset-block-start: var(--space-s); }
+main:focus { outline: none; }
+
+/* Header */
+.site-header { position: sticky; inset-block-start: 0; z-index: 40; border-block-end: 1px solid color-mix(in srgb, var(--color-border) 40%, transparent); background: color-mix(in srgb, var(--color-bg) 95%, transparent); }
+.site-header__inner { display: flex; align-items: center; justify-content: space-between; gap: var(--space-m); block-size: 4rem; }
+.brand { display: flex; align-items: center; gap: var(--space-s); color: var(--color-text); text-decoration: none; min-inline-size: 0; }
+.brand__mark { display: inline-grid; place-items: center; inline-size: 2rem; block-size: 2rem; flex: none; border: 1px solid var(--color-border); border-radius: var(--radius-chip); background: var(--color-surface2); color: var(--color-accent); }
+.brand__name { font-weight: 700; font-size: 1.125rem; white-space: nowrap; }
+.brand__tagline { display: none; font-family: var(--font-mono); font-size: var(--size-label); color: var(--color-muted); white-space: nowrap; }
+@media (min-width: 640px) { .brand__tagline { display: inline; } }
+.site-nav { display: none; gap: var(--space-l); font-size: var(--size-small); font-weight: 600; }
+.site-nav a, .mobile-menu__nav a { color: color-mix(in srgb, var(--color-text) 80%, transparent); text-decoration: none; }
+.site-nav a:hover, .site-nav a[aria-current], .mobile-menu__nav a[aria-current] { color: var(--color-accent); }
+.site-header__tools { display: flex; align-items: center; gap: var(--space-xs); }
+.icon-btn { display: inline-grid; place-items: center; inline-size: 2.5rem; block-size: 2.5rem; border: 1px solid transparent; border-radius: var(--radius-card); background: none; color: var(--color-text); cursor: pointer; }
+.icon-btn:hover { border-color: var(--color-border); background: var(--color-surface); }
+.theme-toggle[aria-pressed="true"] .theme-toggle__moon, .theme-toggle[aria-pressed="false"] .theme-toggle__sun { display: none; }
+@media (min-width: 900px) {
+  .site-nav { display: flex; }
+  .site-header__search, .site-header__menu { display: none; }
+}
+
+/* Mobile menu: native popover, no JS. */
+.mobile-menu { inset: 0; inline-size: 100%; max-inline-size: none; block-size: 100dvh; max-block-size: none; margin: 0; padding: var(--space-xl) var(--space-l); border: 0; background: var(--color-bg); color: var(--color-text); }
+.mobile-menu__close { position: absolute; inset-block-start: var(--space-m); inset-inline-end: var(--space-m); }
+.mobile-menu__nav { display: grid; gap: var(--space-m); margin-block-start: var(--space-xl); font-family: var(--font-display); font-size: 1.75rem; font-weight: 700; }
+
+/* Footer */
+.site-footer { margin-block-start: var(--space-section); border-block-start: 1px solid color-mix(in srgb, var(--color-border) 40%, transparent); background: color-mix(in srgb, var(--color-surface) 40%, transparent); }
+.site-footer__inner { display: grid; gap: var(--space-l); padding-block: var(--space-xl); }
+.site-footer__top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-l); }
+.follow-mini { display: flex; align-items: center; gap: var(--space-m); color: var(--color-text); text-decoration: none; }
+.follow-mini img { border-radius: var(--radius-chip); background: #fff; padding: 2px; }
+.follow-mini span { display: grid; line-height: 1.5; }
+.follow-mini strong { font-size: var(--size-small); }
+.follow-mini small { font-size: var(--size-label); color: var(--color-muted); }
+.site-footer__links { display: flex; flex-wrap: wrap; gap: var(--space-l); font-family: var(--font-mono); font-size: 13px; }
+.site-footer__links a { color: var(--color-muted); text-decoration: none; }
+.site-footer__links a:hover { color: var(--color-accent); }
+.site-footer__copy { padding-block-start: var(--space-m); border-block-start: 1px solid color-mix(in srgb, var(--color-border) 30%, transparent); font-family: var(--font-mono); font-size: 13px; color: var(--color-muted); }

@@ -1,2 +1,18 @@
 html_lang: en
 reading_time: "%d min read"
+skip_link: Skip to content
+nav_label: Main navigation
+nav_home: Home
+nav_articles: Articles
+nav_notes: Notes
+nav_archives: Archive
+nav_search: Search
+nav_about: About
+menu: Menu
+close: Close
+theme_toggle: Toggle dark mode
+site_tagline: AI Evolution Researcher
+footer_label: Footer links
+footer_follow: Follow AI进化调研员
+footer_follow_sub: Scan or search on WeChat for Chinese explainers
+copyright: "© %d AI进化调研员 · AI Evolution Researcher."

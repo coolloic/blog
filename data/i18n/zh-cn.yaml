@@ -1,2 +1,18 @@
 html_lang: zh-CN
 reading_time: "阅读 %d 分钟"
+skip_link: 跳到正文
+nav_label: 主导航
+nav_home: 首页
+nav_articles: 科普
+nav_notes: 技术笔记
+nav_archives: 归档
+nav_search: 搜索
+nav_about: 关于
+menu: 菜单
+close: 关闭
+theme_toggle: 切换深色模式
+site_tagline: AI Evolution Researcher
+footer_label: 页脚链接
+footer_follow: 关注 AI进化调研员
+footer_follow_sub: 微信扫码或搜索同名公众号
+copyright: "© %d AI进化调研员 · 保留所有权利。"

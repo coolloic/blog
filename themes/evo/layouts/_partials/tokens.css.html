@@ -1,18 +1,19 @@
-{{- /* CSS custom properties generated from data/tokens.yaml (shared with the Remotion videos). */ -}}
+{{- /* CSS custom properties generated from data/tokens.yaml (shared with the Remotion videos).
+     Returns a string (not template output) so html/template does not escape the quotes in font names. */ -}}
 {{- $t := hugo.Data.tokens -}}
-@layer tokens {
-:root { color-scheme: light dark;
-{{- range $k, $v := $t.color }} --color-{{ $k }}: light-dark({{ $v.light }}, {{ $v.dark }});{{ end }}
-{{- range $k, $v := $t.font }} --font-{{ $k }}: {{ $v }};{{ end }}
-{{- range $k, $v := $t.size }} --size-{{ $k }}: {{ $v }};{{ end }}
-{{- range $k, $v := $t.radius }} --radius-{{ $k }}: {{ $v }};{{ end }}
-{{- range $k, $v := $t.space }} --space-{{ $k }}: {{ $v }};{{ end }}
-{{- range $k, $v := $t.motion }} --motion-{{ $k }}: {{ $v }};{{ end }} }
+{{- $vars := slice -}}
+{{- range $k, $v := $t.color }}{{ $vars = $vars | append (printf "--color-%s: light-dark(%s, %s);" $k $v.light $v.dark) }}{{ end -}}
+{{- range $g := slice "font" "size" "radius" "space" "motion" }}{{ range $k, $v := index $t $g }}{{ $vars = $vars | append (printf "--%s-%s: %s;" $g $k $v) }}{{ end }}{{ end -}}
+{{- $light := slice -}}{{- $dark := slice -}}
+{{- range $k, $v := $t.color }}{{ $light = $light | append (printf "--color-%s: %s;" $k $v.light) }}{{ $dark = $dark | append (printf "--color-%s: %s;" $k $v.dark) }}{{ end -}}
+{{- $css := printf `@layer tokens {
+:root { color-scheme: light dark; %s }
 :root[data-theme=light] { color-scheme: light; }
 :root[data-theme=dark] { color-scheme: dark; }
 @supports not (color: light-dark(#fff, #000)) {
-  :root {{ "{" }}{{ range $k, $v := $t.color }} --color-{{ $k }}: {{ $v.light }};{{ end }} }
-  @media (prefers-color-scheme: dark) { :root:not([data-theme=light]) {{ "{" }}{{ range $k, $v := $t.color }} --color-{{ $k }}: {{ $v.dark }};{{ end }} } }
-  :root[data-theme=dark] {{ "{" }}{{ range $k, $v := $t.color }} --color-{{ $k }}: {{ $v.dark }};{{ end }} }
+  :root { %s }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme=light]) { %s } }
+  :root[data-theme=dark] { %s }
 }
-}
+}` (delimit $vars " ") (delimit $light " ") (delimit $dark " ") (delimit $dark " ") -}}
+{{- return $css -}}

@@ -60,39 +60,19 @@ params:
     appendFilePath: true
 
 menu:
+  # Labels come from data/i18n/<lang>.yaml (nav_<identifier>) so they follow the page language.
   main:
-    - identifier: posts
-      name: Posts
-      url: /posts/
-      weight: 10
-    - identifier: wiki
-      name: Wiki
-      url: /wiki/
-      weight: 15
-    - identifier: archives
-      name: Archive
-      url: /archives/
-      weight: 20
-    - identifier: tags
-      name: Tags
-      url: /tags/
-      weight: 30
-    - identifier: search
-      name: Search
-      url: /search/
-      weight: 40
-    - identifier: now
-      name: Now
-      url: /now/
-      weight: 45
-    - identifier: about
-      name: About
-      url: /about/
-      weight: 50
-    - identifier: cv
-      name: CV
-      url: https://coolloic.github.io/
-      weight: 60
+    - {identifier: home, name: 首页, url: "", weight: 10}
+    - {identifier: articles, name: 科普, url: "articles/", weight: 20}
+    - {identifier: notes, name: 技术笔记, url: "notes/", weight: 30}
+    - {identifier: archives, name: 归档, url: "archives/", weight: 40}
+    - {identifier: search, name: 搜索, url: "search/", weight: 50}
+    - {identifier: about, name: 关于, url: "about/", weight: 60}
+  footer:
+    - {identifier: cv, name: CV, url: "https://coolloic.github.io/", weight: 10}
+    - {identifier: now, name: Now, url: "now/", weight: 20}
+    - {identifier: rss, name: RSS, url: "index.xml", weight: 30}
+    - {identifier: github, name: GitHub, url: "https://github.com/coolloic", weight: 40}
 
 markup:
   highlight:
