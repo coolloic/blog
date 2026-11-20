@@ -56,3 +56,9 @@ callout_tip: 划重点
 callout_note: 注意
 callout_warning: 小心
 post_nav: 上下篇
+copy: 复制
+copied: 已复制
+updated: 更新于
+suggest_changes: 提出修改
+wiki_card_title: AI Wiki — 由 LLM 维护的知识库
+wiki_card_stats: "%d 个概念 · %d 个来源"

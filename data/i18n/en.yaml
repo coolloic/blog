@@ -56,3 +56,9 @@ callout_tip: Key point
 callout_note: Note
 callout_warning: Warning
 post_nav: More posts
+copy: Copy
+copied: Copied
+updated: Updated
+suggest_changes: Suggest changes
+wiki_card_title: AI Wiki — an LLM-maintained knowledge base
+wiki_card_stats: "%d concepts · %d sources"

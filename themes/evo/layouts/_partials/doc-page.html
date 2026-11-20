@@ -1,0 +1,24 @@
+{{- /* Shared English long-form page: posts and wiki pages. dict "page" . "kind" "post|wiki" */ -}}
+{{- $p := .page -}}
+<article class="article article--doc">
+  <div class="container">
+    <header class="article__head">
+      <div class="article-meta">
+        {{- if eq .kind "post" }}{{ partial "meta-line.html" $p }}{{ else }}{{ with $p.Lastmod }}<span class="meta-line">{{ partial "t.html" (dict "page" $p "key" "updated") }} <time datetime="{{ .Format "2006-01-02" }}">{{ .Format "2006-01-02" }}</time></span>{{ end }}{{ end }}
+      </div>
+      <h1>{{ $p.Title }}</h1>
+      {{ with $p.Params.summary }}<p class="article__summary">{{ . }}</p>{{ end }}
+      {{ partial "toc.html" (dict "page" $p "where" "inline") }}
+    </header>
+    <div class="article__layout">
+      <div class="prose">{{ $p.Content }}</div>
+      {{ partial "toc.html" (dict "page" $p "where" "side") }}
+    </div>
+    <div class="article__after">
+      {{ with $p.Params.tags }}<ul class="tag-cloud">{{ range . }}<li><a href="{{ printf "tags/%s/" (urlize .) | relURL }}">#{{ . }}</a></li>{{ end }}</ul>{{ end }}
+      {{ if eq .kind "post" }}{{ partial "post-nav.html" $p }}{{ end }}
+      {{ with site.Params.editPost }}{{ $base := .URL }}{{ with $p.File }}<p class="meta-line"><a href="{{ $base }}/{{ .Path }}" rel="noopener">{{ partial "t.html" (dict "page" $.page "key" "suggest_changes") }} →</a></p>{{ end }}{{ end }}
+    </div>
+  </div>
+</article>
+{{ partial "code-copy.html" $p }}

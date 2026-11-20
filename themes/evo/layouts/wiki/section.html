@@ -1,0 +1,6 @@
+{{ define "main" }}
+<div class="container stack-section">
+  <header class="page-head"><h1>{{ .Title }}</h1>{{ with .Params.summary }}<p class="page-head__desc">{{ . }}</p>{{ end }}</header>
+  <div class="prose prose--wide wiki-index">{{ .Content }}</div>
+</div>
+{{ end }}

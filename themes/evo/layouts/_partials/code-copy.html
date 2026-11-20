@@ -1,0 +1,5 @@
+{{- /* Load the copy script on any page whose content has a code block. Content renders before this runs. */ -}}
+{{- if strings.Contains .Content "data-copy" }}
+{{- $js := resources.Get "js/code-copy.js" | js.Build (dict "minify" true "format" "esm") | fingerprint }}
+<script type="module" src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}"></script>
+{{- end -}}

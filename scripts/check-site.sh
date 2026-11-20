@@ -260,6 +260,42 @@ check_prev_next() {
   else fail check_prev_next "prev/next missing or leaves articles: $links"; fi
 }
 
-CHECKS=(check_theme_evo check_html_lang check_tokens_css check_light_dark_fallback check_theme_script_first check_nav check_skip_link check_wrap check_toggle_button check_tokens_unescaped check_home_featured check_home_featured_fallback check_home_lists_articles_not_wiki check_home_empty check_cover_box check_cover_video_slot check_follow_card check_no_format_errors check_category_order check_category_urls check_category_empty check_archives check_old_urls check_internal_links check_article_page check_wechat_footer check_video_vertical check_video_shortcode check_required_fields check_jsonld check_prev_next)
+check_notes_page() {
+  local h n bad=""; h=$(html1 "$OUT/notes/index.html" 2>/dev/null)
+  n=$(echo "$h" | grep -oE 'href="?/blog/posts/[a-z0-9-]+/' | sort -u | wc -l | tr -d ' ')
+  [[ "$n" -ge 4 ]] || bad+="posts=$n "
+  echo "$h" | grep -qE 'href="?/blog/wiki/"?[ >]' || bad+="wiki-link "
+  echo "$h" | grep -qE '<html lang="?en' || bad+="lang "
+  if [[ -z "$bad" ]]; then pass check_notes_page; else fail check_notes_page "$bad"; fi
+}
+
+check_en_chrome() {
+  local h; h=$(html1 "$OUT/posts/hello-world/index.html")
+  if [[ "$h" == *"min read"* && "$h" != *"分钟"* && "$h" != *"目录"* ]]; then pass check_en_chrome
+  else fail check_en_chrome "English post page should use English UI strings only"; fi
+}
+
+check_code_copy() {
+  local f="$OUT/posts/modern-web-guidelines/index.html"
+  local pres btns; pres=$(grep -oE '<pre[ >]' "$f" | wc -l | tr -d ' '); btns=$(grep -oE '<button[^>]*data-copy' "$f" | wc -l | tr -d ' ')
+  local mer; mer=$(grep -oE '<pre class="?mermaid' "$f" | wc -l | tr -d ' ')
+  if [[ $((pres - mer)) -gt 0 && "$btns" -eq $((pres - mer)) ]]; then pass check_code_copy
+  else fail check_code_copy "code blocks=$((pres - mer)) copy buttons=$btns"; fi
+}
+
+check_wiki_body() {
+  if html1 "$OUT/wiki/index.html" | grep -qE '<h2[^>]*>Concepts'; then pass check_wiki_body
+  else fail check_wiki_body "wiki index does not render _index.md body"; fi
+}
+
+check_wiki_concept_page() {
+  local h bad=""; h=$(html1 "$OUT/wiki/concepts/agent-loop/index.html")
+  [[ "$h" == *'class="prose'* || "$h" == *"class=prose"* ]] || bad+="prose "
+  echo "$h" | grep -qE 'href="?/blog/wiki/sources/' || bad+="sources-links "
+  echo "$h" | grep -qiE 'Updated|lastmod' || bad+="updated-date "
+  if [[ -z "$bad" ]]; then pass check_wiki_concept_page; else fail check_wiki_concept_page "$bad"; fi
+}
+
+CHECKS=(check_theme_evo check_html_lang check_tokens_css check_light_dark_fallback check_theme_script_first check_nav check_skip_link check_wrap check_toggle_button check_tokens_unescaped check_home_featured check_home_featured_fallback check_home_lists_articles_not_wiki check_home_empty check_cover_box check_cover_video_slot check_follow_card check_no_format_errors check_category_order check_category_urls check_category_empty check_archives check_old_urls check_internal_links check_article_page check_wechat_footer check_video_vertical check_video_shortcode check_required_fields check_jsonld check_prev_next check_notes_page check_en_chrome check_code_copy check_wiki_body check_wiki_concept_page)
 for c in "${@:-${CHECKS[@]}}"; do $c; done
 [[ $FAILS -eq 0 ]] && echo "SITE ALL PASS" || { echo "$FAILS SITE CHECKS FAILED"; exit 1; }
