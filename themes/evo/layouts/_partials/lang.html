@@ -1,0 +1,2 @@
+{{- /* The page's UI language: "en" for Tech Notes pages (set by cascade), otherwise "zh-cn". */ -}}
+{{- return (cond (eq (string .Params.ui_lang) "en") "en" "zh-cn") -}}

@@ -137,6 +137,7 @@ check_all_wiki_pages_rendered() {
 }
 
 for c in check_build check_wiki_section check_raw_ignored check_home_posts_only check_broken_link_fails check_index_complete check_search_includes_wiki check_concepts_cite_sources check_rss_posts_only check_ci_strict check_unsafe_link_neutralised check_mermaid_rendered check_mermaid_loaded_everywhere check_cv_linked check_all_wiki_pages_rendered; do $c; done
+bash scripts/check-site.sh || FAILS=$((FAILS+1))
 # rebuild cleanly so later checks see real output
 hugo --gc --minify --quiet >/dev/null 2>&1
 [[ $FAILS -eq 0 ]] && echo "ALL PASS" || { echo "$FAILS FAILED"; exit 1; }

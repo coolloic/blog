@@ -1,9 +1,14 @@
 # Change baseURL to your real address once deployed,
 # e.g. https://<github-username>.github.io/blog/ or a custom domain.
 baseURL: https://coolloic.github.io/blog/
-locale: en-us
-title: Loic's Blog
-theme: PaperMod
+locale: zh-cn
+title: AI进化调研员
+theme: evo
+hasCJKLanguage: true
+
+taxonomies:
+  category: categories
+  tag: tags
 
 enableRobotsTXT: true
 buildDrafts: false
@@ -20,7 +25,8 @@ outputs:
 
 params:
   env: production
-  description: "Technical notes on cutting-edge AI: models, agents, and the tools around them."
+  description: "AI进化调研员：把前沿 AI 讲清楚。公众号文章的长期归档，附英文技术笔记与 AI Wiki。"
+  imageBase: "https://pub-PLACEHOLDER.r2.dev"
   author: Loic
   defaultTheme: auto # follows the reader's light/dark preference
   ShowReadingTime: true
@@ -33,7 +39,7 @@ params:
   ShowWordCount: false
   ShowRssButtonInSectionTermList: true
   disableSpecial1stPost: false
-  mainSections: [posts] # keep wiki pages off the home page, archive and post nav
+  mainSections: [articles, posts] # keep wiki pages off the home page, archive and post nav
 
   homeInfoParams:
     Title: "Hi, I'm Loic 👋"

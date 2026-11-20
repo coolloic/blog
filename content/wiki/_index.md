@@ -3,6 +3,7 @@ title: Wiki
 summary: "An LLM-maintained knowledge base on cutting-edge AI."
 category: meta
 cascade:
+  ui_lang: en
   hiddenInRss: true # keep wiki pages out of the blog's RSS feed
 ---
 

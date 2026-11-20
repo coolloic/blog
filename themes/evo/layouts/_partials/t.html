@@ -1,0 +1,5 @@
+{{- /* UI string for the page's language: partial "t.html" (dict "page" . "key" "reading_time") */ -}}
+{{- $lang := partial "lang.html" .page -}}
+{{- $s := index hugo.Data.i18n $lang .key -}}
+{{- if not $s }}{{ errorf "t.html: missing UI string %q for language %q" .key $lang }}{{ end -}}
+{{- return $s -}}

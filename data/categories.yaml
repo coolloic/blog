@@ -1,0 +1,5 @@
+# Category slugs are part of URLs (/categories/<slug>/): never rename a slug once live. Names can change.
+models:   {name: 新模型速递, desc: 拆解前沿模型的架构、能力边界与基准实测。}
+concepts: {name: 概念科普, desc: 用日常直觉讲透注意力、RAG 与智能体原理。}
+tools:    {name: 工具实测, desc: 本地部署、工作流插件与日常效率横向对比。}
+industry: {name: 行业观察, desc: 算力经济学、开源生态与产品演进的冷静记录。}

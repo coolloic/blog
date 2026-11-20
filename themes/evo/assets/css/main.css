@@ -1,0 +1,19 @@
+@layer reset, tokens, base, layout, components, motion;
+
+@layer reset {
+  *, *::before, *::after { box-sizing: border-box; }
+  body, h1, h2, h3, h4, p, figure, blockquote, ul, ol { margin: 0; }
+  img, video, svg { display: block; max-inline-size: 100%; block-size: auto; }
+}
+
+@layer base {
+  body {
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: var(--size-body);
+    line-height: 1.8;
+    -webkit-text-size-adjust: 100%;
+  }
+  a { color: var(--color-accent); }
+}

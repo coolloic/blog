@@ -1,0 +1,12 @@
+{{- $lang := partial "lang.html" . -}}
+<!doctype html>
+<html lang="{{ index hugo.Data.i18n $lang "html_lang" }}" data-lang="{{ $lang }}">
+<head>
+{{ partial "head.html" . }}
+</head>
+<body>
+<main id="main">
+{{ block "main" . }}{{ end }}
+</main>
+</body>
+</html>

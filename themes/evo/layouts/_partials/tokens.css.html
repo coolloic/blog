@@ -1,0 +1,18 @@
+{{- /* CSS custom properties generated from data/tokens.yaml (shared with the Remotion videos). */ -}}
+{{- $t := hugo.Data.tokens -}}
+@layer tokens {
+:root { color-scheme: light dark;
+{{- range $k, $v := $t.color }} --color-{{ $k }}: light-dark({{ $v.light }}, {{ $v.dark }});{{ end }}
+{{- range $k, $v := $t.font }} --font-{{ $k }}: {{ $v }};{{ end }}
+{{- range $k, $v := $t.size }} --size-{{ $k }}: {{ $v }};{{ end }}
+{{- range $k, $v := $t.radius }} --radius-{{ $k }}: {{ $v }};{{ end }}
+{{- range $k, $v := $t.space }} --space-{{ $k }}: {{ $v }};{{ end }}
+{{- range $k, $v := $t.motion }} --motion-{{ $k }}: {{ $v }};{{ end }} }
+:root[data-theme=light] { color-scheme: light; }
+:root[data-theme=dark] { color-scheme: dark; }
+@supports not (color: light-dark(#fff, #000)) {
+  :root {{ "{" }}{{ range $k, $v := $t.color }} --color-{{ $k }}: {{ $v.light }};{{ end }} }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme=light]) {{ "{" }}{{ range $k, $v := $t.color }} --color-{{ $k }}: {{ $v.dark }};{{ end }} } }
+  :root[data-theme=dark] {{ "{" }}{{ range $k, $v := $t.color }} --color-{{ $k }}: {{ $v.dark }};{{ end }} }
+}
+}
