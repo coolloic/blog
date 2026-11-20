@@ -10,7 +10,7 @@
       <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006-01-02" }}</time>
       <div>
         <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
-        {{ with .Summary }}<p>{{ . | plainify | truncate 160 }}</p>{{ end }}
+        {{ with .Summary }}<p>{{ . | plainify | htmlUnescape | truncate 160 }}</p>{{ end }}
         {{ with .Params.tags }}<p class="note-list__tags">{{ range . }}<span>#{{ . }}</span>{{ end }}</p>{{ end }}
       </div>
     </li>

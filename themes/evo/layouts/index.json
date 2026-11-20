@@ -1,10 +1,11 @@
-{{- /* Search index: articles, posts and wiki pages. Content is capped (wiki 400, others 1200 chars) so the file stays light on phones. */ -}}
+{{- /* Search index: articles, posts and wiki pages. Content is capped (wiki 400, others 1200 chars) so the file stays light on phones.
+     htmlUnescape runs again after truncate, which HTML-escapes plain strings. */ -}}
 {{- $out := slice -}}
 {{- range where site.RegularPages "Section" "in" (slice "articles" "posts" "wiki") -}}
   {{- $out = $out | append (dict
       "title" .Title
-      "summary" (.Summary | plainify | strings.TrimSpace | truncate 200)
-      "content" (.Plain | strings.TrimSpace | truncate (cond (eq .Section "wiki") 400 1200) "")
+      "summary" (.Summary | plainify | htmlUnescape | strings.TrimSpace | truncate 200 | htmlUnescape)
+      "content" (.Plain | htmlUnescape | strings.TrimSpace | truncate (cond (eq .Section "wiki") 400 1200) "" | htmlUnescape)
       "permalink" .RelPermalink
       "section" .Section
       "lang" (partial "lang.html" .)) -}}

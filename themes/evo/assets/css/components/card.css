@@ -1,6 +1,6 @@
-.stack-section { display: grid; gap: var(--space-section); padding-block: var(--space-xl) 0; }
+.stack-section { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-section); padding-block: var(--space-xl) 0; }
 @media (min-width: 768px) { .stack-section { padding-block-start: var(--space-section); } }
-.stack { display: grid; gap: var(--space-l); }
+.stack { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-l); }
 .section-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--space-m); padding-block-end: var(--space-s); border-block-end: 1px solid color-mix(in srgb, var(--color-border) 40%, transparent); }
 .section-head h2 { font-size: var(--size-h3); }
 .section-head p { font-size: var(--size-small); color: var(--color-muted); }

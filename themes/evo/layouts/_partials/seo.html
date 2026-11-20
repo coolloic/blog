@@ -1,16 +1,18 @@
 {{- /* SEO head tags: description, canonical, Open Graph, Twitter, verification, feeds, JSON-LD. */ -}}
 {{- $lang := partial "lang.html" . -}}
-{{- $desc := .Params.summary | default .Summary | default site.Params.description | plainify | strings.TrimSpace | truncate 160 -}}
+{{- $desc := .Params.summary | default .Summary | default site.Params.description | plainify | htmlUnescape | strings.TrimSpace | truncate 160 -}}
 {{- if .IsHome }}{{ $desc = site.Params.description }}{{ end -}}
 {{- $img := partial "abs-img-url.html" site.Params.shareImage -}}
 {{- with .Params.cover }}{{ if not (strings.HasSuffix . ".svg") }}{{ $img = partial "abs-img-url.html" . }}{{ end }}{{ end -}}
 {{- $isArticle := and .IsPage (in (slice "articles" "posts") .Section) -}}
+{{- $canon := .Permalink -}}
+{{- if or (and .IsSection (eq .Section "articles")) (and (eq .Kind "term") (eq .Data.Plural "categories")) }}{{ $canon = (partial "article-pager.html" .).URL | absURL }}{{ end -}}
 <meta name="description" content="{{ $desc }}">
-<link rel="canonical" href="{{ .Permalink }}">
+<link rel="canonical" href="{{ $canon }}">
 <meta property="og:site_name" content="{{ site.Title }}">
 <meta property="og:title" content="{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }}{{ end }}">
 <meta property="og:description" content="{{ $desc }}">
-<meta property="og:url" content="{{ .Permalink }}">
+<meta property="og:url" content="{{ $canon }}">
 <meta property="og:image" content="{{ $img }}">
 <meta property="og:locale" content="{{ index hugo.Data.i18n $lang "og_locale" }}">
 <meta property="og:type" content="{{ if $isArticle }}article{{ else }}website{{ end }}">

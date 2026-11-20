@@ -7,8 +7,9 @@ const urls = (q) => search(q).map((d) => new URL(d.permalink, "http://x").pathna
 const cases = [
   ["MCP finds the wiki concept", () => urls("MCP").some((u) => u.endsWith("/wiki/concepts/model-context-protocol/"))],
   ["Chinese term finds a sample article", () => urls("示例").some((u) => u.endsWith("/articles/sample-1/"))],
-  ["mixed zh/en query matches", () => urls("agent 示例").length > 0],
-  ["mixed query is an intersection", () => urls("agent 示例").every((u) => u.includes("/articles/sample-"))],
+  ["mixed zh/en query reaches both sections", () => { const u = urls("agent 示例"); return u.some((x) => x.includes("/articles/")) && u.some((x) => x.includes("/wiki/") || x.includes("/posts/")); }],
+  ["pages matching every term rank first", () => urls("agent 示例")[0].includes("/articles/sample-")],
+  ["a Chinese term absent from English notes does not hide them", () => urls("agent 记忆").some((x) => x.includes("/wiki/") || x.includes("/posts/"))],
   ["empty query returns nothing", () => search("").length === 0 && search("   ").length === 0],
 ];
 let failed = 0;

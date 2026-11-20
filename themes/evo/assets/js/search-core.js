@@ -9,22 +9,24 @@ const OPTIONS = {
   includeScore: true,
 };
 
-// Each whitespace-separated term is searched on its own and the results are intersected,
-// so a mixed query like "agent 记忆" works even though Fuse scores whole strings.
+// Each whitespace-separated term is searched on its own and the results are merged (a union):
+// pages matching more terms rank first, then by average Fuse score. A mixed query like
+// "agent 记忆" therefore still finds English notes that can never contain the Chinese term.
 export function makeSearch(index) {
   const fuse = new Fuse(index, OPTIONS);
   return (query) => {
     const terms = String(query).trim().split(/\s+/).filter(Boolean);
     if (!terms.length) return [];
-    let best = null;
+    const merged = new Map();
     for (const term of terms) {
-      const hits = new Map(fuse.search(term).map((r) => [r.item.permalink, r]));
-      if (!best) { best = hits; continue; }
-      for (const [k, r] of best) {
-        const h = hits.get(k);
-        if (!h) best.delete(k); else r.score += h.score;
+      for (const r of fuse.search(term)) {
+        const m = merged.get(r.item.permalink) ?? { item: r.item, hits: 0, score: 0 };
+        m.hits += 1; m.score += r.score;
+        merged.set(r.item.permalink, m);
       }
     }
-    return [...best.values()].sort((a, b) => a.score - b.score).map((r) => r.item);
+    return [...merged.values()]
+      .sort((a, b) => b.hits - a.hits || a.score / a.hits - b.score / b.hits)
+      .map((m) => m.item);
   };
 }

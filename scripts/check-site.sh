@@ -420,6 +420,52 @@ check_rise_no_fade() {
   else pass check_rise_no_fade; fi
 }
 
-CHECKS=(check_theme_evo check_html_lang check_tokens_css check_light_dark_fallback check_theme_script_first check_nav check_skip_link check_wrap check_toggle_button check_tokens_unescaped check_home_featured check_home_featured_fallback check_home_lists_articles_not_wiki check_home_empty check_cover_box check_cover_video_slot check_follow_card check_no_format_errors check_category_order check_category_urls check_category_empty check_archives check_old_urls check_internal_links check_article_page check_wechat_footer check_video_vertical check_video_shortcode check_required_fields check_jsonld check_prev_next check_notes_page check_en_chrome check_code_copy check_wiki_body check_wiki_concept_page check_search_index check_search_page check_view_transitions check_scroll_driven_guarded check_reduced_motion check_js_budget check_progress_bar check_seo check_structured_data check_sitemap check_rss_scope check_404 check_video_dir check_no_blocking_fonts check_search_form_visible check_rise_no_fade)
+check_layout_375() {
+  local port=$((20000 + RANDOM % 20000)) srv r
+  mkdir -p "$OUT.srv" && ln -sfn "$OUT" "$OUT.srv/blog"
+  python3 -m http.server "$port" -d "$OUT.srv" >/dev/null 2>&1 & srv=$!
+  sleep 1
+  hugo -D --quiet --panicOnWarning -d "$OUT.layout" --baseURL "http://localhost:$port/blog/" >/dev/null 2>&1
+  ln -sfn "$OUT.layout" "$OUT.srv/blog"
+  r=$(node scripts/check-layout.mjs "http://localhost:$port/blog/" "" articles/sample-3/ articles/ posts/modern-web-guidelines/ posts/hello-world/ wiki/concepts/agent-loop/ wiki/ notes/ archives/ search/ about/ 2>&1); local rc=$?
+  kill $srv 2>/dev/null; wait $srv 2>/dev/null; rm -rf "$OUT.srv" "$OUT.layout"
+  if [[ $rc -eq 0 ]]; then pass check_layout_375; else fail check_layout_375 "$(echo "$r" | head -6 | tr '\n' ';')"; fi
+}
+
+manyarticles() { for i in $(seq 1 10); do mkdir -p articles/zz-many-$i; printf -- '---\ntitle: "分页测试 %s"\ndate: 2026-10-%02dT08:00:00+08:00\nsummary: "x"\ncategories: ["concepts"]\ncover: "/images/placeholder-cover.svg"\nwechat_url: "https://mp.weixin.qq.com/s/p"\ndraft: true\n---\nx\n' $i $i > articles/zz-many-$i/index.md; done; }
+check_paged_canonical() {
+  local o; o=$(mktemp -d)
+  build_variant "$o" manyarticles || { fail check_paged_canonical "variant build failed"; rm -rf "$o"; return; }
+  local c1 c2 t2; c1=$(grep -oE '<link rel="?canonical"? href="?[^" >]+' "$o/articles/page/2/index.html" | sed -E 's/.*href="?//')
+  t2=$(grep -oE '<link rel="?canonical"? href="?[^" >]+' "$o/categories/concepts/page/2/index.html" | sed -E 's/.*href="?//')
+  if [[ "$c1" == */articles/page/2/ && "$t2" == */categories/concepts/page/2/ ]]; then pass check_paged_canonical
+  else fail check_paged_canonical "page 2 canonical: articles=$c1 concepts=$t2"; fi
+  rm -rf "$o"
+}
+
+check_popover_fallback() {
+  if css_all | grep -q '@supportsnotselector(:popover-open)'; then pass check_popover_fallback
+  else fail check_popover_fallback "no fallback for browsers without popover (menu would show permanently)"; fi
+}
+
+check_no_double_entities() {
+  local bad="" f
+  for f in index.json index.xml notes/index.html posts/modern-web-guidelines/index.html articles/sample-1/index.html; do
+    grep -qE '&amp;(r|l)(s|d)quo;|&amp;#[0-9]+;' "$OUT/$f" && bad+="$f "
+  done
+  grep -qE '(&|\\u0026)(amp;)?((r|l)(s|d)quo|#[0-9]+);' "$OUT/index.json" && bad+="index.json(entity text) "
+  perl -0777 -ne 'while (/<script type="?application\/ld\+json"?>(.*?)<\/script>/sg) { exit 1 if $1 =~ /&(r|l)(s|d)quo;/ }' "$OUT/posts/modern-web-guidelines/index.html" "$OUT/articles/sample-1/index.html" || bad+="json-ld "
+  if [[ -z "$bad" ]]; then pass check_no_double_entities; else fail check_no_double_entities "HTML entities leak into: $bad"; fi
+}
+
+tagsummary() { sed -i.bak 's|^summary: "示例文章（占位），用于开发主题。"|summary: "示例：<think> 标签和 a<b 的写法。"|' articles/sample-1/index.md && rm -f articles/sample-1/index.md.bak; }
+check_summary_with_angle_brackets() {
+  local o; o=$(mktemp -d)
+  if build_variant "$o" tagsummary && grep -q 'think' "$o/articles/sample-1/index.html"; then pass check_summary_with_angle_brackets
+  else fail check_summary_with_angle_brackets "a summary containing <tag> or < breaks the --panicOnWarning build"; fi
+  rm -rf "$o"
+}
+
+CHECKS=(check_theme_evo check_html_lang check_tokens_css check_light_dark_fallback check_theme_script_first check_nav check_skip_link check_wrap check_toggle_button check_tokens_unescaped check_home_featured check_home_featured_fallback check_home_lists_articles_not_wiki check_home_empty check_cover_box check_cover_video_slot check_follow_card check_no_format_errors check_category_order check_category_urls check_category_empty check_archives check_old_urls check_internal_links check_article_page check_wechat_footer check_video_vertical check_video_shortcode check_required_fields check_jsonld check_prev_next check_notes_page check_en_chrome check_code_copy check_wiki_body check_wiki_concept_page check_search_index check_search_page check_view_transitions check_scroll_driven_guarded check_reduced_motion check_js_budget check_progress_bar check_seo check_structured_data check_sitemap check_rss_scope check_404 check_video_dir check_no_blocking_fonts check_search_form_visible check_rise_no_fade check_layout_375 check_paged_canonical check_popover_fallback check_no_double_entities check_summary_with_angle_brackets)
 for c in "${@:-${CHECKS[@]}}"; do $c; done
 [[ $FAILS -eq 0 ]] && echo "SITE ALL PASS" || { echo "$FAILS SITE CHECKS FAILED"; exit 1; }

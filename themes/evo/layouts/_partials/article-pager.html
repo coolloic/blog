@@ -1,0 +1,4 @@
+{{- /* The paginator for an article listing (the articles section or a category term). Shared by the
+     list template and the SEO partial so both see the same pager (Hugo memoizes .Paginate per page). */ -}}
+{{- $pages := cond (eq .Kind "term") .Pages .RegularPages -}}
+{{- return (.Paginate $pages.ByDate.Reverse 9) -}}

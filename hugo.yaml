@@ -11,6 +11,9 @@ taxonomies:
   tag: tags
 
 enableRobotsTXT: true
+# Synced WeChat text can contain things like <think>; Goldmark drops raw HTML, which is fine,
+# but its warning would fail the --panicOnWarning build.
+ignoreLogs: ["warning-goldmark-raw-html"]
 buildDrafts: false
 buildFuture: false
 pagination:
