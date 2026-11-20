@@ -1,0 +1,4 @@
+<div class="empty" data-empty="{{ .key }}">
+  <p class="empty__title">{{ partial "t.html" (dict "page" .page "key" (printf "%s_title" .key)) }}</p>
+  <p>{{ partial "t.html" (dict "page" .page "key" .key) }}</p>
+</div>

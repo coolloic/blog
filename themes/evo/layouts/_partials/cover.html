@@ -1,0 +1,16 @@
+{{- /* Cover box with a fixed aspect ratio and a brand-gradient background that shows when there is no
+     cover or it fails to load. partial "cover.html" (dict "page" $p "size" "card|hero") */ -}}
+{{- $p := .page -}}{{- $hero := eq .size "hero" -}}
+{{- $w := cond $hero 2100 1600 -}}{{- $h := 900 -}}
+<div class="cover cover--{{ .size }}" style="view-transition-name: cover-{{ $p.File.ContentBaseName | default $p.File.BaseFileName | urlize }}">
+  {{- with $p.Params.cover }}
+  {{- $src := partial "img-url.html" . }}
+  {{- with $p.Params.cover_video }}
+  <video class="cover__media" src="{{ partial "img-url.html" . }}" poster="{{ $src }}" width="{{ $w }}" height="{{ $h }}" muted loop playsinline preload="none" data-autoplay-in-view aria-hidden="true"></video>
+  {{- else }}
+  <img class="cover__media" src="{{ $src }}" alt="{{ $p.Params.cover_alt }}" width="{{ $w }}" height="{{ $h }}" decoding="async"{{ if $hero }} fetchpriority="high"{{ else }} loading="lazy"{{ end }}>
+  {{- end }}
+  {{- end }}
+  {{- if $p.Params.cover_video }}<span class="cover__badge">{{ partial "icon.html" "play" }}{{ partial "t.html" (dict "page" $p "key" "video_badge") }}</span>{{ end }}
+</div>
+{{- /**/ -}}

@@ -87,6 +87,85 @@ check_tokens_unescaped() {
   else fail check_tokens_unescaped "token CSS is HTML-escaped or missing: $(echo "$style" | grep -o -- '--font-body:[^;]*')"; fi
 }
 
-CHECKS=(check_theme_evo check_html_lang check_tokens_css check_light_dark_fallback check_theme_script_first check_nav check_skip_link check_wrap check_toggle_button check_tokens_unescaped)
+# Build a variant of the site from a copy of content/ changed by a callback: build_variant <outdir> <fn>
+build_variant() {
+  local out=$1 fn=$2 cdir; cdir=$(mktemp -d)
+  cp -R content/. "$cdir"/
+  ( cd "$cdir" && $fn )
+  hugo -D --quiet --panicOnWarning --contentDir "$cdir" -d "$out" >/dev/null 2>&1; local rc=$?
+  rm -rf "$cdir"; return $rc
+}
+html1() { tr -d '\n' < "$1"; }
+# The element carrying marker attribute $2 plus the following N chars (default 900). macOS grep caps {m,n} at 255.
+after_attr() { perl -0777 -ne 'print $1 if /(<[a-z]+[^>]*'"$2"'[^>]*>.{0,'"${3:-900}"'})/s' "$1"; }
+
+check_home_featured() {
+  local card; card=$(after_attr "$OUT/index.html" data-featured)
+  if [[ "$card" =~ href=\"?/blog/articles/sample-2/ ]]; then pass check_home_featured
+  else fail check_home_featured "featured card does not link to sample-2: ${card:0:200}"; fi
+}
+
+unfeature() { sed -i '' 's/^featured: true/featured: false/' articles/sample-2/index.md; }
+check_home_featured_fallback() {
+  local o; o=$(mktemp -d)
+  build_variant "$o" unfeature || { fail check_home_featured_fallback "variant build failed"; rm -rf "$o"; return; }
+  local card; card=$(after_attr "$o/index.html" data-featured)
+  if [[ "$card" =~ href=\"?/blog/articles/sample-3/ ]]; then pass check_home_featured_fallback
+  else fail check_home_featured_fallback "without featured, hero should be the newest (sample-3): ${card:0:200}"; fi
+  rm -rf "$o"
+}
+
+check_home_lists_articles_not_wiki() {
+  local h; h=$(html1 "$OUT/index.html")
+  if [[ "$h" == *"/blog/articles/sample-1/"* ]] && ! echo "$h" | grep -qE 'href="?/blog/wiki/[^" >]+'; then pass check_home_lists_articles_not_wiki
+  else fail check_home_lists_articles_not_wiki "home must list articles and no wiki pages"; fi
+}
+
+noarticles() { rm -rf articles/sample-*; }
+check_home_empty() {
+  local o; o=$(mktemp -d)
+  if build_variant "$o" noarticles && grep -qE 'data-empty="?no_articles' "$o/index.html"; then pass check_home_empty
+  else fail check_home_empty "home without articles fails to build or lacks data-empty=no_articles"; fi
+  rm -rf "$o"
+}
+
+check_cover_box() {
+  local h bad=""; h=$(html1 "$OUT/index.html")
+  local hero; hero=$(after_attr "$OUT/index.html" data-featured | grep -oE '<img[^>]*>' | head -1)
+  [[ "$hero" == *fetchpriority=*high* && "$hero" == *width=* && "$hero" == *height=* ]] || bad+="hero-img($hero) "
+  local card; card=$(after_attr "$OUT/index.html" 'class="?card[ ">]' | grep -oE '<img[^>]*>' | head -1)
+  [[ "$card" == *loading=*lazy* && "$card" == *width=* && "$card" == *height=* ]] || bad+="card-img($card) "
+  echo "$(css_all)" | grep -qE '\.cover\{[^}]*aspect-ratio' || bad+="css(.cover aspect-ratio) "
+  if [[ -z "$bad" ]]; then pass check_cover_box; else fail check_cover_box "$bad"; fi
+}
+
+addvideo() { sed -i '' 's|^featured: false|featured: false\ncover_video: "https://example.com/x.mp4"|' articles/sample-1/index.md; }
+check_cover_video_slot() {
+  local o; o=$(mktemp -d)
+  build_variant "$o" addvideo || { fail check_cover_video_slot "variant build failed"; rm -rf "$o"; return; }
+  local v; v=$(html1 "$o/index.html" | grep -oE '<video[^>]*>' | head -1)
+  if [[ "$v" == *muted* && "$v" == *playsinline* && "$v" == *preload=*none* && "$v" == *poster=* && "$v" == *x.mp4* ]] && ! echo "$v" | grep -qE '[ "]autoplay([ =>]|$)'; then pass check_cover_video_slot
+  else fail check_cover_video_slot "bad or missing <video>: $v"; fi
+  rm -rf "$o"
+}
+
+check_follow_card() {
+  local h; h=$(html1 "$OUT/index.html")
+  if echo "$h" | grep -qE 'data-follow-card' && [[ "$h" == *wechat-qr.png* ]]; then pass check_follow_card
+  else fail check_follow_card "home lacks data-follow-card with wechat-qr.png"; fi
+}
+
+check_no_format_errors() {
+  local bad; bad=$(grep -rlE '%!\(?[a-z]' "$OUT" --include='*.html' | head -3)
+  if [[ -z "$bad" ]]; then pass check_no_format_errors; else fail check_no_format_errors "printf verb errors (%!…) in: $bad"; fi
+}
+
+check_category_order() {
+  local order; order=$(html1 "$OUT/index.html" | grep -oE 'href="?/blog/categories/[a-z]+/' | sed -E 's|.*/categories/||; s|/||' | awk '!s[$0]++' | tr '\n' ' ')
+  if [[ "$order" == "models concepts tools industry " ]]; then pass check_category_order
+  else fail check_category_order "category tiles in wrong order: $order"; fi
+}
+
+CHECKS=(check_theme_evo check_html_lang check_tokens_css check_light_dark_fallback check_theme_script_first check_nav check_skip_link check_wrap check_toggle_button check_tokens_unescaped check_home_featured check_home_featured_fallback check_home_lists_articles_not_wiki check_home_empty check_cover_box check_cover_video_slot check_follow_card check_no_format_errors check_category_order)
 for c in "${@:-${CHECKS[@]}}"; do $c; done
 [[ $FAILS -eq 0 ]] && echo "SITE ALL PASS" || { echo "$FAILS SITE CHECKS FAILED"; exit 1; }

@@ -1,0 +1,8 @@
+<article class="hero" data-featured>
+  {{ partial "cover.html" (dict "page" . "size" "hero") }}
+  <div class="hero__body">
+    <div class="hero__meta">{{ partial "category-chip.html" . }}{{ partial "meta-line.html" . }}</div>
+    <h2 class="hero__title"><a class="card__link" href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+    {{ with .Summary }}<p class="hero__summary">{{ . | plainify }}</p>{{ end }}
+  </div>
+</article>

@@ -1,0 +1,46 @@
+{{ define "main" }}
+{{- $articles := where site.RegularPages "Section" "articles" -}}
+<div class="container stack-section">
+<h1 class="visually-hidden">{{ site.Title }}</h1>
+{{- if not $articles }}
+  {{ partial "empty.html" (dict "page" . "key" "no_articles") }}
+{{- else }}
+  {{- $featured := index (where $articles "Params.featured" true).ByDate.Reverse 0 | default (index $articles.ByDate.Reverse 0) }}
+  <section aria-label="{{ $featured.Title }}">{{ partial "hero.html" $featured }}</section>
+
+  <section class="cat-tiles" aria-label="{{ partial "t.html" (dict "page" . "key" "categories_label") }}">
+    {{- range $c := partial "categories.html" . }}{{ $slug := $c.slug }}
+    {{- $n := len (where $articles "Params.categories" "intersect" (slice $slug)) }}
+    <a class="cat-tile" href="{{ printf "categories/%s/" $slug | relURL }}">
+      <span class="cat-tile__head"><span class="cat-tile__name">{{ $c.name }}</span><span class="cat-tile__count">{{ printf (partial "t.html" (dict "page" $ "key" "article_count")) $n }}</span></span>
+      <span class="cat-tile__desc">{{ $c.desc }}</span>
+    </a>
+    {{- end }}
+  </section>
+
+  <section class="stack" aria-labelledby="latest-heading">
+    <div class="section-head">
+      <h2 id="latest-heading">{{ partial "t.html" (dict "page" . "key" "latest") }}</h2>
+      <a href="{{ "articles/" | relURL }}">{{ partial "t.html" (dict "page" . "key" "view_all") }}</a>
+    </div>
+    <div class="card-grid">
+      {{- range first 6 (complement (slice $featured) $articles.ByDate.Reverse) }}{{ partial "card.html" . }}{{ end }}
+    </div>
+  </section>
+{{- end }}
+
+  {{ partial "follow-card.html" . }}
+
+  <section class="notes-strip" aria-labelledby="notes-heading">
+    <div class="section-head">
+      <div><h2 id="notes-heading">{{ partial "t.html" (dict "page" . "key" "notes_title") }}</h2><p>{{ partial "t.html" (dict "page" . "key" "notes_desc") }}</p></div>
+      <a href="{{ "notes/" | relURL }}">{{ partial "t.html" (dict "page" . "key" "notes_enter") }}</a>
+    </div>
+    <ul class="notes-strip__list">
+      {{- range first 2 (where site.RegularPages "Section" "posts").ByDate.Reverse }}
+      <li><a href="{{ .RelPermalink }}" lang="en">{{ .Title }}</a><time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006-01-02" }}</time></li>
+      {{- end }}
+    </ul>
+  </section>
+</div>
+{{ end }}

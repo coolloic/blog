@@ -1,0 +1,4 @@
+{{- /* Categories from data/categories.yaml in display order: a slice of dicts {slug, name, desc}. */ -}}
+{{- $out := slice -}}
+{{- range $slug, $c := hugo.Data.categories }}{{ $out = $out | append (merge $c (dict "slug" $slug)) }}{{ end -}}
+{{- return (sort $out "order") -}}

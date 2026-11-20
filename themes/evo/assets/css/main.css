@@ -1,6 +1,7 @@
 @layer reset, tokens, base, layout, components, motion;
 @import "base.css" layer(base);
 @import "layout.css" layer(layout);
+@import "components/card.css" layer(components);
 
 @layer reset {
   *, *::before, *::after { box-sizing: border-box; }

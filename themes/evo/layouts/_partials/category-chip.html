@@ -1,0 +1,4 @@
+{{- with index (.Params.categories | default slice) 0 }}
+{{- $c := index hugo.Data.categories . }}
+<span class="chip">{{ with $c }}{{ .name }}{{ else }}{{ . }}{{ end }}</span>
+{{- end }}

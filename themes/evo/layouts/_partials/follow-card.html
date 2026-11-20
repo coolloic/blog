@@ -1,0 +1,8 @@
+<section class="follow-card" data-follow-card aria-label="{{ partial "t.html" (dict "page" . "key" "follow_title") }}">
+  <img class="follow-card__qr" src="{{ "images/wechat-qr.png" | relURL }}" width="96" height="96" alt="{{ partial "t.html" (dict "page" . "key" "follow_qr_alt") }}" loading="lazy">
+  <div class="follow-card__text">
+    <h2 class="follow-card__title">{{ partial "t.html" (dict "page" . "key" "follow_title") }}</h2>
+    <p>{{ partial "t.html" (dict "page" . "key" "follow_sub") }} <strong>AI进化调研员</strong></p>
+  </div>
+  <span class="follow-card__badge">{{ partial "t.html" (dict "page" . "key" "follow_badge") }}</span>
+</section>

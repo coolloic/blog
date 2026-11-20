@@ -1,0 +1,1 @@
+<span class="meta-line"><time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006-01-02" }}</time> · {{ printf (partial "t.html" (dict "page" . "key" "reading_time")) (int (math.Max 1 .ReadingTime)) }}</span>

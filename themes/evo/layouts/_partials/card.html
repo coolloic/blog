@@ -1,0 +1,9 @@
+<article class="card">
+  {{ partial "cover.html" (dict "page" . "size" "card") }}
+  <div class="card__body">
+    {{ partial "category-chip.html" . }}
+    <h3 class="card__title"><a class="card__link" href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+    {{ with .Summary }}<p class="card__summary">{{ . | plainify }}</p>{{ end }}
+    <div class="card__foot">{{ partial "meta-line.html" . }}</div>
+  </div>
+</article>

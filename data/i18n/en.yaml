@@ -16,3 +16,17 @@ footer_label: Footer links
 footer_follow: Follow AI进化调研员
 footer_follow_sub: Scan or search on WeChat for Chinese explainers
 copyright: "© %d AI进化调研员 · AI Evolution Researcher."
+latest: Latest articles
+view_all: View all →
+categories_label: Categories
+article_count: "%d articles"
+video_badge: Motion cover
+follow_title: Follow AI进化调研员 on WeChat
+follow_sub: Search on WeChat for
+follow_badge: WeChat Official Account
+follow_qr_alt: WeChat QR code for AI进化调研员
+notes_title: Tech Notes
+notes_desc: Long-form English engineering posts & an AI knowledge-base Wiki.
+notes_enter: Open Tech Notes →
+no_articles: Articles are on their way from the WeChat account.
+no_articles_title: No articles yet
