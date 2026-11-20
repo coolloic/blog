@@ -1,0 +1,1 @@
+About page (/about/). Sections: what "AI进化调研员" is (one paragraph); the author (one short paragraph with a link "完整履历 CV →"); a large WeChat QR card with "扫码关注"; links to other platforms (小红书); "关于这个网站": it archives the WeChat articles so they can be searched and re-read, plus English Tech Notes and an AI Wiki. Dark theme.

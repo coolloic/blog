@@ -1,0 +1,31 @@
+# Design tokens: single source for the Hugo theme (themes/evo) and the Remotion videos (video/).
+# Values come from the Stitch design system (design/DESIGN.md). Every color has light and dark.
+color:
+  bg:            {light: "#F9F9FF", dark: "#0C1321"}   # background
+  surface:       {light: "#F1F3FF", dark: "#151B2A"}   # surface-container-low: cards
+  surface2:      {light: "#E9EDFF", dark: "#19202E"}   # surface-container: raised panels, code
+  text:          {light: "#151B2A", dark: "#DCE2F6"}   # on-surface
+  muted:         {light: "#584237", dark: "#E0C0B1"}   # on-surface-variant
+  accent:        {light: "#9D4300", dark: "#FFB690"}   # primary: links, active nav (text-safe)
+  accent-fill:   {light: "#F97316", dark: "#F97316"}   # primary-container: buttons, progress bar
+  on-accent-fill: {light: "#582200", dark: "#582200"}  # text on accent-fill
+  accent2:       {light: "#006B5F", dark: "#4FDBC8"}   # secondary: teal, tech notes
+  accent3:       {light: "#842BD2", dark: "#DDB7FF"}   # tertiary: purple, category chips
+  border:        {light: "#E0C0B1", dark: "#584237"}   # outline-variant
+font:
+  body: '"PingFang SC", "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif'
+  display: '"Crimson Pro", "Songti SC", "Noto Serif SC", Georgia, serif'
+  mono: 'ui-monospace, "SF Mono", Menlo, Consolas, monospace'
+size:
+  body: "18px"
+  body-en: "17px"
+  h1: "44px"
+  h1-mobile: "30px"
+  h2: "36px"
+  h2-mobile: "26px"
+  h3: "24px"
+  small: "14px"
+  label: "12px"
+radius: {chip: "4px", card: "12px", hero: "16px", pill: "9999px"}
+space: {xs: "4px", s: "8px", m: "16px", l: "24px", xl: "32px", section: "48px"}
+motion: {fast: "150ms", base: "280ms", slow: "450ms", ease: "cubic-bezier(0.2, 0, 0, 1)"}

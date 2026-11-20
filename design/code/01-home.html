@@ -1,0 +1,545 @@
+<!DOCTYPE html><html lang="zh-CN" class="dark"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI进化调研员 — AI Evolution Researcher</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">/** @type {import('tailwindcss').Config} */
+globalThis.tailwind = globalThis.tailwind || {};
+globalThis.tailwind.config = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      colors: {
+        'light-primary': '#9D4300',
+        'light-on-primary': '#FFFFFF',
+        'light-primary-container': '#F97316',
+        'light-on-primary-container': '#582200',
+        'light-secondary': '#006B5F',
+        'light-on-secondary': '#FFFFFF',
+        'light-secondary-container': '#6DF5E1',
+        'light-on-secondary-container': '#006F64',
+        'light-tertiary': '#842BD2',
+        'light-on-tertiary': '#FFFFFF',
+        'light-tertiary-container': '#BE7BFF',
+        'light-on-tertiary-container': '#4C0084',
+        'light-error': '#BA1A1A',
+        'light-on-error': '#FFFFFF',
+        'light-error-container': '#FFDAD6',
+        'light-on-error-container': '#93000A',
+        'light-background': '#F9F9FF',
+        'light-on-background': '#151B2A',
+        'light-surface': '#F9F9FF',
+        'light-surface-dim': '#D3DAEE',
+        'light-surface-bright': '#F9F9FF',
+        'light-surface-container-lowest': '#FFFFFF',
+        'light-surface-container-low': '#F1F3FF',
+        'light-surface-container': '#E9EDFF',
+        'light-surface-container-high': '#E2E8FC',
+        'light-surface-container-highest': '#DCE2F6',
+        'light-on-surface': '#151B2A',
+        'light-surface-variant': '#FDDCCC',
+        'light-on-surface-variant': '#584237',
+        'light-outline': '#8C7164',
+        'light-outline-variant': '#E0C0B1',
+        'light-inverse-surface': '#2A3040',
+        'light-inverse-on-surface': '#EDF0FF',
+        'light-inverse-primary': '#FFB690',
+        'dark-primary': '#FFB690',
+        'dark-on-primary': '#552100',
+        'dark-primary-container': '#F97316',
+        'dark-on-primary-container': '#582200',
+        'dark-secondary': '#4FDBC8',
+        'dark-on-secondary': '#003731',
+        'dark-secondary-container': '#04B4A2',
+        'dark-on-secondary-container': '#003F38',
+        'dark-tertiary': '#DDB7FF',
+        'dark-on-tertiary': '#490080',
+        'dark-tertiary-container': '#BE7BFF',
+        'dark-on-tertiary-container': '#4C0084',
+        'dark-error': '#FFB4AB',
+        'dark-on-error': '#690005',
+        'dark-error-container': '#93000A',
+        'dark-on-error-container': '#FFDAD6',
+        'dark-background': '#0C1321',
+        'dark-on-background': '#DCE2F6',
+        'dark-surface': '#0C1321',
+        'dark-surface-dim': '#0C1321',
+        'dark-surface-bright': '#323949',
+        'dark-surface-container-lowest': '#070E1C',
+        'dark-surface-container-low': '#151B2A',
+        'dark-surface-container': '#19202E',
+        'dark-surface-container-high': '#232A39',
+        'dark-surface-container-highest': '#2E3544',
+        'dark-on-surface': '#DCE2F6',
+        'dark-surface-variant': '#584237',
+        'dark-on-surface-variant': '#E0C0B1',
+        'dark-outline': '#A78B7D',
+        'dark-outline-variant': '#584237',
+        'dark-inverse-surface': '#DCE2F6',
+        'dark-inverse-on-surface': '#2A3040',
+        'dark-inverse-primary': '#9D4300',
+      },
+      borderRadius: {
+        'sm': '4px',
+        'DEFAULT': '8px',
+        'md': '12px',
+        'lg': '16px',
+        'xl': '24px',
+        'full': '9999px',
+      },
+      spacing: {
+        'gutter-xs': '4px',
+        'gutter-sm': '8px',
+        'gutter-md': '16px',
+        'gutter-lg': '24px',
+        'gutter-xl': '32px',
+        'section': '48px',
+        'page-margin': '32px',
+      },
+      fontFamily: {
+        'display': ['"Crimson Pro"', 'sans-serif'],
+        'headline': ['"Crimson Pro"', 'sans-serif'],
+        'title': ['"Lato"', 'sans-serif'],
+        'body': ['"Lato"', 'sans-serif'],
+        'label': ['"Lato"', 'sans-serif'],
+        'mono': ['"Source Code Pro"', 'monospace'],
+      },
+      fontSize: {
+        'display-lg': ['44px', { lineHeight: '54px', letterSpacing: '-0.5px', fontWeight: '700' }],
+        'display-lg-mobile': ['30px', { lineHeight: '38px', letterSpacing: '-0.25px', fontWeight: '700' }],
+        'headline-lg': ['36px', { lineHeight: '46px', letterSpacing: '-0.25px', fontWeight: '700' }],
+        'headline-lg-mobile': ['26px', { lineHeight: '34px', letterSpacing: '0px', fontWeight: '700' }],
+        'headline-md': ['24px', { lineHeight: '32px', letterSpacing: '0px', fontWeight: '600' }],
+        'title-lg': ['20px', { lineHeight: '30px', letterSpacing: '0px', fontWeight: '700' }],
+        'title-md': ['18px', { lineHeight: '28px', letterSpacing: '0px', fontWeight: '700' }],
+        'body-lg': ['18px', { lineHeight: '32px', letterSpacing: '0px', fontWeight: '400' }],
+        'body-md': ['16px', { lineHeight: '26px', letterSpacing: '0px', fontWeight: '400' }],
+        'body-sm': ['14px', { lineHeight: '22px', letterSpacing: '0px', fontWeight: '400' }],
+        'label-lg': ['14px', { lineHeight: '20px', letterSpacing: '0.1px', fontWeight: '600' }],
+        'label-md': ['12px', { lineHeight: '16px', letterSpacing: '0.2px', fontWeight: '500' }],
+        'mono-sm': ['13px', { lineHeight: '18px', letterSpacing: '0px', fontWeight: '400' }],
+      },
+      transitionDuration: {
+        'state-change': '150ms',
+        'surface-enter': '280ms',
+      },
+      transitionDelay: {
+        'state-change': '0ms',
+        'surface-enter': '0ms',
+      },
+      transitionTimingFunction: {
+        'state-change': 'ease-out',
+        'surface-enter': 'cubic-bezier(0.2, 0, 0, 1)',
+      },
+    },
+  },
+};
+if (typeof module !== 'undefined') module.exports = globalThis.tailwind.config;
+</script>
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@600;700&amp;family=Lato:wght@400;600;700&amp;family=Source+Code+Pro:wght@400;500&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet">
+  <style>
+    .material-symbols-outlined, .material-symbols-rounded, .material-symbols-sharp, .material-icons {
+      display: inline-block;
+      width: 1em;
+      height: 1em;
+      line-height: 1 !important;
+      box-sizing: content-box;
+      overflow: hidden;
+      white-space: nowrap;
+      direction: ltr;
+      vertical-align: middle;
+    }
+    body {
+      font-family: "Lato", "PingFang SC", "Noto Sans SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    }
+    .font-headline {
+      font-family: "Crimson Pro", "PingFang SC", "Noto Serif SC", serif;
+    }
+    .font-body, .font-title, .font-label {
+      font-family: "Lato", "PingFang SC", "Noto Sans SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    }
+    .font-mono {
+      font-family: "Source Code Pro", "SFMono-Regular", Consolas, monospace;
+    }
+  </style>
+</head>
+<body class="bg-light-background dark:bg-dark-background text-light-on-background dark:text-dark-on-background font-body antialiased selection:bg-light-primary/20 dark:selection:bg-dark-primary-container/30">
+
+  <!-- Thin Reading Progress Bar (Navigation & Reading Motion Only) -->
+  <div class="fixed top-0 left-0 right-0 z-50 h-0.5 bg-light-surface-container dark:bg-dark-surface-container" aria-hidden="true">
+    <div id="reading-progress" class="h-full w-1/5 bg-light-primary dark:bg-dark-primary-container transition-transform duration-state-change ease-state-change origin-left"></div>
+  </div>
+
+  <div class="min-h-[1024px] flex flex-col" data-stitch-vh="min-h-[1024px]===min-h-screen">
+
+    <!-- Site Header -->
+    <header class="sticky top-0 z-40 border-b border-light-outline-variant/40 dark:border-dark-outline-variant/40 bg-light-background/95 dark:bg-dark-background/95">
+      <div class="max-w-[1200px] mx-auto px-gutter-md md:px-page-margin h-16 flex items-center justify-between gap-gutter-md">
+        <!-- Brand Mark & Name -->
+        <a href="#" class="flex items-center gap-gutter-sm group focus-visible:outline focus-visible:outline-2 focus-visible:outline-dark-primary rounded-sm">
+          <span class="inline-flex items-center justify-center w-8 h-8 rounded bg-light-surface-container dark:bg-dark-surface-container border border-light-outline-variant dark:border-dark-outline-variant text-light-primary dark:text-dark-primary" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M12 2v4"></path>
+              <path d="M12 18v4"></path>
+              <path d="M4.93 4.93l2.83 2.83"></path>
+              <path d="M16.24 16.24l2.83 2.83"></path>
+              <path d="M2 12h4"></path>
+              <path d="M18 12h4"></path>
+            </svg>
+          </span>
+          <span class="flex items-baseline gap-gutter-sm">
+            <span data-design-text-token="title-md" class="font-title text-title-md text-light-on-surface dark:text-dark-on-surface group-hover:text-light-primary dark:group-hover:text-dark-primary transition-colors duration-state-change">AI进化调研员</span>
+            <span data-design-text-token="mono-sm" class="hidden sm:inline font-mono text-mono-sm text-light-outline dark:text-dark-outline">AI Evolution Researcher</span>
+          </span>
+        </a>
+
+        <!-- Primary Navigation & Theme Toggle -->
+        <div class="flex items-center gap-gutter-md md:gap-gutter-lg">
+          <nav aria-label="主导航" class="hidden md:flex items-center gap-gutter-lg">
+            <a href="#" aria-current="page" data-design-text-token="label-lg" class="font-label text-label-lg text-light-primary dark:text-dark-primary">首页</a>
+            <a href="#" data-design-text-token="label-lg" class="font-label text-label-lg text-light-on-surface/80 dark:text-dark-on-surface/80 hover:text-light-primary dark:hover:text-dark-primary transition-colors duration-state-change">科普</a>
+            <a href="#" data-design-text-token="label-lg" class="font-label text-label-lg text-light-on-surface/80 dark:text-dark-on-surface/80 hover:text-light-primary dark:hover:text-dark-primary transition-colors duration-state-change">技术笔记</a>
+            <a href="#" data-design-text-token="label-lg" class="font-label text-label-lg text-light-on-surface/80 dark:text-dark-on-surface/80 hover:text-light-primary dark:hover:text-dark-primary transition-colors duration-state-change">归档</a>
+            <a href="#" data-design-text-token="label-lg" class="font-label text-label-lg text-light-on-surface/80 dark:text-dark-on-surface/80 hover:text-light-primary dark:hover:text-dark-primary transition-colors duration-state-change">搜索</a>
+            <a href="#" data-design-text-token="label-lg" class="font-label text-label-lg text-light-on-surface/80 dark:text-dark-on-surface/80 hover:text-light-primary dark:hover:text-dark-primary transition-colors duration-state-change">关于</a>
+          </nav>
+
+          <!-- Light/Dark Toggle Icon Button -->
+          <!-- COMPONENT: button-icon -->
+          <button id="theme-toggle" data-component-id="button-icon" data-component-type="button" data-component-variant="icon" type="button" aria-label="切换浅色或深色主题" class="inline-flex items-center justify-center w-9 h-9 rounded border border-light-outline-variant dark:border-dark-outline-variant bg-light-surface-container-low dark:bg-dark-surface-container-low text-light-on-surface dark:text-dark-on-surface transition-colors duration-state-change ease-state-change hover:border-light-primary dark:hover:border-dark-primary hover:text-light-primary dark:hover:text-dark-primary">
+            <span id="theme-icon" class="material-symbols-outlined text-title-md" aria-hidden="true">light_mode</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 w-full max-w-[1200px] mx-auto px-gutter-md md:px-page-margin py-gutter-xl md:py-section flex flex-col gap-section">
+
+      <!-- 1) Featured Article Hero Card -->
+      <section aria-labelledby="featured-heading">
+        <a href="#" data-component-id="card-featured" data-component-type="card" data-component-variant="interactive" class="group block rounded-lg overflow-hidden bg-light-surface-container-low dark:bg-dark-surface-container-low border border-light-outline-variant/60 dark:border-dark-outline-variant/60 transition-colors duration-state-change hover:border-light-primary dark:hover:border-dark-primary">
+          <!-- Wide 21:9 Cover Marked as Looping-Video Slot -->
+          <div class="relative aspect-[21/9] w-full overflow-hidden bg-light-surface-container dark:bg-dark-surface-container">
+            <img src="https://lh3.googleusercontent.com/aida/ALJJyrDMapIYb2zwTcp0ydYpy60uQ_NWh_X9DRUMxWW-_c7yNBDGcSGRjMwD-_--LKK1JEVEzdOPuYbBOCQPtBCdu1RGJwIAauPlurgbR2w4cfaUiNcBoFEb2Nzo9QMjdQmYLnvXup0VYHN84b0CDnPgSQDIZ7L3s99TV1nkdXo5-bl5qShS7l_Wzvoe-0oSB91I-L08J0HXrx_VVfS71Xo6VVUCsqf5bqedo9AQU8Z6XhnZ5o5WFwM8" alt="象征模型上下文协议（MCP）的金属接口连接神经网络核心模块" class="w-full h-full object-cover transition-transform duration-surface-enter ease-surface-enter group-hover:scale-[1.01]">
+            <div class="absolute inset-0 bg-gradient-to-t from-dark-surface-container-lowest/70 via-transparent to-transparent" aria-hidden="true"></div>
+            <!-- Looping-video slot badge -->
+            <!-- COMPONENT: chip-with-icon -->
+            <span data-component-id="chip-with-icon" data-component-type="chip" data-component-variant="with-icon" class="absolute top-gutter-md right-gutter-md inline-flex items-center gap-gutter-xs px-gutter-sm py-gutter-xs rounded-sm bg-dark-surface-container-lowest/85 text-dark-on-surface border border-dark-outline-variant/60 font-mono text-label-md">
+              <span class="material-symbols-outlined text-body-sm text-dark-primary" style="font-variation-settings: &#39;FILL&#39; 1;" aria-hidden="true">play_arrow</span>
+              <span data-design-text-token="label-md">动态封面</span>
+            </span>
+          </div>
+
+          <!-- Featured Article Copy -->
+          <div class="p-gutter-lg md:p-gutter-xl flex flex-col gap-gutter-md">
+            <div class="flex flex-wrap items-center gap-gutter-md">
+              <!-- COMPONENT: chip-action -->
+              <span data-component-id="chip-action" data-component-type="chip" data-component-variant="action" class="inline-flex items-center px-gutter-sm py-gutter-xs rounded-sm bg-light-tertiary/15 dark:bg-dark-tertiary/15 text-light-tertiary dark:text-dark-tertiary font-mono text-label-md">
+                <span data-design-text-token="label-md">概念科普</span>
+              </span>
+              <span data-design-text-token="mono-sm" class="font-mono text-mono-sm text-light-outline dark:text-dark-outline tabular-nums">2026-11-18 · 阅读 8 分钟</span>
+            </div>
+
+            <h1 id="featured-heading" data-design-text-token="display-lg" class="font-headline text-display-lg-mobile md:text-display-lg text-light-on-surface dark:text-dark-on-surface group-hover:text-light-primary dark:group-hover:text-dark-primary transition-colors duration-state-change text-balance">
+              什么是 MCP？给 AI 装上 USB 接口
+            </h1>
+
+            <p data-design-text-token="body-lg" class="font-body text-body-lg text-light-on-surface/85 dark:text-dark-on-surface/85 max-w-[40em] text-pretty">
+              当大模型不再满足于聊天框里的文字接龙，模型上下文协议如何用一套统一标准连接本地文件、数据库与真实工具链？
+            </p>
+          </div>
+        </a>
+      </section>
+
+      <!-- 2) Category Entry Row (4 Compact Tiles) -->
+      <section aria-label="栏目分类">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter-md items-stretch">
+          <a href="#" data-component-id="card-interactive-2" data-component-type="card" data-component-variant="interactive" class="h-full flex flex-col justify-between gap-gutter-sm p-gutter-md rounded-md bg-light-surface-container-low dark:bg-dark-surface-container-low border border-light-outline-variant/60 dark:border-dark-outline-variant/60 transition-colors duration-state-change hover:border-light-primary dark:hover:border-dark-primary">
+            <div class="flex items-center justify-between gap-gutter-sm">
+              <h2 data-design-text-token="title-md" class="font-title text-title-md text-light-on-surface dark:text-dark-on-surface">新模型速递</h2>
+              <span data-design-text-token="mono-sm" class="font-mono text-mono-sm text-light-primary dark:text-dark-primary tabular-nums">18 篇</span>
+            </div>
+            <p data-design-text-token="body-sm" class="font-body text-body-sm text-light-outline dark:text-dark-outline text-balance">拆解前沿模型架构、能力边界与基准实测。</p>
+          </a>
+
+          <a href="#" data-component-id="card-interactive-2" data-component-type="card" data-component-variant="interactive" class="h-full flex flex-col justify-between gap-gutter-sm p-gutter-md rounded-md bg-light-surface-container-low dark:bg-dark-surface-container-low border border-light-outline-variant/60 dark:border-dark-outline-variant/60 transition-colors duration-state-change hover:border-light-primary dark:hover:border-dark-primary">
+            <div class="flex items-center justify-between gap-gutter-sm">
+              <h2 data-design-text-token="title-md" class="font-title text-title-md text-light-on-surface dark:text-dark-on-surface">概念科普</h2>
+              <span data-design-text-token="mono-sm" class="font-mono text-mono-sm text-light-primary dark:text-dark-primary tabular-nums">24 篇</span>
+            </div>
+            <p data-design-text-token="body-sm" class="font-body text-body-sm text-light-outline dark:text-dark-outline text-balance">用日常直觉讲透注意力、RAG 与智能体原理。</p>
+          </a>
+
+          <a href="#" data-component-id="card-interactive-2" data-component-type="card" data-component-variant="interactive" class="h-full flex flex-col justify-between gap-gutter-sm p-gutter-md rounded-md bg-light-surface-container-low dark:bg-dark-surface-container-low border border-light-outline-variant/60 dark:border-dark-outline-variant/60 transition-colors duration-state-change hover:border-light-primary dark:hover:border-dark-primary">
+            <div class="flex items-center justify-between gap-gutter-sm">
+              <h2 data-design-text-token="title-md" class="font-title text-title-md text-light-on-surface dark:text-dark-on-surface">工具实测</h2>
+              <span data-design-text-token="mono-sm" class="font-mono text-mono-sm text-light-primary dark:text-dark-primary tabular-nums">15 篇</span>
+            </div>
+            <p data-design-text-token="body-sm" class="font-body text-body-sm text-light-outline dark:text-dark-outline text-balance">本地部署、工作流插件与日常效率横向对比。</p>
+          </a>
+
+          <a href="#" data-component-id="card-interactive-2" data-component-type="card" data-component-variant="interactive" class="h-full flex flex-col justify-between gap-gutter-sm p-gutter-md rounded-md bg-light-surface-container-low dark:bg-dark-surface-container-low border border-light-outline-variant/60 dark:border-dark-outline-variant/60 transition-colors duration-state-change hover:border-light-primary dark:hover:border-dark-primary">
+            <div class="flex items-center justify-between gap-gutter-sm">
+              <h2 data-design-text-token="title-md" class="font-title text-title-md text-light-on-surface dark:text-dark-on-surface">行业观察</h2>
+              <span data-design-text-token="mono-sm" class="font-mono text-mono-sm text-light-primary dark:text-dark-primary tabular-nums">11 篇</span>
+            </div>
+            <p data-design-text-token="body-sm" class="font-body text-body-sm text-light-outline dark:text-dark-outline text-balance">算力经济学、开源生态与产品演进的冷静记录。</p>
+          </a>
+        </div>
+      </section>
+
+      <!-- 3) "最新科普" Card Grid (3 Columns) -->
+      <section aria-labelledby="latest-explainers-heading" class="flex flex-col gap-gutter-lg">
+        <div class="flex items-baseline justify-between gap-gutter-md border-b border-light-outline-variant/40 dark:border-dark-outline-variant/40 pb-gutter-sm">
+          <h2 id="latest-explainers-heading" data-design-text-token="headline-md" class="font-headline text-headline-md text-light-on-surface dark:text-dark-on-surface">最新科普</h2>
+          <a href="#" data-design-text-token="label-lg" class="font-label text-label-lg text-light-primary dark:text-dark-primary hover:underline">查看全部 →</a>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter-lg items-stretch">
+          <!-- Card 1 -->
+          <a href="#" data-component-id="card-interactive" data-component-type="card" data-component-variant="interactive" class="group h-full flex flex-col rounded-md overflow-hidden bg-light-surface-container-low dark:bg-dark-surface-container-low border border-light-outline-variant/60 dark:border-dark-outline-variant/60 transition-transform duration-surface-enter ease-surface-enter hover:-translate-y-0.5 hover:border-light-primary dark:hover:border-dark-primary">
+            <div class="aspect-video w-full overflow-hidden bg-light-surface-container dark:bg-dark-surface-container">
+              <img src="https://lh3.googleusercontent.com/aida/ALJJyrAHtOfdU-s7kVbvW-fQ9ZZxSQ7yGJZuemoGgUezvUe8stSWotGbElcMB0EQPCkUaHm9GQKY3azPDuQlpMqIDvaGnxLCBxk2EdJ8xJuG3vlJ91cLke7Ws3RSxP8-2DX_1t3n9l8DOiJhKDh8z1HzV8bNu0CRVwL-hS3U-tdrY_Rqq6GK2XqdLhA-EnFafKsrwTEOLfOObdsshkHGIV3qIVX76H7bsXSSK03eHdpoYCjbtyNTxTqiTLruG2T8QCBtIw" alt="折射光束的精密玻璃棱镜" class="w-full h-full object-cover">
+            </div>
+            <div class="flex flex-col flex-1 justify-between gap-gutter-md p-gutter-lg">
+              <div class="flex flex-col gap-gutter-sm">
+                <span data-design-text-token="label-md" class="self-start px-gutter-sm py-gutter-xs rounded-sm bg-light-tertiary/15 dark:bg-dark-tertiary/15 text-light-tertiary dark:text-dark-tertiary font-mono text-label-md">新模型速递</span>
+                <h3 data-design-text-token="title-md" class="font-title text-title-md text-light-on-surface dark:text-dark-on-surface group-hover:text-light-primary dark:group-hover:text-dark-primary transition-colors duration-state-change line-clamp-2">推理模型为什么先想再说？</h3>
+                <p data-design-text-token="body-sm" class="font-body text-body-sm text-light-outline dark:text-dark-outline line-clamp-2">把算力从预训练搬到回答前的几十秒，思维链与验证器如何联手提升复杂解题准确率。</p>
+              </div>
+              <div class="pt-gutter-sm border-t border-light-outline-variant/40 dark:border-dark-outline-variant/40 flex items-center justify-between font-mono text-mono-sm text-light-outline dark:text-dark-outline tabular-nums">
+                <span data-design-text-token="mono-sm">2026-11-14</span>
+                <span data-design-text-token="mono-sm">阅读 7 分钟</span>
+              </div>
+            </div>
+          </a>
+
+          <!-- Card 2 -->
+          <a href="#" data-component-id="card-interactive" data-component-type="card" data-component-variant="interactive" class="group h-full flex flex-col rounded-md overflow-hidden bg-light-surface-container-low dark:bg-dark-surface-container-low border border-light-outline-variant/60 dark:border-dark-outline-variant/60 transition-transform duration-surface-enter ease-surface-enter hover:-translate-y-0.5 hover:border-light-primary dark:hover:border-dark-primary">
+            <div class="aspect-video w-full overflow-hidden bg-light-surface-container dark:bg-dark-surface-container">
+              <img src="https://lh3.googleusercontent.com/aida/ALJJyrCg0P19k1zyy35-5gGIZxBlSFtfeSHOsxwsifIJDou9GHrgxsQ311QCuw4foyZjBtKrUTR2HfWzubAy5AnT_P2Wdb8M4_jMwtigDD1QQeMSdzI1zHzw0yeeMV4NMr3v0t57s5vPZFAWW4KkFWVbQAPiWRti0qUqy7eorAFdsftkERjtdVOftlaB0mBhMvh1UMoxjHH-r0rvRBAOJx5vHSfAAhDM5zILluRi_-ACkPnoxb_r8AjSd_16-x9srO5Q-g" alt="有序排列的模块化铝制工作流模块" class="w-full h-full object-cover">
+            </div>
+            <div class="flex flex-col flex-1 justify-between gap-gutter-md p-gutter-lg">
+              <div class="flex flex-col gap-gutter-sm">
+                <span data-design-text-token="label-md" class="self-start px-gutter-sm py-gutter-xs rounded-sm bg-light-tertiary/15 dark:bg-dark-tertiary/15 text-light-tertiary dark:text-dark-tertiary font-mono text-label-md">概念科普</span>
+                <h3 data-design-text-token="title-md" class="font-title text-title-md text-light-on-surface dark:text-dark-on-surface group-hover:text-light-primary dark:group-hover:text-dark-primary transition-colors duration-state-change line-clamp-2">Workflow 与 Agent 怎么选？</h3>
+                <p data-design-text-token="body-sm" class="font-body text-body-sm text-light-outline dark:text-dark-outline line-clamp-2">固定编排还是自主规划，用四个真实业务场景看懂两种架构的可靠性取舍。</p>
+              </div>
+              <div class="pt-gutter-sm border-t border-light-outline-variant/40 dark:border-dark-outline-variant/40 flex items-center justify-between font-mono text-mono-sm text-light-outline dark:text-dark-outline tabular-nums">
+                <span data-design-text-token="mono-sm">2026-11-09</span>
+                <span data-design-text-token="mono-sm">阅读 6 分钟</span>
+              </div>
+            </div>
+          </a>
+
+          <!-- Card 3: No-Cover Gradient Fallback -->
+          <a href="#" data-component-id="card-interactive" data-component-type="card" data-component-variant="interactive" class="group h-full flex flex-col rounded-md overflow-hidden bg-light-surface-container-low dark:bg-dark-surface-container-low border border-light-outline-variant/60 dark:border-dark-outline-variant/60 transition-transform duration-surface-enter ease-surface-enter hover:-translate-y-0.5 hover:border-light-primary dark:hover:border-dark-primary">
+            <!-- Brand Gradient Fallback Block (16:9 Aspect Ratio Preserved) -->
+            <div class="aspect-video w-full overflow-hidden bg-gradient-to-br from-dark-surface-container-high via-dark-surface-container to-dark-primary-container/25 flex items-end justify-between p-gutter-md border-b border-dark-outline-variant/30">
+              <span data-design-text-token="mono-sm" class="font-mono text-mono-sm text-dark-primary/80">AI进化调研员 · 专栏手记</span>
+              <span class="material-symbols-outlined text-title-lg text-dark-secondary/70" aria-hidden="true">science</span>
+            </div>
+            <div class="flex flex-col flex-1 justify-between gap-gutter-md p-gutter-lg">
+              <div class="flex flex-col gap-gutter-sm">
+                <span data-design-text-token="label-md" class="self-start px-gutter-sm py-gutter-xs rounded-sm bg-light-tertiary/15 dark:bg-dark-tertiary/15 text-light-tertiary dark:text-dark-tertiary font-mono text-label-md">行业观察</span>
+                <h3 data-design-text-token="title-md" class="font-title text-title-md text-light-on-surface dark:text-dark-on-surface group-hover:text-light-primary dark:group-hover:text-dark-primary transition-colors duration-state-change line-clamp-2">开源小模型正在接管端侧推理</h3>
+                <p data-design-text-token="body-sm" class="font-body text-body-sm text-light-outline dark:text-dark-outline line-clamp-2">从量化压缩到 NPU 内存带宽瓶颈，一次看清 7B 级别模型的本地化经济账。</p>
+              </div>
+              <div class="pt-gutter-sm border-t border-light-outline-variant/40 dark:border-dark-outline-variant/40 flex items-center justify-between font-mono text-mono-sm text-light-outline dark:text-dark-outline tabular-nums">
+                <span data-design-text-token="mono-sm">2026-11-03</span>
+                <span data-design-text-token="mono-sm">阅读 5 分钟</span>
+              </div>
+            </div>
+          </a>
+
+          <!-- Card 4 -->
+          <a href="#" data-component-id="card-interactive" data-component-type="card" data-component-variant="interactive" class="group h-full flex flex-col rounded-md overflow-hidden bg-light-surface-container-low dark:bg-dark-surface-container-low border border-light-outline-variant/60 dark:border-dark-outline-variant/60 transition-transform duration-surface-enter ease-surface-enter hover:-translate-y-0.5 hover:border-light-primary dark:hover:border-dark-primary">
+            <div class="aspect-video w-full overflow-hidden bg-light-surface-container dark:bg-dark-surface-container">
+              <img src="https://lh3.googleusercontent.com/aida/ALJJyrCDGkvq5LUEofwAbBid7pKEiGpxiRALR-qoZyg1OM1fu1jcRfVNHb1EMkJBOvfgrNIAf4sM_otPBGvq8AasAGAH1-rYrQpbEzYE0XDMZyMiVGc_Uk6CJ3aHZN95tB8udY3HSgZjq0zlLf9lRu1a1cnzH5xA3M4HQZz1HR6KetUGeKGxCNZ9-5Zt7Xjwg-6pq44lr81xoIYgY7kBccGMc_IHNIYMF4mietwx6f2aMde7zprt_3SUR0CzV0Q" alt="哑光黑色本地工作站显卡散热器与光学镜头" class="w-full h-full object-cover">
+            </div>
+            <div class="flex flex-col flex-1 justify-between gap-gutter-md p-gutter-lg">
+              <div class="flex flex-col gap-gutter-sm">
+                <span data-design-text-token="label-md" class="self-start px-gutter-sm py-gutter-xs rounded-sm bg-light-tertiary/15 dark:bg-dark-tertiary/15 text-light-tertiary dark:text-dark-tertiary font-mono text-label-md">工具实测</span>
+                <h3 data-design-text-token="title-md" class="font-title text-title-md text-light-on-surface dark:text-dark-on-surface group-hover:text-light-primary dark:group-hover:text-dark-primary transition-colors duration-state-change line-clamp-2">消费级显卡本地跑模型实测</h3>
+                <p data-design-text-token="body-sm" class="font-body text-body-sm text-light-outline dark:text-dark-outline line-clamp-2">实测 4-bit 量化下的首字延迟与每秒生成词元数，帮你避开常见硬件误区。</p>
+              </div>
+              <div class="pt-gutter-sm border-t border-light-outline-variant/40 dark:border-dark-outline-variant/40 flex items-center justify-between font-mono text-mono-sm text-light-outline dark:text-dark-outline tabular-nums">
+                <span data-design-text-token="mono-sm">2026-10-28</span>
+                <span data-design-text-token="mono-sm">阅读 9 分钟</span>
+              </div>
+            </div>
+          </a>
+
+          <!-- Card 5 -->
+          <a href="#" data-component-id="card-interactive" data-component-type="card" data-component-variant="interactive" class="group h-full flex flex-col rounded-md overflow-hidden bg-light-surface-container-low dark:bg-dark-surface-container-low border border-light-outline-variant/60 dark:border-dark-outline-variant/60 transition-transform duration-surface-enter ease-surface-enter hover:-translate-y-0.5 hover:border-light-primary dark:hover:border-dark-primary">
+            <div class="aspect-video w-full overflow-hidden bg-light-surface-container dark:bg-dark-surface-container">
+              <img src="https://lh3.googleusercontent.com/aida/ALJJyrBMLr8Pg8YyD_31PivZZGaRT_iv1E4kry4NyFznD1oG3OVmvvLjmMOwh7CR4K_X1htG1tquTgEl0rODUBk3GnNnQXg84HO2RbZgSvnqqI16YeF7s6lgRLgfYoQghPixHIAeDiKiUZqQisfDJ_TRoQv_fyy5iwgWj_xjMz4lUpOszKff7XcXbELLArIuBVnIAipbK9H2AXYZ9sv4aKZE1KGgcDflGE3_d1CT4G1JTbFOEFmlDgFqcBDRQga1" alt="悬浮于金属架上的半透明索引卡片与光束" class="w-full h-full object-cover">
+            </div>
+            <div class="flex flex-col flex-1 justify-between gap-gutter-md p-gutter-lg">
+              <div class="flex flex-col gap-gutter-sm">
+                <span data-design-text-token="label-md" class="self-start px-gutter-sm py-gutter-xs rounded-sm bg-light-tertiary/15 dark:bg-dark-tertiary/15 text-light-tertiary dark:text-dark-tertiary font-mono text-label-md">概念科普</span>
+                <h3 data-design-text-token="title-md" class="font-title text-title-md text-light-on-surface dark:text-dark-on-surface group-hover:text-light-primary dark:group-hover:text-dark-primary transition-colors duration-state-change line-clamp-2">混合检索为何比纯向量更靠谱？</h3>
+                <p data-design-text-token="body-sm" class="font-body text-body-sm text-light-outline dark:text-dark-outline line-clamp-2">BM25 关键词精确匹配遇上语义向量召回，重排模型如何把文档答案排到第一位。</p>
+              </div>
+              <div class="pt-gutter-sm border-t border-light-outline-variant/40 dark:border-dark-outline-variant/40 flex items-center justify-between font-mono text-mono-sm text-light-outline dark:text-dark-outline tabular-nums">
+                <span data-design-text-token="mono-sm">2026-10-21</span>
+                <span data-design-text-token="mono-sm">阅读 6 分钟</span>
+              </div>
+            </div>
+          </a>
+
+          <!-- Card 6 -->
+          <a href="#" data-component-id="card-interactive" data-component-type="card" data-component-variant="interactive" class="group h-full flex flex-col rounded-md overflow-hidden bg-light-surface-container-low dark:bg-dark-surface-container-low border border-light-outline-variant/60 dark:border-dark-outline-variant/60 transition-transform duration-surface-enter ease-surface-enter hover:-translate-y-0.5 hover:border-light-primary dark:hover:border-dark-primary">
+            <div class="aspect-video w-full overflow-hidden bg-light-surface-container dark:bg-dark-surface-container">
+              <img src="https://lh3.googleusercontent.com/aida/ALJJyrBcWTXi70YKZHcHE7fKD-UxpdzwPTbfoVb6RrqQfI3PTGJaEfYItccTYFeeXOj2Sgw6TFAB89GMs-TpEfIWWaiz13rOn0c-JCc1FMtW3gIYpxrMEzaj5OcZOp1Yw4luWU1kCpPiqqEFWNq5jsuwes4GignU1CFtBFuxJb6FsHdIrdXJB6KmTGw0homXDoGk8427jyvHK4vXhy7keLT1kXnK9-qnketdTFD0zu6xXmHLBQQ4LxpD2daDFC8q7lhmvPv7" alt="精密光学镜头光圈与光谱仪刻度盘" class="w-full h-full object-cover">
+            </div>
+            <div class="flex flex-col flex-1 justify-between gap-gutter-md p-gutter-lg">
+              <div class="flex flex-col gap-gutter-sm">
+                <span data-design-text-token="label-md" class="self-start px-gutter-sm py-gutter-xs rounded-sm bg-light-tertiary/15 dark:bg-dark-tertiary/15 text-light-tertiary dark:text-dark-tertiary font-mono text-label-md">新模型速递</span>
+                <h3 data-design-text-token="title-md" class="font-title text-title-md text-light-on-surface dark:text-dark-on-surface group-hover:text-light-primary dark:group-hover:text-dark-primary transition-colors duration-state-change line-clamp-2">原生多模态如何直接“看图”？</h3>
+                <p data-design-text-token="body-sm" class="font-body text-body-sm text-light-outline dark:text-dark-outline line-clamp-2">告别外挂视觉编码器的拼接时代，统一词元空间如何让模型看懂复杂图表与手写公式。</p>
+              </div>
+              <div class="pt-gutter-sm border-t border-light-outline-variant/40 dark:border-dark-outline-variant/40 flex items-center justify-between font-mono text-mono-sm text-light-outline dark:text-dark-outline tabular-nums">
+                <span data-design-text-token="mono-sm">2026-10-15</span>
+                <span data-design-text-token="mono-sm">阅读 7 分钟</span>
+              </div>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <!-- 4) WeChat Follow Card -->
+      <section aria-label="关注公众号">
+        <div data-component-id="card-elevated" data-component-type="card" data-component-variant="elevated" class="flex flex-col sm:flex-row items-center justify-between gap-gutter-lg p-gutter-lg md:p-gutter-xl rounded-md bg-light-surface-container-low dark:bg-dark-surface-container-low border border-light-outline-variant/60 dark:border-dark-outline-variant/60">
+          <div class="flex items-center gap-gutter-lg">
+            <!-- Scannable Geometric QR Code -->
+            <div class="shrink-0 w-24 h-24 p-gutter-xs rounded bg-light-surface-container-lowest text-light-on-surface border border-light-outline-variant/40" aria-label="微信公众号 AI进化调研员 二维码">
+              <svg viewBox="0 0 100 100" class="w-full h-full" fill="currentColor" role="img" aria-label="微信扫码关注 AI进化调研员">
+                <rect x="6" y="6" width="26" height="26" rx="2" fill="none" stroke="currentColor" stroke-width="5"></rect>
+                <rect x="14" y="14" width="10" height="10"></rect>
+                <rect x="68" y="6" width="26" height="26" rx="2" fill="none" stroke="currentColor" stroke-width="5"></rect>
+                <rect x="76" y="14" width="10" height="10"></rect>
+                <rect x="6" y="68" width="26" height="26" rx="2" fill="none" stroke="currentColor" stroke-width="5"></rect>
+                <rect x="14" y="76" width="10" height="10"></rect>
+                <rect x="40" y="8" width="6" height="6"></rect>
+                <rect x="52" y="8" width="6" height="6"></rect>
+                <rect x="40" y="20" width="12" height="6"></rect>
+                <rect x="40" y="38" width="20" height="20" rx="2" fill="#F97316"></rect>
+                <rect x="8" y="42" width="10" height="6"></rect>
+                <rect x="24" y="42" width="8" height="12"></rect>
+                <rect x="68" y="42" width="12" height="6"></rect>
+                <rect x="84" y="42" width="10" height="10"></rect>
+                <rect x="42" y="68" width="8" height="8"></rect>
+                <rect x="56" y="68" width="14" height="6"></rect>
+                <rect x="42" y="82" width="14" height="10"></rect>
+                <rect x="64" y="80" width="10" height="12"></rect>
+                <rect x="82" y="70" width="12" height="12"></rect>
+                <rect x="80" y="86" width="14" height="8"></rect>
+              </svg>
+            </div>
+            <div class="flex flex-col gap-gutter-xs">
+              <h2 data-design-text-token="title-lg" class="font-title text-title-lg text-light-on-surface dark:text-dark-on-surface">关注公众号 AI进化调研员，每周更新</h2>
+              <p data-design-text-token="body-md" class="font-body text-body-md text-light-outline dark:text-dark-outline text-balance">在微信里搜索 <span class="text-light-primary dark:text-dark-primary font-semibold">AI进化调研员</span></p>
+            </div>
+          </div>
+          <span data-design-text-token="mono-sm" class="font-mono text-mono-sm text-light-secondary dark:text-dark-secondary px-gutter-md py-gutter-xs rounded-sm bg-light-secondary/10 dark:bg-dark-secondary/10 border border-light-secondary/30 dark:border-dark-secondary/30">WeChat Official Account</span>
+        </div>
+      </section>
+
+      <!-- 5) Visually Lighter "技术笔记 Tech Notes" Strip -->
+      <section aria-labelledby="tech-notes-heading">
+        <div data-component-id="card-action" data-component-type="card" data-component-variant="action" class="flex flex-col gap-gutter-md p-gutter-lg rounded-md bg-light-surface-container-low/50 dark:bg-dark-surface-container-low/50 border border-light-outline-variant/40 dark:border-dark-outline-variant/40">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-gutter-sm">
+            <div class="flex flex-col gap-gutter-xs">
+              <h2 id="tech-notes-heading" data-design-text-token="headline-md" class="font-headline text-headline-md text-light-on-surface dark:text-dark-on-surface">技术笔记 Tech Notes</h2>
+              <p data-design-text-token="body-sm" class="font-body text-body-sm text-light-outline dark:text-dark-outline">Long-form English engineering posts &amp; an evergreen AI knowledge-base Wiki.</p>
+            </div>
+            <a href="#" data-design-text-token="label-lg" class="shrink-0 font-label text-label-lg text-light-secondary dark:text-dark-secondary hover:underline">进入技术笔记 →</a>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter-md pt-gutter-sm border-t border-light-outline-variant/30 dark:border-dark-outline-variant/30">
+            <a href="#" class="group flex items-center justify-between gap-gutter-md py-gutter-xs">
+              <span data-design-text-token="body-md" class="font-body text-body-md text-light-on-surface dark:text-dark-on-surface group-hover:text-light-secondary dark:group-hover:text-dark-secondary transition-colors duration-state-change">Anatomy of an Agentic Evaluation Harness: Deterministic Replay at Scale</span>
+              <span data-design-text-token="mono-sm" class="shrink-0 font-mono text-mono-sm text-light-outline dark:text-dark-outline tabular-nums">2026-11-11</span>
+            </a>
+            <a href="#" class="group flex items-center justify-between gap-gutter-md py-gutter-xs">
+              <span data-design-text-token="body-md" class="font-body text-body-md text-light-on-surface dark:text-dark-on-surface group-hover:text-light-secondary dark:group-hover:text-dark-secondary transition-colors duration-state-change">KV-Cache Quantization in Practice: Memory Bandwidth vs. Perplexity Trade-offs</span>
+              <span data-design-text-token="mono-sm" class="shrink-0 font-mono text-mono-sm text-light-outline dark:text-dark-outline tabular-nums">2026-10-30</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Site Footer -->
+    <footer class="border-t border-light-outline-variant/40 dark:border-dark-outline-variant/40 bg-light-surface-container-low/40 dark:bg-dark-surface-container-lowest/40">
+      <div class="max-w-[1200px] mx-auto px-gutter-md md:px-page-margin py-gutter-xl flex flex-col gap-gutter-lg">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-gutter-lg">
+          <!-- Small WeChat QR Card -->
+          <div class="flex items-center gap-gutter-md">
+            <div class="w-12 h-12 p-gutter-xs rounded-sm bg-light-surface-container-lowest text-light-on-surface border border-light-outline-variant/40" aria-hidden="true">
+              <svg viewBox="0 0 100 100" class="w-full h-full" fill="currentColor">
+                <rect x="8" y="8" width="28" height="28" fill="none" stroke="currentColor" stroke-width="6"></rect>
+                <rect x="64" y="8" width="28" height="28" fill="none" stroke="currentColor" stroke-width="6"></rect>
+                <rect x="8" y="64" width="28" height="28" fill="none" stroke="currentColor" stroke-width="6"></rect>
+                <rect x="44" y="44" width="14" height="14" fill="#F97316"></rect>
+                <rect x="66" y="66" width="22" height="22"></rect>
+              </svg>
+            </div>
+            <div class="flex flex-col">
+              <span data-design-text-token="label-lg" class="font-label text-label-lg text-light-on-surface dark:text-dark-on-surface">关注 AI进化调研员</span>
+              <span data-design-text-token="body-sm" class="font-body text-body-sm text-light-outline dark:text-dark-outline">微信扫码或搜索同名公众号</span>
+            </div>
+          </div>
+
+          <!-- Footer Links -->
+          <nav aria-label="页脚链接" class="flex items-center gap-gutter-lg font-mono text-mono-sm text-light-outline dark:text-dark-outline">
+            <a href="#" class="hover:text-light-primary dark:hover:text-dark-primary transition-colors duration-state-change">CV</a>
+            <a href="#" class="hover:text-light-primary dark:hover:text-dark-primary transition-colors duration-state-change">Now</a>
+            <a href="#" class="hover:text-light-primary dark:hover:text-dark-primary transition-colors duration-state-change">RSS</a>
+            <a href="#" class="hover:text-light-primary dark:hover:text-dark-primary transition-colors duration-state-change">GitHub</a>
+          </nav>
+        </div>
+
+        <!-- Single Copyright Line -->
+        <p data-design-text-token="mono-sm" class="font-mono text-mono-sm text-light-outline dark:text-dark-outline border-t border-light-outline-variant/30 dark:border-dark-outline-variant/30 pt-gutter-md">
+          © 2026 AI进化调研员 · AI Evolution Researcher. 保留所有权利。
+        </p>
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    (function () {
+      var toggle = document.getElementById('theme-toggle');
+      var icon = document.getElementById('theme-icon');
+      var root = document.documentElement;
+
+      if (toggle && icon) {
+        toggle.addEventListener('click', function () {
+          var isDark = root.classList.toggle('dark');
+          icon.textContent = isDark ? 'light_mode' : 'dark_mode';
+          try {
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+          } catch (e) {}
+        });
+      }
+
+      var progress = document.getElementById('reading-progress');
+      if (progress) {
+        window.addEventListener('scroll', function () {
+          var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+          var pct = docHeight > 0 ? Math.min(1, Math.max(0.2, window.scrollY / docHeight)) : 0.2;
+          progress.style.width = Math.round(pct * 100) + '%';
+        }, { passive: true });
+      }
+    })();
+  </script>
+
+
+</body></html>

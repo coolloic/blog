@@ -1,0 +1,468 @@
+<!DOCTYPE html><html lang="en" class="dark"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modern Web Guidelines: Building a Good Website in 2026 — AI Evolution Researcher</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">/** @type {import('tailwindcss').Config} */
+globalThis.tailwind = globalThis.tailwind || {};
+globalThis.tailwind.config = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      colors: {
+        'light-primary': '#9D4300',
+        'light-on-primary': '#FFFFFF',
+        'light-primary-container': '#F97316',
+        'light-on-primary-container': '#582200',
+        'light-secondary': '#006B5F',
+        'light-on-secondary': '#FFFFFF',
+        'light-secondary-container': '#6DF5E1',
+        'light-on-secondary-container': '#006F64',
+        'light-tertiary': '#842BD2',
+        'light-on-tertiary': '#FFFFFF',
+        'light-tertiary-container': '#BE7BFF',
+        'light-on-tertiary-container': '#4C0084',
+        'light-error': '#BA1A1A',
+        'light-on-error': '#FFFFFF',
+        'light-error-container': '#FFDAD6',
+        'light-on-error-container': '#93000A',
+        'light-background': '#F9F9FF',
+        'light-on-background': '#151B2A',
+        'light-surface': '#F9F9FF',
+        'light-surface-dim': '#D3DAEE',
+        'light-surface-bright': '#F9F9FF',
+        'light-surface-container-lowest': '#FFFFFF',
+        'light-surface-container-low': '#F1F3FF',
+        'light-surface-container': '#E9EDFF',
+        'light-surface-container-high': '#E2E8FC',
+        'light-surface-container-highest': '#DCE2F6',
+        'light-on-surface': '#151B2A',
+        'light-surface-variant': '#FDDCCC',
+        'light-on-surface-variant': '#584237',
+        'light-outline': '#8C7164',
+        'light-outline-variant': '#E0C0B1',
+        'light-inverse-surface': '#2A3040',
+        'light-inverse-on-surface': '#EDF0FF',
+        'light-inverse-primary': '#FFB690',
+        'dark-primary': '#FFB690',
+        'dark-on-primary': '#552100',
+        'dark-primary-container': '#F97316',
+        'dark-on-primary-container': '#582200',
+        'dark-secondary': '#4FDBC8',
+        'dark-on-secondary': '#003731',
+        'dark-secondary-container': '#04B4A2',
+        'dark-on-secondary-container': '#003F38',
+        'dark-tertiary': '#DDB7FF',
+        'dark-on-tertiary': '#490080',
+        'dark-tertiary-container': '#BE7BFF',
+        'dark-on-tertiary-container': '#4C0084',
+        'dark-error': '#FFB4AB',
+        'dark-on-error': '#690005',
+        'dark-error-container': '#93000A',
+        'dark-on-error-container': '#FFDAD6',
+        'dark-background': '#0C1321',
+        'dark-on-background': '#DCE2F6',
+        'dark-surface': '#0C1321',
+        'dark-surface-dim': '#0C1321',
+        'dark-surface-bright': '#323949',
+        'dark-surface-container-lowest': '#070E1C',
+        'dark-surface-container-low': '#151B2A',
+        'dark-surface-container': '#19202E',
+        'dark-surface-container-high': '#232A39',
+        'dark-surface-container-highest': '#2E3544',
+        'dark-on-surface': '#DCE2F6',
+        'dark-surface-variant': '#584237',
+        'dark-on-surface-variant': '#E0C0B1',
+        'dark-outline': '#A78B7D',
+        'dark-outline-variant': '#584237',
+        'dark-inverse-surface': '#DCE2F6',
+        'dark-inverse-on-surface': '#2A3040',
+        'dark-inverse-primary': '#9D4300',
+      },
+      borderRadius: {
+        'sm': '4px',
+        'DEFAULT': '8px',
+        'md': '12px',
+        'lg': '16px',
+        'xl': '24px',
+        'full': '9999px',
+      },
+      spacing: {
+        'gutter-xs': '4px',
+        'gutter-sm': '8px',
+        'gutter-md': '16px',
+        'gutter-lg': '24px',
+        'gutter-xl': '32px',
+        'section': '48px',
+        'page-margin': '32px',
+      },
+      fontFamily: {
+        'display': ['"Crimson Pro"', 'sans-serif'],
+        'headline': ['"Crimson Pro"', 'sans-serif'],
+        'title': ['"Lato"', 'sans-serif'],
+        'body': ['"Lato"', 'sans-serif'],
+        'label': ['"Lato"', 'sans-serif'],
+        'mono': ['"Source Code Pro"', 'monospace'],
+      },
+      fontSize: {
+        'display-lg': ['44px', { lineHeight: '54px', letterSpacing: '-0.5px', fontWeight: '700' }],
+        'display-lg-mobile': ['30px', { lineHeight: '38px', letterSpacing: '-0.25px', fontWeight: '700' }],
+        'headline-lg': ['36px', { lineHeight: '46px', letterSpacing: '-0.25px', fontWeight: '700' }],
+        'headline-lg-mobile': ['26px', { lineHeight: '34px', letterSpacing: '0px', fontWeight: '700' }],
+        'headline-md': ['24px', { lineHeight: '32px', letterSpacing: '0px', fontWeight: '600' }],
+        'title-lg': ['20px', { lineHeight: '30px', letterSpacing: '0px', fontWeight: '700' }],
+        'title-md': ['18px', { lineHeight: '28px', letterSpacing: '0px', fontWeight: '700' }],
+        'body-lg': ['18px', { lineHeight: '32px', letterSpacing: '0px', fontWeight: '400' }],
+        'body-md': ['16px', { lineHeight: '26px', letterSpacing: '0px', fontWeight: '400' }],
+        'body-sm': ['14px', { lineHeight: '22px', letterSpacing: '0px', fontWeight: '400' }],
+        'label-lg': ['14px', { lineHeight: '20px', letterSpacing: '0.1px', fontWeight: '600' }],
+        'label-md': ['12px', { lineHeight: '16px', letterSpacing: '0.2px', fontWeight: '500' }],
+        'mono-sm': ['13px', { lineHeight: '18px', letterSpacing: '0px', fontWeight: '400' }],
+      },
+      transitionDuration: {
+        'state-change': '150ms',
+        'surface-enter': '280ms',
+      },
+      transitionDelay: {
+        'state-change': '0ms',
+        'surface-enter': '0ms',
+      },
+      transitionTimingFunction: {
+        'state-change': 'ease-out',
+        'surface-enter': 'cubic-bezier(0.2, 0, 0, 1)',
+      },
+    },
+  },
+};
+if (typeof module !== 'undefined') module.exports = globalThis.tailwind.config;
+</script>
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@600;700&amp;family=Lato:wght@400;600;700&amp;family=Source+Code+Pro:wght@400;500&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet">
+  <style>
+    .material-symbols-outlined, .material-symbols-rounded, .material-symbols-sharp, .material-icons {
+      display: inline-block;
+      width: 1em;
+      height: 1em;
+      line-height: 1 !important;
+      box-sizing: content-box;
+      overflow: hidden;
+      white-space: nowrap;
+      direction: ltr;
+      vertical-align: middle;
+    }
+    body {
+      font-family: "Lato", "PingFang SC", "Noto Sans SC", sans-serif;
+    }
+    .font-headline {
+      font-family: "Crimson Pro", Georgia, serif;
+    }
+    .font-body, .font-title, .font-label {
+      font-family: "Lato", "PingFang SC", "Noto Sans SC", sans-serif;
+    }
+    .font-mono {
+      font-family: "Source Code Pro", monospace;
+    }
+  </style>
+</head>
+<body class="bg-light-background dark:bg-dark-background text-light-on-background dark:text-dark-on-background font-body antialiased selection:bg-light-primary/20 dark:selection:bg-dark-primary-container/30">
+
+  <div class="min-h-[1024px] flex flex-col" data-stitch-vh="min-h-[1024px]===min-h-screen">
+
+    <!-- Site Header (English UI Shell Parity) + Thin Orange Reading Progress Bar -->
+    <header class="sticky top-0 z-40 border-b border-light-outline-variant/40 dark:border-dark-outline-variant/40 bg-light-background/95 dark:bg-dark-background/95">
+      <div class="max-w-[1200px] mx-auto px-gutter-md md:px-page-margin h-16 flex items-center justify-between gap-gutter-md">
+        <!-- Brand Mark & Name -->
+        <a href="../home/Home.html" class="flex items-center gap-gutter-sm group focus-visible:outline focus-visible:outline-2 focus-visible:outline-dark-primary rounded-sm">
+          <span class="inline-flex items-center justify-center w-8 h-8 rounded bg-light-surface-container dark:bg-dark-surface-container border border-light-outline-variant dark:border-dark-outline-variant text-light-primary dark:text-dark-primary" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M12 2v4"></path>
+              <path d="M12 18v4"></path>
+              <path d="M4.93 4.93l2.83 2.83"></path>
+              <path d="M16.24 16.24l2.83 2.83"></path>
+              <path d="M2 12h4"></path>
+              <path d="M18 12h4"></path>
+            </svg>
+          </span>
+          <span class="flex items-baseline gap-gutter-sm">
+            <span data-design-text-token="title-md" class="font-title text-title-md text-light-on-surface dark:text-dark-on-surface group-hover:text-light-primary dark:group-hover:text-dark-primary transition-colors duration-state-change">AI Evolution Researcher</span>
+            <span data-design-text-token="mono-sm" class="hidden sm:inline font-mono text-mono-sm text-light-outline dark:text-dark-outline">AI进化调研员</span>
+          </span>
+        </a>
+
+        <!-- English Navigation & Theme Toggle -->
+        <div class="flex items-center gap-gutter-md md:gap-gutter-lg">
+          <nav aria-label="Main navigation" class="hidden md:flex items-center gap-gutter-lg">
+            <a href="../home/Home.html" data-design-text-token="label-lg" class="font-label text-label-lg text-light-on-surface/80 dark:text-dark-on-surface/80 hover:text-light-primary dark:hover:text-dark-primary transition-colors duration-state-change">Home</a>
+            <a href="../category-concepts/CategoryConcepts.html" data-design-text-token="label-lg" class="font-label text-label-lg text-light-on-surface/80 dark:text-dark-on-surface/80 hover:text-light-primary dark:hover:text-dark-primary transition-colors duration-state-change">Articles</a>
+            <a href="../tech-notes/TechNotes.html" aria-current="page" data-design-text-token="label-lg" class="font-label text-label-lg text-light-primary dark:text-dark-primary">Notes</a>
+            <a href="#" data-design-text-token="label-lg" class="font-label text-label-lg text-light-on-surface/80 dark:text-dark-on-surface/80 hover:text-light-primary dark:hover:text-dark-primary transition-colors duration-state-change">Archive</a>
+            <a href="#" data-design-text-token="label-lg" class="font-label text-label-lg text-light-on-surface/80 dark:text-dark-on-surface/80 hover:text-light-primary dark:hover:text-dark-primary transition-colors duration-state-change">Search</a>
+            <a href="#" data-design-text-token="label-lg" class="font-label text-label-lg text-light-on-surface/80 dark:text-dark-on-surface/80 hover:text-light-primary dark:hover:text-dark-primary transition-colors duration-state-change">About</a>
+          </nav>
+
+          <!-- Light/Dark Toggle Icon Button -->
+          <!-- COMPONENT: button-icon -->
+          <button id="theme-toggle" data-component-id="button-icon" data-component-type="button" data-component-variant="icon" type="button" aria-label="Toggle light or dark theme" class="inline-flex items-center justify-center w-9 h-9 rounded border border-light-outline-variant dark:border-dark-outline-variant bg-light-surface-container-low dark:bg-dark-surface-container-low text-light-on-surface dark:text-dark-on-surface transition-colors duration-state-change ease-state-change hover:border-light-primary dark:hover:border-dark-primary hover:text-light-primary dark:hover:text-dark-primary">
+            <span id="theme-icon" class="material-symbols-outlined text-title-md" aria-hidden="true">light_mode</span>
+          </button>
+        </div>
+      </div>
+      <!-- Thin Orange Reading Progress Bar -->
+      <div class="w-full h-0.5 bg-light-surface-container dark:bg-dark-surface-container" aria-hidden="true">
+        <div id="reading-progress" class="h-full w-1/4 bg-light-primary dark:bg-dark-primary-container transition-transform duration-state-change ease-state-change origin-left"></div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 w-full max-w-[1200px] mx-auto px-gutter-md md:px-page-margin py-gutter-xl md:py-section">
+      <article class="flex flex-col gap-gutter-xl">
+
+        <!-- Post Header -->
+        <header class="max-w-[720px] flex flex-col gap-gutter-md">
+          <div class="flex flex-wrap items-center gap-gutter-md">
+            <span data-design-text-token="mono-sm" class="font-mono text-mono-sm text-light-outline dark:text-dark-outline tabular-nums">2026-11-16 · 8 min read</span>
+            <div class="flex items-center gap-gutter-xs">
+              <span data-design-text-token="label-md" class="px-gutter-sm py-0.5 rounded-sm bg-light-tertiary/15 dark:bg-dark-tertiary/15 text-light-tertiary dark:text-dark-tertiary font-mono text-label-md">web</span>
+              <span data-design-text-token="label-md" class="px-gutter-sm py-0.5 rounded-sm bg-light-tertiary/15 dark:bg-dark-tertiary/15 text-light-tertiary dark:text-dark-tertiary font-mono text-label-md">architecture</span>
+            </div>
+          </div>
+
+          <h1 data-design-text-token="display-lg" class="font-headline text-display-lg-mobile md:text-display-lg text-light-on-surface dark:text-dark-on-surface text-balance">
+            Modern Web Guidelines: Building a Good Website in 2026
+          </h1>
+        </header>
+
+        <!-- Two Columns: English Body (17px / 1.7) + Right-side Sticky Table of Contents -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter-xl items-start pt-gutter-lg border-t border-light-outline-variant/40 dark:border-dark-outline-variant/40">
+
+          <!-- Left Column: English Body -->
+          <div class="lg:col-span-8 max-w-[65ch] flex flex-col gap-gutter-lg font-body text-body-lg">
+
+            <p class="text-light-on-surface dark:text-dark-on-surface text-pretty">
+              Most websites fail their readers not because of missing features, but because of accumulated friction: oversized client bundles, layout shifts during font hydration, and visual noise competing with the text. In 2026, building a durable content site means treating simplicity as a strict engineering constraint.
+            </p>
+
+            <h2 id="sec-principles" data-design-text-token="headline-lg" class="font-headline text-headline-lg-mobile md:text-headline-lg text-light-on-surface dark:text-dark-on-surface pt-gutter-sm">
+              1. Core Architectural Principles
+            </h2>
+
+            <p class="text-light-on-surface dark:text-dark-on-surface text-pretty">
+              When readers arrive from WeChat or a search engine, their tolerance for waiting is measured in hundreds of milliseconds. A static-first architecture delivers the entire document in a single round trip:
+            </p>
+
+            <ul class="list-disc pl-gutter-lg flex flex-col gap-gutter-sm text-light-on-surface dark:text-dark-on-surface">
+              <li><strong class="font-bold">Zero-JS reading baseline:</strong> Every article, table, and diagram renders in pure HTML and CSS before any script executes.</li>
+              <li><strong class="font-bold">Explicit media aspect ratios:</strong> Reserve 21:9 or 16:9 boxes up front so images and looping-video covers never cause layout shift.</li>
+              <li><strong class="font-bold">Semantic color tokens:</strong> Pair dark navy surfaces with WCAG AA foreground contrast rather than inverting light-mode palettes.</li>
+            </ul>
+
+            <h3 id="sec-budgets" data-design-text-token="headline-md" class="font-headline text-headline-md text-light-on-surface dark:text-dark-on-surface pt-gutter-xs">
+              Performance &amp; Typography Budgets
+            </h3>
+
+            <!-- Table -->
+            <div class="overflow-x-auto rounded-md border border-light-outline-variant/60 dark:border-dark-outline-variant/60">
+              <table class="w-full text-left border-collapse">
+                <thead class="bg-light-surface-container dark:bg-dark-surface-container border-b border-light-outline-variant/60 dark:border-dark-outline-variant/60">
+                  <tr>
+                    <th data-design-text-token="label-lg" class="px-gutter-md py-gutter-sm font-label text-label-lg text-light-on-surface dark:text-dark-on-surface">Metric</th>
+                    <th data-design-text-token="label-lg" class="px-gutter-md py-gutter-sm font-label text-label-lg text-light-on-surface dark:text-dark-on-surface">Target Budget</th>
+                    <th data-design-text-token="label-lg" class="px-gutter-md py-gutter-sm font-label text-label-lg text-light-on-surface dark:text-dark-on-surface">Rationale</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-light-outline-variant/40 dark:divide-dark-outline-variant/40 bg-light-surface-container-low dark:bg-dark-surface-container-low">
+                  <tr>
+                    <td data-design-text-token="mono-sm" class="px-gutter-md py-gutter-sm font-mono text-mono-sm text-light-primary dark:text-dark-primary">First Contentful Paint</td>
+                    <td data-design-text-token="mono-sm" class="px-gutter-md py-gutter-sm font-mono text-mono-sm text-light-on-surface dark:text-dark-on-surface tabular-nums">&lt; 0.8s</td>
+                    <td data-design-text-token="body-sm" class="px-gutter-md py-gutter-sm font-body text-body-sm text-light-outline dark:text-dark-outline">Static HTML from edge CDN</td>
+                  </tr>
+                  <tr>
+                    <td data-design-text-token="mono-sm" class="px-gutter-md py-gutter-sm font-mono text-mono-sm text-light-primary dark:text-dark-primary">Line Measure (EN / ZH)</td>
+                    <td data-design-text-token="mono-sm" class="px-gutter-md py-gutter-sm font-mono text-mono-sm text-light-on-surface dark:text-dark-on-surface tabular-nums">65ch / 40 chars</td>
+                    <td data-design-text-token="body-sm" class="px-gutter-md py-gutter-sm font-body text-body-sm text-light-outline dark:text-dark-outline">Comfortable eye-tracking</td>
+                  </tr>
+                  <tr>
+                    <td data-design-text-token="mono-sm" class="px-gutter-md py-gutter-sm font-mono text-mono-sm text-light-primary dark:text-dark-primary">Client JS Payload</td>
+                    <td data-design-text-token="mono-sm" class="px-gutter-md py-gutter-sm font-mono text-mono-sm text-light-on-surface dark:text-dark-on-surface tabular-nums">&lt; 5 KB</td>
+                    <td data-design-text-token="body-sm" class="px-gutter-md py-gutter-sm font-body text-body-sm text-light-outline dark:text-dark-outline">Theme toggle &amp; progress bar only</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h2 id="sec-implementation" data-design-text-token="headline-lg" class="font-headline text-headline-lg-mobile md:text-headline-lg text-light-on-surface dark:text-dark-on-surface pt-gutter-sm">
+              2. Minimal Theme &amp; Progress Pattern
+            </h2>
+
+            <p class="text-light-on-surface dark:text-dark-on-surface text-pretty">
+              Rather than shipping a full state-management library for a light/dark toggle, a tiny inline snippet respects system preferences and keeps contrast tokens intact:
+            </p>
+
+            <!-- Code Block with Language Label and Copy Button -->
+            <div class="rounded-md overflow-hidden border border-light-outline-variant/60 dark:border-dark-outline-variant/60 bg-dark-surface-container-lowest">
+              <div class="flex items-center justify-between px-gutter-md py-gutter-xs bg-dark-surface-container border-b border-dark-outline-variant/40">
+                <span data-design-text-token="mono-sm" class="font-mono text-mono-sm text-dark-secondary">javascript</span>
+                <button id="copy-code-btn" type="button" class="inline-flex items-center gap-gutter-xs px-gutter-sm py-0.5 rounded-sm font-mono text-label-md text-dark-on-surface/80 hover:text-dark-primary hover:bg-dark-surface-container-high transition-colors duration-state-change">
+                  <span class="material-symbols-outlined text-body-sm" aria-hidden="true">content_copy</span>
+                  <span id="copy-label">Copy</span>
+                </button>
+              </div>
+              <pre id="code-snippet" class="p-gutter-md overflow-x-auto font-mono text-mono-sm text-dark-on-surface leading-relaxed"><code>const root = document.documentElement;
+toggleBtn.addEventListener(&#39;click&#39;, () =&gt; {
+  const isDark = root.classList.toggle(&#39;dark&#39;);
+  icon.textContent = isDark ? &#39;light_mode&#39; : &#39;dark_mode&#39;;
+});</code></pre>
+            </div>
+
+            <h2 id="sec-pipeline" data-design-text-token="headline-lg" class="font-headline text-headline-lg-mobile md:text-headline-lg text-light-on-surface dark:text-dark-on-surface pt-gutter-sm">
+              3. Static Build &amp; Verification Pipeline
+            </h2>
+
+            <!-- Flowchart Diagram -->
+            <figure class="p-gutter-lg rounded-md bg-light-surface-container-low dark:bg-dark-surface-container-low border border-light-outline-variant/60 dark:border-dark-outline-variant/60 flex flex-col gap-gutter-sm">
+              <svg viewBox="0 0 700 110" class="w-full h-auto" role="img" aria-label="Static website build and verification pipeline flowchart">
+                <rect x="8" y="22" width="144" height="62" rx="8" class="fill-light-surface-container dark:fill-dark-surface-container stroke-light-outline-variant dark:stroke-dark-outline-variant" stroke-width="1.5"></rect>
+                <text x="80" y="50" text-anchor="middle" class="fill-light-on-surface dark:fill-dark-on-surface font-bold" font-size="13">Markdown + Media</text>
+                <text x="80" y="68" text-anchor="middle" class="fill-light-outline dark:fill-dark-outline font-mono" font-size="11">Git Repository</text>
+
+                <path d="M156 53 L190 53" class="stroke-light-outline dark:stroke-dark-outline" stroke-width="1.5"></path>
+
+                <rect x="194" y="22" width="144" height="62" rx="8" class="fill-light-surface-container dark:fill-dark-surface-container stroke-light-secondary dark:stroke-dark-secondary" stroke-width="1.5"></rect>
+                <text x="266" y="50" text-anchor="middle" class="fill-light-on-surface dark:fill-dark-on-surface font-bold" font-size="13">Static Generator</text>
+                <text x="266" y="68" text-anchor="middle" class="fill-light-secondary dark:fill-dark-secondary font-mono" font-size="11">HTML + Tokens</text>
+
+                <path d="M342 53 L376 53" class="stroke-light-outline dark:stroke-dark-outline" stroke-width="1.5"></path>
+
+                <rect x="380" y="22" width="144" height="62" rx="8" class="fill-light-surface-container dark:fill-dark-surface-container stroke-light-outline-variant dark:stroke-dark-outline-variant" stroke-width="1.5"></rect>
+                <text x="452" y="50" text-anchor="middle" class="fill-light-on-surface dark:fill-dark-on-surface font-bold" font-size="13">AA &amp; Layout Lint</text>
+                <text x="452" y="68" text-anchor="middle" class="fill-light-outline dark:fill-dark-outline font-mono" font-size="11">Zero-Shift Check</text>
+
+                <path d="M528 53 L562 53" class="stroke-light-primary dark:stroke-dark-primary" stroke-width="1.5"></path>
+
+                <rect x="566" y="22" width="126" height="62" rx="8" class="fill-light-primary-container/15 dark:fill-dark-primary-container/20 stroke-light-primary dark:stroke-dark-primary-container" stroke-width="1.5"></rect>
+                <text x="629" y="50" text-anchor="middle" class="fill-light-primary dark:fill-dark-primary font-bold" font-size="13">Edge CDN</text>
+                <text x="629" y="68" text-anchor="middle" class="fill-light-primary dark:fill-dark-primary font-mono" font-size="11">&lt; 50ms TTFB</text>
+              </svg>
+              <figcaption data-design-text-token="body-sm" class="font-body text-body-sm text-light-outline dark:text-dark-outline">
+                Figure 1: Every post is compiled, contrast-checked, and published as immutable static assets.
+              </figcaption>
+            </figure>
+
+            <!-- Bottom: Previous / Next Links + Suggest Changes -->
+            <div class="flex flex-col gap-gutter-lg pt-gutter-lg border-t border-light-outline-variant/40 dark:border-dark-outline-variant/40">
+              <nav aria-label="Post navigation" class="grid grid-cols-1 sm:grid-cols-2 gap-gutter-md">
+                <a href="#" class="group flex flex-col gap-gutter-xs p-gutter-md rounded-md bg-light-surface-container-low dark:bg-dark-surface-container-low border border-light-outline-variant/60 dark:border-dark-outline-variant/60 hover:border-light-primary dark:hover:border-dark-primary transition-colors duration-state-change">
+                  <span data-design-text-token="mono-sm" class="font-mono text-mono-sm text-light-outline dark:text-dark-outline">← Previous</span>
+                  <span data-design-text-token="title-md" class="font-title text-title-md text-light-on-surface dark:text-dark-on-surface group-hover:text-light-primary dark:group-hover:text-dark-primary transition-colors duration-state-change">Harness Engineering</span>
+                </a>
+                <a href="#" class="group flex flex-col items-start sm:items-end gap-gutter-xs p-gutter-md rounded-md bg-light-surface-container-low dark:bg-dark-surface-container-low border border-light-outline-variant/60 dark:border-dark-outline-variant/60 hover:border-light-primary dark:hover:border-dark-primary transition-colors duration-state-change">
+                  <span data-design-text-token="mono-sm" class="font-mono text-mono-sm text-light-outline dark:text-dark-outline">Next →</span>
+                  <span data-design-text-token="title-md" class="font-title text-title-md text-light-on-surface dark:text-dark-on-surface group-hover:text-light-primary dark:group-hover:text-dark-primary transition-colors duration-state-change">Anatomy of an AI Agent</span>
+                </a>
+              </nav>
+
+              <div class="flex items-center justify-between">
+                <a href="#" class="inline-flex items-center gap-gutter-xs font-mono text-mono-sm text-light-secondary dark:text-dark-secondary hover:underline">
+                  <span class="material-symbols-outlined text-body-md" aria-hidden="true">edit_note</span>
+                  <span>Suggest changes</span>
+                </a>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Right Column: Sticky Table of Contents -->
+          <aside aria-label="Table of contents" class="lg:col-span-4 lg:sticky lg:top-24 p-gutter-lg rounded-md bg-light-surface-container-low dark:bg-dark-surface-container-low border border-light-outline-variant/60 dark:border-dark-outline-variant/60 flex flex-col gap-gutter-md">
+            <div class="flex items-center justify-between border-b border-light-outline-variant/40 dark:border-dark-outline-variant/40 pb-gutter-sm">
+              <h2 data-design-text-token="title-md" class="font-title text-title-md text-light-on-surface dark:text-dark-on-surface">On this page</h2>
+              <span data-design-text-token="mono-sm" class="font-mono text-mono-sm text-light-outline dark:text-dark-outline">TOC</span>
+            </div>
+            <nav aria-label="Section links" class="flex flex-col gap-gutter-sm">
+              <a href="#sec-principles" data-design-text-token="body-sm" class="font-body text-body-sm text-light-primary dark:text-dark-primary font-semibold pl-gutter-sm border-l-2 border-light-primary dark:border-dark-primary-container">
+                1. Core Architectural Principles
+              </a>
+              <a href="#sec-budgets" data-design-text-token="body-sm" class="font-body text-body-sm text-light-outline dark:text-dark-outline hover:text-light-on-surface dark:hover:text-dark-on-surface pl-gutter-lg border-l-2 border-transparent transition-colors duration-state-change">
+                Performance &amp; Typography Budgets
+              </a>
+              <a href="#sec-implementation" data-design-text-token="body-sm" class="font-body text-body-sm text-light-outline dark:text-dark-outline hover:text-light-on-surface dark:hover:text-dark-on-surface pl-gutter-sm border-l-2 border-transparent transition-colors duration-state-change">
+                2. Minimal Theme &amp; Progress Pattern
+              </a>
+              <a href="#sec-pipeline" data-design-text-token="body-sm" class="font-body text-body-sm text-light-outline dark:text-dark-outline hover:text-light-on-surface dark:hover:text-dark-on-surface pl-gutter-sm border-l-2 border-transparent transition-colors duration-state-change">
+                3. Static Build &amp; Verification Pipeline
+              </a>
+            </nav>
+          </aside>
+
+        </div>
+
+      </article>
+    </main>
+
+    <!-- Site Footer (English UI Shell Parity) -->
+    <footer class="border-t border-light-outline-variant/40 dark:border-dark-outline-variant/40 bg-light-surface-container-low/40 dark:bg-dark-surface-container-lowest/40">
+      <div class="max-w-[1200px] mx-auto px-gutter-md md:px-page-margin py-gutter-xl flex flex-col gap-gutter-lg">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-gutter-lg">
+          <div class="flex items-center gap-gutter-md">
+            <div class="w-12 h-12 p-gutter-xs rounded-sm bg-light-surface-container-lowest text-light-on-surface border border-light-outline-variant/40" aria-hidden="true">
+              <svg viewBox="0 0 100 100" class="w-full h-full" fill="currentColor">
+                <rect x="8" y="8" width="28" height="28" fill="none" stroke="currentColor" stroke-width="6"></rect>
+                <rect x="64" y="8" width="28" height="28" fill="none" stroke="currentColor" stroke-width="6"></rect>
+                <rect x="8" y="64" width="28" height="28" fill="none" stroke="currentColor" stroke-width="6"></rect>
+                <rect x="44" y="44" width="14" height="14" fill="#F97316"></rect>
+                <rect x="66" y="66" width="22" height="22"></rect>
+              </svg>
+            </div>
+            <div class="flex flex-col">
+              <span data-design-text-token="label-lg" class="font-label text-label-lg text-light-on-surface dark:text-dark-on-surface">Follow AI进化调研员</span>
+              <span data-design-text-token="body-sm" class="font-body text-body-sm text-light-outline dark:text-dark-outline">Scan or search on WeChat for Chinese explainers</span>
+            </div>
+          </div>
+
+          <nav aria-label="Footer links" class="flex items-center gap-gutter-lg font-mono text-mono-sm text-light-outline dark:text-dark-outline">
+            <a href="#" class="hover:text-light-primary dark:hover:text-dark-primary transition-colors duration-state-change">CV</a>
+            <a href="#" class="hover:text-light-primary dark:hover:text-dark-primary transition-colors duration-state-change">Now</a>
+            <a href="#" class="hover:text-light-primary dark:hover:text-dark-primary transition-colors duration-state-change">RSS</a>
+            <a href="#" class="hover:text-light-primary dark:hover:text-dark-primary transition-colors duration-state-change">GitHub</a>
+          </nav>
+        </div>
+
+        <p data-design-text-token="mono-sm" class="font-mono text-mono-sm text-light-outline dark:text-dark-outline border-t border-light-outline-variant/30 dark:border-dark-outline-variant/30 pt-gutter-md">
+          © 2026 AI进化调研员 · AI Evolution Researcher. All rights reserved.
+        </p>
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    (function () {
+      var toggle = document.getElementById('theme-toggle');
+      var icon = document.getElementById('theme-icon');
+      var root = document.documentElement;
+      if (toggle && icon) {
+        toggle.addEventListener('click', function () {
+          var isDark = root.classList.toggle('dark');
+          icon.textContent = isDark ? 'light_mode' : 'dark_mode';
+        });
+      }
+
+      var copyBtn = document.getElementById('copy-code-btn');
+      var copyLabel = document.getElementById('copy-label');
+      var codeSnippet = document.getElementById('code-snippet');
+      if (copyBtn && copyLabel && codeSnippet) {
+        copyBtn.addEventListener('click', function () {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(codeSnippet.textContent).catch(function () {});
+          }
+          copyLabel.textContent = 'Copied';
+          setTimeout(function () {
+            copyLabel.textContent = 'Copy';
+          }, 1500);
+        });
+      }
+    })();
+  </script>
+
+
+</body></html>

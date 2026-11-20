@@ -1,0 +1,313 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>搜索 — AI进化调研员</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">/** @type {import('tailwindcss').Config} */
+globalThis.tailwind = globalThis.tailwind || {};
+globalThis.tailwind.config = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      colors: {
+        'light-primary': '#9D4300',
+        'light-on-primary': '#FFFFFF',
+        'light-primary-container': '#F97316',
+        'light-on-primary-container': '#582200',
+        'light-secondary': '#006B5F',
+        'light-on-secondary': '#FFFFFF',
+        'light-secondary-container': '#6DF5E1',
+        'light-on-secondary-container': '#006F64',
+        'light-tertiary': '#842BD2',
+        'light-on-tertiary': '#FFFFFF',
+        'light-tertiary-container': '#BE7BFF',
+        'light-on-tertiary-container': '#4C0084',
+        'light-error': '#BA1A1A',
+        'light-on-error': '#FFFFFF',
+        'light-error-container': '#FFDAD6',
+        'light-on-error-container': '#93000A',
+        'light-background': '#F9F9FF',
+        'light-on-background': '#151B2A',
+        'light-surface': '#F9F9FF',
+        'light-surface-dim': '#D3DAEE',
+        'light-surface-bright': '#F9F9FF',
+        'light-surface-container-lowest': '#FFFFFF',
+        'light-surface-container-low': '#F1F3FF',
+        'light-surface-container': '#E9EDFF',
+        'light-surface-container-high': '#E2E8FC',
+        'light-surface-container-highest': '#DCE2F6',
+        'light-on-surface': '#151B2A',
+        'light-surface-variant': '#FDDCCC',
+        'light-on-surface-variant': '#584237',
+        'light-outline': '#8C7164',
+        'light-outline-variant': '#E0C0B1',
+        'light-inverse-surface': '#2A3040',
+        'light-inverse-on-surface': '#EDF0FF',
+        'light-inverse-primary': '#FFB690',
+        'dark-primary': '#FFB690',
+        'dark-on-primary': '#552100',
+        'dark-primary-container': '#F97316',
+        'dark-on-primary-container': '#582200',
+        'dark-secondary': '#4FDBC8',
+        'dark-on-secondary': '#003731',
+        'dark-secondary-container': '#04B4A2',
+        'dark-on-secondary-container': '#003F38',
+        'dark-tertiary': '#DDB7FF',
+        'dark-on-tertiary': '#490080',
+        'dark-tertiary-container': '#BE7BFF',
+        'dark-on-tertiary-container': '#4C0084',
+        'dark-error': '#FFB4AB',
+        'dark-on-error': '#690005',
+        'dark-error-container': '#93000A',
+        'dark-on-error-container': '#FFDAD6',
+        'dark-background': '#0C1321',
+        'dark-on-background': '#DCE2F6',
+        'dark-surface': '#0C1321',
+        'dark-surface-dim': '#0C1321',
+        'dark-surface-bright': '#323949',
+        'dark-surface-container-lowest': '#070E1C',
+        'dark-surface-container-low': '#151B2A',
+        'dark-surface-container': '#19202E',
+        'dark-surface-container-high': '#232A39',
+        'dark-surface-container-highest': '#2E3544',
+        'dark-on-surface': '#DCE2F6',
+        'dark-surface-variant': '#584237',
+        'dark-on-surface-variant': '#E0C0B1',
+        'dark-outline': '#A78B7D',
+        'dark-outline-variant': '#584237',
+        'dark-inverse-surface': '#DCE2F6',
+        'dark-inverse-on-surface': '#2A3040',
+        'dark-inverse-primary': '#9D4300',
+      },
+      borderRadius: {
+        'sm': '4px',
+        'DEFAULT': '8px',
+        'md': '12px',
+        'lg': '16px',
+        'xl': '24px',
+        'full': '9999px',
+      },
+      spacing: {
+        'gutter-xs': '4px',
+        'gutter-sm': '8px',
+        'gutter-md': '16px',
+        'gutter-lg': '24px',
+        'gutter-xl': '32px',
+        'section': '48px',
+        'page-margin': '32px',
+      },
+      fontFamily: {
+        'display': ['"Crimson Pro"', 'sans-serif'],
+        'headline': ['"Crimson Pro"', 'sans-serif'],
+        'title': ['"Lato"', 'sans-serif'],
+        'body': ['"Lato"', 'sans-serif'],
+        'label': ['"Lato"', 'sans-serif'],
+        'mono': ['"Source Code Pro"', 'monospace'],
+      },
+      fontSize: {
+        'display-lg': ['44px', { lineHeight: '54px', letterSpacing: '-0.5px', fontWeight: '700' }],
+        'display-lg-mobile': ['30px', { lineHeight: '38px', letterSpacing: '-0.25px', fontWeight: '700' }],
+        'headline-lg': ['36px', { lineHeight: '46px', letterSpacing: '-0.25px', fontWeight: '700' }],
+        'headline-lg-mobile': ['26px', { lineHeight: '34px', letterSpacing: '0px', fontWeight: '700' }],
+        'headline-md': ['24px', { lineHeight: '32px', letterSpacing: '0px', fontWeight: '600' }],
+        'title-lg': ['20px', { lineHeight: '30px', letterSpacing: '0px', fontWeight: '700' }],
+        'title-md': ['18px', { lineHeight: '28px', letterSpacing: '0px', fontWeight: '700' }],
+        'body-lg': ['18px', { lineHeight: '32px', letterSpacing: '0px', fontWeight: '400' }],
+        'body-md': ['16px', { lineHeight: '26px', letterSpacing: '0px', fontWeight: '400' }],
+        'body-sm': ['14px', { lineHeight: '22px', letterSpacing: '0px', fontWeight: '400' }],
+        'label-lg': ['14px', { lineHeight: '20px', letterSpacing: '0.1px', fontWeight: '600' }],
+        'label-md': ['12px', { lineHeight: '16px', letterSpacing: '0.2px', fontWeight: '500' }],
+        'mono-sm': ['13px', { lineHeight: '18px', letterSpacing: '0px', fontWeight: '400' }],
+      },
+      transitionDuration: {
+        'state-change': '150ms',
+        'surface-enter': '280ms',
+      },
+      transitionDelay: {
+        'state-change': '0ms',
+        'surface-enter': '0ms',
+      },
+      transitionTimingFunction: {
+        'state-change': 'ease-out',
+        'surface-enter': 'cubic-bezier(0.2, 0, 0, 1)',
+      },
+    },
+  },
+};
+if (typeof module !== 'undefined') module.exports = globalThis.tailwind.config;
+</script>
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@600;700&amp;family=Lato:wght@400;600;700&amp;family=Source+Code+Pro:wght@400;500&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet">
+  <style>
+    .material-symbols-outlined, .material-symbols-rounded, .material-symbols-sharp, .material-icons {
+      display: inline-block;
+      width: 1em;
+      height: 1em;
+      line-height: 1 !important;
+      box-sizing: content-box;
+      overflow: hidden;
+      white-space: nowrap;
+      direction: ltr;
+      vertical-align: middle;
+    }
+    body { font-family: "Lato", "PingFang SC", "Noto Sans SC", sans-serif; }
+    .font-headline { font-family: "Crimson Pro", "PingFang SC", serif; }
+    .font-body, .font-title, .font-label { font-family: "Lato", "PingFang SC", "Noto Sans SC", sans-serif; }
+    .font-mono { font-family: "Source Code Pro", monospace; }
+  </style>
+</head>
+<body class="bg-light-background dark:bg-dark-background text-light-on-background dark:text-dark-on-background font-body antialiased">
+
+  <div class="min-h-[1024px] flex flex-col" data-stitch-vh="min-h-[1024px]===min-h-screen">
+
+    <!-- Site Header (Shell Parity) -->
+    <header class="sticky top-0 z-40 border-b border-light-outline-variant/60 dark:border-dark-outline-variant/40 bg-light-background/95 dark:bg-dark-background/95">
+      <div class="max-w-[1200px] mx-auto px-gutter-md md:px-page-margin h-16 flex items-center justify-between gap-gutter-md">
+        <a href="../home/Home.html" class="flex items-center gap-gutter-sm group rounded-sm">
+          <span class="inline-flex items-center justify-center w-8 h-8 rounded bg-light-surface-container dark:bg-dark-surface-container border border-light-outline-variant dark:border-dark-outline-variant text-light-primary dark:text-dark-primary" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M12 2v4"></path><path d="M12 18v4"></path>
+              <path d="M4.93 4.93l2.83 2.83"></path><path d="M16.24 16.24l2.83 2.83"></path>
+              <path d="M2 12h4"></path><path d="M18 12h4"></path>
+            </svg>
+          </span>
+          <span class="flex items-baseline gap-gutter-sm">
+            <span data-design-text-token="title-md" class="font-title text-title-md text-light-on-surface dark:text-dark-on-surface">AI进化调研员</span>
+            <span data-design-text-token="mono-sm" class="hidden sm:inline font-mono text-mono-sm text-light-on-surface-variant dark:text-dark-outline">AI Evolution Researcher</span>
+          </span>
+        </a>
+
+        <div class="flex items-center gap-gutter-md md:gap-gutter-lg">
+          <nav aria-label="主导航" class="hidden md:flex items-center gap-gutter-lg">
+            <a href="../home/Home.html" data-design-text-token="label-lg" class="font-label text-label-lg text-light-on-surface/80 dark:text-dark-on-surface/80 hover:text-light-primary transition-colors duration-state-change">首页</a>
+            <a href="../category-concepts/CategoryConcepts.html" data-design-text-token="label-lg" class="font-label text-label-lg text-light-on-surface/80 dark:text-dark-on-surface/80 hover:text-light-primary transition-colors duration-state-change">科普</a>
+            <a href="../tech-notes/TechNotes.html" data-design-text-token="label-lg" class="font-label text-label-lg text-light-on-surface/80 dark:text-dark-on-surface/80 hover:text-light-primary transition-colors duration-state-change">技术笔记</a>
+            <a href="../archives/Archives.html" data-design-text-token="label-lg" class="font-label text-label-lg text-light-on-surface/80 dark:text-dark-on-surface/80 hover:text-light-primary transition-colors duration-state-change">归档</a>
+            <a href="#" aria-current="page" data-design-text-token="label-lg" class="font-label text-label-lg text-light-primary dark:text-dark-primary">搜索</a>
+            <a href="../about/About.html" data-design-text-token="label-lg" class="font-label text-label-lg text-light-on-surface/80 dark:text-dark-on-surface/80 hover:text-light-primary transition-colors duration-state-change">关于</a>
+          </nav>
+
+          <!-- COMPONENT: button-icon -->
+          <button id="theme-toggle" data-component-id="button-icon" data-component-type="button" data-component-variant="icon" type="button" aria-label="切换浅色或深色主题" class="inline-flex items-center justify-center w-9 h-9 rounded border border-light-outline-variant dark:border-dark-outline-variant bg-light-surface-container-low dark:bg-dark-surface-container-low text-light-on-surface dark:text-dark-on-surface transition-colors duration-state-change hover:border-light-primary">
+            <span class="material-symbols-outlined text-title-md" aria-hidden="true">dark_mode</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 w-full max-w-[920px] mx-auto px-gutter-md md:px-page-margin py-gutter-xl md:py-section flex flex-col gap-gutter-xl">
+
+      <!-- Large Search Input -->
+      <section aria-label="全站搜索" class="flex flex-col gap-gutter-sm">
+        <label for="site-search" class="sr-only">搜索科普、技术笔记和 Wiki</label>
+        <div class="relative flex items-center">
+          <span class="material-symbols-outlined absolute left-gutter-md text-title-lg text-light-on-surface-variant" aria-hidden="true">search</span>
+          <input id="site-search" type="search" value="agent 记忆" placeholder="搜索科普、技术笔记和 Wiki…" class="w-full pl-12 pr-gutter-lg py-gutter-md rounded-md bg-light-surface-container-lowest border border-light-outline-variant text-body-lg text-light-on-surface placeholder:text-light-on-surface-variant focus:border-light-primary focus:ring-1 focus:ring-light-primary">
+        </div>
+        <p data-design-text-token="mono-sm" class="font-mono text-mono-sm text-light-on-surface-variant tabular-nums">找到 3 条与“agent 记忆”相关的结果</p>
+      </section>
+
+      <!-- Search Results -->
+      <section aria-label="搜索结果" class="flex flex-col divide-y divide-light-outline-variant/50">
+
+        <!-- Result 1: 科普 -->
+        <article class="py-gutter-lg first:pt-0">
+          <a href="#" class="group flex flex-col gap-gutter-xs">
+            <div class="flex items-center gap-gutter-sm">
+              <span data-design-text-token="label-md" class="px-gutter-sm py-0.5 rounded-sm bg-light-primary-container/20 text-light-primary font-mono text-label-md">科普</span>
+              <span data-design-text-token="mono-sm" class="font-mono text-mono-sm text-light-on-surface-variant tabular-nums">2026-11-09</span>
+            </div>
+            <h2 data-design-text-token="title-lg" class="font-title text-title-lg text-light-on-surface group-hover:text-light-primary transition-colors duration-state-change">
+              Workflow 与 <mark class="bg-light-primary-container/25 text-light-primary px-0.5 rounded-sm">Agent</mark> 怎么选？聊聊状态与<mark class="bg-light-primary-container/25 text-light-primary px-0.5 rounded-sm">记忆</mark>设计
+            </h2>
+            <p data-design-text-token="body-md" class="font-body text-body-md text-light-on-surface-variant">
+              当 <mark class="bg-light-primary-container/25 text-light-primary px-0.5 rounded-sm">Agent</mark> 需要跨多轮对话保存用户偏好时，短期上下文与长期<mark class="bg-light-primary-container/25 text-light-primary px-0.5 rounded-sm">记忆</mark>检索该如何协同工作。
+            </p>
+          </a>
+        </article>
+
+        <!-- Result 2: 技术笔记 -->
+        <article class="py-gutter-lg">
+          <a href="#" class="group flex flex-col gap-gutter-xs">
+            <div class="flex items-center gap-gutter-sm">
+              <span data-design-text-token="label-md" class="px-gutter-sm py-0.5 rounded-sm bg-light-secondary/15 text-light-secondary font-mono text-label-md">技术笔记</span>
+              <span data-design-text-token="mono-sm" class="font-mono text-mono-sm text-light-on-surface-variant tabular-nums">2026-10-19</span>
+            </div>
+            <h2 data-design-text-token="title-lg" class="font-title text-title-lg text-light-on-surface group-hover:text-light-primary transition-colors duration-state-change">
+              Anatomy of an AI <mark class="bg-light-primary-container/25 text-light-primary px-0.5 rounded-sm">Agent</mark>
+            </h2>
+            <p data-design-text-token="body-md" class="font-body text-body-md text-light-on-surface-variant">
+              Separating the control loop, working memory (<mark class="bg-light-primary-container/25 text-light-primary px-0.5 rounded-sm">记忆</mark>缓冲区), and tool sandbox into testable primitives.
+            </p>
+          </a>
+        </article>
+
+        <!-- Result 3: Wiki -->
+        <article class="py-gutter-lg last:pb-0">
+          <a href="../wiki/Wiki.html" class="group flex flex-col gap-gutter-xs">
+            <div class="flex items-center gap-gutter-sm">
+              <span data-design-text-token="label-md" class="px-gutter-sm py-0.5 rounded-sm bg-light-tertiary/15 text-light-tertiary font-mono text-label-md">Wiki</span>
+              <span data-design-text-token="mono-sm" class="font-mono text-mono-sm text-light-on-surface-variant">Agents / Episodic Memory</span>
+            </div>
+            <h2 data-design-text-token="title-lg" class="font-title text-title-lg text-light-on-surface group-hover:text-light-primary transition-colors duration-state-change">
+              Episodic Memory（<mark class="bg-light-primary-container/25 text-light-primary px-0.5 rounded-sm">Agent</mark> 情景<mark class="bg-light-primary-container/25 text-light-primary px-0.5 rounded-sm">记忆</mark>）
+            </h2>
+            <p data-design-text-token="body-md" class="font-body text-body-md text-light-on-surface-variant">
+              Stores past interaction trajectories for cross-session task recall in autonomous <mark class="bg-light-primary-container/25 text-light-primary px-0.5 rounded-sm">agent</mark> loops.
+            </p>
+          </a>
+        </article>
+
+      </section>
+
+      <!-- Small Panel Showing No-Results State -->
+      <section aria-label="无搜索结果示例" class="pt-gutter-md border-t border-light-outline-variant/60">
+        <div data-component-id="card-elevated" data-component-type="card" data-component-variant="elevated" class="flex items-center justify-between gap-gutter-md p-gutter-lg rounded-md bg-light-surface-container-low border border-dashed border-light-outline-variant">
+          <div class="flex items-center gap-gutter-md">
+            <span class="material-symbols-outlined text-title-lg text-light-on-surface-variant" aria-hidden="true">search_off</span>
+            <p data-design-text-token="body-md" class="font-body text-body-md text-light-on-surface">没有找到相关内容</p>
+          </div>
+          <span data-design-text-token="mono-sm" class="font-mono text-mono-sm text-light-on-surface-variant">空状态示例</span>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Site Footer (Shell Parity) -->
+    <footer class="border-t border-light-outline-variant/60 dark:border-dark-outline-variant/40 bg-light-surface-container-low dark:bg-dark-surface-container-lowest/40">
+      <div class="max-w-[1200px] mx-auto px-gutter-md md:px-page-margin py-gutter-xl flex flex-col gap-gutter-lg">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-gutter-lg">
+          <div class="flex items-center gap-gutter-md">
+            <div class="w-12 h-12 p-gutter-xs rounded-sm bg-light-surface-container-lowest text-light-on-surface border border-light-outline-variant/40" aria-hidden="true">
+              <svg viewBox="0 0 100 100" class="w-full h-full" fill="currentColor">
+                <rect x="8" y="8" width="28" height="28" fill="none" stroke="currentColor" stroke-width="6"></rect>
+                <rect x="64" y="8" width="28" height="28" fill="none" stroke="currentColor" stroke-width="6"></rect>
+                <rect x="8" y="64" width="28" height="28" fill="none" stroke="currentColor" stroke-width="6"></rect>
+                <rect x="44" y="44" width="14" height="14" fill="#F97316"></rect>
+                <rect x="66" y="66" width="22" height="22"></rect>
+              </svg>
+            </div>
+            <div class="flex flex-col">
+              <span data-design-text-token="label-lg" class="font-label text-label-lg text-light-on-surface dark:text-dark-on-surface">关注 AI进化调研员</span>
+              <span data-design-text-token="body-sm" class="font-body text-body-sm text-light-on-surface-variant dark:text-dark-outline">微信扫码或搜索同名公众号</span>
+            </div>
+          </div>
+          <nav aria-label="页脚链接" class="flex items-center gap-gutter-lg font-mono text-mono-sm text-light-on-surface-variant dark:text-dark-outline">
+            <a href="#" class="hover:text-light-primary transition-colors duration-state-change">CV</a>
+            <a href="#" class="hover:text-light-primary transition-colors duration-state-change">Now</a>
+            <a href="#" class="hover:text-light-primary transition-colors duration-state-change">RSS</a>
+            <a href="#" class="hover:text-light-primary transition-colors duration-state-change">GitHub</a>
+          </nav>
+        </div>
+        <p data-design-text-token="mono-sm" class="font-mono text-mono-sm text-light-on-surface-variant dark:text-dark-outline border-t border-light-outline-variant/40 pt-gutter-md">
+          © 2026 AI进化调研员 · AI Evolution Researcher. 保留所有权利。
+        </p>
+      </div>
+    </footer>
+
+  </div>
+
+
+</body></html>

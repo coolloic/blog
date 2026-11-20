@@ -1,0 +1,614 @@
+<!DOCTYPE html><html lang="zh-CN" class="dark"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>大模型为什么会“幻觉”？ — AI进化调研员</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">/** @type {import('tailwindcss').Config} */
+globalThis.tailwind = globalThis.tailwind || {};
+globalThis.tailwind.config = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      colors: {
+        'light-primary': '#9D4300',
+        'light-on-primary': '#FFFFFF',
+        'light-primary-container': '#F97316',
+        'light-on-primary-container': '#582200',
+        'light-secondary': '#006B5F',
+        'light-on-secondary': '#FFFFFF',
+        'light-secondary-container': '#6DF5E1',
+        'light-on-secondary-container': '#006F64',
+        'light-tertiary': '#842BD2',
+        'light-on-tertiary': '#FFFFFF',
+        'light-tertiary-container': '#BE7BFF',
+        'light-on-tertiary-container': '#4C0084',
+        'light-error': '#BA1A1A',
+        'light-on-error': '#FFFFFF',
+        'light-error-container': '#FFDAD6',
+        'light-on-error-container': '#93000A',
+        'light-background': '#F9F9FF',
+        'light-on-background': '#151B2A',
+        'light-surface': '#F9F9FF',
+        'light-surface-dim': '#D3DAEE',
+        'light-surface-bright': '#F9F9FF',
+        'light-surface-container-lowest': '#FFFFFF',
+        'light-surface-container-low': '#F1F3FF',
+        'light-surface-container': '#E9EDFF',
+        'light-surface-container-high': '#E2E8FC',
+        'light-surface-container-highest': '#DCE2F6',
+        'light-on-surface': '#151B2A',
+        'light-surface-variant': '#FDDCCC',
+        'light-on-surface-variant': '#584237',
+        'light-outline': '#8C7164',
+        'light-outline-variant': '#E0C0B1',
+        'light-inverse-surface': '#2A3040',
+        'light-inverse-on-surface': '#EDF0FF',
+        'light-inverse-primary': '#FFB690',
+        'dark-primary': '#FFB690',
+        'dark-on-primary': '#552100',
+        'dark-primary-container': '#F97316',
+        'dark-on-primary-container': '#582200',
+        'dark-secondary': '#4FDBC8',
+        'dark-on-secondary': '#003731',
+        'dark-secondary-container': '#04B4A2',
+        'dark-on-secondary-container': '#003F38',
+        'dark-tertiary': '#DDB7FF',
+        'dark-on-tertiary': '#490080',
+        'dark-tertiary-container': '#BE7BFF',
+        'dark-on-tertiary-container': '#4C0084',
+        'dark-error': '#FFB4AB',
+        'dark-on-error': '#690005',
+        'dark-error-container': '#93000A',
+        'dark-on-error-container': '#FFDAD6',
+        'dark-background': '#0C1321',
+        'dark-on-background': '#DCE2F6',
+        'dark-surface': '#0C1321',
+        'dark-surface-dim': '#0C1321',
+        'dark-surface-bright': '#323949',
+        'dark-surface-container-lowest': '#070E1C',
+        'dark-surface-container-low': '#151B2A',
+        'dark-surface-container': '#19202E',
+        'dark-surface-container-high': '#232A39',
+        'dark-surface-container-highest': '#2E3544',
+        'dark-on-surface': '#DCE2F6',
+        'dark-surface-variant': '#584237',
+        'dark-on-surface-variant': '#E0C0B1',
+        'dark-outline': '#A78B7D',
+        'dark-outline-variant': '#584237',
+        'dark-inverse-surface': '#DCE2F6',
+        'dark-inverse-on-surface': '#2A3040',
+        'dark-inverse-primary': '#9D4300',
+      },
+      borderRadius: {
+        'sm': '4px',
+        'DEFAULT': '8px',
+        'md': '12px',
+        'lg': '16px',
+        'xl': '24px',
+        'full': '9999px',
+      },
+      spacing: {
+        'gutter-xs': '4px',
+        'gutter-sm': '8px',
+        'gutter-md': '16px',
+        'gutter-lg': '24px',
+        'gutter-xl': '32px',
+        'section': '48px',
+        'page-margin': '32px',
+      },
+      fontFamily: {
+        'display': ['"Crimson Pro"', 'sans-serif'],
+        'headline': ['"Crimson Pro"', 'sans-serif'],
+        'title': ['"Lato"', 'sans-serif'],
+        'body': ['"Lato"', 'sans-serif'],
+        'label': ['"Lato"', 'sans-serif'],
+        'mono': ['"Source Code Pro"', 'monospace'],
+      },
+      fontSize: {
+        'display-lg': ['44px', { lineHeight: '54px', letterSpacing: '-0.5px', fontWeight: '700' }],
+        'display-lg-mobile': ['30px', { lineHeight: '38px', letterSpacing: '-0.25px', fontWeight: '700' }],
+        'headline-lg': ['36px', { lineHeight: '46px', letterSpacing: '-0.25px', fontWeight: '700' }],
+        'headline-lg-mobile': ['26px', { lineHeight: '34px', letterSpacing: '0px', fontWeight: '700' }],
+        'headline-md': ['24px', { lineHeight: '32px', letterSpacing: '0px', fontWeight: '600' }],
+        'title-lg': ['20px', { lineHeight: '30px', letterSpacing: '0px', fontWeight: '700' }],
+        'title-md': ['18px', { lineHeight: '28px', letterSpacing: '0px', fontWeight: '700' }],
+        'body-lg': ['18px', { lineHeight: '32px', letterSpacing: '0px', fontWeight: '400' }],
+        'body-md': ['16px', { lineHeight: '26px', letterSpacing: '0px', fontWeight: '400' }],
+        'body-sm': ['14px', { lineHeight: '22px', letterSpacing: '0px', fontWeight: '400' }],
+        'label-lg': ['14px', { lineHeight: '20px', letterSpacing: '0.1px', fontWeight: '600' }],
+        'label-md': ['12px', { lineHeight: '16px', letterSpacing: '0.2px', fontWeight: '500' }],
+        'mono-sm': ['13px', { lineHeight: '18px', letterSpacing: '0px', fontWeight: '400' }],
+      },
+      transitionDuration: {
+        'state-change': '150ms',
+        'surface-enter': '280ms',
+      },
+      transitionDelay: {
+        'state-change': '0ms',
+        'surface-enter': '0ms',
+      },
+      transitionTimingFunction: {
+        'state-change': 'ease-out',
+        'surface-enter': 'cubic-bezier(0.2, 0, 0, 1)',
+      },
+    },
+  },
+};
+if (typeof module !== 'undefined') module.exports = globalThis.tailwind.config;
+</script>
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@600;700&amp;family=Lato:wght@400;600;700&amp;family=Source+Code+Pro:wght@400;500&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet">
+  <style>
+    .material-symbols-outlined, .material-symbols-rounded, .material-symbols-sharp, .material-icons {
+      display: inline-block;
+      width: 1em;
+      height: 1em;
+      line-height: 1 !important;
+      box-sizing: content-box;
+      overflow: hidden;
+      white-space: nowrap;
+      direction: ltr;
+      vertical-align: middle;
+    }
+    body {
+      font-family: "Lato", "PingFang SC", "Noto Sans SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    }
+    .font-headline {
+      font-family: "Crimson Pro", "PingFang SC", "Noto Serif SC", serif;
+    }
+    .font-body, .font-title, .font-label {
+      font-family: "Lato", "PingFang SC", "Noto Sans SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    }
+    .font-mono {
+      font-family: "Source Code Pro", "SFMono-Regular", Consolas, monospace;
+    }
+  </style>
+</head>
+<body class="bg-light-background dark:bg-dark-background text-light-on-background dark:text-dark-on-background font-body antialiased selection:bg-light-primary/20 dark:selection:bg-dark-primary-container/30">
+
+  <div class="min-h-[1024px] flex flex-col" data-stitch-vh="min-h-[1024px]===min-h-screen">
+
+    <!-- Site Header (Shell Parity with Home) + Thin Orange Reading Progress Bar Under Header -->
+    <header class="sticky top-0 z-40 border-b border-light-outline-variant/40 dark:border-dark-outline-variant/40 bg-light-background/95 dark:bg-dark-background/95">
+      <div class="max-w-[1200px] mx-auto px-gutter-md md:px-page-margin h-16 flex items-center justify-between gap-gutter-md">
+        <!-- Brand Mark & Name -->
+        <a href="../home/Home.html" class="flex items-center gap-gutter-sm group focus-visible:outline focus-visible:outline-2 focus-visible:outline-dark-primary rounded-sm">
+          <span class="inline-flex items-center justify-center w-8 h-8 rounded bg-light-surface-container dark:bg-dark-surface-container border border-light-outline-variant dark:border-dark-outline-variant text-light-primary dark:text-dark-primary" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M12 2v4"></path>
+              <path d="M12 18v4"></path>
+              <path d="M4.93 4.93l2.83 2.83"></path>
+              <path d="M16.24 16.24l2.83 2.83"></path>
+              <path d="M2 12h4"></path>
+              <path d="M18 12h4"></path>
+            </svg>
+          </span>
+          <span class="flex items-baseline gap-gutter-sm">
+            <span data-design-text-token="title-md" class="font-title text-title-md text-light-on-surface dark:text-dark-on-surface group-hover:text-light-primary dark:group-hover:text-dark-primary transition-colors duration-state-change">AI进化调研员</span>
+            <span data-design-text-token="mono-sm" class="hidden sm:inline font-mono text-mono-sm text-light-outline dark:text-dark-outline">AI Evolution Researcher</span>
+          </span>
+        </a>
+
+        <!-- Primary Navigation & Theme Toggle -->
+        <div class="flex items-center gap-gutter-md md:gap-gutter-lg">
+          <nav aria-label="主导航" class="hidden md:flex items-center gap-gutter-lg">
+            <a href="../home/Home.html" data-design-text-token="label-lg" class="font-label text-label-lg text-light-on-surface/80 dark:text-dark-on-surface/80 hover:text-light-primary dark:hover:text-dark-primary transition-colors duration-state-change">首页</a>
+            <a href="#" aria-current="page" data-design-text-token="label-lg" class="font-label text-label-lg text-light-primary dark:text-dark-primary">科普</a>
+            <a href="#" data-design-text-token="label-lg" class="font-label text-label-lg text-light-on-surface/80 dark:text-dark-on-surface/80 hover:text-light-primary dark:hover:text-dark-primary transition-colors duration-state-change">技术笔记</a>
+            <a href="#" data-design-text-token="label-lg" class="font-label text-label-lg text-light-on-surface/80 dark:text-dark-on-surface/80 hover:text-light-primary dark:hover:text-dark-primary transition-colors duration-state-change">归档</a>
+            <a href="#" data-design-text-token="label-lg" class="font-label text-label-lg text-light-on-surface/80 dark:text-dark-on-surface/80 hover:text-light-primary dark:hover:text-dark-primary transition-colors duration-state-change">搜索</a>
+            <a href="#" data-design-text-token="label-lg" class="font-label text-label-lg text-light-on-surface/80 dark:text-dark-on-surface/80 hover:text-light-primary dark:hover:text-dark-primary transition-colors duration-state-change">关于</a>
+          </nav>
+
+          <!-- Light/Dark Toggle Icon Button -->
+          <!-- COMPONENT: button-icon -->
+          <button id="theme-toggle" data-component-id="button-icon" data-component-type="button" data-component-variant="icon" type="button" aria-label="切换浅色或深色主题" class="inline-flex items-center justify-center w-9 h-9 rounded border border-light-outline-variant dark:border-dark-outline-variant bg-light-surface-container-low dark:bg-dark-surface-container-low text-light-on-surface dark:text-dark-on-surface transition-colors duration-state-change ease-state-change hover:border-light-primary dark:hover:border-dark-primary hover:text-light-primary dark:hover:text-dark-primary">
+            <span id="theme-icon" class="material-symbols-outlined text-title-md" aria-hidden="true">light_mode</span>
+          </button>
+        </div>
+      </div>
+      <!-- Thin Orange Reading Progress Bar Under Header -->
+      <div class="w-full h-0.5 bg-light-surface-container dark:bg-dark-surface-container" aria-hidden="true">
+        <div id="reading-progress" class="h-full w-1/3 bg-light-primary dark:bg-dark-primary-container transition-transform duration-state-change ease-state-change origin-left"></div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 w-full max-w-[1200px] mx-auto px-gutter-md md:px-page-margin py-gutter-xl md:py-section flex flex-col gap-section">
+
+      <!-- Article Header: Wide 21:9 Looping-Video Cover + Title Block -->
+      <article class="flex flex-col gap-gutter-xl">
+        <header class="flex flex-col gap-gutter-lg">
+          <!-- Wide 21:9 Cover Marked as Looping-Video Slot -->
+          <div class="relative aspect-[21/9] w-full rounded-lg overflow-hidden bg-light-surface-container dark:bg-dark-surface-container border border-light-outline-variant/60 dark:border-dark-outline-variant/60">
+            <img src="https://lh3.googleusercontent.com/aida/ALJJyrBdF5GIQQz6qvUzG5sAj0AZhQpwrNXdYrpmzH3_9ukH-OtUjrRAbSC54KXX-iUwSmIc52mGBMcx1B1qBHLXkVj4IGDUE8cOpcbpuM214ne7_u0ypAyjxk6wduDFWhiNQt605anq-pGV4XxlZRR2PByIfkij9UtY6jIEzrvnGILCIIlOlrFiqj78AUAgE0PbgpminHq8wrvahQ3wH1brF2rhmSw_ETE72lQ-hkXPrrpjRtntgLEfUlc2leGKTUo" alt="折射出虚幻边缘光影的精密光学棱镜，象征大模型生成过程中的幻觉现象" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-dark-surface-container-lowest/60 via-transparent to-transparent" aria-hidden="true"></div>
+            <!-- Looping-video slot badge -->
+            <!-- COMPONENT: chip-with-icon -->
+            <span data-component-id="chip-with-icon" data-component-type="chip" data-component-variant="with-icon" class="absolute top-gutter-md right-gutter-md inline-flex items-center gap-gutter-xs px-gutter-sm py-gutter-xs rounded-sm bg-dark-surface-container-lowest/85 text-dark-on-surface border border-dark-outline-variant/60 font-mono text-label-md">
+              <span class="material-symbols-outlined text-body-sm text-dark-primary" style="font-variation-settings: &#39;FILL&#39; 1;" aria-hidden="true">play_arrow</span>
+              <span data-design-text-token="label-md">动态封面</span>
+            </span>
+          </div>
+
+          <!-- Title Block -->
+          <div class="max-w-[720px] flex flex-col gap-gutter-md">
+            <div class="flex flex-wrap items-center gap-gutter-md">
+              <!-- COMPONENT: chip-action -->
+              <span data-component-id="chip-action" data-component-type="chip" data-component-variant="action" class="inline-flex items-center px-gutter-sm py-gutter-xs rounded-sm bg-light-tertiary/15 dark:bg-dark-tertiary/15 text-light-tertiary dark:text-dark-tertiary font-mono text-label-md">
+                <span data-design-text-token="label-md">概念科普</span>
+              </span>
+              <span data-design-text-token="mono-sm" class="font-mono text-mono-sm text-light-outline dark:text-dark-outline tabular-nums">2026-11-18 · 阅读 9 分钟 · 原文发于公众号</span>
+            </div>
+
+            <h1 data-design-text-token="display-lg" class="font-headline text-display-lg-mobile md:text-display-lg text-light-on-surface dark:text-dark-on-surface text-balance">
+              大模型为什么会“幻觉”？
+            </h1>
+
+            <p data-design-text-token="body-lg" class="font-body text-body-lg text-light-on-surface/85 dark:text-dark-on-surface/85 text-pretty">
+              一本正经地编造不存在的论文、法条甚至历史事件，并不是模型在“撒谎”，而是概率续写机制在缺乏事实锚点时的必然产物。
+            </p>
+          </div>
+        </header>
+
+        <!-- Two Columns: Article Body (~40 Chinese chars / 720px) + Sticky TOC (目录) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter-xl items-start pt-gutter-md border-t border-light-outline-variant/40 dark:border-dark-outline-variant/40">
+
+          <!-- Left Column: Article Body -->
+          <div class="lg:col-span-8 max-w-[720px] flex flex-col gap-gutter-lg">
+
+            <p data-design-text-token="body-lg" class="font-body text-body-lg text-light-on-surface dark:text-dark-on-surface text-pretty">
+              几乎每个深度使用过大语言模型的人，都遇到过这样的瞬间：当你询问一个冷门技术细节或某篇论文的具体出处时，AI 会用极其流畅、自信甚至带点学术腔的语气，给出一串看似严丝合缝的回答——直到你去核对原文，才发现作者、年份和页码全是凭空捏造的。
+            </p>
+
+            <h2 id="sec-probabilistic" data-design-text-token="headline-lg" class="font-headline text-headline-lg-mobile md:text-headline-lg text-light-on-surface dark:text-dark-on-surface pt-gutter-md">
+              一、本质不是“查数据库”，而是“概率接龙”
+            </h2>
+
+            <p data-design-text-token="body-lg" class="font-body text-body-lg text-light-on-surface dark:text-dark-on-surface text-pretty">
+              理解幻觉（Hallucination）的第一步，是修正我们对模型工作方式的直觉。大语言模型内部并不存在一个结构化的“事实数据库”，它在预训练阶段学到的，是海量文本中<strong class="font-bold text-light-on-surface dark:text-dark-on-surface">词元（Token）之间的条件概率分布</strong>。
+            </p>
+
+            <!-- Blockquote -->
+            <blockquote class="pl-gutter-lg py-gutter-xs border-l-2 border-light-secondary dark:border-dark-secondary text-light-on-surface/90 dark:text-dark-on-surface/90">
+              <p data-design-text-token="body-lg" class="font-body text-body-lg italic text-pretty">
+                “模型并不知道什么是‘真’，它只知道在给定上文之后，哪一个词接在后面最像人类写出来的答案。”
+              </p>
+            </blockquote>
+
+            <p data-design-text-token="body-lg" class="font-body text-body-lg text-light-on-surface dark:text-dark-on-surface text-pretty">
+              在推理阶段，模型会先计算词表里每个候选词的得分（Logits），再通过 <code class="font-mono text-mono-sm px-gutter-xs py-0.5 rounded-sm bg-light-surface-container dark:bg-dark-surface-container text-light-primary dark:text-dark-primary border border-light-outline-variant/40 dark:border-dark-outline-variant/40">softmax(logits / temperature)</code> 将得分转化为概率。当采样参数 <code class="font-mono text-mono-sm px-gutter-xs py-0.5 rounded-sm bg-light-surface-container dark:bg-dark-surface-container text-light-primary dark:text-dark-primary border border-light-outline-variant/40 dark:border-dark-outline-variant/40">temperature &gt; 0</code> 时，模型会按概率随机抽取下一个字，从而带来创造力，也同时埋下了偏离事实的种子。
+            </p>
+
+            <!-- Inline 16:9 Video Block -->
+            <figure class="flex flex-col gap-gutter-sm my-gutter-sm">
+              <div class="relative aspect-video w-full rounded-md overflow-hidden bg-light-surface-container dark:bg-dark-surface-container border border-light-outline-variant/60 dark:border-dark-outline-variant/60 group">
+                <img src="https://lh3.googleusercontent.com/aida/ALJJyrAhl8r_rDeZZSPERPVzpfxjPy90DmFgHORLM5u_zb0cTenKgnhxDa2VBsLxyS2tmtTOeCD-hN2HB2rTdQOD-uZ9jKI-bA5b-kBW6aVSXl2X2EPXGMqcTtr3fjFKKd5Sg0V0e_UlEMVbz6xeTjxocgSKBramYBOsr5-i4Fwo9kW9Q04kl-k_u6PeGVNitQparkjA7qf0OwZzDdfkuGgocLPsLcWFWMmGXiw3wYSKb5DEuLg2h2G1KRd1LnRiJhAJmeUP1zxM5Co" alt="动画讲解视频封面：按顺序倒下的发光玻璃骨牌" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-dark-surface-container-lowest/40 flex items-center justify-center">
+                  <button type="button" aria-label="播放动画讲解视频" class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-dark-primary-container text-dark-on-primary-container transition-transform duration-state-change group-hover:scale-105">
+                    <span class="material-symbols-outlined text-headline-md" style="font-variation-settings: &#39;FILL&#39; 1;" aria-hidden="true">play_arrow</span>
+                  </button>
+                </div>
+              </div>
+              <figcaption data-design-text-token="body-sm" class="font-body text-body-sm text-light-outline dark:text-dark-outline text-center">
+                动画讲解：模型如何一个字一个字地生成（自回归采样过程演示）
+              </figcaption>
+            </figure>
+
+            <h2 id="sec-causes" data-design-text-token="headline-lg" class="font-headline text-headline-lg-mobile md:text-headline-lg text-light-on-surface dark:text-dark-on-surface pt-gutter-md">
+              二、幻觉最常发生的三种场景
+            </h2>
+
+            <p data-design-text-token="body-lg" class="font-body text-body-lg text-light-on-surface dark:text-dark-on-surface text-pretty">
+              并不是所有问题都同样容易触发幻觉。结合工程实践，最常见的诱因通常集中在以下三类：
+            </p>
+
+            <!-- Bulleted List -->
+            <ul class="list-disc pl-gutter-lg flex flex-col gap-gutter-sm font-body text-body-lg text-light-on-surface dark:text-dark-on-surface">
+              <li class="text-pretty"><strong class="font-bold">长尾事实与冷门实体：</strong>训练语料中只出现过一两次的人名、论文或 API 参数，模型权重无法形成稳固记忆，只能靠高频模式“补全”。</li>
+              <li class="text-pretty"><strong class="font-bold">被迫回答“不知道”的问题：</strong>传统对齐训练（RLHF）往往奖励“有帮助、完整”的回答，使模型倾向于硬着头皮作答而非坦诚拒答。</li>
+              <li class="text-pretty"><strong class="font-bold">多跳推理中的误差累积：</strong>自回归生成每一步都有微小的偏差概率，连续推理十步后，最初的微小猜测会被后续上下文当成“既定事实”继续演绎。</li>
+            </ul>
+
+            <h3 id="sec-flowchart" data-design-text-token="headline-md" class="font-headline text-headline-md text-light-on-surface dark:text-dark-on-surface pt-gutter-sm">
+              从提问到幻觉的生成链路
+            </h3>
+
+            <!-- Simple Flowchart Diagram (Inline SVG) -->
+            <figure class="p-gutter-lg rounded-md bg-light-surface-container-low dark:bg-dark-surface-container-low border border-light-outline-variant/60 dark:border-dark-outline-variant/60 flex flex-col gap-gutter-sm">
+              <svg viewBox="0 0 720 120" class="w-full h-auto" role="img" aria-label="大模型幻觉生成链路流程图">
+                <!-- Node 1 -->
+                <rect x="8" y="28" width="144" height="64" rx="8" class="fill-light-surface-container dark:fill-dark-surface-container stroke-light-outline-variant dark:stroke-dark-outline-variant" stroke-width="1.5"></rect>
+                <text x="80" y="56" text-anchor="middle" class="fill-light-on-surface dark:fill-dark-on-surface text-label-lg font-bold" font-size="14">输入冷门提问</text>
+                <text x="80" y="76" text-anchor="middle" class="fill-light-outline dark:fill-dark-outline font-mono" font-size="11">Prompt Context</text>
+
+                <!-- Arrow 1 -->
+                <path d="M156 60 L192 60" class="stroke-light-outline dark:stroke-dark-outline" stroke-width="1.5" marker-end="url(#arrow)"></path>
+
+                <!-- Node 2 -->
+                <rect x="196" y="28" width="144" height="64" rx="8" class="fill-light-surface-container dark:fill-dark-surface-container stroke-light-outline-variant dark:stroke-dark-outline-variant" stroke-width="1.5"></rect>
+                <text x="268" y="56" text-anchor="middle" class="fill-light-on-surface dark:fill-dark-on-surface text-label-lg font-bold" font-size="14">预测词元概率</text>
+                <text x="268" y="76" text-anchor="middle" class="fill-light-outline dark:fill-dark-outline font-mono" font-size="11">Next-Token Logits</text>
+
+                <!-- Arrow 2 -->
+                <path d="M344 60 L380 60" class="stroke-light-outline dark:stroke-dark-outline" stroke-width="1.5"></path>
+
+                <!-- Node 3 -->
+                <rect x="384" y="28" width="144" height="64" rx="8" class="fill-light-surface-container dark:fill-dark-surface-container stroke-light-secondary dark:stroke-dark-secondary" stroke-width="1.5"></rect>
+                <text x="456" y="56" text-anchor="middle" class="fill-light-on-surface dark:fill-dark-on-surface text-label-lg font-bold" font-size="14">随机概率采样</text>
+                <text x="456" y="76" text-anchor="middle" class="fill-light-secondary dark:fill-dark-secondary font-mono" font-size="11">Sampling (T &gt; 0)</text>
+
+                <!-- Arrow 3 -->
+                <path d="M532 60 L568 60" class="stroke-light-primary dark:stroke-dark-primary" stroke-width="1.5"></path>
+
+                <!-- Node 4 -->
+                <rect x="572" y="28" width="140" height="64" rx="8" class="fill-light-primary-container/15 dark:fill-dark-primary-container/20 stroke-light-primary dark:stroke-dark-primary-container" stroke-width="1.5"></rect>
+                <text x="642" y="56" text-anchor="middle" class="fill-light-primary dark:fill-dark-primary text-label-lg font-bold" font-size="14">顺滑但失实</text>
+                <text x="642" y="76" text-anchor="middle" class="fill-light-primary dark:fill-dark-primary font-mono" font-size="11">Hallucination</text>
+              </svg>
+              <figcaption data-design-text-token="body-sm" class="font-body text-body-sm text-light-outline dark:text-dark-outline">
+                图 1：在缺乏外部检索校验时，自回归模型会沿着“语言最顺畅”而非“事实最准确”的路径继续生成。
+              </figcaption>
+            </figure>
+
+            <!-- "划重点" Callout Box with Orange Left Border -->
+            <aside aria-label="划重点" class="p-gutter-lg rounded-r-md bg-light-surface-container-low dark:bg-dark-surface-container-low border-l-4 border-light-primary dark:border-dark-primary-container flex flex-col gap-gutter-xs">
+              <span data-design-text-token="label-lg" class="font-label text-label-lg text-light-primary dark:text-dark-primary">划重点</span>
+              <p data-design-text-token="body-md" class="font-body text-body-md text-light-on-surface dark:text-dark-on-surface text-pretty">
+                幻觉不是可以靠“调大参数量”彻底消灭的 Bug，而是生成式模型的结构性特征。降低幻觉的关键在于把模型从“记忆者”变成“阅读理解者”。
+              </p>
+            </aside>
+
+            <h2 id="sec-mitigation" data-design-text-token="headline-lg" class="font-headline text-headline-lg-mobile md:text-headline-lg text-light-on-surface dark:text-dark-on-surface pt-gutter-md">
+              三、工程上如何把幻觉关进笼子？
+            </h2>
+
+            <p data-design-text-token="body-lg" class="font-body text-body-lg text-light-on-surface dark:text-dark-on-surface text-pretty">
+              既然模型天生擅长“看材料作文”而不擅长“凭空背诵”，当前工业界最有效的手段就是给模型提供可验证的外部上下文。
+            </p>
+
+            <!-- Image with Caption -->
+            <figure class="flex flex-col gap-gutter-sm my-gutter-sm">
+              <div class="aspect-video w-full rounded-md overflow-hidden bg-light-surface-container dark:bg-dark-surface-container border border-light-outline-variant/60 dark:border-dark-outline-variant/60">
+                <img src="https://lh3.googleusercontent.com/aida/ALJJyrB5vXRQLDZVcxdaml4DS59YBJfXwblALXsl8dmsWgKcfe5u_VgEPdA8OTvCRBIFOkmSqFXesNVkxboAW7SNrdtr4CjLY5Fzek0mCbY2IyF2xfW0GmD9rqNs7VkRKc1vW8omZb07z13pec-atpQPnkRGLoWzDLNfaGqEhizDc4pU8T9XE2CZhW8P-T-p1yEA3PzFuu_SIxL-0bTpdAUQdFl5FRGHrATFID0t2V_AsQ9qxo9HDTsUzZDBYbT862Z6_iI" alt="精密机械刻度盘与光纤连接，象征采样温度调节与检索校验" class="w-full h-full object-cover">
+              </div>
+              <figcaption data-design-text-token="body-sm" class="font-body text-body-sm text-light-outline dark:text-dark-outline">
+                图 2：通过调低采样温度（Temperature）并引入检索增强，可显著收紧输出的概率分布。
+              </figcaption>
+            </figure>
+
+            <!-- Small Table -->
+            <div class="overflow-x-auto rounded-md border border-light-outline-variant/60 dark:border-dark-outline-variant/60">
+              <table class="w-full text-left border-collapse">
+                <thead class="bg-light-surface-container dark:bg-dark-surface-container border-b border-light-outline-variant/60 dark:border-dark-outline-variant/60">
+                  <tr>
+                    <th data-design-text-token="label-lg" class="px-gutter-md py-gutter-sm font-label text-label-lg text-light-on-surface dark:text-dark-on-surface">缓解策略</th>
+                    <th data-design-text-token="label-lg" class="px-gutter-md py-gutter-sm font-label text-label-lg text-light-on-surface dark:text-dark-on-surface">核心原理</th>
+                    <th data-design-text-token="label-lg" class="px-gutter-md py-gutter-sm font-label text-label-lg text-light-on-surface dark:text-dark-on-surface">适用场景</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-light-outline-variant/40 dark:divide-dark-outline-variant/40 bg-light-surface-container-low dark:bg-dark-surface-container-low">
+                  <tr>
+                    <td data-design-text-token="body-sm" class="px-gutter-md py-gutter-sm font-body text-body-sm font-bold text-light-on-surface dark:text-dark-on-surface">RAG 检索增强</td>
+                    <td data-design-text-token="body-sm" class="px-gutter-md py-gutter-sm font-body text-body-sm text-light-on-surface/85 dark:text-dark-on-surface/85">先检索可信文档片段，再让模型据实作答</td>
+                    <td data-design-text-token="body-sm" class="px-gutter-md py-gutter-sm font-body text-body-sm text-light-outline dark:text-dark-outline">企业知识库、实时问答</td>
+                  </tr>
+                  <tr>
+                    <td data-design-text-token="body-sm" class="px-gutter-md py-gutter-sm font-body text-body-sm font-bold text-light-on-surface dark:text-dark-on-surface">工具调用校验</td>
+                    <td data-design-text-token="body-sm" class="px-gutter-md py-gutter-sm font-body text-body-sm text-light-on-surface/85 dark:text-dark-on-surface/85">通过 MCP 或代码沙盒核验计算与数据库结果</td>
+                    <td data-design-text-token="body-sm" class="px-gutter-md py-gutter-sm font-body text-body-sm text-light-outline dark:text-dark-outline">数据查询、代码生成</td>
+                  </tr>
+                  <tr>
+                    <td data-design-text-token="body-sm" class="px-gutter-md py-gutter-sm font-body text-body-sm font-bold text-light-on-surface dark:text-dark-on-surface">拒答对齐微调</td>
+                    <td data-design-text-token="body-sm" class="px-gutter-md py-gutter-sm font-body text-body-sm text-light-on-surface/85 dark:text-dark-on-surface/85">奖励“不确定时坦诚说明”的样本</td>
+                    <td data-design-text-token="body-sm" class="px-gutter-md py-gutter-sm font-body text-body-sm text-light-outline dark:text-dark-outline">医疗、法律高敏感领域</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+
+          <!-- Right Column: Sticky Table of Contents (目录) -->
+          <aside aria-label="文章目录" class="lg:col-span-4 lg:sticky lg:top-24 p-gutter-lg rounded-md bg-light-surface-container-low dark:bg-dark-surface-container-low border border-light-outline-variant/60 dark:border-dark-outline-variant/60 flex flex-col gap-gutter-md">
+            <div class="flex items-center justify-between border-b border-light-outline-variant/40 dark:border-dark-outline-variant/40 pb-gutter-sm">
+              <h2 data-design-text-token="title-md" class="font-title text-title-md text-light-on-surface dark:text-dark-on-surface">目录</h2>
+              <span data-design-text-token="mono-sm" class="font-mono text-mono-sm text-light-outline dark:text-dark-outline">TOC</span>
+            </div>
+            <nav aria-label="章节导航" class="flex flex-col gap-gutter-sm">
+              <a href="#sec-probabilistic" data-design-text-token="body-sm" class="font-body text-body-sm text-light-primary dark:text-dark-primary font-semibold pl-gutter-sm border-l-2 border-light-primary dark:border-dark-primary-container">
+                一、本质不是“查数据库”，而是“概率接龙”
+              </a>
+              <a href="#sec-causes" data-design-text-token="body-sm" class="font-body text-body-sm text-light-outline dark:text-dark-outline hover:text-light-on-surface dark:hover:text-dark-on-surface pl-gutter-sm border-l-2 border-transparent transition-colors duration-state-change">
+                二、幻觉最常发生的三种场景
+              </a>
+              <a href="#sec-flowchart" data-design-text-token="body-sm" class="font-body text-body-sm text-light-outline dark:text-dark-outline hover:text-light-on-surface dark:hover:text-dark-on-surface pl-gutter-lg border-l-2 border-transparent transition-colors duration-state-change">
+                从提问到幻觉的生成链路
+              </a>
+              <a href="#sec-mitigation" data-design-text-token="body-sm" class="font-body text-body-sm text-light-outline dark:text-dark-outline hover:text-light-on-surface dark:hover:text-dark-on-surface pl-gutter-sm border-l-2 border-transparent transition-colors duration-state-change">
+                三、工程上如何把幻觉关进笼子？
+              </a>
+            </nav>
+          </aside>
+
+        </div>
+
+        <!-- Post-Body: WeChat Footer Card -->
+        <section aria-label="原文来源与视频版" class="pt-gutter-md">
+          <div data-component-id="card-elevated" data-component-type="card" data-component-variant="elevated" class="flex flex-col md:flex-row items-start md:items-center justify-between gap-gutter-lg p-gutter-lg md:p-gutter-xl rounded-md bg-light-surface-container-low dark:bg-dark-surface-container-low border border-light-outline-variant/60 dark:border-dark-outline-variant/60">
+            <div class="flex items-center gap-gutter-lg">
+              <div class="shrink-0 w-20 h-20 p-gutter-xs rounded bg-light-surface-container-lowest text-light-on-surface border border-light-outline-variant/40" aria-label="微信公众号 AI进化调研员 二维码">
+                <svg viewBox="0 0 100 100" class="w-full h-full" fill="currentColor" role="img" aria-label="微信扫码关注 AI进化调研员">
+                  <rect x="6" y="6" width="26" height="26" rx="2" fill="none" stroke="currentColor" stroke-width="5"></rect>
+                  <rect x="14" y="14" width="10" height="10"></rect>
+                  <rect x="68" y="6" width="26" height="26" rx="2" fill="none" stroke="currentColor" stroke-width="5"></rect>
+                  <rect x="76" y="14" width="10" height="10"></rect>
+                  <rect x="6" y="68" width="26" height="26" rx="2" fill="none" stroke="currentColor" stroke-width="5"></rect>
+                  <rect x="14" y="76" width="10" height="10"></rect>
+                  <rect x="40" y="38" width="20" height="20" rx="2" fill="#F97316"></rect>
+                  <rect x="42" y="68" width="14" height="8"></rect>
+                  <rect x="68" y="42" width="12" height="10"></rect>
+                  <rect x="76" y="72" width="16" height="16"></rect>
+                </svg>
+              </div>
+              <div class="flex flex-col gap-gutter-xs">
+                <h2 data-design-text-token="title-lg" class="font-title text-title-lg text-light-on-surface dark:text-dark-on-surface">原文发于公众号「AI进化调研员」</h2>
+                <p data-design-text-token="body-sm" class="font-body text-body-sm text-light-outline dark:text-dark-outline">微信扫码关注，每周获取最新图解科普与实测归档。</p>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-gutter-md">
+              <!-- Primary Orange Button -->
+              <!-- COMPONENT: button-primary -->
+              <button data-component-id="button-primary" data-component-type="button" data-component-variant="primary" type="button" class="inline-flex items-center justify-center gap-gutter-sm px-gutter-lg py-gutter-sm rounded bg-light-primary dark:bg-dark-primary-container text-light-on-primary dark:text-dark-on-primary-container font-label text-label-lg transition-opacity duration-state-change ease-state-change hover:opacity-90">
+                <span data-design-text-token="label-lg">阅读原文</span>
+              </button>
+
+              <!-- Secondary Button -->
+              <!-- COMPONENT: button-secondary -->
+              <button data-component-id="button-secondary" data-component-type="button" data-component-variant="secondary" type="button" class="inline-flex items-center justify-center gap-gutter-xs px-gutter-md py-gutter-sm rounded bg-light-surface-container dark:bg-dark-surface-container text-light-on-surface dark:text-dark-on-surface border border-light-outline-variant dark:border-dark-outline-variant font-label text-label-lg transition-colors duration-state-change hover:border-light-primary dark:hover:border-dark-primary">
+                <span data-design-text-token="label-lg">▶ 看 60 秒视频版</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Tag Chips -->
+        <div class="flex flex-wrap items-center gap-gutter-sm" aria-label="文章标签">
+          <span data-design-text-token="mono-sm" class="font-mono text-mono-sm text-light-outline dark:text-dark-outline mr-gutter-xs">标签：</span>
+          <a href="#" data-component-id="chip-action" data-component-type="chip" data-component-variant="action" class="inline-flex items-center px-gutter-sm py-gutter-xs rounded-sm bg-light-tertiary/15 dark:bg-dark-tertiary/15 text-light-tertiary dark:text-dark-tertiary font-mono text-label-md hover:bg-light-tertiary/25 dark:hover:bg-dark-tertiary/25 transition-colors duration-state-change">
+            <span data-design-text-token="label-md">#幻觉机制</span>
+          </a>
+          <a href="#" data-component-id="chip-action" data-component-type="chip" data-component-variant="action" class="inline-flex items-center px-gutter-sm py-gutter-xs rounded-sm bg-light-tertiary/15 dark:bg-dark-tertiary/15 text-light-tertiary dark:text-dark-tertiary font-mono text-label-md hover:bg-light-tertiary/25 dark:hover:bg-dark-tertiary/25 transition-colors duration-state-change">
+            <span data-design-text-token="label-md">#概率采样</span>
+          </a>
+          <a href="#" data-component-id="chip-action" data-component-type="chip" data-component-variant="action" class="inline-flex items-center px-gutter-sm py-gutter-xs rounded-sm bg-light-tertiary/15 dark:bg-dark-tertiary/15 text-light-tertiary dark:text-dark-tertiary font-mono text-label-md hover:bg-light-tertiary/25 dark:hover:bg-dark-tertiary/25 transition-colors duration-state-change">
+            <span data-design-text-token="label-md">#RAG</span>
+          </a>
+          <a href="#" data-component-id="chip-action" data-component-type="chip" data-component-variant="action" class="inline-flex items-center px-gutter-sm py-gutter-xs rounded-sm bg-light-tertiary/15 dark:bg-dark-tertiary/15 text-light-tertiary dark:text-dark-tertiary font-mono text-label-md hover:bg-light-tertiary/25 dark:hover:bg-dark-tertiary/25 transition-colors duration-state-change">
+            <span data-design-text-token="label-md">#提示词工程</span>
+          </a>
+        </div>
+
+        <!-- Previous / Next Article Links -->
+        <nav aria-label="上下篇导航" class="grid grid-cols-1 sm:grid-cols-2 gap-gutter-md pt-gutter-md border-t border-light-outline-variant/40 dark:border-dark-outline-variant/40">
+          <a href="#" class="group flex flex-col gap-gutter-xs p-gutter-md rounded-md bg-light-surface-container-low dark:bg-dark-surface-container-low border border-light-outline-variant/60 dark:border-dark-outline-variant/60 hover:border-light-primary dark:hover:border-dark-primary transition-colors duration-state-change">
+            <span data-design-text-token="mono-sm" class="font-mono text-mono-sm text-light-outline dark:text-dark-outline">← 上一篇</span>
+            <span data-design-text-token="title-md" class="font-title text-title-md text-light-on-surface dark:text-dark-on-surface group-hover:text-light-primary dark:group-hover:text-dark-primary transition-colors duration-state-change">什么是 MCP？给 AI 装上 USB 接口</span>
+          </a>
+          <a href="#" class="group flex flex-col items-start sm:items-end gap-gutter-xs p-gutter-md rounded-md bg-light-surface-container-low dark:bg-dark-surface-container-low border border-light-outline-variant/60 dark:border-dark-outline-variant/60 hover:border-light-primary dark:hover:border-dark-primary transition-colors duration-state-change">
+            <span data-design-text-token="mono-sm" class="font-mono text-mono-sm text-light-outline dark:text-dark-outline">下一篇 →</span>
+            <span data-design-text-token="title-md" class="font-title text-title-md text-light-on-surface dark:text-dark-on-surface group-hover:text-light-primary dark:group-hover:text-dark-primary transition-colors duration-state-change">混合检索为何比纯向量更靠谱？</span>
+          </a>
+        </nav>
+
+        <!-- Related Articles (相关文章 - 3 Small Cards) -->
+        <section aria-labelledby="related-heading" class="flex flex-col gap-gutter-lg pt-gutter-md">
+          <div class="flex items-baseline justify-between border-b border-light-outline-variant/40 dark:border-dark-outline-variant/40 pb-gutter-sm">
+            <h2 id="related-heading" data-design-text-token="headline-md" class="font-headline text-headline-md text-light-on-surface dark:text-dark-on-surface">相关文章</h2>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter-lg items-stretch">
+            <a href="#" data-component-id="card-interactive" data-component-type="card" data-component-variant="interactive" class="group h-full flex flex-col rounded-md overflow-hidden bg-light-surface-container-low dark:bg-dark-surface-container-low border border-light-outline-variant/60 dark:border-dark-outline-variant/60 hover:border-light-primary dark:hover:border-dark-primary transition-colors duration-state-change">
+              <div class="aspect-video w-full overflow-hidden bg-light-surface-container dark:bg-dark-surface-container">
+                <img src="https://lh3.googleusercontent.com/aida/ALJJyrBMLr8Pg8YyD_31PivZZGaRT_iv1E4kry4NyFznD1oG3OVmvvLjmMOwh7CR4K_X1htG1tquTgEl0rODUBk3GnNnQXg84HO2RbZgSvnqqI16YeF7s6lgRLgfYoQghPixHIAeDiKiUZqQisfDJ_TRoQv_fyy5iwgWj_xjMz4lUpOszKff7XcXbELLArIuBVnIAipbK9H2AXYZ9sv4aKZE1KGgcDflGE3_d1CT4G1JTbFOEFmlDgFqcBDRQga1" alt="混合检索概念封面" class="w-full h-full object-cover">
+              </div>
+              <div class="p-gutter-md flex flex-col justify-between flex-1 gap-gutter-sm">
+                <h3 data-design-text-token="title-md" class="font-title text-title-md text-light-on-surface dark:text-dark-on-surface group-hover:text-light-primary dark:group-hover:text-dark-primary transition-colors duration-state-change">混合检索为何比纯向量更靠谱？</h3>
+                <span data-design-text-token="mono-sm" class="font-mono text-mono-sm text-light-outline dark:text-dark-outline tabular-nums">2026-10-21 · 阅读 6 分钟</span>
+              </div>
+            </a>
+
+            <a href="#" data-component-id="card-interactive" data-component-type="card" data-component-variant="interactive" class="group h-full flex flex-col rounded-md overflow-hidden bg-light-surface-container-low dark:bg-dark-surface-container-low border border-light-outline-variant/60 dark:border-dark-outline-variant/60 hover:border-light-primary dark:hover:border-dark-primary transition-colors duration-state-change">
+              <div class="aspect-video w-full overflow-hidden bg-light-surface-container dark:bg-dark-surface-container">
+                <img src="https://lh3.googleusercontent.com/aida/ALJJyrAHtOfdU-s7kVbvW-fQ9ZZxSQ7yGJZuemoGgUezvUe8stSWotGbElcMB0EQPCkUaHm9GQKY3azPDuQlpMqIDvaGnxLCBxk2EdJ8xJuG3vlJ91cLke7Ws3RSxP8-2DX_1t3n9l8DOiJhKDh8z1HzV8bNu0CRVwL-hS3U-tdrY_Rqq6GK2XqdLhA-EnFafKsrwTEOLfOObdsshkHGIV3qIVX76H7bsXSSK03eHdpoYCjbtyNTxTqiTLruG2T8QCBtIw" alt="推理模型概念封面" class="w-full h-full object-cover">
+              </div>
+              <div class="p-gutter-md flex flex-col justify-between flex-1 gap-gutter-sm">
+                <h3 data-design-text-token="title-md" class="font-title text-title-md text-light-on-surface dark:text-dark-on-surface group-hover:text-light-primary dark:group-hover:text-dark-primary transition-colors duration-state-change">推理模型为什么先想再说？</h3>
+                <span data-design-text-token="mono-sm" class="font-mono text-mono-sm text-light-outline dark:text-dark-outline tabular-nums">2026-11-14 · 阅读 7 分钟</span>
+              </div>
+            </a>
+
+            <a href="#" data-component-id="card-interactive" data-component-type="card" data-component-variant="interactive" class="group h-full flex flex-col rounded-md overflow-hidden bg-light-surface-container-low dark:bg-dark-surface-container-low border border-light-outline-variant/60 dark:border-dark-outline-variant/60 hover:border-light-primary dark:hover:border-dark-primary transition-colors duration-state-change">
+              <div class="aspect-video w-full overflow-hidden bg-light-surface-container dark:bg-dark-surface-container">
+                <img src="https://lh3.googleusercontent.com/aida/ALJJyrCg0P19k1zyy35-5gGIZxBlSFtfeSHOsxwsifIJDou9GHrgxsQ311QCuw4foyZjBtKrUTR2HfWzubAy5AnT_P2Wdb8M4_jMwtigDD1QQeMSdzI1zHzw0yeeMV4NMr3v0t57s5vPZFAWW4KkFWVbQAPiWRti0qUqy7eorAFdsftkERjtdVOftlaB0mBhMvh1UMoxjHH-r0rvRBAOJx5vHSfAAhDM5zILluRi_-ACkPnoxb_r8AjSd_16-x9srO5Q-g" alt="智能体工作流概念封面" class="w-full h-full object-cover">
+              </div>
+              <div class="p-gutter-md flex flex-col justify-between flex-1 gap-gutter-sm">
+                <h3 data-design-text-token="title-md" class="font-title text-title-md text-light-on-surface dark:text-dark-on-surface group-hover:text-light-primary dark:group-hover:text-dark-primary transition-colors duration-state-change">Workflow 与 Agent 怎么选？</h3>
+                <span data-design-text-token="mono-sm" class="font-mono text-mono-sm text-light-outline dark:text-dark-outline tabular-nums">2026-11-09 · 阅读 6 分钟</span>
+              </div>
+            </a>
+          </div>
+        </section>
+
+      </article>
+    </main>
+
+    <!-- Site Footer (Shell Parity with Home) -->
+    <footer class="border-t border-light-outline-variant/40 dark:border-dark-outline-variant/40 bg-light-surface-container-low/40 dark:bg-dark-surface-container-lowest/40">
+      <div class="max-w-[1200px] mx-auto px-gutter-md md:px-page-margin py-gutter-xl flex flex-col gap-gutter-lg">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-gutter-lg">
+          <!-- Small WeChat QR Card -->
+          <div class="flex items-center gap-gutter-md">
+            <div class="w-12 h-12 p-gutter-xs rounded-sm bg-light-surface-container-lowest text-light-on-surface border border-light-outline-variant/40" aria-hidden="true">
+              <svg viewBox="0 0 100 100" class="w-full h-full" fill="currentColor">
+                <rect x="8" y="8" width="28" height="28" fill="none" stroke="currentColor" stroke-width="6"></rect>
+                <rect x="64" y="8" width="28" height="28" fill="none" stroke="currentColor" stroke-width="6"></rect>
+                <rect x="8" y="64" width="28" height="28" fill="none" stroke="currentColor" stroke-width="6"></rect>
+                <rect x="44" y="44" width="14" height="14" fill="#F97316"></rect>
+                <rect x="66" y="66" width="22" height="22"></rect>
+              </svg>
+            </div>
+            <div class="flex flex-col">
+              <span data-design-text-token="label-lg" class="font-label text-label-lg text-light-on-surface dark:text-dark-on-surface">关注 AI进化调研员</span>
+              <span data-design-text-token="body-sm" class="font-body text-body-sm text-light-outline dark:text-dark-outline">微信扫码或搜索同名公众号</span>
+            </div>
+          </div>
+
+          <!-- Footer Links -->
+          <nav aria-label="页脚链接" class="flex items-center gap-gutter-lg font-mono text-mono-sm text-light-outline dark:text-dark-outline">
+            <a href="#" class="hover:text-light-primary dark:hover:text-dark-primary transition-colors duration-state-change">CV</a>
+            <a href="#" class="hover:text-light-primary dark:hover:text-dark-primary transition-colors duration-state-change">Now</a>
+            <a href="#" class="hover:text-light-primary dark:hover:text-dark-primary transition-colors duration-state-change">RSS</a>
+            <a href="#" class="hover:text-light-primary dark:hover:text-dark-primary transition-colors duration-state-change">GitHub</a>
+          </nav>
+        </div>
+
+        <!-- Single Copyright Line -->
+        <p data-design-text-token="mono-sm" class="font-mono text-mono-sm text-light-outline dark:text-dark-outline border-t border-light-outline-variant/30 dark:border-dark-outline-variant/30 pt-gutter-md">
+          © 2026 AI进化调研员 · AI Evolution Researcher. 保留所有权利。
+        </p>
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    (function () {
+      var toggle = document.getElementById('theme-toggle');
+      var icon = document.getElementById('theme-icon');
+      var root = document.documentElement;
+
+      if (toggle && icon) {
+        toggle.addEventListener('click', function () {
+          var isDark = root.classList.toggle('dark');
+          icon.textContent = isDark ? 'light_mode' : 'dark_mode';
+          try {
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+          } catch (e) {}
+        });
+      }
+
+      var progress = document.getElementById('reading-progress');
+      if (progress) {
+        window.addEventListener('scroll', function () {
+          var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+          var pct = docHeight > 0 ? Math.min(1, Math.max(0.15, window.scrollY / docHeight)) : 0.33;
+          progress.style.width = Math.round(pct * 100) + '%';
+        }, { passive: true });
+      }
+    })();
+  </script>
+
+
+</body></html>
