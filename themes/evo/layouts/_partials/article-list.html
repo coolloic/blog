@@ -3,7 +3,7 @@
 {{- $p := .page -}}
 <div class="container stack-section">
   <header class="page-head">
-    <h1 class="page-head__title">{{ with .current }}{{ partial "cat-icon.html" (dict "slug" . "size" 56 "eager" true) }}{{ end }}{{ $p.Title }}</h1>
+    <h1 class="page-head__title">{{ with .current }}{{ partial "cat-icon.html" (dict "slug" . "size" 56 "eager" true) }}{{ else }}<img class="cat-icon" src="{{ "images/logo-mark-128.webp" | relURL }}" width="56" height="56" alt="" decoding="async">{{ end }}{{ $p.Title }}</h1>
     {{ with $p.Params.summary }}<p class="page-head__desc">{{ . }}</p>{{ end }}
     <p class="meta-line">{{ printf (partial "t.html" (dict "page" $p "key" "total_count")) (len .pages) }}</p>
   </header>
