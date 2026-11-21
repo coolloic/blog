@@ -77,3 +77,4 @@ topics_heading: Topics
 topic_count: "%d articles, in order"
 topic_step: "Part %d"
 all_topics: All topics →
+topic_path: Reading path

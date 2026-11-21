@@ -137,7 +137,7 @@ check_home_lists_articles_not_wiki() {
   else fail check_home_lists_articles_not_wiki "home must list articles and no wiki pages"; fi
 }
 
-noarticles() { rm -rf articles/sample-*; }
+noarticles() { rm -rf articles/sample-* topics/*/; }  # topics point at articles, so they go too
 check_home_empty() {
   local o; o=$(mktemp -d)
   if build_variant "$o" noarticles && grep -qE 'data-empty="?no_articles' "$o/index.html"; then pass check_home_empty
@@ -528,7 +528,7 @@ check_stitch_fonts() {
 }
 
 check_card_foot_split() {
-  local foot; foot=$(perl -0777 -ne 'print $1 if /(<div class="?card__foot.*?<\/div>)/s' "$OUT/index.html")
+  local foot; foot=$(perl -0777 -ne 'print $1 if /(<div class="?card__foot"?><time.*?<\/div>)/s' "$OUT/index.html")
   if echo "$foot" | grep -qE '<time[^>]*>2026-11-' && echo "$foot" | grep -qE 'class="?card__read'; then pass check_card_foot_split
   else fail check_card_foot_split "card footer should show the date and the reading time as separate items: ${foot:0:200}"; fi
 }
@@ -618,6 +618,7 @@ check_topics() {
   local order; order=$(echo "$h" | grep -oE 'href="?/blog/articles/sample-[0-9]/' | sed -E 's|.*sample-||; s|/||' | awk '!s[$0]++' | tr '\n' ' ')
   [[ "$order" == "3 1 "* ]] || bad+="order($order) "
   echo "$h" | grep -qE 'data-step="?1' || bad+="step-numbers "
+  echo "$h" | grep -qE '<h2[^>]*>阅读路线</h2>' || bad+="h2-before-cards "
   html1 "$OUT/topics/index.html" 2>/dev/null | grep -qE 'href="?/blog/topics/sample-topic/' || bad+="topics-index "
   html1 "$OUT/index.html" | grep -qE 'aria-labelledby="?topics-heading' || bad+="home-row "
   perl -0777 -ne 'exit(/<nav class="?site-nav.{0,600}?href="?\/blog\/topics\/"?>专题<\/a>/s ? 0 : 1)' "$OUT/index.html" || bad+="nav "

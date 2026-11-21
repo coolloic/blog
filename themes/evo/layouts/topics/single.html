@@ -8,7 +8,8 @@
     <p class="meta-line">{{ printf (partial "t.html" (dict "page" . "key" "topic_count")) (len $arts) }}</p>
   </header>
   {{ with .Content }}<div class="prose topic__intro">{{ . }}</div>{{ end }}
-  <ol class="topic__steps">
+  <h2 class="topic__steps-title">{{ partial "t.html" (dict "page" . "key" "topic_path") }}</h2>
+  <ol class="topic__steps" aria-label="{{ partial "t.html" (dict "page" . "key" "topic_path") }}">
     {{- range $i, $a := $arts }}
     <li class="topic__step" data-step="{{ add $i 1 }}">
       <span class="topic__num">{{ printf (partial "t.html" (dict "page" $ "key" "topic_step")) (add $i 1) }}</span>

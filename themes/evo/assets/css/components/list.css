@@ -39,3 +39,4 @@
 @media (min-width: 768px) { .topic__steps { grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); } }
 .topic__step { display: grid; gap: var(--space-s); }
 .topic__num { font-family: var(--font-mono); font-size: var(--size-label); color: var(--color-accent2); letter-spacing: 0.08em; }
+.topic__steps-title { font-size: var(--size-h3); }

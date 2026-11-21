@@ -32,6 +32,7 @@ images:
   cover.jpg:
     - 1276
     - 544
+webp: true
 draft: false
 ---
 
