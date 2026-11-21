@@ -514,10 +514,16 @@ check_cjk_emphasis() {
 }
 
 check_stitch_fonts() {
-  local h; h=$(html1 "$OUT/index.html" | sed 's|</head>.*||' | perl -pe 's|<noscript>.*?</noscript>||g')
-  local link; link=$(echo "$h" | grep -oE '<link[^>]*fonts.googleapis.com/css2[^>]*>' | head -1)
-  if [[ "$link" == *Crimson+Pro* && "$link" == *Lato* && "$link" == *Source+Code+Pro* && "$link" == *rel=*preload* ]] && python3 scripts/check-contrast.py >/dev/null; then pass check_stitch_fonts
-  else fail check_stitch_fonts "need one non-blocking Google Fonts link with Crimson Pro, Lato and Source Code Pro, and passing contrast incl. subtle: $link"; fi
+  # Stitch's three type voices, self-hosted (fonts.googleapis.com is unreachable in mainland China).
+  local bad="" css; css=$(cat "$OUT"/css/*.css "$OUT/index.html")
+  grep -rq 'fonts.googleapis.com\|fonts.gstatic.com' "$OUT/index.html" && bad+="google-fonts-request "
+  # the minifier may lowercase and unquote family names inside @font-face
+  for fam in "Crimson Pro" "Lato" "Source Code Pro"; do echo "$css" | grep -qiE "@font-face *\{ *font-family: *\"?$fam" || bad+="no-@font-face:$fam "; done
+  echo "$css" | grep -q 'font-display:swap\|font-display: swap' || bad+="font-display "
+  local n; n=$(ls "$OUT"/fonts/*.woff2 2>/dev/null | wc -l | tr -d ' '); [[ "$n" -ge 4 ]] || bad+="woff2-files=$n "
+  html1 "$OUT/index.html" | grep -qE '<link rel="?preload"? [^>]*as="?font' || bad+="no-preload "
+  python3 scripts/check-contrast.py >/dev/null || bad+="contrast "
+  if [[ -z "$bad" ]]; then pass check_stitch_fonts; else fail check_stitch_fonts "$bad"; fi
 }
 
 check_card_foot_split() {
