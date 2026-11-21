@@ -24,6 +24,8 @@ images:
     - 544
 webp: true
 draft: false
+cover_video: "https://aitanyan.com/img/videos/ai-in-the-lab/cover-loop.mp4"
+video_vertical: "https://aitanyan.com/img/videos/ai-in-the-lab/vertical.mp4"
 ---
 
 2026 年，AI 不再只是帮科研人员查文献、改语法。从提出假设、设计实验，到写论文、审论文，“AI 科学家”已经走完了整条链路。本文拆解五个环节的真实进展、可信度和边界。

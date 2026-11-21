@@ -19,6 +19,8 @@ images:
     - 435
 webp: true
 draft: false
+cover_video: "https://aitanyan.com/img/videos/ai-designs-rockets/cover-loop.mp4"
+video_vertical: "https://aitanyan.com/img/videos/ai-designs-rockets/vertical.mp4"
 ---
 
 在过去，制造一台火箭发动机，意味着几十年经验的积累、无数次试验的失败，以及一代代工程师的传承。

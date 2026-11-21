@@ -1,0 +1,13 @@
+{
+  "slug": "agent-skills-on-github",
+  "shortTitle": "GitHub 最火的 AI 技能包",
+  "hook": "GitHub 本周最火的，是给 AI 写的技能包",
+  "points": [
+    { "text": "好几个 skills 仓库上了 Trending，一天能涨上千颗星" },
+    { "text": "一个 Skill 就是一个文件夹：一份 SKILL.md，加可选的脚本" },
+    { "text": "Agent 平时只看名字和简介，用得上时才加载全文" },
+    { "text": "据 Anthropic 新闻页，已有 70 多个 Agent 平台接入" },
+    { "text": "MCP 管 Agent 能调用什么，Skills 管 Agent 该怎么做" }
+  ],
+  "takeaway": "从重复最多的流程，写你的第一个 Skill"
+}

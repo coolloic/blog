@@ -28,6 +28,8 @@ images:
     - 519
 webp: true
 draft: false
+cover_video: "https://aitanyan.com/img/videos/ai-wealth-gap/cover-loop.mp4"
+video_vertical: "https://aitanyan.com/img/videos/ai-wealth-gap/vertical.mp4"
 ---
 
 > 栏目：人类与 AI 的未来｜AI调研员

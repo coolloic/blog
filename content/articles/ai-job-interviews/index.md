@@ -19,6 +19,8 @@ images:
     - 459
 webp: true
 draft: false
+cover_video: "https://aitanyan.com/img/videos/ai-job-interviews/cover-loop.mp4"
+video_vertical: "https://aitanyan.com/img/videos/ai-job-interviews/vertical.mp4"
 ---
 
 今年秋招，不少应届生发现：第一轮面试官变成了屏幕里的“数字人”，问完问题就倒计时，答完没有任何回音。AI 正在成为招聘的第一道门。这篇用数据讲清楚：AI 到底怎么筛你、哪里可能看走眼，以及求职者能做什么。

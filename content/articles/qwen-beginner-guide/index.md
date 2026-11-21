@@ -46,6 +46,8 @@ images:
     - 459
 webp: true
 draft: false
+cover_video: "https://aitanyan.com/img/videos/qwen-beginner-guide/cover-loop.mp4"
+video_vertical: "https://aitanyan.com/img/videos/qwen-beginner-guide/vertical.mp4"
 ---
 
 【AI 工具推荐 No.2】上一期我们教了豆包，这一期换阿里的「千问」。它免费、中文好用，打开网页就能问。这次挑的 4 个场景，正好接着头条讲的“被裁员之后”：算补偿、看协议、改简历，再加一个生活里常用的“翻译外文说明书”。

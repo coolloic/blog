@@ -1,0 +1,13 @@
+{
+  "slug": "ai-interview-practice-apps",
+  "shortTitle": "被 AI 面试前先练一遍",
+  "hook": "被 AI 面试之前，先让 AI 陪你练一遍",
+  "points": [
+    { "text": "牛客：刷银行、电气制造等行业的 AI 面试真题", "image": "2.png" },
+    { "text": "猎聘：简历优化、模拟面试，还有付费的“AI 职位透镜”", "image": "3.png" },
+    { "text": "不装 App：让通用 AI 当面试官，每次只问一个问题" },
+    { "text": "开着计时器，每题控制在 2 分钟内" },
+    { "text": "别用“实时代答”工具，AI 面试普遍有防作弊检测" }
+  ],
+  "takeaway": "能打动面试官的，是你真实做过的事"
+}

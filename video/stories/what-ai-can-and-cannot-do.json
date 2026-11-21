@@ -1,0 +1,12 @@
+{
+  "slug": "what-ai-can-and-cannot-do",
+  "shortTitle": "AI 会做什么、不会做什么",
+  "hook": "能推翻 80 年的数学猜想，却玩不会小游戏",
+  "points": [
+    { "text": "ARC-AGI-3 上，前沿模型都低于 1%，人类第一次就全解出", "image": "1.jpg" },
+    { "text": "METR：AI 能独立完成的任务，约每 4 个多月翻一倍", "image": "2.jpg" },
+    { "text": "斯坦福研究：AI 高暴露职业里，22–25 岁的人就业落后约 19%" },
+    { "text": "Anthropic 实验：依赖 AI 学新库的一组，测验得分低了 17%" }
+  ],
+  "takeaway": "用 AI 求理解，而不只是要答案"
+}

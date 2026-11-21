@@ -31,6 +31,8 @@ images:
     - 544
 webp: true
 draft: false
+cover_video: "https://aitanyan.com/img/videos/will-ai-take-your-job/cover-loop.mp4"
+video_vertical: "https://aitanyan.com/img/videos/will-ai-take-your-job/vertical.mp4"
 ---
 
 每隔几个月，就有一份"AI 将取代 X 亿个岗位"的报告刷屏。但如果你认真去读原始数据，会发现故事比标题复杂得多——也比标题更值得每个普通人认真对待。

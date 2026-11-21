@@ -25,6 +25,8 @@ images:
     - 544
 webp: true
 draft: false
+cover_video: "https://aitanyan.com/img/videos/ai-universal-basic-income/cover-loop.mp4"
+video_vertical: "https://aitanyan.com/img/videos/ai-universal-basic-income/vertical.mp4"
 ---
 
 【AI 脑洞实验室 No.27】假设 AI 让社会变得极其富有，政府决定：每个成年人每月无条件领一笔钱，不管你工作不工作。你会怎么过？
