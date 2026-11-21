@@ -23,10 +23,14 @@ images:
   cover.jpg:
     - 1276
     - 544
+  cover-site.jpg:
+    - 1280
+    - 544
 webp: true
 draft: false
 cover_video: "https://aitanyan.com/img/videos/ai-layoff-30-day-plan/cover-loop.mp4"
 video_vertical: "https://aitanyan.com/img/videos/ai-layoff-30-day-plan/vertical.mp4"
+cover_wide: "https://aitanyan.com/img/articles/ai-layoff-30-day-plan/cover-site.jpg"
 ---
 
 “公司要用 AI 优化流程，你的岗位取消了。”这句话，正在越来越多的会议室里出现。如果有一天轮到你，前 30 天该做什么？这篇不讲焦虑，只讲行动。

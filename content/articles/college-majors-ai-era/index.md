@@ -23,10 +23,14 @@ images:
   cover.jpg:
     - 1276
     - 544
+  cover-site.jpg:
+    - 1280
+    - 544
 webp: true
 draft: false
 cover_video: "https://aitanyan.com/img/videos/college-majors-ai-era/cover-loop.mp4"
 video_vertical: "https://aitanyan.com/img/videos/college-majors-ai-era/vertical.mp4"
+cover_wide: "https://aitanyan.com/img/articles/college-majors-ai-era/cover-site.jpg"
 ---
 
 过去十年，“学计算机，稳了”几乎是家长圈的共识。可最近的数据却让很多人意外：一些热门专业的毕业生找工作变难了，而一些被认为“冷门”“辛苦”“不体面”的方向，反而越来越抗风险。今天我们用国内外的就业数据和研究，聊聊 AI 时代选专业的新思路。

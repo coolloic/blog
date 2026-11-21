@@ -23,10 +23,14 @@ images:
   cover.jpg:
     - 1280
     - 544
+  cover-site.jpg:
+    - 1280
+    - 544
 webp: true
 draft: false
 cover_video: "https://aitanyan.com/img/videos/huawei-medical-ai/cover-loop.mp4"
 video_vertical: "https://aitanyan.com/img/videos/huawei-medical-ai/vertical.mp4"
+cover_wide: "https://aitanyan.com/img/articles/huawei-medical-ai/cover-site.jpg"
 ---
 
 > 导语：一群 AI 智能体开组会、分工、互相挑刺，最后设计出能在湿实验中起作用的纳米抗体——这已经不是科幻。斯坦福的 Virtual Lab 证明了「虚拟实验室」可行，而在国内，华为正把类似的思路搬进实验室和医院。本文梳理事实、拆解技术，也聊聊那些宣传稿里不太提的问题。

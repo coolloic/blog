@@ -4,7 +4,7 @@ import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { parse, stringify } from "yaml";
 import { convertArticle, wechatShortUrl } from "./convert.mjs";
-import { dimensions, webpVariants, wideCover, needsWide, WIDE } from "./images.mjs";
+import { dimensions, webpVariants, wideCover, needsWide, WIDE, siteCover } from "./images.mjs";
 import { bodyOf, readFrontMatter, renderArticle } from "./frontmatter.mjs";
 
 const SLUG = /^[a-z0-9]+(-[a-z0-9]+){0,5}$/;
@@ -209,6 +209,35 @@ export async function addWideCovers({ contentDir, uploader, downloadImage, image
         await uploadWebp(uploader, slug, "cover-wide", wide, imageWidths, true, "jpg");
         const images = { ...fm.images, "cover-wide.jpg": [WIDE.width, WIDE.height] };
         await writeFile(file, renderArticle({ ...fm, cover_wide: uploader.url(`articles/${slug}/cover-wide.jpg`), images }, bodyOf(text)));
+      }
+      result.added.push(slug); log(`✓ ${slug}`);
+    } catch (e) {
+      result.failed.push({ slug, error: e.message }); log(`✗ ${slug}: ${e.message}`);
+    }
+  }
+  return result;
+}
+
+/**
+ * Site-only covers (see .claude/skills/site-cover): for each <dir>/<slug>.png, upload a 1280×544 crop as
+ * `cover-site.jpg` (+ WebP) and point `cover_wide` at it. `cover` (the WeChat cover) stays for sharing.
+ * @returns {Promise<{added: string[], unknown: string[], failed: {slug: string, error: string}[]}>}
+ */
+export async function addSiteCovers({ dir, contentDir, uploader, imageWidths = DEFAULT_IMAGE_WIDTHS, dryRun = false, log = () => {} }) {
+  const result = { added: [], unknown: [], failed: [] };
+  for (const f of (await readdir(dir)).filter((n) => /\.(png|jpe?g|webp)$/i.test(n)).sort()) {
+    const slug = f.replace(/\.[^.]+$/, "");
+    const file = join(contentDir, slug, "index.md");
+    if (!existsSync(file)) { result.unknown.push(slug); log(`? ${slug}: no such article`); continue; }
+    try {
+      if (!dryRun) {
+        const text = await readFile(file, "utf8");
+        const fm = readFrontMatter(text);
+        const cover = await siteCover(await readFile(join(dir, f)));
+        await uploader.put(`articles/${slug}/cover-site.jpg`, cover, "image/jpeg");
+        await uploadWebp(uploader, slug, "cover-site", cover, imageWidths, true, "jpg");
+        const images = { ...fm.images, "cover-site.jpg": [WIDE.width, WIDE.height] };
+        await writeFile(file, renderArticle({ ...fm, cover_wide: uploader.url(`articles/${slug}/cover-site.jpg`), images }, bodyOf(text)));
       }
       result.added.push(slug); log(`✓ ${slug}`);
     } catch (e) {

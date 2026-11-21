@@ -27,11 +27,14 @@ images:
   cover-wide.jpg:
     - 1280
     - 544
+  cover-site.jpg:
+    - 1280
+    - 544
 webp: true
 draft: false
 cover_video: "https://aitanyan.com/img/videos/kids-ai-learning-apps/cover-loop.mp4"
 video_vertical: "https://aitanyan.com/img/videos/kids-ai-learning-apps/vertical.mp4"
-cover_wide: "https://aitanyan.com/img/articles/kids-ai-learning-apps/cover-wide.jpg"
+cover_wide: "https://aitanyan.com/img/articles/kids-ai-learning-apps/cover-site.jpg"
 ---
 
 【AI 手机应用推荐 · 学习篇｜非广告】头条讨论了“孩子用 AI 写作业，是作弊还是新能力”。不管你怎么看，AI 学习 App 已经在很多孩子手里了。这篇介绍两款热门的，重点讲**家长怎么设置，让 AI 当老师，而不是当答案机**。

@@ -26,11 +26,14 @@ images:
   cover-wide.jpg:
     - 1280
     - 544
+  cover-site.jpg:
+    - 1280
+    - 544
 webp: true
 draft: false
 cover_video: "https://aitanyan.com/img/videos/ai-interview-practice-apps/cover-loop.mp4"
 video_vertical: "https://aitanyan.com/img/videos/ai-interview-practice-apps/vertical.mp4"
-cover_wide: "https://aitanyan.com/img/articles/ai-interview-practice-apps/cover-wide.jpg"
+cover_wide: "https://aitanyan.com/img/articles/ai-interview-practice-apps/cover-site.jpg"
 ---
 
 【AI 手机应用推荐 · 面试篇】头条讲了 AI 面试官怎么筛人，次条脑洞了“AI 面 AI”。这一篇说实用的：面对 AI 面试，怎么提前练？介绍两款常见求职 App 里用得上的功能，以及几条一定要守的底线。本文**非广告**，没有收任何平台的钱，不放下载链接；应用信息来自苹果 App Store 公开页面（2026 年 11 月 20 日查看）。

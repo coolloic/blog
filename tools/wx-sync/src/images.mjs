@@ -51,3 +51,8 @@ export async function wideCover(bytes) {
   const front = await sharp(bytes).rotate().resize({ height, width: width - 64, fit: "inside" }).toBuffer();
   return sharp(backdrop).composite([{ input: front, gravity: "center" }]).jpeg({ quality: 86, mozjpeg: true }).toBuffer();
 }
+
+/** A generated photo cropped (around its most salient region) to the site's 1280×544 cover. */
+export async function siteCover(bytes) {
+  return sharp(bytes).rotate().resize(WIDE.width, WIDE.height, { fit: "cover", position: sharp.strategy.attention }).jpeg({ quality: 84, mozjpeg: true }).toBuffer();
+}

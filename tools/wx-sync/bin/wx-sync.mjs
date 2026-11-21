@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
 import { parseArgs } from "node:util";
 import { parse } from "yaml";
-import { runSync, optimizeExisting, addWideCovers } from "../src/sync.mjs";
+import { runSync, optimizeExisting, addWideCovers, addSiteCovers } from "../src/sync.mjs";
 import { makeUploader, readImageBase } from "../src/r2.mjs";
 import { fetchArticleHtml, downloadImage } from "../src/fetch.mjs";
 
@@ -17,6 +17,7 @@ const USAGE = `wx-sync — sync WeChat articles into content/articles/
   --resync <slug>   re-fetch one already-synced article; its slug and image keys stay the same
   --optimize-existing  add WebP versions (params.imageWidths) to synced articles that lack them (honours --dry-run)
   --wide-covers     give square-cover articles a 2.35:1 cover (cover_wide) for the site's cover boxes (honours --dry-run)
+  --site-covers <dir>  set the site cover (cover_wide) from <dir>/<slug>.png, cropped to 2.35:1; WeChat cover kept (honours --dry-run)
   --force-resync    with --resync: proceed even if the article has manual corrections (they must be re-applied)
   --help            this text
 
@@ -24,7 +25,7 @@ Exit code 1 if any article failed.`;
 
 const { values } = parseArgs({ options: {
   plan: { type: "string", default: ".wx-sync/plan.json" }, "dry-run": { type: "boolean", default: false },
-  resync: { type: "string" }, "optimize-existing": { type: "boolean", default: false }, "wide-covers": { type: "boolean", default: false }, "force-resync": { type: "boolean", default: false }, help: { type: "boolean", default: false } } });
+  resync: { type: "string" }, "optimize-existing": { type: "boolean", default: false }, "wide-covers": { type: "boolean", default: false }, "site-covers": { type: "string" }, "force-resync": { type: "boolean", default: false }, help: { type: "boolean", default: false } } });
 if (values.help) { console.log(USAGE); process.exit(0); }
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
@@ -40,6 +41,17 @@ if (values["optimize-existing"]) {
     log: (line) => console.log(line),
   });
   console.log(`\noptimized ${r.optimized.length} · failed ${r.failed.length}`);
+  for (const f of r.failed) console.log(`  failed ${f.slug}: ${f.error}`);
+  process.exit(r.failed.length ? 1 : 0);
+}
+
+if (values["site-covers"]) {
+  const r = await addSiteCovers({
+    dir: resolve(values["site-covers"]), contentDir: resolve(root, "content/articles"), imageWidths, dryRun,
+    uploader: makeUploader({ bucket: config.bucket, imageBase: readImageBase(resolve(root, "hugo.yaml")) }),
+    log: (line) => console.log(line),
+  });
+  console.log(`\n${dryRun ? "[dry run] " : ""}site covers ${r.added.length} · unknown ${r.unknown.length} · failed ${r.failed.length}`);
   for (const f of r.failed) console.log(`  failed ${f.slug}: ${f.error}`);
   process.exit(r.failed.length ? 1 : 0);
 }

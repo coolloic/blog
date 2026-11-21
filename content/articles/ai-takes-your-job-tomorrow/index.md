@@ -26,11 +26,14 @@ images:
   cover-wide.jpg:
     - 1280
     - 544
+  cover-site.jpg:
+    - 1280
+    - 544
 webp: true
 draft: false
 cover_video: "https://aitanyan.com/img/videos/ai-takes-your-job-tomorrow/cover-loop.mp4"
 video_vertical: "https://aitanyan.com/img/videos/ai-takes-your-job-tomorrow/vertical.mp4"
-cover_wide: "https://aitanyan.com/img/articles/ai-takes-your-job-tomorrow/cover-wide.jpg"
+cover_wide: "https://aitanyan.com/img/articles/ai-takes-your-job-tomorrow/cover-site.jpg"
 ---
 
 【AI 脑洞实验室 No.13】想象一下：明天早上你到公司，发现工位上已经坐着一个“AI 同事”，它会做你会做的所有事，而且不用睡觉、不用休假、不要工资。你的老板说：“你可以先休息一段时间。”接下来会发生什么？

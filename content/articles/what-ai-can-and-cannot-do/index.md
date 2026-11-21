@@ -32,10 +32,14 @@ images:
   cover.jpg:
     - 1276
     - 544
+  cover-site.jpg:
+    - 1280
+    - 544
 webp: true
 draft: false
 cover_video: "https://aitanyan.com/img/videos/what-ai-can-and-cannot-do/cover-loop.mp4"
 video_vertical: "https://aitanyan.com/img/videos/what-ai-can-and-cannot-do/vertical.mp4"
+cover_wide: "https://aitanyan.com/img/articles/what-ai-can-and-cannot-do/cover-site.jpg"
 ---
 
 2026 年，同一代 AI 一边推翻了一个悬而未决 80 年的数学猜想，一边在一组"五岁小孩几秒就能上手"的小游戏里拿了不到 1 分。这不是矛盾，而恰恰是理解这个时代最重要的线索。

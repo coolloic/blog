@@ -26,11 +26,14 @@ images:
   cover-wide.jpg:
     - 1280
     - 544
+  cover-site.jpg:
+    - 1280
+    - 544
 webp: true
 draft: false
 cover_video: "https://aitanyan.com/img/videos/if-exams-disappear/cover-loop.mp4"
 video_vertical: "https://aitanyan.com/img/videos/if-exams-disappear/vertical.mp4"
-cover_wide: "https://aitanyan.com/img/articles/if-exams-disappear/cover-wide.jpg"
+cover_wide: "https://aitanyan.com/img/articles/if-exams-disappear/cover-site.jpg"
 ---
 
 【AI 脑洞实验室 No.7】如果每个学生都能随时问 AI，那一张试卷、一篇作文，还能证明什么？有人说，考试会消失；也有人说，考试会变得更严。我们来推演一下。

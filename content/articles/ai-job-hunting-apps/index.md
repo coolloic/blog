@@ -23,11 +23,14 @@ images:
   cover-wide.jpg:
     - 1280
     - 544
+  cover-site.jpg:
+    - 1280
+    - 544
 webp: true
 draft: false
 cover_video: "https://aitanyan.com/img/videos/ai-job-hunting-apps/cover-loop.mp4"
 video_vertical: "https://aitanyan.com/img/videos/ai-job-hunting-apps/vertical.mp4"
-cover_wide: "https://aitanyan.com/img/articles/ai-job-hunting-apps/cover-wide.jpg"
+cover_wide: "https://aitanyan.com/img/articles/ai-job-hunting-apps/cover-site.jpg"
 ---
 
 【AI 手机应用推荐 · 求职篇｜非广告】头条讲了“入门岗位被 AI 吃掉，年轻人第一份工作去哪找”。工作难找，但找工作的工具变强了：**改简历、练面试、看岗位，AI 都能帮一把**。这篇介绍几款常见的，也提醒你哪些事千万别让 AI 替你做。

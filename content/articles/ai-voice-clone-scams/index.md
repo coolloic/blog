@@ -29,10 +29,14 @@ images:
   cover.jpg:
     - 1276
     - 544
+  cover-site.jpg:
+    - 1280
+    - 544
 webp: true
 draft: false
 cover_video: "https://aitanyan.com/img/videos/ai-voice-clone-scams/cover-loop.mp4"
 video_vertical: "https://aitanyan.com/img/videos/ai-voice-clone-scams/vertical.mp4"
+cover_wide: "https://aitanyan.com/img/articles/ai-voice-clone-scams/cover-site.jpg"
 ---
 
 一通视频电话打来，屏幕里是许久未见的孙子，熟悉的脸、熟悉的声音，焦急地说自己出了事，急需 5 万元。郑州的李奶奶差点就转了账——直到银行工作人员提示风险，她给孙子打电话确认，对方大吃一惊："我根本没跟您要过钱！"**骗子用的，是 AI 换脸和 AI 拟声。**
