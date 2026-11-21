@@ -93,9 +93,9 @@ check_unsafe_link_neutralised() {
 }
 
 check_cv_linked() {
-  # The owner dropped CV from the site menus (2026-11-21); the About page still links it.
-  if grep -Eq 'href="?https://coolloic.github.io/"?[ >]' public/about/index.html 2>/dev/null; then pass check_cv_linked
-  else fail check_cv_linked "About page lost its CV link"; fi
+  # The owner stays anonymous on the site (2026-11-22): no CV link and no name on the About page.
+  if grep -Eq 'coolloic.github.io/"?[ >]|Loic' public/about/index.html 2>/dev/null; then fail check_cv_linked "About page still shows the CV link or the owner's name"
+  else pass check_cv_linked; fi
 }
 
 check_mermaid_loaded_everywhere() {

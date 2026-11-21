@@ -38,7 +38,7 @@ params:
     google: ""
     bing: ""
     baidu: ""
-  author: Loic
+  author: AI调研员
   defaultTheme: auto # follows the reader's light/dark preference
   ShowReadingTime: true
   ShowShareButtons: false
@@ -51,10 +51,6 @@ params:
   ShowRssButtonInSectionTermList: true
   disableSpecial1stPost: false
   mainSections: [articles, posts] # keep wiki pages off the home page, archive and post nav
-
-  homeInfoParams:
-    Title: "Hi, I'm Loic 👋"
-    Content: "Technical writing on cutting-edge AI: models, agents, tooling, and what I learn building with them."
 
   socialIcons:
     - name: rss
