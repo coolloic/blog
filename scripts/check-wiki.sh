@@ -93,12 +93,9 @@ check_unsafe_link_neutralised() {
 }
 
 check_cv_linked() {
-  # The CV lives at the site root; the blog's menu (every page) and About page must link to it.
-  local cv='href="?https://coolloic.github.io/"?[ >]' f bad=""
-  for f in public/index.html public/posts/anatomy-of-an-ai-agent/index.html public/about/index.html; do
-    grep -Eq "$cv" "$f" 2>/dev/null || bad+="$f "
-  done
-  if [[ -z "$bad" ]]; then pass check_cv_linked; else fail check_cv_linked "no link to the CV on: $bad"; fi
+  # The owner dropped CV from the site menus (2026-11-21); the About page still links it.
+  if grep -Eq 'href="?https://coolloic.github.io/"?[ >]' public/about/index.html 2>/dev/null; then pass check_cv_linked
+  else fail check_cv_linked "About page lost its CV link"; fi
 }
 
 check_mermaid_loaded_everywhere() {
