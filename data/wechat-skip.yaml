@@ -1,4 +1,117 @@
-# WeChat posts that are deliberately NOT synced to the blog (announcements such as 招募令 / 征稿启事).
-# Written by tools/wx-sync from plan items with a `skip` reason. Delete an entry to let it sync next time.
-# Format: - {wechat_id: "<appmsgid>_<itemidx>", title: "…", reason: "…"}
-[]
+- wechat_id: 2650016567_1
+  title: 招募令：成为「读者调研员」，分享你的 AI 真实经历
+  reason: 招募令（公告，非文章）
+- wechat_id: 2650016340_1
+  title: 强势回归－新西兰纽乐Nutra-life热门产品推销
+  reason: 2016 年购物/产品推广旧文，与 AI 科普无关
+- wechat_id: 2650016323_1
+  title: 清凉夏日产品帮你避暑降温焕发第二春
+  reason: 2016 年购物/产品推广旧文，与 AI 科普无关
+- wechat_id: 2650016298_1
+  title: 新西兰最新好产品推荐
+  reason: 2016 年购物/产品推广旧文，与 AI 科普无关
+- wechat_id: 402532647_1
+  title: 新西兰好评婴儿物品大集合
+  reason: 2016 年购物/产品推广旧文，与 AI 科普无关
+- wechat_id: 402251683_1
+  title: 新西兰热卖化妆品--让你72变
+  reason: 2016 年购物/产品推广旧文，与 AI 科普无关
+- wechat_id: 402160803_1
+  title: 新西兰本土最热卖的产品，震撼登场
+  reason: 2016 年购物/产品推广旧文，与 AI 科普无关
+- wechat_id: 402055865_1
+  title: 今日至4月4日邀请关注即可享受产品折扣
+  reason: 2016 年购物/产品推广旧文，与 AI 科普无关
+- wechat_id: 402042902_1
+  title: 轮番推荐-不看你将遗憾终身的产品
+  reason: 2016 年购物/产品推广旧文，与 AI 科普无关
+- wechat_id: 402025462_1
+  title: NZ经典产品快速推荐
+  reason: 2016 年购物/产品推广旧文，与 AI 科普无关
+- wechat_id: 401996744_1
+  title: 火遍全球却与NZ八字不合？扒一扒星巴克与新西兰
+  reason: 2016 年购物/产品推广旧文，与 AI 科普无关
+- wechat_id: 401955497_1
+  title: 那些总是卖断货的新西兰特产
+  reason: 2016 年购物/产品推广旧文，与 AI 科普无关
+- wechat_id: 401930974_1
+  title: 新西兰好评婴儿物品大集合
+  reason: 2016 年购物/产品推广旧文，与 AI 科普无关
+- wechat_id: 401911796_1
+  title: Eco Store---不仅仅是婴儿产品
+  reason: 2016 年购物/产品推广旧文，与 AI 科普无关
+- wechat_id: 401901676_1
+  title: 纳尼？新西兰要换国旗！
+  reason: 2016 年购物/产品推广旧文，与 AI 科普无关
+- wechat_id: 401878175_1
+  title: 细数新西兰断货好商品
+  reason: 2016 年购物/产品推广旧文，与 AI 科普无关
+- wechat_id: 401860376_1
+  title: 神器来袭－内外兼修塑造完美女神范儿
+  reason: 2016 年购物/产品推广旧文，与 AI 科普无关
+- wechat_id: 401833024_1
+  title: 有机品牌Antipodes 5大最火热卖品
+  reason: 2016 年购物/产品推广旧文，与 AI 科普无关
+- wechat_id: 401816222_1
+  title: 连王妃都是它的粉丝！Trilogy最值得买的七大好物！
+  reason: 2016 年购物/产品推广旧文，与 AI 科普无关
+- wechat_id: 401795757_1
+  title: 范爷、李冰冰青睐的“小脸”神器居然在羊村！！
+  reason: 2016 年购物/产品推广旧文，与 AI 科普无关
+- wechat_id: 401782588_1
+  title: 新西兰知名保健品汤普森Thompson's最畅销产品
+  reason: 2016 年购物/产品推广旧文，与 AI 科普无关
+- wechat_id: 401767892_1
+  title: 新西兰超好评单品篇（二）
+  reason: 2016 年购物/产品推广旧文，与 AI 科普无关
+- wechat_id: 401762112_1
+  title: 新西兰超好用单品篇（一）
+  reason: 2016 年购物/产品推广旧文，与 AI 科普无关
+- wechat_id: 401756122_1
+  title: 开启 Pandora 潘多拉珠宝箱
+  reason: 2016 年购物/产品推广旧文，与 AI 科普无关
+- wechat_id: 401749383_1
+  title: 新西兰嗨淘必买之保健品篇
+  reason: 2016 年购物/产品推广旧文，与 AI 科普无关
+- wechat_id: 401742128_1
+  title: 爱美女性的百宝箱---新西兰嗨淘必买之护肤品篇
+  reason: 2016 年购物/产品推广旧文，与 AI 科普无关
+- wechat_id: 401735812_1
+  title: 新西兰神兽来袭---羊驼（草泥马，Alpaca）
+  reason: 2016 年购物/产品推广旧文，与 AI 科普无关
+- wechat_id: 401735812_2
+  title: 吐血整理干货---新西兰超好评婴儿物品推荐
+  reason: 2016 年购物/产品推广旧文，与 AI 科普无关
+- wechat_id: 401731209_1
+  title: NZ生活Rule No.3--爱上羊村的奶？
+  reason: 2016 年购物/产品推广旧文，与 AI 科普无关
+- wechat_id: 401731209_2
+  title: 新西兰知名婴儿奶粉品牌介绍和比较
+  reason: 2016 年购物/产品推广旧文，与 AI 科普无关
+- wechat_id: 401731209_3
+  title: 新西兰奶制品业的骄傲---安佳
+  reason: 2016 年购物/产品推广旧文，与 AI 科普无关
+- wechat_id: 401721431_1
+  title: NZ生活Rule No.2
+  reason: 2016 年购物/产品推广旧文，与 AI 科普无关
+- wechat_id: 401721431_2
+  title: 吃蜂胶没效果？因为你吃的方法不对
+  reason: 2016 年购物/产品推广旧文，与 AI 科普无关
+- wechat_id: 401721431_3
+  title: 你永远也猜不到贪婪新西兰人都
+  reason: 2016 年购物/产品推广旧文，与 AI 科普无关
+- wechat_id: 401716673_1
+  title: NZ生活Rule No.2
+  reason: 2016 年购物/产品推广旧文，与 AI 科普无关
+- wechat_id: 401716673_2
+  title: 吃蜂胶没效果？因为你吃的方法不对
+  reason: 2016 年购物/产品推广旧文，与 AI 科普无关
+- wechat_id: 401716673_3
+  title: 你永远也猜不到贪婪新西兰人都
+  reason: 2016 年购物/产品推广旧文，与 AI 科普无关
+- wechat_id: 401712356_1
+  title: NZ生活Rule No.1
+  reason: 2016 年购物/产品推广旧文，与 AI 科普无关
+- wechat_id: 401710363_1
+  title: 共享纯净新西兰优品
+  reason: 2016 年购物/产品推广旧文，与 AI 科普无关
