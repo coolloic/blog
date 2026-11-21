@@ -6,6 +6,7 @@
 {{- $main := (index $feeds 0).url -}}
 <article class="article article--page subscribe">
   <div class="container">
+    {{ partial "crumbs.html" . }}
     <header class="article__head"><h1>{{ .Title }}</h1><p class="article__summary">{{ .Params.summary }}</p></header>
 
     <section class="subscribe__option" aria-labelledby="sub-wechat">

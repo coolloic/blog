@@ -924,6 +924,10 @@ check_back_links() {
   perl -0777 -ne 'exit(/<nav class="?crumbs[^>]*>.{0,400}?href="?\/blog\/notes\//s ? 0 : 1)' "$OUT/posts/hello-world/index.html" || bad+="post "
   local g; g=$(cd "$OUT" && ls -d glossary/*/ | head -1)
   perl -0777 -ne 'exit(/<nav class="?crumbs[^>]*>.{0,400}?href="?\/blog\/glossary\//s ? 0 : 1)' "$OUT/${g}index.html" || bad+="glossary "
+  local q; q=$(cd "$OUT" && ls -d quiz/*/ | head -1)
+  for f in subscribe/index.html "${q}index.html" about/index.html methodology/index.html; do
+    perl -0777 -ne 'exit(/<nav class="?crumbs[^>]*>.{0,400}?href="?\/blog\/"?.{0,400}?首页<\/a>/s ? 0 : 1)' "$OUT/$f" || bad+="home:$f "
+  done
   if [[ -z "$bad" ]]; then pass check_back_links; else fail check_back_links "$bad"; fi
 }
 
