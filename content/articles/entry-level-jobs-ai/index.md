@@ -26,11 +26,14 @@ images:
   cover-site.jpg:
     - 1280
     - 544
+  cover-poster.jpg:
+    - 1280
+    - 544
 webp: true
 draft: false
-cover_video: "https://aitanyan.com/img/videos/entry-level-jobs-ai/cover-loop.mp4"
+cover_video: "https://aitanyan.com/img/videos/entry-level-jobs-ai/cover-loop-94d4a98b.mp4"
 video_vertical: "https://aitanyan.com/img/videos/entry-level-jobs-ai/vertical.mp4"
-cover_wide: "https://aitanyan.com/img/articles/entry-level-jobs-ai/cover-site.jpg"
+cover_wide: "https://aitanyan.com/img/articles/entry-level-jobs-ai/cover-poster.jpg"
 ---
 
 “招聘要求：三年以上经验。”刚毕业的年轻人最怕看到这句话。而在 AI 时代，这个问题可能更严重了：那些原本给新人练手的基础工作，正在被 AI 接手。这篇说说数据，也给正在找工作的年轻人一些实在的建议。

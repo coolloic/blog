@@ -32,11 +32,14 @@ images:
   cover-site.jpg:
     - 1280
     - 544
+  cover-poster.jpg:
+    - 1280
+    - 544
 webp: true
 draft: false
-cover_video: "https://aitanyan.com/img/videos/ai-college-application-apps/cover-loop.mp4"
+cover_video: "https://aitanyan.com/img/videos/ai-college-application-apps/cover-loop-077e2e86.mp4"
 video_vertical: "https://aitanyan.com/img/videos/ai-college-application-apps/vertical.mp4"
-cover_wide: "https://aitanyan.com/img/articles/ai-college-application-apps/cover-site.jpg"
+cover_wide: "https://aitanyan.com/img/articles/ai-college-application-apps/cover-poster.jpg"
 ---
 
 【AI 手机应用推荐 · 高考志愿篇】头条聊了“冷门专业”为什么反而吃香，次条脑洞了“AI 替你填志愿”。这一篇说点实在的：2026 年高考，几款主流 AI 都免费上线了志愿填报功能，到底能帮什么、不能帮什么？明年要报志愿的家庭，现在了解正好。本文**非广告**，没有收任何一家的钱。

@@ -16,11 +16,14 @@ images:
   cover-site.jpg:
     - 1280
     - 544
+  cover-poster.jpg:
+    - 1280
+    - 544
 webp: true
 draft: false
-cover_video: "https://aitanyan.com/img/videos/world-models/cover-loop.mp4"
+cover_video: "https://aitanyan.com/img/videos/world-models/cover-loop-058acf51.mp4"
 video_vertical: "https://aitanyan.com/img/videos/world-models/vertical.mp4"
-cover_wide: "https://aitanyan.com/img/articles/world-models/cover-site.jpg"
+cover_wide: "https://aitanyan.com/img/articles/world-models/cover-poster.jpg"
 ---
 
 在过去几年里，人工智能的发展经历了一次显著转向：从“会说话的模型”，逐步迈向“会理解世界的模型”。而由 Fei-Fei Li 推动的 World Labs 所提出的“世界模型（World Model）”，正是这一转变的核心代表之一。

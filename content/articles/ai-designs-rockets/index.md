@@ -20,11 +20,14 @@ images:
   cover-site.jpg:
     - 1280
     - 544
+  cover-poster.jpg:
+    - 1280
+    - 544
 webp: true
 draft: false
-cover_video: "https://aitanyan.com/img/videos/ai-designs-rockets/cover-loop.mp4"
+cover_video: "https://aitanyan.com/img/videos/ai-designs-rockets/cover-loop-57f9387f.mp4"
 video_vertical: "https://aitanyan.com/img/videos/ai-designs-rockets/vertical.mp4"
-cover_wide: "https://aitanyan.com/img/articles/ai-designs-rockets/cover-site.jpg"
+cover_wide: "https://aitanyan.com/img/articles/ai-designs-rockets/cover-poster.jpg"
 ---
 
 在过去，制造一台火箭发动机，意味着几十年经验的积累、无数次试验的失败，以及一代代工程师的传承。

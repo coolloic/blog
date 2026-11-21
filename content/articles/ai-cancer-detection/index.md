@@ -32,11 +32,14 @@ images:
   cover-site.jpg:
     - 1280
     - 544
+  cover-poster.jpg:
+    - 1280
+    - 544
 webp: true
 draft: false
-cover_video: "https://aitanyan.com/img/videos/ai-cancer-detection/cover-loop.mp4"
+cover_video: "https://aitanyan.com/img/videos/ai-cancer-detection/cover-loop-883eece1.mp4"
 video_vertical: "https://aitanyan.com/img/videos/ai-cancer-detection/vertical.mp4"
-cover_wide: "https://aitanyan.com/img/articles/ai-cancer-detection/cover-site.jpg"
+cover_wide: "https://aitanyan.com/img/articles/ai-cancer-detection/cover-poster.jpg"
 ---
 
 2026 年 1 月，《柳叶刀》发表了一项涉及 10 万多名瑞典女性的随机对照试验：用 AI 辅助读乳腺 X 光片，**多发现了 29% 的癌症**，而且没有增加误报。几个月后，《科学》杂志又发表研究：在真实急诊病例中，AI 的早期诊断准确率超过了主治医生。**医学，可能是 AI 最快改变普通人命运的领域之一。**

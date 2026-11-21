@@ -11,7 +11,7 @@ import { parse } from "yaml";
 import { bundle } from "@remotion/bundler";
 import { renderMedia, selectComposition } from "@remotion/renderer";
 import { validateStory, timeline } from "../lib/story.mjs";
-import { videoKeys, withVideos } from "../lib/publish.mjs";
+import { videoKeys, withVideos, coverLoopKey } from "../lib/publish.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, "../..");
@@ -61,10 +61,14 @@ for (const job of jobs) {
   }
   if (!upload) continue;
   const keys = videoKeys(job.slug);
+  if (!only || only === "cover") keys.cover = coverLoopKey(job.slug, readFileSync(renders.cover.file));
   for (const [kind, key] of Object.entries(keys)) {
     if (only && kind !== only) continue;
     await run("npx", ["wrangler", "r2", "object", "put", `${BUCKET}/${key}`, "--file", renders[kind].file, "--content-type", "video/mp4", "--remote"]);
   }
-  writeFileSync(job.mdPath, withVideos(readFileSync(job.mdPath, "utf8"), { cover_video: `${imageBase}/${keys.cover}`, video_vertical: `${imageBase}/${keys.vertical}` }));
+  const urls = {};
+  if (!only || only === "cover") urls.cover_video = `${imageBase}/${keys.cover}`;
+  if (!only || only === "vertical") urls.video_vertical = `${imageBase}/${keys.vertical}`;
+  writeFileSync(job.mdPath, withVideos(readFileSync(job.mdPath, "utf8"), urls));
   console.log(`${job.slug}: uploaded and front matter updated`);
 }

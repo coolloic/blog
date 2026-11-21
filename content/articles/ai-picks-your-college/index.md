@@ -29,11 +29,14 @@ images:
   cover-site.jpg:
     - 1280
     - 544
+  cover-poster.jpg:
+    - 1280
+    - 544
 webp: true
 draft: false
-cover_video: "https://aitanyan.com/img/videos/ai-picks-your-college/cover-loop.mp4"
+cover_video: "https://aitanyan.com/img/videos/ai-picks-your-college/cover-loop-1039ee35.mp4"
 video_vertical: "https://aitanyan.com/img/videos/ai-picks-your-college/vertical.mp4"
-cover_wide: "https://aitanyan.com/img/articles/ai-picks-your-college/cover-site.jpg"
+cover_wide: "https://aitanyan.com/img/articles/ai-picks-your-college/cover-poster.jpg"
 ---
 
 【AI 脑洞实验室 No.11】每年高考出分后，几百万个家庭都会面对同一个难题：分数、位次、城市、学校、专业，几千个选项，怎么选？现在已经有不少平台推出 AI 志愿助手。如果有一天，AI 不只是“帮你查”，而是直接告诉你：“就报这个”，你敢听吗？

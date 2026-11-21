@@ -29,11 +29,14 @@ images:
   cover-site.jpg:
     - 1280
     - 544
+  cover-poster.jpg:
+    - 1280
+    - 544
 webp: true
 draft: false
-cover_video: "https://aitanyan.com/img/videos/gemini-decision-1/cover-loop.mp4"
+cover_video: "https://aitanyan.com/img/videos/gemini-decision-1/cover-loop-c3974c49.mp4"
 video_vertical: "https://aitanyan.com/img/videos/gemini-decision-1/vertical.mp4"
-cover_wide: "https://aitanyan.com/img/articles/gemini-decision-1/cover-site.jpg"
+cover_wide: "https://aitanyan.com/img/articles/gemini-decision-1/cover-poster.jpg"
 ---
 
 不生成一个字，只给出概率。Google 新发布的 Gemini Decision 1，可能是 AI Agent 时代最被低估的一块基础设施。

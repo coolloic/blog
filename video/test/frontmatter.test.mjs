@@ -33,3 +33,11 @@ test("re-running replaces the values instead of duplicating keys", () => {
   assert.equal((twice.match(/cover_video:/g) || []).length, 1);
   assert.match(twice, /cover_video: "c\.mp4"/);
 });
+
+test("cover loop keys change with the video's content (a new render is never hidden by CDN caches)", async () => {
+  const { coverLoopKey } = await import("../lib/publish.mjs");
+  const a = coverLoopKey("demo", Buffer.from("video one")), b = coverLoopKey("demo", Buffer.from("video two"));
+  assert.match(a, /^videos\/demo\/cover-loop-[0-9a-f]{8}\.mp4$/);
+  assert.notEqual(a, b);
+  assert.equal(a, coverLoopKey("demo", Buffer.from("video one")));
+});

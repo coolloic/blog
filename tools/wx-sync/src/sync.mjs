@@ -223,7 +223,7 @@ export async function addWideCovers({ contentDir, uploader, downloadImage, image
  * `cover-site.jpg` (+ WebP) and point `cover_wide` at it. `cover` (the WeChat cover) stays for sharing.
  * @returns {Promise<{added: string[], unknown: string[], failed: {slug: string, error: string}[]}>}
  */
-export async function addSiteCovers({ dir, contentDir, uploader, imageWidths = DEFAULT_IMAGE_WIDTHS, dryRun = false, log = () => {} }) {
+export async function addSiteCovers({ dir, contentDir, uploader, imageWidths = DEFAULT_IMAGE_WIDTHS, name = "cover-site", dryRun = false, log = () => {} }) {
   const result = { added: [], unknown: [], failed: [] };
   for (const f of (await readdir(dir)).filter((n) => /\.(png|jpe?g|webp)$/i.test(n)).sort()) {
     const slug = f.replace(/\.[^.]+$/, "");
@@ -234,10 +234,10 @@ export async function addSiteCovers({ dir, contentDir, uploader, imageWidths = D
         const text = await readFile(file, "utf8");
         const fm = readFrontMatter(text);
         const cover = await siteCover(await readFile(join(dir, f)));
-        await uploader.put(`articles/${slug}/cover-site.jpg`, cover, "image/jpeg");
-        await uploadWebp(uploader, slug, "cover-site", cover, imageWidths, true, "jpg");
-        const images = { ...fm.images, "cover-site.jpg": [WIDE.width, WIDE.height] };
-        await writeFile(file, renderArticle({ ...fm, cover_wide: uploader.url(`articles/${slug}/cover-site.jpg`), images }, bodyOf(text)));
+        await uploader.put(`articles/${slug}/${name}.jpg`, cover, "image/jpeg");
+        await uploadWebp(uploader, slug, name, cover, imageWidths, true, "jpg");
+        const images = { ...fm.images, [`${name}.jpg`]: [WIDE.width, WIDE.height] };
+        await writeFile(file, renderArticle({ ...fm, cover_wide: uploader.url(`articles/${slug}/${name}.jpg`), images }, bodyOf(text)));
       }
       result.added.push(slug); log(`✓ ${slug}`);
     } catch (e) {

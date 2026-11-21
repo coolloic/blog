@@ -34,3 +34,18 @@ test("addSiteCovers sets the site cover from <dir>/<slug>.png and keeps the WeCh
   assert.equal(fm.cover, "https://img.example/articles/a/cover.jpg");
   assert.equal(readFrontMatter(await readFile(join(content, "b/index.md"), "utf8")).cover_wide, "https://img.example/articles/b/cover-wide.jpg");
 });
+
+test("addSiteCovers can upload under another name (a fresh URL beats CDN caches)", async () => {
+  const root = await mkdtemp(join(tmpdir(), "site-cover-name-"));
+  const content = join(root, "articles"), covers = join(root, "covers");
+  await mkdir(join(content, "a"), { recursive: true }); await mkdir(covers);
+  await writeFile(join(content, "a", "index.md"), `---\ntitle: "T"\ncover: "https://img.example/articles/a/cover.jpg"\nimages:\n  cover.jpg:\n    - 900\n    - 383\n---\n\nbody\n`);
+  await writeFile(join(covers, "a.png"), photo);
+  const puts = [];
+  const uploader = { url: (k) => `https://img.example/${k}`, exists: async () => false, put: async (k) => puts.push(k) };
+  await addSiteCovers({ dir: covers, contentDir: content, uploader, imageWidths: [480], name: "cover-poster" });
+  assert.ok(puts.includes("articles/a/cover-poster.jpg") && puts.includes("articles/a/cover-poster-480.webp"));
+  const fm = readFrontMatter(await readFile(join(content, "a/index.md"), "utf8"));
+  assert.equal(fm.cover_wide, "https://img.example/articles/a/cover-poster.jpg");
+  assert.deepEqual(fm.images["cover-poster.jpg"], [1280, 544]);
+});

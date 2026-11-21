@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 // Where an article's videos live on R2, and writing their URLs back into its front matter.
 export const videoKeys = (slug) => ({ cover: `videos/${slug}/cover-loop.mp4`, vertical: `videos/${slug}/vertical.mp4` });
 
@@ -12,4 +13,9 @@ export function withVideos(text, values) {
     fm = re.test(fm) ? fm.replace(re, line) : `${fm}\n${line}`;
   }
   return `---\n${fm}\n---\n${text.slice(m[0].length)}`;
+}
+
+/** R2 key for a cover loop, named by a hash of its bytes so a re-render gets a fresh URL past CDN caches. */
+export function coverLoopKey(slug, bytes) {
+  return `videos/${slug}/cover-loop-${createHash("sha256").update(bytes).digest("hex").slice(0, 8)}.mp4`;
 }
