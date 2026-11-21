@@ -2,5 +2,10 @@
   "name": "aitanyan-comments",
   "private": true,
   "description": "Waline comment server for aitanyan.com (Vercel project waline-aitanyan, Neon Postgres).",
-  "dependencies": { "@waline/vercel": "1.43.8" }
+  "dependencies": {
+    "@waline/vercel": "1.43.8"
+  },
+  "engines": {
+    "node": ">=24"
+  }
 }

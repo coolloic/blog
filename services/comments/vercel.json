@@ -1,6 +1,17 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "git": { "deploymentEnabled": false },
-  "builds": [{ "src": "index.js", "use": "@vercel/node" }],
-  "routes": [{ "src": "/(.*)", "dest": "index.js" }]
+  "git": {
+    "deploymentEnabled": false
+  },
+  "functions": {
+    "api/index.js": {
+      "includeFiles": "node_modules/{@mathjax,mhchemparser,mj-context-menu,speech-rule-engine,@xmldom,wicked-good-xpath,commander}/**"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/api"
+    }
+  ]
 }
