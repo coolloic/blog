@@ -1,0 +1,12 @@
+{{- /* Back link at the top of a detail page: ← its list (posts go back to Tech Notes), plus the category for
+     science articles. Plain links; the BreadcrumbList JSON-LD lives in seo.html. */ -}}
+{{- $p := . -}}
+{{- $back := cond (eq $p.Section "posts") (site.GetPage "/notes") $p.Parent -}}
+{{- with $back }}
+<nav class="crumbs" aria-label="{{ partial "t.html" (dict "page" $p "key" "breadcrumb") }}">
+  <a class="crumbs__back" href="{{ .RelPermalink }}">{{ partial "icon.html" "arrow-left" }}{{ .Title }}</a>
+  {{- if eq $p.Section "articles" }}{{ with index ($p.Params.categories | default slice) 0 }}{{ with index hugo.Data.categories . }}
+  <span aria-hidden="true">/</span><a href="{{ printf "categories/%s/" (index $p.Params.categories 0) | relURL }}">{{ .name }}</a>
+  {{- end }}{{ end }}{{ end }}
+</nav>
+{{- end }}

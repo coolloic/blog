@@ -19,7 +19,7 @@ export const NO_WEBP = new Set(["gif", "svg"]);
  * (that key is the original itself). Never upscales; honours EXIF orientation. GIF and SVG get none.
  * @returns {Promise<{file: string, width: number, bytes: Buffer}[]>}
  */
-export async function webpVariants(bytes, name, widths, ext = "") {
+export async function webpVariants(bytes, name, widths, ext = "", quality = WEBP_QUALITY) {
   if (NO_WEBP.has(String(ext).toLowerCase())) return [];
   const upright = () => sharp(bytes).rotate(); // apply EXIF orientation, which WebP output would drop
   const { info } = await upright().toBuffer({ resolveWithObject: true });
@@ -27,10 +27,10 @@ export async function webpVariants(bytes, name, widths, ext = "") {
   const out = [];
   for (const w of [...widths].sort((a, b) => a - b)) {
     if (w >= original) continue;
-    out.push({ file: `${name}-${w}.webp`, width: w, bytes: await upright().resize({ width: w }).webp({ quality: WEBP_QUALITY }).toBuffer() });
+    out.push({ file: `${name}-${w}.webp`, width: w, bytes: await upright().resize({ width: w }).webp({ quality }).toBuffer() });
   }
   if (String(ext).toLowerCase() !== "webp") {
-    out.push({ file: `${name}.webp`, width: original, bytes: await upright().webp({ quality: WEBP_QUALITY }).toBuffer() });
+    out.push({ file: `${name}.webp`, width: original, bytes: await upright().webp({ quality }).toBuffer() });
   }
   return out;
 }

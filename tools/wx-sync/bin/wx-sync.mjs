@@ -17,6 +17,7 @@ const USAGE = `wx-sync — sync WeChat articles into content/articles/
   --resync <slug>   re-fetch one already-synced article; its slug and image keys stay the same
   --optimize-existing  add WebP versions (params.imageWidths) to synced articles that lack them (honours --dry-run)
   --wide-covers     give square-cover articles a 2.35:1 cover (cover_wide) for the site's cover boxes (honours --dry-run)
+  --webp-quality <n>   with --site-covers: WebP quality (default 78; posters use 68)
   --cover-name <name>  with --site-covers: R2 file name (default cover-site); use a new name to replace a cover past CDN caches
   --site-covers <dir>  set the site cover (cover_wide) from <dir>/<slug>.png, cropped to 2.35:1; WeChat cover kept (honours --dry-run)
   --force-resync    with --resync: proceed even if the article has manual corrections (they must be re-applied)
@@ -26,7 +27,7 @@ Exit code 1 if any article failed.`;
 
 const { values } = parseArgs({ options: {
   plan: { type: "string", default: ".wx-sync/plan.json" }, "dry-run": { type: "boolean", default: false },
-  resync: { type: "string" }, "optimize-existing": { type: "boolean", default: false }, "wide-covers": { type: "boolean", default: false }, "site-covers": { type: "string" }, "cover-name": { type: "string", default: "cover-site" }, "force-resync": { type: "boolean", default: false }, help: { type: "boolean", default: false } } });
+  resync: { type: "string" }, "optimize-existing": { type: "boolean", default: false }, "wide-covers": { type: "boolean", default: false }, "site-covers": { type: "string" }, "cover-name": { type: "string", default: "cover-site" }, "webp-quality": { type: "string" }, "force-resync": { type: "boolean", default: false }, help: { type: "boolean", default: false } } });
 if (values.help) { console.log(USAGE); process.exit(0); }
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
@@ -48,7 +49,7 @@ if (values["optimize-existing"]) {
 
 if (values["site-covers"]) {
   const r = await addSiteCovers({
-    dir: resolve(values["site-covers"]), contentDir: resolve(root, "content/articles"), imageWidths, dryRun, name: values["cover-name"],
+    dir: resolve(values["site-covers"]), contentDir: resolve(root, "content/articles"), imageWidths, dryRun, name: values["cover-name"], quality: values["webp-quality"] ? Number(values["webp-quality"]) : undefined,
     uploader: makeUploader({ bucket: config.bucket, imageBase: readImageBase(resolve(root, "hugo.yaml")) }),
     log: (line) => console.log(line),
   });

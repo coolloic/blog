@@ -32,11 +32,14 @@ images:
   cover-poster.jpg:
     - 1280
     - 544
+  cover-poster-v2.jpg:
+    - 1280
+    - 544
 webp: true
 draft: false
 cover_video: "https://aitanyan.com/img/videos/ai-wealth-gap/cover-loop-9f73178e.mp4"
 video_vertical: "https://aitanyan.com/img/videos/ai-wealth-gap/vertical.mp4"
-cover_wide: "https://aitanyan.com/img/articles/ai-wealth-gap/cover-poster.jpg"
+cover_wide: "https://aitanyan.com/img/articles/ai-wealth-gap/cover-poster-v2.jpg"
 ---
 
 > 栏目：人类与 AI 的未来｜AI调研员

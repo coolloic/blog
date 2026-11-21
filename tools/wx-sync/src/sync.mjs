@@ -13,8 +13,8 @@ const MIN_BODY_CHARS = 50;
 export const DEFAULT_IMAGE_WIDTHS = [480, 960, 1440];
 
 // WebP copies for srcset (see themes/evo/layouts/_partials/picture.html). Uploaded next to the original.
-async function uploadWebp(uploader, slug, name, bytes, widths, force, ext) {
-  for (const v of await webpVariants(bytes, name, widths, ext)) {
+async function uploadWebp(uploader, slug, name, bytes, widths, force, ext, quality) {
+  for (const v of await webpVariants(bytes, name, widths, ext, quality)) {
     const key = `articles/${slug}/${v.file}`;
     if (force || !(await uploader.exists(key))) await uploader.put(key, v.bytes, "image/webp");
   }
@@ -223,7 +223,7 @@ export async function addWideCovers({ contentDir, uploader, downloadImage, image
  * `cover-site.jpg` (+ WebP) and point `cover_wide` at it. `cover` (the WeChat cover) stays for sharing.
  * @returns {Promise<{added: string[], unknown: string[], failed: {slug: string, error: string}[]}>}
  */
-export async function addSiteCovers({ dir, contentDir, uploader, imageWidths = DEFAULT_IMAGE_WIDTHS, name = "cover-site", dryRun = false, log = () => {} }) {
+export async function addSiteCovers({ dir, contentDir, uploader, imageWidths = DEFAULT_IMAGE_WIDTHS, name = "cover-site", quality, dryRun = false, log = () => {} }) {
   const result = { added: [], unknown: [], failed: [] };
   for (const f of (await readdir(dir)).filter((n) => /\.(png|jpe?g|webp)$/i.test(n)).sort()) {
     const slug = f.replace(/\.[^.]+$/, "");
@@ -235,7 +235,7 @@ export async function addSiteCovers({ dir, contentDir, uploader, imageWidths = D
         const fm = readFrontMatter(text);
         const cover = await siteCover(await readFile(join(dir, f)));
         await uploader.put(`articles/${slug}/${name}.jpg`, cover, "image/jpeg");
-        await uploadWebp(uploader, slug, name, cover, imageWidths, true, "jpg");
+        await uploadWebp(uploader, slug, name, cover, imageWidths, true, "jpg", quality);
         const images = { ...fm.images, [`${name}.jpg`]: [WIDE.width, WIDE.height] };
         await writeFile(file, renderArticle({ ...fm, cover_wide: uploader.url(`articles/${slug}/${name}.jpg`), images }, bodyOf(text)));
       }

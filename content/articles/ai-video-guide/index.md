@@ -35,11 +35,14 @@ images:
   cover-poster.jpg:
     - 1280
     - 544
+  cover-poster-v2.jpg:
+    - 1280
+    - 544
 webp: true
 draft: false
 cover_video: "https://aitanyan.com/img/videos/ai-video-guide/cover-loop-db83c030.mp4"
 video_vertical: "https://aitanyan.com/img/videos/ai-video-guide/vertical.mp4"
-cover_wide: "https://aitanyan.com/img/articles/ai-video-guide/cover-poster.jpg"
+cover_wide: "https://aitanyan.com/img/articles/ai-video-guide/cover-poster-v2.jpg"
 ---
 
 2026 年初，视频 AI 公司 Runway 做了一个实验：给 1043 个人看一组 5 秒的视频，一半是实拍，一半是 AI 生成，让大家判断真假。结果，整体正确率只有 **57.1%**——几乎和抛硬币一样。

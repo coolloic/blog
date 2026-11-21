@@ -29,11 +29,14 @@ images:
   cover-poster.jpg:
     - 1280
     - 544
+  cover-poster-v2.jpg:
+    - 1280
+    - 544
 webp: true
 draft: false
 cover_video: "https://aitanyan.com/img/videos/ai-money-apps/cover-loop-13dacca6.mp4"
 video_vertical: "https://aitanyan.com/img/videos/ai-money-apps/vertical.mp4"
-cover_wide: "https://aitanyan.com/img/articles/ai-money-apps/cover-poster.jpg"
+cover_wide: "https://aitanyan.com/img/articles/ai-money-apps/cover-poster-v2.jpg"
 ---
 
 【AI 手机应用推荐 · 钱包篇】头条聊了“AI 会让贫富差距越来越大吗”，次条脑洞了“AI 创造的财富每人每月发一份”。大币还没发下来，AI 已经开始帮你管小钱了。这一篇讲支付宝今年推出的 AI 助手“阿宝”怎么用，以及 AI 碰到钱时一定要守住的 4 条规则。本文**非广告**，也不构成任何理财建议。

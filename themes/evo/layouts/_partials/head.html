@@ -2,6 +2,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 {{- /* Must run before any stylesheet so the first paint already has the right theme. */}}
 <script>(function(){var t;try{t=localStorage.getItem("theme")}catch(e){}if(t!=="light"){t="dark"}document.documentElement.setAttribute("data-theme",t)})()</script>
+{{- /* Images live at params.imageBase. When that host differs from the site's (local previews, tests), open the
+     connection early; on the live site they share a host and this prints nothing. */}}
+{{- with site.Params.imageBase }}{{ $img := urls.Parse . }}{{ if ne $img.Host (urls.Parse site.BaseURL).Host }}
+<link rel="preconnect" href="{{ $img.Scheme }}://{{ $img.Host }}">{{ end }}{{ end }}
 <title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} · {{ site.Title }}{{ end }}</title>
 {{ partial "seo.html" . }}
 <link rel="icon" href="{{ "images/favicon-32.png" | relURL }}" type="image/png" sizes="32x32">

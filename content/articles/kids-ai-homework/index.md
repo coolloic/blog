@@ -29,11 +29,14 @@ images:
   cover-poster.jpg:
     - 1280
     - 544
+  cover-poster-v2.jpg:
+    - 1280
+    - 544
 webp: true
 draft: false
 cover_video: "https://aitanyan.com/img/videos/kids-ai-homework/cover-loop-6e927eea.mp4"
 video_vertical: "https://aitanyan.com/img/videos/kids-ai-homework/vertical.mp4"
-cover_wide: "https://aitanyan.com/img/articles/kids-ai-homework/cover-poster.jpg"
+cover_wide: "https://aitanyan.com/img/articles/kids-ai-homework/cover-poster-v2.jpg"
 ---
 
 晚上九点，孩子说“作业写完了”，你一看，作文写得比你还好。是孩子突然开窍了，还是 AI 代笔了？这可能是今天很多家长共同的困惑。禁也禁不住，放又不放心，到底该怎么办？我们看看数据和研究怎么说。

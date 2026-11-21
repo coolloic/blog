@@ -49,3 +49,19 @@ test("addSiteCovers can upload under another name (a fresh URL beats CDN caches)
   assert.equal(fm.cover_wide, "https://img.example/articles/a/cover-poster.jpg");
   assert.deepEqual(fm.images["cover-poster.jpg"], [1280, 544]);
 });
+
+test("addSiteCovers takes a WebP quality (posters ship lighter)", async () => {
+  const noisy = await sharp(Buffer.from(Array.from({ length: 1536 * 1024 * 3 }, (_, i) => (i * 2654435761) % 256)), { raw: { width: 1536, height: 1024, channels: 3 } }).png().toBuffer();
+  const run = async (quality) => {
+    const root = await mkdtemp(join(tmpdir(), "q-"));
+    const content = join(root, "articles"), covers = join(root, "covers");
+    await mkdir(join(content, "a"), { recursive: true }); await mkdir(covers);
+    await writeFile(join(content, "a", "index.md"), `---\ntitle: "T"\ncover: "https://img.example/articles/a/cover.jpg"\n---\n\nbody\n`);
+    await writeFile(join(covers, "a.png"), noisy);
+    const sizes = {};
+    const uploader = { url: (k) => `https://img.example/${k}`, exists: async () => false, put: async (k, b) => { sizes[k] = b.length; } };
+    await addSiteCovers({ dir: covers, contentDir: content, uploader, imageWidths: [480], name: "p", quality });
+    return sizes["articles/a/p-480.webp"];
+  };
+  assert.ok((await run(60)) < (await run(90)));
+});

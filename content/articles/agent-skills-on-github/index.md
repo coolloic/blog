@@ -29,11 +29,14 @@ images:
   cover-poster.jpg:
     - 1280
     - 544
+  cover-poster-v2.jpg:
+    - 1280
+    - 544
 webp: true
 draft: false
 cover_video: "https://aitanyan.com/img/videos/agent-skills-on-github/cover-loop-3ac65422.mp4"
 video_vertical: "https://aitanyan.com/img/videos/agent-skills-on-github/vertical.mp4"
-cover_wide: "https://aitanyan.com/img/articles/agent-skills-on-github/cover-poster.jpg"
+cover_wide: "https://aitanyan.com/img/articles/agent-skills-on-github/cover-poster-v2.jpg"
 ---
 
 打开今天（11 月 11 日）的 GitHub Trending，你会发现一个有意思的现象：榜单上最抢眼的，不是新的 Web 框架，也不是新的大模型，而是好几个名字里带 “skills” 的仓库。它们没有复杂的运行时，大部分内容是 Markdown 文件，却一天能涨上千颗星。

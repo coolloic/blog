@@ -77,6 +77,7 @@ menu:
     - {identifier: methodology, name: 调研方法, url: "methodology/", weight: 22}
     - {identifier: corrections, name: 更正与反馈, url: "corrections/", weight: 24}
     - {identifier: subscribe, name: 订阅更新, url: "subscribe/", weight: 30}
+    - {identifier: contact, name: 投稿与联系, url: "mailto:hello@aitanyan.com", weight: 35}
 
 markup:
   goldmark:

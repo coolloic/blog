@@ -6,6 +6,7 @@
 {{- range (where site.RegularPages "Section" "articles").ByDate.Reverse }}{{ if partial "mentions.html" (dict "text" .Plain "term" $term) }}{{ $mentions = $mentions | append . }}{{ end }}{{ end -}}
 <article class="article article--page glossary-entry">
   <div class="container">
+    {{ partial "crumbs.html" . }}
     <header class="article__head">
       <a class="chip chip--topic" href="{{ "glossary/" | relURL }}">{{ partial "t.html" (dict "page" . "key" "nav_glossary") }}</a>
       <h1>{{ .Title }}</h1>
