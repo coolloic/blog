@@ -12,7 +12,7 @@
     {{- range $c := partial "categories.html" . }}{{ $slug := $c.slug }}
     {{- $n := len (where $articles "Params.categories" "intersect" (slice $slug)) }}
     <a class="cat-tile" href="{{ printf "categories/%s/" $slug | relURL }}">
-      <span class="cat-tile__head"><span class="cat-tile__name">{{ $c.name }}</span><span class="cat-tile__count">{{ printf (partial "t.html" (dict "page" $ "key" "article_count")) $n }}</span></span>
+      <span class="cat-tile__head">{{ partial "cat-icon.html" (dict "slug" $slug "eager" true) }}<span class="cat-tile__name">{{ $c.name }}</span><span class="cat-tile__count">{{ printf (partial "t.html" (dict "page" $ "key" "article_count")) $n }}</span></span>
       <span class="cat-tile__desc">{{ $c.desc }}</span>
     </a>
     {{- end }}

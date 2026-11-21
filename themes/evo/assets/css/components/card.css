@@ -39,10 +39,13 @@
 /* Category tiles: a scrolling row on phones, a 4-column grid on desktop. */
 .cat-tiles { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(70%, 1fr); gap: var(--space-m); overflow-x: auto; scroll-snap-type: x mandatory; padding-block-end: var(--space-xs); }
 @media (min-width: 640px) { .cat-tiles { grid-auto-flow: row; grid-template-columns: repeat(2, 1fr); overflow: visible; } }
-@media (min-width: 1024px) { .cat-tiles { grid-template-columns: repeat(4, 1fr); } }
+@media (min-width: 1024px) { .cat-tiles { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
 .cat-tile { display: grid; gap: var(--space-s); align-content: space-between; padding: var(--space-m); border: 1px solid color-mix(in srgb, var(--color-border) 60%, transparent); border-radius: var(--radius-card); background: var(--color-surface); color: var(--color-text); text-decoration: none; scroll-snap-align: start; }
 .cat-tile:hover { border-color: var(--color-accent); }
-.cat-tile__head { display: flex; justify-content: space-between; gap: var(--space-s); }
+.cat-tile__head { display: flex; align-items: center; gap: var(--space-s); }
+.cat-tile__head .cat-tile__count { margin-inline-start: auto; }
+.cat-icon { flex: none; border-radius: 50%; box-shadow: 0 4px 14px -6px color-mix(in srgb, #1F4BFF 60%, transparent); }
+.cat-overview__item h2 { display: flex; align-items: center; gap: var(--space-s); flex-wrap: wrap; }
 .cat-tile__name { font-weight: 700; }
 .cat-tile__count { font-family: var(--font-mono); font-size: 13px; color: var(--color-accent); }
 .cat-tile__desc { font-size: var(--size-small); line-height: 1.6; color: var(--color-subtle); }

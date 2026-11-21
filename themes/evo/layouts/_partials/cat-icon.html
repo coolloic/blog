@@ -1,0 +1,4 @@
+{{- /* Category icon (the logo's robot, one prop per category): partial "cat-icon.html" (dict "slug" "work" "size" 48).
+     WebP files in static/images/categories/<slug>-{96,192}.webp; decorative, the name is next to it. */ -}}
+{{- $s := .size | default 48 -}}
+<img class="cat-icon" src="{{ printf "images/categories/%s-96.webp" .slug | relURL }}" srcset="{{ printf "images/categories/%s-192.webp" .slug | relURL }} 2x" width="{{ $s }}" height="{{ $s }}" alt="" decoding="async"{{ if not .eager }} loading="lazy"{{ end }}>

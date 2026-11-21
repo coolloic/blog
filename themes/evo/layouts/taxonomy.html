@@ -7,7 +7,7 @@
     {{- range partial "categories.html" . }}
     {{- $in := where $articles "Params.categories" "intersect" (slice .slug) }}
     <section class="cat-overview__item">
-      <h2><a href="{{ printf "categories/%s/" .slug | relURL }}">{{ .name }}</a> <span class="cat-tile__count">{{ printf (partial "t.html" (dict "page" $ "key" "article_count")) (len $in) }}</span></h2>
+      <h2>{{ partial "cat-icon.html" (dict "slug" .slug "size" 56) }}<a href="{{ printf "categories/%s/" .slug | relURL }}">{{ .name }}</a> <span class="cat-tile__count">{{ printf (partial "t.html" (dict "page" $ "key" "article_count")) (len $in) }}</span></h2>
       <p class="cat-tile__desc">{{ .desc }}</p>
       {{- if $in }}<ul class="row-list">{{ range first 3 $in.ByDate.Reverse }}<li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>{{ end }}</ul>
       {{- else }}<p class="cat-overview__empty">{{ partial "t.html" (dict "page" $ "key" "no_category_articles") }}</p>{{ end }}
