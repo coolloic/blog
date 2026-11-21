@@ -65,3 +65,7 @@
 .post-nav small { font-family: var(--font-mono); color: var(--color-muted); }
 .post-nav__next { text-align: end; }
 .card-grid--small { grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); }
+.corrections { display: grid; gap: var(--space-s); padding: var(--space-m) var(--space-l); border-inline-start: 4px solid var(--color-accent2); border-radius: 0 var(--radius-card) var(--radius-card) 0; background: var(--color-surface); font-size: var(--size-small); }
+.corrections h2 { font-size: 1.125rem; }
+.corrections ul { display: grid; gap: var(--space-xs); padding-inline-start: 1.2em; }
+.corrections time { font-family: var(--font-mono); color: var(--color-subtle); }

@@ -1,0 +1,9 @@
+{{- /* Corrections made on the site (front matter `corrections`: [{date, note}]), shown at the end of the article.
+     Kept in front matter so a WeChat re-sync cannot silently drop them (tools/wx-sync refuses without --force-resync). */ -}}
+{{- with .Params.corrections }}
+<aside class="corrections" aria-labelledby="corrections-heading">
+  <h2 id="corrections-heading">{{ partial "t.html" (dict "page" $ "key" "corrections_title") }}</h2>
+  <ul>{{ range . }}<li><time datetime="{{ .date }}">{{ .date }}</time> {{ .note }}</li>{{ end }}</ul>
+  <p><a href="{{ "corrections/" | relURL }}">{{ partial "t.html" (dict "page" $ "key" "corrections_policy") }}</a></p>
+</aside>
+{{- end }}

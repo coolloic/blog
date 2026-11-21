@@ -237,3 +237,46 @@ test("optimizeExisting adds WebP versions to already-synced articles once", asyn
   assert.deepEqual(r2.optimized, []);
   assert.equal(puts.length, before);
 });
+
+
+test("optimizeExisting --dry-run uploads nothing and changes no file", async () => {
+  const s = await setup();
+  await s.run({ items: [item(1)] });
+  const file = join(s.contentDir, "article-1/index.md");
+  await writeFile(file, (await readFile(file, "utf8")).replace(/^webp: true\n/m, ""));
+  const before = await readFile(file, "utf8");
+  const puts = [];
+  const uploader = { url: (k) => `https://img.example/${k}`, exists: async () => false, put: async (k) => puts.push(k) };
+  const r = await optimizeExisting({ contentDir: s.contentDir, uploader, downloadImage: async () => ({ bytes: PNG, ext: "png" }), dryRun: true });
+  assert.deepEqual(r.optimized, ["article-1"]);
+  assert.equal(puts.length, 0);
+  assert.equal(await readFile(file, "utf8"), before);
+});
+
+test("rewriting an article keeps front matter the owner added by hand", async () => {
+  const s = await setup();
+  await s.run({ items: [item(1)] });
+  const file = join(s.contentDir, "article-1/index.md");
+  const t = (await readFile(file, "utf8")).replace(/^webp: true\n/m, "").replace("draft: false", 'draft: false\nfeatured: true\ncover_alt: "封面说明"');
+  await writeFile(file, t);
+  const uploader = { url: (k) => `https://img.example/${k}`, exists: async () => false, put: async () => {} };
+  await optimizeExisting({ contentDir: s.contentDir, uploader, downloadImage: async () => ({ bytes: PNG, ext: "png" }) });
+  const fm = readFrontMatter(await readFile(file, "utf8"));
+  assert.equal(fm.featured, true);
+  assert.equal(fm.cover_alt, "封面说明");
+  assert.equal(fm.webp, true);
+});
+
+test("resync refuses an article with manual corrections unless forced", async () => {
+  const s = await setup();
+  await s.run({ items: [item(1)] });
+  const file = join(s.contentDir, "article-1/index.md");
+  await writeFile(file, (await readFile(file, "utf8")).replace("draft: false", 'draft: false\ncorrections:\n  - {date: "2026-12-01", note: "改正了一个数字"}'));
+  const before = await readFile(file, "utf8");
+  const r = await s.run({ items: [item(1)] }, { resync: "article-1" });
+  assert.equal(r.failed.length, 1);
+  assert.match(r.failed[0].error, /corrections/);
+  assert.equal(await readFile(file, "utf8"), before);
+  const r2 = await s.run({ items: [item(1)] }, { resync: "article-1", forceResync: true });
+  assert.deepEqual(r2.added, ["article-1"]);
+});

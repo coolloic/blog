@@ -15,14 +15,15 @@ const USAGE = `wx-sync — sync WeChat articles into content/articles/
   --plan <file>     plan written by Claude (default .wx-sync/plan.json)
   --dry-run         fetch and convert into .wx-sync/preview/; upload nothing, write nothing to content/
   --resync <slug>   re-fetch one already-synced article; its slug and image keys stay the same
-  --optimize-existing  add WebP versions (params.imageWidths) to synced articles that lack them
+  --optimize-existing  add WebP versions (params.imageWidths) to synced articles that lack them (honours --dry-run)
+  --force-resync    with --resync: proceed even if the article has manual corrections (they must be re-applied)
   --help            this text
 
 Exit code 1 if any article failed.`;
 
 const { values } = parseArgs({ options: {
   plan: { type: "string", default: ".wx-sync/plan.json" }, "dry-run": { type: "boolean", default: false },
-  resync: { type: "string" }, "optimize-existing": { type: "boolean", default: false }, help: { type: "boolean", default: false } } });
+  resync: { type: "string" }, "optimize-existing": { type: "boolean", default: false }, "force-resync": { type: "boolean", default: false }, help: { type: "boolean", default: false } } });
 if (values.help) { console.log(USAGE); process.exit(0); }
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
@@ -33,7 +34,7 @@ const dryRun = values["dry-run"];
 
 if (values["optimize-existing"]) {
   const r = await optimizeExisting({
-    contentDir: resolve(root, "content/articles"), imageWidths, downloadImage,
+    contentDir: resolve(root, "content/articles"), imageWidths, downloadImage, dryRun,
     uploader: makeUploader({ bucket: config.bucket, imageBase: readImageBase(resolve(root, "hugo.yaml")) }),
     log: (line) => console.log(line),
   });
@@ -45,7 +46,7 @@ if (values["optimize-existing"]) {
 const plan = JSON.parse(readFileSync(resolve(root, values.plan), "utf8"));
 
 const result = await runSync({
-  plan, categories, dryRun, imageWidths, resync: values.resync ?? null,
+  plan, categories, dryRun, imageWidths, resync: values.resync ?? null, forceResync: values["force-resync"],
   contentDir: resolve(root, "content/articles"),
   skipFile: resolve(root, "data/wechat-skip.yaml"),
   previewDir: resolve(root, ".wx-sync/preview"),

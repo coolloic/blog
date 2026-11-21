@@ -48,4 +48,6 @@ The WeChat backend is **read-only** for this skill: never click, edit, publish o
 
 ## Re-syncing one article
 
+Corrections made on the site are listed in the article's front matter `corrections` and shown at the end of the article. `--resync` refuses such an article: re-apply the body fix after resyncing, then run it with `--force-resync` (the `corrections` list itself is kept).
+
 When the owner edited an article on WeChat: `node tools/wx-sync/bin/wx-sync.mjs --plan .wx-sync/plan.json --resync <slug>` with that article in the plan. The slug and image keys stay the same.

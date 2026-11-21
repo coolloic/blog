@@ -8,6 +8,8 @@ cover: "/images/placeholder-cover.svg"
 wechat_url: "https://mp.weixin.qq.com/s/placeholder"
 wechat_id: "sample-3"
 featured: false
+corrections:
+  - {date: "2026-12-01", note: "第二节的示例数字由 3 改为 5。"}
 draft: true
 ---
 

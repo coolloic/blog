@@ -10,18 +10,27 @@ export function dimensions(bytes) {
 
 const WEBP_QUALITY = 78;
 
+// Formats that a WebP copy would damage: GIFs (sharp keeps only the first frame) and SVGs (rasterised).
+export const NO_WEBP = new Set(["gif", "svg"]);
+
 /**
  * WebP copies of an image for srcset: one per configured width that is smaller than the original
- * (`<name>-<w>.webp`), plus one at the original width (`<name>.webp`). Never upscales.
+ * (`<name>-<w>.webp`), plus one at the original width (`<name>.webp`) unless the original is already WebP
+ * (that key is the original itself). Never upscales; honours EXIF orientation. GIF and SVG get none.
  * @returns {Promise<{file: string, width: number, bytes: Buffer}[]>}
  */
-export async function webpVariants(bytes, name, widths) {
-  const { width: original } = await sharp(bytes).metadata();
+export async function webpVariants(bytes, name, widths, ext = "") {
+  if (NO_WEBP.has(String(ext).toLowerCase())) return [];
+  const upright = () => sharp(bytes).rotate(); // apply EXIF orientation, which WebP output would drop
+  const { info } = await upright().toBuffer({ resolveWithObject: true });
+  const original = info.width;
   const out = [];
   for (const w of [...widths].sort((a, b) => a - b)) {
     if (w >= original) continue;
-    out.push({ file: `${name}-${w}.webp`, width: w, bytes: await sharp(bytes).resize({ width: w }).webp({ quality: WEBP_QUALITY }).toBuffer() });
+    out.push({ file: `${name}-${w}.webp`, width: w, bytes: await upright().resize({ width: w }).webp({ quality: WEBP_QUALITY }).toBuffer() });
   }
-  out.push({ file: `${name}.webp`, width: original, bytes: await sharp(bytes).webp({ quality: WEBP_QUALITY }).toBuffer() });
+  if (String(ext).toLowerCase() !== "webp") {
+    out.push({ file: `${name}.webp`, width: original, bytes: await upright().webp({ quality: WEBP_QUALITY }).toBuffer() });
+  }
   return out;
 }

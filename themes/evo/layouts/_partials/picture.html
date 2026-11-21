@@ -4,12 +4,15 @@
 {{- $dims := .dims -}}
 {{- $srcset := slice -}}
 {{- /* Only images the sync recorded (in the images map) have WebP copies; never guess for other files. */ -}}
-{{- $known := index (.page.Params.images | default dict) (path.Base (urls.Parse .src).Path) -}}
-{{- if and .page.Params.webp (reflect.IsSlice $known) (reflect.IsSlice $dims) -}}
+{{- $file := path.Base (urls.Parse .src).Path -}}
+{{- $known := index (.page.Params.images | default dict) $file -}}
+{{- /* GIFs (animation) and SVGs get no WebP copies (tools/wx-sync NO_WEBP); a WebP original has no <name>.webp twin. */ -}}
+{{- $ext := lower (strings.TrimPrefix "." (path.Ext $file)) -}}
+{{- if and .page.Params.webp (reflect.IsSlice $known) (reflect.IsSlice $dims) (not (in (slice "gif" "svg") $ext)) -}}
   {{- $base := replaceRE `\.[A-Za-z0-9]+$` "" .src -}}
   {{- $w0 := int (index $dims 0) -}}
   {{- range sort (site.Params.imageWidths | default (slice 480 960 1440)) }}{{ if lt (int .) $w0 }}{{ $srcset = $srcset | append (printf "%s-%d.webp %dw" $base (int .) (int .)) }}{{ end }}{{ end -}}
-  {{- $srcset = $srcset | append (printf "%s.webp %dw" $base $w0) -}}
+  {{- if eq $ext "webp" }}{{ $srcset = $srcset | append (printf "%s %dw" .src $w0) }}{{ else }}{{ $srcset = $srcset | append (printf "%s.webp %dw" $base $w0) }}{{ end -}}
 {{- end -}}
 {{- if $srcset }}<picture><source type="image/webp" srcset="{{ delimit $srcset ", " }}" sizes="{{ .sizes }}">{{ end -}}
 <img{{ with .class }} class="{{ . }}"{{ end }} src="{{ .src }}" alt="{{ .alt }}"{{ if reflect.IsSlice $dims }} width="{{ index $dims 0 }}" height="{{ index $dims 1 }}"{{ end }} decoding="async"{{ if .eager }} fetchpriority="high"{{ else }} loading="lazy"{{ end }}>

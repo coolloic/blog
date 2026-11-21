@@ -74,3 +74,23 @@ test("webpVariants never upscales a small image", async () => {
   assert.deepEqual(v.map((x) => x.file), ["cover.webp"]);
   assert.equal(v[0].width, 300);
 });
+
+test("webpVariants honours EXIF orientation (a rotated photo stays upright)", async () => {
+  const jpg = await sharp({ create: { width: 200, height: 100, channels: 3, background: "#000" } }).jpeg().withMetadata({ orientation: 6 }).toBuffer();
+  const v = await webpVariants(jpg, "1", []);
+  const meta = await sharp(v[0].bytes).metadata();
+  assert.equal(meta.width, 100);
+  assert.equal(meta.height, 200);
+});
+
+test("webpVariants skips formats it would damage: animated GIF and SVG", async () => {
+  const gif = await sharp({ create: { width: 600, height: 400, channels: 4, background: "#f00" } }).gif().toBuffer();
+  assert.deepEqual(await webpVariants(gif, "2", [480], "gif"), []);
+  assert.deepEqual(await webpVariants(Buffer.from("<svg xmlns='http://www.w3.org/2000/svg'/>"), "3", [480], "svg"), []);
+});
+
+test("a WebP original keeps its key: only resized copies are made", async () => {
+  const webp = await sharp({ create: { width: 1000, height: 500, channels: 3, background: "#0f0" } }).webp().toBuffer();
+  const v = await webpVariants(webp, "4", [480], "webp");
+  assert.deepEqual(v.map((x) => x.file), ["4-480.webp"]);
+});

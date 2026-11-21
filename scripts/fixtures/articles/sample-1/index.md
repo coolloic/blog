@@ -10,6 +10,7 @@ wechat_id: "sample-1"
 featured: false
 images:
   "1.jpg": [1280, 720]
+  "2.gif": [600, 400]
 webp: true
 draft: true
 ---
@@ -21,6 +22,8 @@ draft: true
 示例段落。示例段落。一个超长的英文链接用来测试换行：https://example.com/a/very/long/path/that/should/wrap/instead/of/causing/horizontal/scrolling/on/a/phone
 
 ![示例图](https://pub-PLACEHOLDER.r2.dev/articles/sample-1/1.jpg "示例图注")
+
+![动图](https://pub-PLACEHOLDER.r2.dev/articles/sample-1/2.gif)
 
 ## 第二节：另一个小标题
 
