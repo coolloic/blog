@@ -1,0 +1,4 @@
+# WeChat posts that are deliberately NOT synced to the blog (announcements such as 招募令 / 征稿启事).
+# Written by tools/wx-sync from plan items with a `skip` reason. Delete an entry to let it sync next time.
+# Format: - {wechat_id: "<appmsgid>_<itemidx>", title: "…", reason: "…"}
+[]
