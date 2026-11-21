@@ -69,6 +69,10 @@ Triggered by a question about the wiki's subject matter.
 1. Answer from the wiki pages, linking the pages you used. If the wiki doesn't cover the question, say so plainly before using outside knowledge, and label that part as such.
 2. If the answer adds lasting value, offer to file it as a concept page (with sources). If the owner agrees, file it, then update the index and log (`· query ·`).
 
+### Sync
+
+Triggered by "同步公众号" / "sync WeChat articles". Follow `.claude/skills/wx-sync/SKILL.md`: Claude writes a plan from the logged-in WeChat backend, `tools/wx-sync` writes `content/articles/<slug>/` with images on R2, then `scripts/check-wiki.sh` and commit.
+
 ### Lint
 
 Triggered by "lint the wiki".
