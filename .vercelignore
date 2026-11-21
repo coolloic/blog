@@ -1,0 +1,14 @@
+# Only what Hugo needs is uploaded. raw/ holds copyrighted sources: never upload it.
+raw/
+.wx-sync/
+.superpowers/
+.wrangler/
+tools/
+design/
+docs/
+scripts/
+video/
+public/
+resources/
+.env*
+.vercel/
