@@ -4,6 +4,10 @@ Covers for aitanyan.com are generated per article in one style, **documentary li
 choice, 2026-11-21: "真实、接地气"). The WeChat covers stay on WeChat and in `cover` for sharing; the site shows
 `cover_wide` at 2.35:1 (1280×544), so the subject must sit in the middle band of the image.
 
+> **From 2026-11-21 new covers use "real photo + 大字报"** (bold two-line headline set by script over a gritty
+> documentary photo); see `.claude/skills/site-cover/SKILL.md` and the reference
+> `~/Documents/aitanyan/covers/samples/reference-poster.png`. The covers below were made before that and stay.
+
 ## Shared style (prepend to every prompt)
 
 Landscape photo, 1536x1024. Documentary lifestyle photography of everyday life in China: a real place, natural
