@@ -21,3 +21,5 @@ tools/wx-sync/node_modules/
 
 # Vercel CLI project link
 .vercel/
+.vercel
+.env*
