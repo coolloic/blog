@@ -552,6 +552,39 @@ check_redirect_site() {
   if [[ -z "$bad" ]]; then pass check_redirect_site; else fail check_redirect_site "redirect site for the old address is wrong: $bad"; fi
 }
 
-CHECKS=(check_theme_evo check_html_lang check_tokens_css check_light_dark_fallback check_theme_script_first check_nav check_skip_link check_wrap check_toggle_button check_tokens_unescaped check_home_featured check_home_featured_fallback check_home_lists_articles_not_wiki check_home_empty check_cover_box check_cover_video_slot check_follow_card check_no_format_errors check_category_order check_category_urls check_category_empty check_archives check_old_urls check_internal_links check_article_page check_wechat_footer check_video_vertical check_video_shortcode check_required_fields check_jsonld check_prev_next check_notes_page check_en_chrome check_code_copy check_wiki_body check_wiki_concept_page check_search_index check_search_page check_view_transitions check_scroll_driven_guarded check_reduced_motion check_js_budget check_progress_bar check_seo check_structured_data check_sitemap check_rss_scope check_404 check_video_dir check_no_blocking_fonts check_search_form_visible check_rise_no_fade check_layout_375 check_paged_canonical check_popover_fallback check_no_double_entities check_summary_with_angle_brackets check_unknown_category check_fixtures_not_in_content check_image_dimensions check_cjk_emphasis check_stitch_fonts check_card_foot_split check_real_content check_redirect_site)
+check_sitemap_scope() {
+  local f="$OUT/sitemap.xml" bad=""
+  grep -qE '<loc>[^<]*/tags/' "$f" && bad+="tags "
+  grep -qE '<loc>[^<]*/search/</loc>' "$f" && bad+="search "
+  grep -qE '<loc>[^<]*/404' "$f" && bad+="404 "
+  for u in /articles/sample-1/ /categories/education/ /posts/hello-world/ /wiki/concepts/agent-loop/ /notes/; do grep -q "<loc>[^<]*$u</loc>" "$f" || bad+="missing:$u "; done
+  if [[ -z "$bad" ]]; then pass check_sitemap_scope; else fail check_sitemap_scope "sitemap scope wrong: $bad"; fi
+}
+
+check_noindex_thin() {
+  local bad="" f
+  for f in tags/index.html tags/agents/index.html search/index.html 404.html; do
+    html1 "$OUT/$f" | grep -qE '<meta name="?robots"? content="?noindex,follow' || bad+="$f "
+  done
+  for f in index.html articles/sample-1/index.html categories/education/index.html posts/hello-world/index.html; do
+    html1 "$OUT/$f" | grep -qE 'name="?robots"? content="?noindex' && bad+="indexable:$f "
+  done
+  if [[ -z "$bad" ]]; then pass check_noindex_thin; else fail check_noindex_thin "noindex wrong on: $bad"; fi
+}
+
+check_post_jsonld() {
+  local r; r=$(perl -0777 -ne 'print "$1\n\x1e" while /<script type="?application\/ld\+json"?>(.*?)<\/script>/sg' "$OUT/posts/hello-world/index.html" | python3 -c '
+import json,sys
+items=[]
+for b in sys.stdin.read().split("\x1e"):
+    if b.strip(): d=json.loads(b); items+=d if isinstance(d,list) else [d]
+t=[i for i in items if i.get("@type") in ("BlogPosting","Article")]
+assert t, "no BlogPosting"
+assert t[0].get("inLanguage")=="en", "inLanguage should be en"
+print("ok")' 2>&1)
+  if [[ "$r" == ok ]]; then pass check_post_jsonld; else fail check_post_jsonld "$r"; fi
+}
+
+CHECKS=(check_theme_evo check_html_lang check_tokens_css check_light_dark_fallback check_theme_script_first check_nav check_skip_link check_wrap check_toggle_button check_tokens_unescaped check_home_featured check_home_featured_fallback check_home_lists_articles_not_wiki check_home_empty check_cover_box check_cover_video_slot check_follow_card check_no_format_errors check_category_order check_category_urls check_category_empty check_archives check_old_urls check_internal_links check_article_page check_wechat_footer check_video_vertical check_video_shortcode check_required_fields check_jsonld check_prev_next check_notes_page check_en_chrome check_code_copy check_wiki_body check_wiki_concept_page check_search_index check_search_page check_view_transitions check_scroll_driven_guarded check_reduced_motion check_js_budget check_progress_bar check_seo check_structured_data check_sitemap check_rss_scope check_404 check_video_dir check_no_blocking_fonts check_search_form_visible check_rise_no_fade check_layout_375 check_paged_canonical check_popover_fallback check_no_double_entities check_summary_with_angle_brackets check_unknown_category check_fixtures_not_in_content check_image_dimensions check_cjk_emphasis check_stitch_fonts check_card_foot_split check_real_content check_redirect_site check_sitemap_scope check_noindex_thin check_post_jsonld)
 for c in "${@:-${CHECKS[@]}}"; do $c; done
 [[ $FAILS -eq 0 ]] && echo "SITE ALL PASS" || { echo "$FAILS SITE CHECKS FAILED"; exit 1; }

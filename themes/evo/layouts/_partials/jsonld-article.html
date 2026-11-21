@@ -1,7 +1,7 @@
-{{- $img := slice -}}{{- with .Params.cover }}{{ $img = slice (partial "abs-img-url.html" .) }}{{ end -}}
+{{- $img := slice (partial "abs-img-url.html" site.Params.shareImage) -}}{{- with .Params.cover }}{{ $img = slice (partial "abs-img-url.html" .) }}{{ end -}}
 {{- $d := dict
   "@context" "https://schema.org"
-  "@type" "Article"
+  "@type" (cond (eq .Section "posts") "BlogPosting" "Article")
   "headline" .Title
   "description" (.Summary | plainify | htmlUnescape | strings.TrimSpace)
   "datePublished" (.Date.Format "2006-01-02T15:04:05Z07:00")

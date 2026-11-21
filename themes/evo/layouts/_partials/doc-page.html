@@ -23,3 +23,4 @@
   </div>
 </article>
 {{ partial "code-copy.html" $p }}
+{{ if eq .kind "post" }}{{ partial "jsonld-article.html" $p }}{{ end }}

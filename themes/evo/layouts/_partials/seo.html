@@ -7,6 +7,7 @@
 {{- $isArticle := and .IsPage (in (slice "articles" "posts") .Section) -}}
 {{- $canon := .Permalink -}}
 {{- if or (and .IsSection (eq .Section "articles")) (and (eq .Kind "term") (eq .Data.Plural "categories")) }}{{ $canon = (partial "article-pager.html" .).URL | absURL }}{{ end -}}
+{{- if partial "noindex.html" . }}<meta name="robots" content="noindex,follow">{{ end }}
 <meta name="description" content="{{ $desc }}">
 <link rel="canonical" href="{{ $canon }}">
 <meta property="og:site_name" content="{{ site.Title }}">

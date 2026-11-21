@@ -1,0 +1,4 @@
+{{- /* Pages that should stay out of search results (thin or utility pages). Shared by the robots meta tag
+     and sitemap.xml so the two never disagree: tag pages, the search page, 404. */ -}}
+{{- $isTags := and (in (slice "taxonomy" "term") .Kind) (eq .Data.Plural "tags") -}}
+{{- return (or $isTags (eq .Layout "search") (eq .Kind "404")) -}}
