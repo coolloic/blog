@@ -5,7 +5,7 @@
 {{ partial "head.html" . }}
 </head>
 <body>
-<a class="skip-link" href="#main">{{ partial "t.html" (dict "page" . "key" "skip_link") }}</a>
+<a class="skip-link" href="#main" lang="zh-CN">{{ partial "t.html" (dict "page" site.Home "key" "skip_link") }}</a>
 {{ partial "header.html" . }}
 <main id="main" tabindex="-1">
 {{ block "main" . }}{{ end }}

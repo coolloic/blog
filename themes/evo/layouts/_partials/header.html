@@ -1,21 +1,22 @@
 {{- $home := cond (eq (partial "lang.html" .) "en") ("notes/" | relURL) ("" | relURL) -}}
-<header class="site-header">
+{{- /* Site chrome is always Chinese, also on English pages: the reader stays on one site. */ -}}
+<header class="site-header" lang="zh-CN">
   <div class="container site-header__inner">
     <a class="brand" href="{{ "" | relURL }}">
       {{ partial "logo.html" . }}
     </a>
-    <nav class="site-nav" aria-label="{{ partial "t.html" (dict "page" . "key" "nav_label") }}">
+    <nav class="site-nav" aria-label="{{ partial "t.html" (dict "page" site.Home "key" "nav_label") }}">
       {{ partial "nav-links.html" . }}
     </nav>
     <div class="site-header__tools">
-      <a class="icon-btn site-header__search" href="{{ "search/" | relURL }}" aria-label="{{ partial "t.html" (dict "page" . "key" "nav_search") }}">{{ partial "icon.html" "search" }}</a>
+      <a class="icon-btn site-header__search" href="{{ "search/" | relURL }}" aria-label="{{ partial "t.html" (dict "page" site.Home "key" "nav_search") }}">{{ partial "icon.html" "search" }}</a>
       {{ partial "theme-toggle.html" . }}
-      <button class="icon-btn site-header__menu" type="button" popovertarget="mobile-menu" aria-label="{{ partial "t.html" (dict "page" . "key" "menu") }}">{{ partial "icon.html" "menu" }}</button>
+      <button class="icon-btn site-header__menu" type="button" popovertarget="mobile-menu" aria-label="{{ partial "t.html" (dict "page" site.Home "key" "menu") }}">{{ partial "icon.html" "menu" }}</button>
     </div>
   </div>
   <div id="mobile-menu" class="mobile-menu" popover>
-    <button class="icon-btn mobile-menu__close" type="button" popovertarget="mobile-menu" popovertargetaction="hide" aria-label="{{ partial "t.html" (dict "page" . "key" "close") }}">{{ partial "icon.html" "close" }}</button>
-    <nav class="mobile-menu__nav" aria-label="{{ partial "t.html" (dict "page" . "key" "nav_label") }}">
+    <button class="icon-btn mobile-menu__close" type="button" popovertarget="mobile-menu" popovertargetaction="hide" aria-label="{{ partial "t.html" (dict "page" site.Home "key" "close") }}">{{ partial "icon.html" "close" }}</button>
+    <nav class="mobile-menu__nav" aria-label="{{ partial "t.html" (dict "page" site.Home "key" "nav_label") }}">
       {{ partial "nav-links.html" . }}
     </nav>
   </div>

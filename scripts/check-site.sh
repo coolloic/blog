@@ -67,7 +67,10 @@ check_nav() {
     for u in /blog/articles/ /blog/notes/ /blog/search/; do [[ "$nav" == *"href=\"$u\""* || "$nav" == *"href=$u"* ]] || bad+="$f:$u "; done
   done
   tr -d '\n' < "$OUT/index.html" | grep -q '>科普</a>' || bad+="index.html:科普-label "
-  tr -d '\n' < "$OUT/posts/hello-world/index.html" | grep -q '>Articles</a>' || bad+="hello-world:Articles-label "
+  # Site chrome is always Chinese, even on English pages (marked lang=zh-CN inside an lang=en page).
+  tr -d '\n' < "$OUT/posts/hello-world/index.html" | grep -q '>科普</a>' || bad+="hello-world:科普-label "
+  tr -d '\n' < "$OUT/posts/hello-world/index.html" | grep -qE '<header[^>]*lang="?zh-CN' || bad+="hello-world:header-lang "
+  tr -d '\n' < "$OUT/posts/hello-world/index.html" | grep -qE '<footer[^>]*lang="?zh-CN' || bad+="hello-world:footer-lang "
   if [[ -z "$bad" ]]; then pass check_nav; else fail check_nav "missing: $bad"; fi
 }
 

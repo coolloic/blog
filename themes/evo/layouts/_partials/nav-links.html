@@ -2,5 +2,5 @@
 {{- range site.Menus.main }}
   {{- $url := .URL | relURL }}
   {{- $current := or (eq $p.RelPermalink $url) (and (ne .Identifier "home") (strings.HasPrefix $p.RelPermalink $url)) }}
-  <a href="{{ $url }}"{{ if $current }} aria-current="page"{{ end }}>{{ partial "t.html" (dict "page" $p "key" (printf "nav_%s" .Identifier)) }}</a>
+  <a href="{{ $url }}"{{ if $current }} aria-current="page"{{ end }}>{{ partial "t.html" (dict "page" site.Home "key" (printf "nav_%s" .Identifier)) }}</a>
 {{- end }}

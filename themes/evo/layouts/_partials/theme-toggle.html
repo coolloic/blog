@@ -1,4 +1,4 @@
-<button class="icon-btn theme-toggle" type="button" aria-pressed="false" aria-label="{{ partial "t.html" (dict "page" . "key" "theme_toggle") }}" data-theme-toggle>
+<button class="icon-btn theme-toggle" type="button" aria-pressed="false" aria-label="{{ partial "t.html" (dict "page" site.Home "key" "theme_toggle") }}" data-theme-toggle>
   <span class="theme-toggle__sun">{{ partial "icon.html" "sun" }}</span><span class="theme-toggle__moon">{{ partial "icon.html" "moon" }}</span>
 </button>
 {{- $js := resources.Get "js/theme-toggle.js" | js.Build (dict "minify" true "format" "esm") | fingerprint }}
