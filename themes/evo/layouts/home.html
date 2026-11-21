@@ -28,6 +28,16 @@
   </section>
   {{- end }}
 
+  {{- with (where site.RegularPages "Section" "glossary").ByWeight }}
+  <section class="stack" aria-labelledby="glossary-heading">
+    <div class="section-head">
+      <h2 id="glossary-heading">{{ partial "t.html" (dict "page" $ "key" "glossary_heading") }}</h2>
+      <a href="{{ "glossary/" | relURL }}">{{ partial "t.html" (dict "page" $ "key" "all_terms") }}</a>
+    </div>
+    <ul class="term-chips term-chips--large">{{ range first 10 . }}<li><a href="{{ .RelPermalink }}" title="{{ .Params.summary }}">{{ .Title }}</a></li>{{ end }}</ul>
+  </section>
+  {{- end }}
+
   <section class="stack" aria-labelledby="latest-heading">
     <div class="section-head">
       <h2 id="latest-heading">{{ partial "t.html" (dict "page" . "key" "latest") }}</h2>

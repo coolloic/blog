@@ -80,3 +80,14 @@ all_topics: 全部专题 →
 topic_path: 阅读路线
 corrections_title: 更正
 corrections_policy: 我们的更正方式 →
+nav_glossary: 名词
+article_terms: 本文涉及的名词
+term_mentions: 提到它的文章
+term_wiki: 深入了解（英文 Wiki）：
+term_note: 本词条由 AI 辅助整理，依据见英文 Wiki 的来源。发现错误请看
+glossary_group_basics: 基础概念
+glossary_group_models: 模型与能力
+glossary_group_risks: 风险与安全
+glossary_group_tech: 技术与工具
+glossary_heading: AI 名词
+all_terms: 全部名词 →

@@ -1,0 +1,4 @@
+{{- /* dict "text" <plain text> "term" <glossary page>: does the text mention the term? */ -}}
+{{- $text := lower .text -}}{{- $hit := false -}}
+{{- range partial "term-names.html" .term }}{{ if in $text . }}{{ $hit = true }}{{ end }}{{ end -}}
+{{- return $hit -}}

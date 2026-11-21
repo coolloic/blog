@@ -517,7 +517,8 @@ check_cjk_emphasis() {
 check_stitch_fonts() {
   # Stitch's three type voices, self-hosted (fonts.googleapis.com is unreachable in mainland China).
   local bad="" css; css=$(cat "$OUT"/css/*.css "$OUT/index.html")
-  grep -rq 'fonts.googleapis.com\|fonts.gstatic.com' "$OUT/index.html" && bad+="google-fonts-request "
+  grep -rlq 'fonts.googleapis.com\|fonts.gstatic.com' "$OUT" --include='*.html' && bad+="google-fonts-request "
+  local pre; pre=$(html1 "$OUT/index.html" | grep -oE '<link rel="?preload"? href="?[^" >]+\.woff2' | sed -E 's/.*href="?//; s|^/blog/||'); [[ -n "$pre" && -f "$OUT/$pre" ]] || bad+="preloaded-font-missing($pre) "
   # the minifier may lowercase and unquote family names inside @font-face
   for fam in "Crimson Pro" "Lato" "Source Code Pro"; do echo "$css" | grep -qiE "@font-face *\{ *font-family: *\"?$fam" || bad+="no-@font-face:$fam "; done
   echo "$css" | grep -q 'font-display:swap\|font-display: swap' || bad+="font-display "
@@ -652,6 +653,48 @@ check_corrections_note() {
   else fail check_corrections_note "front matter corrections should render as a dated note at the end of the article (and only there)"; fi
 }
 
-CHECKS=(check_theme_evo check_html_lang check_tokens_css check_light_dark_fallback check_theme_script_first check_nav check_skip_link check_wrap check_toggle_button check_tokens_unescaped check_home_featured check_home_featured_fallback check_home_lists_articles_not_wiki check_home_empty check_cover_box check_cover_video_slot check_follow_card check_no_format_errors check_category_order check_category_urls check_category_empty check_archives check_old_urls check_internal_links check_article_page check_wechat_footer check_video_vertical check_video_shortcode check_required_fields check_jsonld check_prev_next check_notes_page check_en_chrome check_code_copy check_wiki_body check_wiki_concept_page check_search_index check_search_page check_view_transitions check_scroll_driven_guarded check_reduced_motion check_js_budget check_progress_bar check_seo check_structured_data check_sitemap check_rss_scope check_404 check_video_dir check_no_blocking_fonts check_search_form_visible check_rise_no_fade check_layout_375 check_paged_canonical check_popover_fallback check_no_double_entities check_summary_with_angle_brackets check_unknown_category check_fixtures_not_in_content check_image_dimensions check_cjk_emphasis check_stitch_fonts check_card_foot_split check_real_content check_redirect_site check_sitemap_scope check_noindex_thin check_post_jsonld check_company check_webp_srcset check_topics check_topic_unknown_article check_trust_pages check_corrections_note)
+check_glossary() {
+  local bad="" e="$OUT/glossary/ai-agent/index.html" h
+  h=$(html1 "$e" 2>/dev/null)
+  [[ -n "$h" ]] || bad+="no-entry-page "
+  [[ "$h" == *"<h1"*"智能体"* && "$h" == *"AI Agent"* ]] || bad+="title/english "
+  echo "$h" | grep -qE 'href="?/blog/wiki/concepts/agent-loop/' || bad+="wiki-link "
+  echo "$h" | grep -qE 'href="?/blog/articles/sample-1/' || bad+="mentioned-in "
+  echo "$h" | grep -q '"@type":"DefinedTerm"' || bad+="jsonld "
+  html1 "$OUT/glossary/index.html" 2>/dev/null | grep -qE 'href="?/blog/glossary/ai-agent/' || bad+="index "
+  html1 "$OUT/articles/sample-1/index.html" | grep -qE 'class="?article-terms.{0,200}href="?/blog/glossary/ai-agent/' || bad+="article-terms "
+  perl -0777 -ne 'exit(/<nav class="?site-nav.{0,800}?href="?\/blog\/glossary\/"?>名词<\/a>/s ? 0 : 1)' "$OUT/index.html" || bad+="nav "
+  grep -q '/glossary/ai-agent/' "$OUT/index.json" && grep -q '/topics/sample-topic/' "$OUT/index.json" || bad+="search-index "
+  if [[ -z "$bad" ]]; then pass check_glossary; else fail check_glossary "$bad"; fi
+}
+
+badwiki() { sed -i.bak 's/^wiki: .*/wiki: "no-such-concept"/' glossary/ai-agent/index.md && rm -f glossary/ai-agent/index.md.bak; }
+check_glossary_bad_wiki() {
+  local o cdir log rc; o=$(mktemp -d); cdir=$(mktemp -d)
+  merge_content "$cdir"; ( cd "$cdir" && badwiki )
+  log=$(hugo -D --contentDir "$cdir" -d "$o" 2>&1); rc=$?
+  rm -rf "$o" "$cdir"
+  if [[ $rc -ne 0 && "$log" == *"unknown wiki concept"* ]]; then pass check_glossary_bad_wiki
+  else fail check_glossary_bad_wiki "a glossary entry pointing at a missing wiki page must fail the build (rc=$rc)"; fi
+}
+
+thintopic() { sed -i.bak 's/^articles: .*/articles: ["sample-3"]/' topics/sample-topic/index.md && rm -f topics/sample-topic/index.md.bak; }
+check_topic_min_articles() {
+  local o cdir log rc; o=$(mktemp -d); cdir=$(mktemp -d)
+  merge_content "$cdir"; ( cd "$cdir" && thintopic )
+  log=$(hugo -D --contentDir "$cdir" -d "$o" 2>&1); rc=$?
+  rm -rf "$o" "$cdir"
+  if [[ $rc -ne 0 && "$log" == *"at least 2 articles"* ]]; then pass check_topic_min_articles
+  else fail check_topic_min_articles "a topic with fewer than 2 articles must fail the build (rc=$rc)"; fi
+}
+
+check_small_fixes() {
+  local bad=""
+  python3 -c "import json;h=json.load(open('vercel.json'))['headers'];assert any(x['source'].startswith('/fonts/') and 'immutable' in x['headers'][0]['value'] for x in h)" 2>/dev/null || bad+="fonts-cache "
+  perl -0777 -ne 'exit(/class="?card topic-card.{0,300}?view-transition-name/s ? 0 : 1)' "$OUT/topics/index.html" && bad+="topic-card-vt-name "
+  if [[ -z "$bad" ]]; then pass check_small_fixes; else fail check_small_fixes "$bad"; fi
+}
+
+CHECKS=(check_theme_evo check_html_lang check_tokens_css check_light_dark_fallback check_theme_script_first check_nav check_skip_link check_wrap check_toggle_button check_tokens_unescaped check_home_featured check_home_featured_fallback check_home_lists_articles_not_wiki check_home_empty check_cover_box check_cover_video_slot check_follow_card check_no_format_errors check_category_order check_category_urls check_category_empty check_archives check_old_urls check_internal_links check_article_page check_wechat_footer check_video_vertical check_video_shortcode check_required_fields check_jsonld check_prev_next check_notes_page check_en_chrome check_code_copy check_wiki_body check_wiki_concept_page check_search_index check_search_page check_view_transitions check_scroll_driven_guarded check_reduced_motion check_js_budget check_progress_bar check_seo check_structured_data check_sitemap check_rss_scope check_404 check_video_dir check_no_blocking_fonts check_search_form_visible check_rise_no_fade check_layout_375 check_paged_canonical check_popover_fallback check_no_double_entities check_summary_with_angle_brackets check_unknown_category check_fixtures_not_in_content check_image_dimensions check_cjk_emphasis check_stitch_fonts check_card_foot_split check_real_content check_redirect_site check_sitemap_scope check_noindex_thin check_post_jsonld check_company check_webp_srcset check_topics check_topic_unknown_article check_trust_pages check_corrections_note check_glossary check_glossary_bad_wiki check_topic_min_articles check_small_fixes)
 for c in "${@:-${CHECKS[@]}}"; do $c; done
 [[ $FAILS -eq 0 ]] && echo "SITE ALL PASS" || { echo "$FAILS SITE CHECKS FAILED"; exit 1; }

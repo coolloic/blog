@@ -75,6 +75,7 @@ menu:
     - {identifier: home, name: 首页, url: "", weight: 10}
     - {identifier: articles, name: 科普, url: "articles/", weight: 20}
     - {identifier: topics, name: 专题, url: "topics/", weight: 25}
+    - {identifier: glossary, name: 名词, url: "glossary/", weight: 27}
     - {identifier: notes, name: 技术笔记, url: "notes/", weight: 30}
     - {identifier: archives, name: 归档, url: "archives/", weight: 40}
     - {identifier: search, name: 搜索, url: "search/", weight: 50}

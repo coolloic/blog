@@ -18,6 +18,7 @@
       {{ partial "toc.html" (dict "page" . "where" "side") }}
     </div>
     <div class="article__after">
+      {{ partial "article-terms.html" . }}
       {{ partial "corrections.html" . }}
       {{ partial "wechat-footer.html" . }}
       {{ with .Params.tags }}<ul class="tag-cloud" aria-label="{{ partial "t.html" (dict "page" $ "key" "tags") }}">{{ range . }}<li><a href="{{ printf "tags/%s/" (urlize .) | relURL }}">#{{ . }}</a></li>{{ end }}</ul>{{ end }}

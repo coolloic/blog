@@ -1,0 +1,18 @@
+{{ define "main" }}
+<div class="container stack-section">
+  <header class="page-head"><h1>{{ .Title }}</h1>{{ with .Params.summary }}<p class="page-head__desc">{{ . }}</p>{{ end }}</header>
+  {{- range slice "basics" "models" "risks" "tech" }}
+  {{- $g := . }}{{ $terms := where $.RegularPages "Params.group" $g }}
+  {{- with $terms }}
+  <section class="stack glossary-group" aria-labelledby="g-{{ $g }}">
+    <div class="section-head"><h2 id="g-{{ $g }}">{{ partial "t.html" (dict "page" $ "key" (printf "glossary_group_%s" $g)) }}</h2></div>
+    <dl class="glossary-list">
+      {{- range .ByTitle }}
+      <div><dt><a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ with .Params.english }} <span lang="en">{{ . }}</span>{{ end }}</dt><dd>{{ .Params.summary }}</dd></div>
+      {{- end }}
+    </dl>
+  </section>
+  {{- end }}
+  {{- end }}
+</div>
+{{ end }}

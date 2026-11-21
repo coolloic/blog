@@ -40,3 +40,19 @@
 .topic__step { display: grid; gap: var(--space-s); }
 .topic__num { font-family: var(--font-mono); font-size: var(--size-label); color: var(--color-accent2); letter-spacing: 0.08em; }
 .topic__steps-title { font-size: var(--size-h3); }
+/* Glossary */
+.term-chips { display: flex; flex-wrap: wrap; gap: var(--space-s); padding: 0; list-style: none; }
+.term-chips a { display: inline-block; padding: var(--space-xs) var(--space-m); border: 1px solid color-mix(in srgb, var(--color-accent2) 40%, transparent); border-radius: var(--radius-pill); color: var(--color-text); font-size: var(--size-small); text-decoration: none; }
+.term-chips a:hover { border-color: var(--color-accent2); color: var(--color-accent2); }
+.term-chips--large a { font-size: 1rem; padding: var(--space-s) var(--space-l); background: var(--color-surface); }
+.article-terms { display: grid; gap: var(--space-s); }
+.article-terms h2 { font-size: 1.125rem; }
+.glossary-list { display: grid; gap: var(--space-m) var(--space-xl); margin: 0; }
+@media (min-width: 768px) { .glossary-list { grid-template-columns: 1fr 1fr; } }
+.glossary-list dt { font-weight: 700; }
+.glossary-list dt a { color: var(--color-text); text-decoration: none; }
+.glossary-list dt a:hover { color: var(--color-accent); }
+.glossary-list dt span { font-family: var(--font-mono); font-size: var(--size-label); font-weight: 400; color: var(--color-subtle); }
+.glossary-list dd { margin: var(--space-xs) 0 0; font-size: var(--size-small); line-height: 1.6; color: var(--color-subtle); }
+.glossary-entry__en { font-family: var(--font-mono); color: var(--color-subtle); }
+.glossary-entry__note { font-size: var(--size-small); color: var(--color-subtle); }

@@ -1,0 +1,30 @@
+{{ define "main" }}
+{{- $groups := slice "basics" "models" "risks" "tech" -}}
+{{- if not (in $groups .Params.group) }}{{ errorf "%s: group must be one of %v" .File.Path $groups }}{{ end -}}
+{{- $wiki := false -}}{{- with .Params.wiki }}{{ with site.GetPage (printf "/wiki/concepts/%s" .) }}{{ $wiki = . }}{{ else }}{{ errorf "%s: unknown wiki concept %q" $.File.Path . }}{{ end }}{{ end -}}
+{{- $term := . -}}{{- $mentions := slice -}}
+{{- range (where site.RegularPages "Section" "articles").ByDate.Reverse }}{{ if partial "mentions.html" (dict "text" .Plain "term" $term) }}{{ $mentions = $mentions | append . }}{{ end }}{{ end -}}
+<article class="article article--page glossary-entry">
+  <div class="container">
+    <header class="article__head">
+      <a class="chip chip--topic" href="{{ "glossary/" | relURL }}">{{ partial "t.html" (dict "page" . "key" "nav_glossary") }}</a>
+      <h1>{{ .Title }}</h1>
+      {{ with .Params.english }}<p class="glossary-entry__en" lang="en">{{ . }}</p>{{ end }}
+      {{ with .Params.summary }}<p class="article__summary">{{ . }}</p>{{ end }}
+    </header>
+    <div class="prose">{{ .Content }}</div>
+    <div class="article__after">
+      {{- with $mentions }}
+      <section class="stack" aria-labelledby="mentions-heading">
+        <div class="section-head"><h2 id="mentions-heading">{{ partial "t.html" (dict "page" $ "key" "term_mentions") }}</h2></div>
+        <div class="card-grid card-grid--small">{{ range first 6 . }}{{ partial "card.html" . }}{{ end }}</div>
+      </section>
+      {{- end }}
+      {{- with $wiki }}<p class="glossary-entry__wiki"><a href="{{ .RelPermalink }}" lang="en">{{ partial "t.html" (dict "page" $ "key" "term_wiki") }} {{ .Title }} →</a></p>{{ end }}
+      <p class="glossary-entry__note">{{ partial "t.html" (dict "page" . "key" "term_note") }} <a href="{{ "corrections/" | relURL }}">{{ partial "t.html" (dict "page" . "key" "corrections_title") }}</a></p>
+    </div>
+  </div>
+</article>
+{{- $set := dict "@type" "DefinedTermSet" "name" (printf "%s AI 名词" site.Title) "url" ("glossary/" | absURL) }}
+<script type="application/ld+json">{{ dict "@context" "https://schema.org" "@type" "DefinedTerm" "name" .Title "alternateName" (.Params.english | default "") "description" (.Params.summary | default "") "url" .Permalink "inDefinedTermSet" $set | jsonify | safeJS }}</script>
+{{ end }}

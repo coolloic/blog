@@ -1,0 +1,9 @@
+{{- /* "本文涉及的名词": glossary terms mentioned in the article body (matched on title + aliases_zh). */ -}}
+{{- $p := . -}}{{- $terms := slice -}}
+{{- range (where site.RegularPages "Section" "glossary").ByTitle }}{{ if partial "mentions.html" (dict "text" $p.Plain "term" .) }}{{ $terms = $terms | append . }}{{ end }}{{ end -}}
+{{- with $terms }}
+<section class="article-terms" aria-labelledby="terms-heading">
+  <h2 id="terms-heading">{{ partial "t.html" (dict "page" $p "key" "article_terms") }}</h2>
+  <ul class="term-chips">{{ range . }}<li><a href="{{ .RelPermalink }}" title="{{ .Params.summary }}">{{ .Title }}</a></li>{{ end }}</ul>
+</section>
+{{- end }}

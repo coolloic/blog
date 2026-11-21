@@ -4,4 +4,5 @@
   {{- with site.GetPage (printf "/articles/%s" .) }}{{ $out = $out | append . }}
   {{- else }}{{ errorf "%s: unknown article %q in articles" $.File.Path . }}{{ end }}
 {{- end -}}
+{{- if lt (len $out) 2 }}{{ errorf "%s: a topic needs at least 2 articles" .File.Path }}{{ end -}}
 {{- return $out -}}

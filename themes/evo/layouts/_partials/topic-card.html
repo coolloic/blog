@@ -1,6 +1,6 @@
 {{- $arts := partial "topic-articles.html" . -}}
 <article class="card topic-card">
-  {{- with index $arts 0 }}{{ partial "cover.html" (dict "page" . "size" "card") }}{{ end }}
+  {{- with index $arts 0 }}{{ partial "cover.html" (dict "page" . "size" "card" "vt" false) }}{{ end }}
   <div class="card__body">
     <span class="chip chip--topic">{{ partial "t.html" (dict "page" . "key" "nav_topics") }}</span>
     <h3 class="card__title"><a class="card__link" href="{{ .RelPermalink }}">{{ .Title }}</a></h3>

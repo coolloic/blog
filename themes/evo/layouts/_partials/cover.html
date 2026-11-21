@@ -2,7 +2,7 @@
      cover or it fails to load. partial "cover.html" (dict "page" $p "size" "card|hero") */ -}}
 {{- $p := .page -}}{{- $hero := eq .size "hero" -}}
 {{- $w := cond $hero 2100 1600 -}}{{- $h := 900 -}}
-<div class="cover cover--{{ .size }}" style="view-transition-name: cover-{{ $p.File.ContentBaseName | default $p.File.BaseFileName | urlize }}">
+<div class="cover cover--{{ .size }}"{{ if ne .vt false }} style="view-transition-name: cover-{{ $p.File.ContentBaseName | default $p.File.BaseFileName | urlize }}"{{ end }}>
   {{- with $p.Params.cover }}
   {{- $src := partial "img-url.html" . }}
   {{- with $p.Params.cover_video }}

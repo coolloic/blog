@@ -80,3 +80,14 @@ all_topics: All topics →
 topic_path: Reading path
 corrections_title: Corrections
 corrections_policy: How we correct →
+nav_glossary: Glossary
+article_terms: Terms in this article
+term_mentions: Articles that mention it
+term_wiki: "Go deeper (English Wiki):"
+term_note: This entry was compiled with AI assistance from the sources in the English Wiki. Found an error? See
+glossary_group_basics: Basics
+glossary_group_models: Models and capabilities
+glossary_group_risks: Risks and safety
+glossary_group_tech: Techniques and tools
+glossary_heading: AI glossary
+all_terms: All terms →

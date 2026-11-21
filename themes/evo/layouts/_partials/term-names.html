@@ -1,0 +1,4 @@
+{{- /* All the ways a glossary term is written in articles: its title plus aliases_zh, lower-cased. */ -}}
+{{- $names := slice (lower .Title) -}}
+{{- range .Params.aliases_zh | default slice }}{{ $names = $names | append (lower .) }}{{ end -}}
+{{- return $names -}}
