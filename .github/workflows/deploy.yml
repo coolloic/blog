@@ -1,8 +1,9 @@
-name: Deploy blog to GitHub Pages
+name: Publish redirects at the old GitHub Pages address
 
+# The blog lives at https://aitanyan.com/ (Vercel, deployed manually with `vercel deploy --prod`).
+# This workflow only publishes redirect pages for https://coolloic.github.io/blog/ so old links and search
+# results land on the new domain. Run it by hand after adding or moving pages: Actions → Run workflow.
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -19,19 +20,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: recursive
-          fetch-depth: 0
       - uses: peaceiris/actions-hugo@v3
         with:
           hugo-version: "0.169.0"
           extended: true
-      - id: pages
-        uses: actions/configure-pages@v5
-      - run: hugo --gc --minify --panicOnWarning --baseURL "${{ steps.pages.outputs.base_url }}/"
+      - run: hugo --gc --minify --panicOnWarning --baseURL "https://aitanyan.com/"
+      - run: python3 scripts/make-redirects.py public redirects https://aitanyan.com
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: ./public
+          path: ./redirects
   deploy:
     needs: build
     runs-on: ubuntu-latest

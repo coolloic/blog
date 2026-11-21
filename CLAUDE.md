@@ -6,7 +6,7 @@ A Hugo site (custom theme `themes/evo`, designs in `design/`) with three kinds o
 - **Blog posts** in `content/posts/` (the English "Tech Notes"): dated essays written by the owner. Edit them only when asked.
 - **The wiki** in `content/wiki/`: a knowledge base on cutting-edge AI that **you (the LLM) maintain** from sources the owner collects. This follows Karpathy's "LLM Wiki" pattern.
 
-Preview with `hugo server -D` (served at `http://localhost:1313/blog/`). Pushing to `main` publishes the site. The owner has approved committing and pushing directly once `scripts/check-wiki.sh` passes; no need to ask first.
+Preview with `bash scripts/preview.sh` (includes the fixture articles; `http://localhost:1313/`). The live site is https://aitanyan.com/ on Vercel. The owner has approved committing and pushing to `main` once `scripts/check-wiki.sh` passes. **Deploys are manual and only when the owner asks**: `npx vercel deploy --prod` publishes aitanyan.com (pushing does not deploy; `vercel.json` has `git.deploymentEnabled: false`), and the "Publish redirects" GitHub Actions workflow refreshes the redirect pages at the old https://coolloic.github.io/blog/ address.
 
 ## Layout (three layers)
 
