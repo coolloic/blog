@@ -84,6 +84,13 @@ menu:
     - {identifier: github, name: GitHub, url: "https://github.com/coolloic", weight: 40}
 
 markup:
+  goldmark:
+    extensions:
+      # Synced Chinese text: "**加粗。**\\ 后文" — an escaped space closes emphasis next to CJK
+      # punctuation and renders as nothing (tools/wx-sync emits it).
+      cjk:
+        enable: true
+        escapedSpace: true
   tableOfContents:
     startLevel: 2
     endLevel: 3

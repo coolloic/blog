@@ -3,7 +3,18 @@
   "private": true,
   "type": "module",
   "description": "Sync WeChat 公众号 articles into content/articles/ (see .claude/skills/wx-sync/SKILL.md)",
-  "bin": { "wx-sync": "bin/wx-sync.mjs" },
-  "scripts": { "test": "node --test test/*.test.mjs" },
-  "engines": { "node": ">=22" }
+  "bin": {
+    "wx-sync": "bin/wx-sync.mjs"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "linkedom": "^0.18.5",
+    "turndown": "^7.2.0",
+    "turndown-plugin-gfm": "^1.0.2"
+  }
 }
