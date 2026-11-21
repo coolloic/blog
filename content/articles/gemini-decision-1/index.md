@@ -1,5 +1,5 @@
 ---
-title: "Google 让 AI 不再“写作文”：Gemini Decision 1 只做AI进化调研员一件事——做选择"
+title: "Google 让 AI 不再“写作文”：Gemini Decision 1 只做一件事——做选择"
 date: "2026-11-12T04:54:46+08:00"
 summary: "不生成一个字，只给出概率。Google 新模型 Gemini Decision 1，可能是 AI Agent 时代最被低估的基础设施。"
 categories:
