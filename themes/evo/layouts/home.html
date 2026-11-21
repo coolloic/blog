@@ -18,6 +18,16 @@
     {{- end }}
   </section>
 
+  {{- with (where site.RegularPages "Section" "topics").ByWeight }}
+  <section class="stack" aria-labelledby="topics-heading">
+    <div class="section-head">
+      <h2 id="topics-heading">{{ partial "t.html" (dict "page" $ "key" "topics_heading") }}</h2>
+      <a href="{{ "topics/" | relURL }}">{{ partial "t.html" (dict "page" $ "key" "all_topics") }}</a>
+    </div>
+    <div class="card-grid">{{ range first 3 . }}{{ partial "topic-card.html" . }}{{ end }}</div>
+  </section>
+  {{- end }}
+
   <section class="stack" aria-labelledby="latest-heading">
     <div class="section-head">
       <h2 id="latest-heading">{{ partial "t.html" (dict "page" . "key" "latest") }}</h2>

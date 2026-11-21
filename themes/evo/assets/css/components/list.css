@@ -32,3 +32,10 @@
 .badge { padding: 0 var(--space-s); border-radius: var(--radius-chip); font-family: var(--font-mono); font-size: var(--size-label); white-space: nowrap; }
 .badge--articles { background: color-mix(in srgb, var(--color-accent) 15%, transparent); color: var(--color-accent); }
 .badge--posts, .badge--wiki { background: color-mix(in srgb, var(--color-accent2) 15%, transparent); color: var(--color-accent2); }
+/* Topics */
+.chip--topic { background: color-mix(in srgb, var(--color-accent2) 15%, transparent); color: var(--color-accent2); }
+.topic__intro { max-inline-size: 40em; }
+.topic__steps { display: grid; gap: var(--space-l); padding: 0; list-style: none; counter-reset: step; }
+@media (min-width: 768px) { .topic__steps { grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); } }
+.topic__step { display: grid; gap: var(--space-s); }
+.topic__num { font-family: var(--font-mono); font-size: var(--size-label); color: var(--color-accent2); letter-spacing: 0.08em; }

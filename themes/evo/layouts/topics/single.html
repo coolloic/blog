@@ -1,0 +1,23 @@
+{{ define "main" }}
+{{- $arts := partial "topic-articles.html" . -}}
+<div class="container stack-section topic">
+  <header class="page-head">
+    <span class="chip chip--topic">{{ partial "t.html" (dict "page" . "key" "nav_topics") }}</span>
+    <h1>{{ .Title }}</h1>
+    {{ with .Params.summary }}<p class="page-head__desc">{{ . }}</p>{{ end }}
+    <p class="meta-line">{{ printf (partial "t.html" (dict "page" . "key" "topic_count")) (len $arts) }}</p>
+  </header>
+  {{ with .Content }}<div class="prose topic__intro">{{ . }}</div>{{ end }}
+  <ol class="topic__steps">
+    {{- range $i, $a := $arts }}
+    <li class="topic__step" data-step="{{ add $i 1 }}">
+      <span class="topic__num">{{ printf (partial "t.html" (dict "page" $ "key" "topic_step")) (add $i 1) }}</span>
+      {{ partial "card.html" $a }}
+    </li>
+    {{- end }}
+  </ol>
+  {{ partial "follow-card.html" . }}
+</div>
+{{- $items := slice }}{{ range $i, $a := $arts }}{{ $items = $items | append (dict "@type" "ListItem" "position" (add $i 1) "url" $a.Permalink "name" $a.Title) }}{{ end }}
+<script type="application/ld+json">{{ dict "@context" "https://schema.org" "@type" "ItemList" "name" .Title "description" (.Params.summary | default "") "itemListOrder" "https://schema.org/ItemListOrderAscending" "itemListElement" $items | jsonify | safeJS }}</script>
+{{ end }}

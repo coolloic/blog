@@ -1,0 +1,7 @@
+{{- /* The articles of a topic, in the order given by its `articles` front matter. Unknown slugs fail the build. */ -}}
+{{- $out := slice -}}
+{{- range .Params.articles }}
+  {{- with site.GetPage (printf "/articles/%s" .) }}{{ $out = $out | append . }}
+  {{- else }}{{ errorf "%s: unknown article %q in articles" $.File.Path . }}{{ end }}
+{{- end -}}
+{{- return $out -}}

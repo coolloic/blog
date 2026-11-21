@@ -32,6 +32,10 @@
 {{- with .baidu }}<meta name="baidu-site-verification" content="{{ . }}">{{ end }}
 {{- end }}
 <link rel="alternate" type="application/rss+xml" title="{{ site.Title }}" href="{{ "index.xml" | absURL }}">
+{{- if .Params.organization }}
+{{- $org := dict "@context" "https://schema.org" "@type" "Organization" "name" site.Title "legalName" site.Params.company "url" ("" | absURL) "logo" ("images/logo-512.png" | absURL) "description" site.Params.description }}
+<script type="application/ld+json">{{ $org | jsonify | safeJS }}</script>
+{{- end }}
 {{- if .IsHome }}
 {{- $site := dict "@context" "https://schema.org" "@type" "WebSite" "name" site.Title "url" ("" | absURL) "inLanguage" "zh-CN" "description" site.Params.description
     "potentialAction" (dict "@type" "SearchAction" "target" (dict "@type" "EntryPoint" "urlTemplate" (printf "%s?q={search_term_string}" ("search/" | absURL))) "query-input" "required name=search_term_string") }}

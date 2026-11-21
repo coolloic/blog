@@ -2,6 +2,7 @@
 title: "关于"
 layout: single
 summary: "「AI调研员」是什么，作者是谁，以及这个网站为什么存在。"
+organization: true
 ---
 
 ## 「AI调研员」是什么
@@ -32,5 +33,7 @@ summary: "「AI调研员」是什么，作者是谁，以及这个网站为什�
 - **科普文章：** 公众号文章的长期归档。公众号里的旧文难翻、也搜不到，这里可以按分类浏览，也能被搜索引擎找到。
 - **技术笔记（英文）：** 关于 AI agent、工具和 Web 工程的长文，见 [技术笔记](notes/_index.md)。
 - **AI Wiki（英文）：** 一个由 LLM 维护的知识库，每个概念都注明来源，见 [AI Wiki](wiki/_index.md)。
+
+我们怎么选题、查证和引用，见[调研方法](methodology.md)；发现错误请看[更正与反馈](corrections.md)。网站由 L.J.K Consultant Limited 运营。
 
 网站用 Hugo 生成，源码在 [GitHub](https://github.com/coolloic/blog)。

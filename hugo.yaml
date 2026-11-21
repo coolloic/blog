@@ -74,6 +74,7 @@ menu:
   main:
     - {identifier: home, name: 首页, url: "", weight: 10}
     - {identifier: articles, name: 科普, url: "articles/", weight: 20}
+    - {identifier: topics, name: 专题, url: "topics/", weight: 25}
     - {identifier: notes, name: 技术笔记, url: "notes/", weight: 30}
     - {identifier: archives, name: 归档, url: "archives/", weight: 40}
     - {identifier: search, name: 搜索, url: "search/", weight: 50}
@@ -81,6 +82,8 @@ menu:
   footer:
     - {identifier: cv, name: CV, url: "https://coolloic.github.io/", weight: 10}
     - {identifier: now, name: Now, url: "now/", weight: 20}
+    - {identifier: methodology, name: 调研方法, url: "methodology/", weight: 22}
+    - {identifier: corrections, name: 更正与反馈, url: "corrections/", weight: 24}
     - {identifier: rss, name: RSS, url: "index.xml", weight: 30}
     - {identifier: github, name: GitHub, url: "https://github.com/coolloic", weight: 40}
 

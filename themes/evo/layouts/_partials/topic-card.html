@@ -1,0 +1,10 @@
+{{- $arts := partial "topic-articles.html" . -}}
+<article class="card topic-card">
+  {{- with index $arts 0 }}{{ partial "cover.html" (dict "page" . "size" "card") }}{{ end }}
+  <div class="card__body">
+    <span class="chip chip--topic">{{ partial "t.html" (dict "page" . "key" "nav_topics") }}</span>
+    <h3 class="card__title"><a class="card__link" href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+    {{ with .Params.summary }}<p class="card__summary">{{ . }}</p>{{ end }}
+    <div class="card__foot"><span>{{ printf (partial "t.html" (dict "page" . "key" "topic_count")) (len $arts) }}</span></div>
+  </div>
+</article>
