@@ -1,7 +1,7 @@
 {{- /* Responsive local image made by the image pipeline: static/<base>-{480,960,1440}.webp + <base>-960.jpg
      (2.35:1, 1440×613). dict "base" "images/notes/<slug>" "alt" "" "class" "" "sizes" "" "eager" false */ -}}
 {{- $b := .base -}}
-<picture>
+<picture{{ with .pictureClass }} class="{{ . }}"{{ end }}>
   <source type="image/webp" srcset="{{ printf "%s-480.webp" $b | relURL }} 480w, {{ printf "%s-960.webp" $b | relURL }} 960w, {{ printf "%s-1440.webp" $b | relURL }} 1440w" sizes="{{ .sizes | default "(min-width: 1200px) 1200px, 100vw" }}">
   <img{{ with .class }} class="{{ . }}"{{ end }} src="{{ printf "%s-960.jpg" $b | relURL }}" alt="{{ .alt }}" width="1440" height="613" decoding="async"{{ if .eager }} fetchpriority="high"{{ else }} loading="lazy"{{ end }}>
 </picture>

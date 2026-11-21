@@ -20,6 +20,7 @@
 
   {{- with site.GetPage "/quiz/job-check" }}
   <a class="quiz-cta" href="{{ .RelPermalink }}">
+    {{ with .Params.hero }}{{ partial "local-picture.html" (dict "base" (printf "images/%s" .) "sizes" "(min-width: 1200px) 1200px, 100vw" "pictureClass" "strip-bg" "class" "strip-bg__img") }}{{ end }}
     <span class="quiz-cta__title">{{ partial "t.html" (dict "page" $ "key" "quiz_cta_title") }}</span>
     <span class="quiz-cta__body">{{ partial "t.html" (dict "page" $ "key" "quiz_cta_body") }}</span>
     <span class="button">{{ partial "t.html" (dict "page" $ "key" "quiz_cta_button") }}</span>
@@ -61,6 +62,7 @@
   {{ partial "follow-card.html" . }}
 
   <section class="notes-strip" aria-labelledby="notes-heading">
+    {{- with index (where (where site.RegularPages "Section" "posts") "Params.hero" "!=" nil).ByDate.Reverse 0 }}{{ partial "local-picture.html" (dict "base" (printf "images/%s" .Params.hero) "sizes" "(min-width: 1200px) 1200px, 100vw" "pictureClass" "strip-bg" "class" "strip-bg__img") }}{{ end }}
     <div class="section-head">
       <div><h2 id="notes-heading">{{ partial "t.html" (dict "page" . "key" "notes_title") }}</h2><p>{{ partial "t.html" (dict "page" . "key" "notes_desc") }}</p></div>
       <a href="{{ "notes/" | relURL }}">{{ partial "t.html" (dict "page" . "key" "notes_enter") }}</a>

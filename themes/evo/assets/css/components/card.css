@@ -146,3 +146,13 @@
 .note-list__thumb { grid-row: span 2; display: block; border-radius: var(--radius-card); overflow: hidden; }
 .note-list__thumb img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 1440 / 613; object-fit: cover; }
 @media (max-width: 639px) { .note-list__item--thumb { grid-template-columns: 1fr; } .note-list__item--thumb > time { grid-column: auto; } .note-list__thumb { grid-row: auto; } }
+
+/* Photo banners behind the home quiz call-to-action and Tech Notes strip (lazy WebP + brand gradient). */
+.quiz-cta, .notes-strip { position: relative; isolation: isolate; overflow: hidden; }
+.strip-bg { position: absolute; inset: 0; z-index: -2; }
+.strip-bg__img { inline-size: 100%; block-size: 100%; object-fit: cover; object-position: right center; }
+.quiz-cta::before, .notes-strip::before { content: ""; position: absolute; inset: 0; z-index: -1;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--color-bg) 94%, transparent) 0%, color-mix(in srgb, var(--color-bg) 78%, transparent) 45%, color-mix(in srgb, var(--color-bg) 25%, transparent) 100%); }
+.quiz-cta { min-block-size: 200px; align-content: center; }
+.notes-strip { min-block-size: 180px; }
+.notes-strip::before { background: linear-gradient(90deg, color-mix(in srgb, var(--color-bg) 92%, transparent), color-mix(in srgb, var(--color-bg) 72%, transparent)); }
