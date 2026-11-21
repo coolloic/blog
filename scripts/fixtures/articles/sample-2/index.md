@@ -4,7 +4,10 @@ date: 2026-11-19T08:00:00+08:00
 summary: "示例文章（占位），用于开发主题。"
 categories: ["work"]
 tags: ["agents"]
-cover: "/images/placeholder-cover.svg"
+cover: "https://pub-PLACEHOLDER.r2.dev/articles/sample-2/cover.jpg"
+images:
+  "cover.jpg": [900, 383]
+webp: true
 wechat_url: "https://mp.weixin.qq.com/s/placeholder"
 wechat_id: "sample-2"
 featured: true

@@ -52,3 +52,25 @@ test("readImageBase reads params.imageBase from hugo.yaml", () => {
   assert.match(base, /^https:\/\//);
   assert.doesNotMatch(base, /\/$/);
 });
+
+import sharp from "sharp";
+import { webpVariants } from "../src/images.mjs";
+
+test("webpVariants makes WebP copies at each configured width below the original, plus full width", async () => {
+  const jpg = await sharp({ create: { width: 1280, height: 720, channels: 3, background: "#336699" } }).jpeg().toBuffer();
+  const v = await webpVariants(jpg, "3", [480, 960, 1440]);
+  assert.deepEqual(v.map((x) => x.file), ["3-480.webp", "3-960.webp", "3.webp"]);
+  assert.deepEqual(v.map((x) => x.width), [480, 960, 1280]);
+  for (const x of v) {
+    const meta = await sharp(x.bytes).metadata();
+    assert.equal(meta.format, "webp");
+    assert.equal(meta.width, x.width);
+  }
+});
+
+test("webpVariants never upscales a small image", async () => {
+  const png = await sharp({ create: { width: 300, height: 200, channels: 4, background: "#fff" } }).png().toBuffer();
+  const v = await webpVariants(png, "cover", [480, 960, 1440]);
+  assert.deepEqual(v.map((x) => x.file), ["cover.webp"]);
+  assert.equal(v[0].width, 300);
+});

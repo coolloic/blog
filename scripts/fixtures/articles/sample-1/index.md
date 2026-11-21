@@ -10,6 +10,7 @@ wechat_id: "sample-1"
 featured: false
 images:
   "1.jpg": [1280, 720]
+webp: true
 draft: true
 ---
 

@@ -4,12 +4,21 @@ import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { parse, stringify } from "yaml";
 import { convertArticle, wechatShortUrl } from "./convert.mjs";
-import { dimensions } from "./images.mjs";
-import { readFrontMatter, renderArticle } from "./frontmatter.mjs";
+import { dimensions, webpVariants } from "./images.mjs";
+import { bodyOf, readFrontMatter, renderArticle } from "./frontmatter.mjs";
 
 const SLUG = /^[a-z0-9]+(-[a-z0-9]+){0,5}$/;
 const WECHAT_ID = /^\d+_\d+$/;
 const MIN_BODY_CHARS = 50;
+export const DEFAULT_IMAGE_WIDTHS = [480, 960, 1440];
+
+// WebP copies for srcset (see themes/evo/layouts/_partials/picture.html). Uploaded next to the original.
+async function uploadWebp(uploader, slug, name, bytes, widths, force) {
+  for (const v of await webpVariants(bytes, name, widths)) {
+    const key = `articles/${slug}/${v.file}`;
+    if (force || !(await uploader.exists(key))) await uploader.put(key, v.bytes, "image/webp");
+  }
+}
 const DATE = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+08:00$/;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -46,7 +55,7 @@ function summaryFrom(markdown) {
   return text.length > 80 ? text.slice(0, 80) + "…" : text;
 }
 
-async function syncOne(item, slug, { uploader, fetchers, linkMap, dryRun, force }) {
+async function syncOne(item, slug, { uploader, fetchers, linkMap, dryRun, force, imageWidths }) {
   const html = await fetchers.fetchArticleHtml(wechatShortUrl(item.url));
   const { markdown, images, coverUrl, description } = convertArticle(html, { linkMap });
   // Image-message, video and removed posts keep #js_content but render nothing without JavaScript.
@@ -59,6 +68,7 @@ async function syncOne(item, slug, { uploader, fetchers, linkMap, dryRun, force 
     dims[file] = dimensions(img.bytes);
     // Keys are positional (1.jpg, 2.jpg…): a resync must overwrite them, or edited articles keep old pictures.
     if (!dryRun && (force || !(await uploader.exists(key)))) await uploader.put(key, img.bytes, img.contentType);
+    if (!dryRun) await uploadWebp(uploader, slug, name, img.bytes, imageWidths, force);
     return uploader.url(key);
   };
   for (const im of images) urlFor[im.n] = await store(im.src, String(im.n));
@@ -67,7 +77,7 @@ async function syncOne(item, slug, { uploader, fetchers, linkMap, dryRun, force 
   return renderArticle({
     title: item.title, date: item.date, summary: item.summary?.trim() || description || summaryFrom(body),
     categories: [item.category], tags: item.tags ?? [], cover,
-    wechat_url: wechatShortUrl(item.url), wechat_id: item.wechat_id, images: dims, draft: false,
+    wechat_url: wechatShortUrl(item.url), wechat_id: item.wechat_id, images: dims, webp: dryRun ? undefined : true, draft: false,
   }, body);
 }
 
@@ -93,7 +103,7 @@ async function repairDeadLinks({ plan, contentDir, previewDir, dryRun, result })
 /**
  * @returns {Promise<{added: string[], skipped: string[], failed: {slug: string, error: string}[], unchanged: string[]}>}
  */
-export async function runSync({ plan, contentDir, skipFile, previewDir, uploader, fetchers, categories, dryRun = false, resync = null, sleepMs = 1500, log = () => {} }) {
+export async function runSync({ plan, contentDir, skipFile, previewDir, uploader, fetchers, categories, dryRun = false, resync = null, sleepMs = 1500, imageWidths = DEFAULT_IMAGE_WIDTHS, log = () => {} }) {
   const result = { added: [], skipped: [], failed: [], unchanged: [] };
   const { byId, bySlug, linkMap } = await existingArticles(contentDir);
   const skips = (existsSync(skipFile) ? parse(await readFile(skipFile, "utf8")) : null) ?? [];
@@ -122,7 +132,7 @@ export async function runSync({ plan, contentDir, skipFile, previewDir, uploader
     if (!first && sleepMs) await sleep(sleepMs);
     first = false;
     try {
-      const text = await syncOne(item, slug, { uploader, fetchers, linkMap, dryRun, force: resync === existing && Boolean(existing) });
+      const text = await syncOne(item, slug, { uploader, fetchers, linkMap, dryRun, imageWidths, force: resync === existing && Boolean(existing) });
       const dir = join(dryRun ? previewDir : contentDir, slug);
       await mkdir(dir, { recursive: true });
       await writeFile(join(dir, "index.md.tmp"), text);
@@ -135,5 +145,32 @@ export async function runSync({ plan, contentDir, skipFile, previewDir, uploader
   }
   await repairDeadLinks({ plan, contentDir, previewDir, dryRun, result });
   if (newSkips && !dryRun) await writeFile(skipFile, stringify(skips));
+  return result;
+}
+
+/**
+ * Add WebP versions to articles synced before WebP existed: download each original from R2 (via its public
+ * URL), upload the variants, then mark the article `webp: true`. Articles already marked are skipped.
+ * @returns {Promise<{optimized: string[], failed: {slug: string, error: string}[]}>}
+ */
+export async function optimizeExisting({ contentDir, uploader, downloadImage, imageWidths = DEFAULT_IMAGE_WIDTHS, log = () => {} }) {
+  const result = { optimized: [], failed: [] };
+  for (const slug of await readdir(contentDir)) {
+    const file = join(contentDir, slug, "index.md");
+    if (!existsSync(file)) continue;
+    const text = await readFile(file, "utf8");
+    const fm = readFrontMatter(text);
+    if (fm.webp || !fm.images || !fm.wechat_id) continue;
+    try {
+      for (const name of Object.keys(fm.images)) {
+        const img = await downloadImage(uploader.url(`articles/${slug}/${name}`));
+        await uploadWebp(uploader, slug, name.replace(/\.[^.]+$/, ""), img.bytes, imageWidths, true);
+      }
+      await writeFile(file, renderArticle({ ...fm, webp: true }, bodyOf(text)));
+      result.optimized.push(slug); log(`✓ ${slug}`);
+    } catch (e) {
+      result.failed.push({ slug, error: e.message }); log(`✗ ${slug}: ${e.message}`);
+    }
+  }
   return result;
 }

@@ -5,7 +5,7 @@ import { readFileSync, existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { parse } from "yaml";
-import { runSync } from "../src/sync.mjs";
+import { runSync, optimizeExisting } from "../src/sync.mjs";
 import { readFrontMatter } from "../src/frontmatter.mjs";
 
 const ARTICLE = readFileSync(new URL("./fixtures/article.html", import.meta.url), "utf8");
@@ -208,4 +208,32 @@ test("an article page with no body text and no images fails instead of writing a
   assert.equal(r.failed.length, 1);
   assert.match(r.failed[0].error, /empty/);
   assert.deepEqual(await readdir(s.contentDir), []);
+});
+
+
+test("sync uploads WebP versions of every image and marks the article webp: true", async () => {
+  const s = await setup();
+  await s.run({ items: [item(1)] }, { imageWidths: [480, 960] });
+  for (const k of ["articles/article-1/1.webp", "articles/article-1/2.webp", "articles/article-1/3.webp", "articles/article-1/cover.webp"]) assert.ok(s.calls.put.includes(k), k);
+  const fm = readFrontMatter(await readFile(join(s.contentDir, "article-1/index.md"), "utf8"));
+  assert.equal(fm.webp, true);
+});
+
+test("optimizeExisting adds WebP versions to already-synced articles once", async () => {
+  const s = await setup();
+  await s.run({ items: [item(1)] });
+  // simulate an article synced before WebP existed
+  const file = join(s.contentDir, "article-1/index.md");
+  await writeFile(file, (await readFile(file, "utf8")).replace(/^webp: true\n/m, ""));
+  const puts = [];
+  const uploader = { url: (k) => `https://img.example/${k}`, exists: async () => false, put: async (k) => puts.push(k) };
+  const download = async () => ({ bytes: PNG, ext: "png", contentType: "image/png" });
+  const r1 = await optimizeExisting({ contentDir: s.contentDir, uploader, downloadImage: download, imageWidths: [480] });
+  assert.deepEqual(r1.optimized, ["article-1"]);
+  assert.ok(puts.includes("articles/article-1/cover.webp"));
+  assert.equal(readFrontMatter(await readFile(file, "utf8")).webp, true);
+  const before = puts.length;
+  const r2 = await optimizeExisting({ contentDir: s.contentDir, uploader, downloadImage: download, imageWidths: [480] });
+  assert.deepEqual(r2.optimized, []);
+  assert.equal(puts.length, before);
 });

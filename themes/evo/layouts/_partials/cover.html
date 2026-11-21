@@ -8,7 +8,9 @@
   {{- with $p.Params.cover_video }}
   <video class="cover__media" src="{{ partial "img-url.html" . }}" poster="{{ $src }}" width="{{ $w }}" height="{{ $h }}" muted loop playsinline preload="none" data-autoplay-in-view aria-hidden="true"></video>
   {{- else }}
-  <img class="cover__media" src="{{ $src }}" alt="{{ $p.Params.cover_alt }}" width="{{ $w }}" height="{{ $h }}" decoding="async"{{ if $hero }} fetchpriority="high"{{ else }} loading="lazy"{{ end }}>
+  {{- $dims := index ($p.Params.images | default dict) (path.Base (urls.Parse .).Path) | default (slice $w $h) }}
+  {{- $sizes := cond $hero "(min-width: 1200px) 1200px, 100vw" "(min-width: 1024px) 380px, (min-width: 640px) 50vw, 100vw" }}
+  {{ partial "picture.html" (dict "page" $p "src" $src "alt" $p.Params.cover_alt "dims" $dims "sizes" $sizes "class" "cover__media" "eager" $hero) }}
   {{- end }}
   {{- end }}
   {{- if $p.Params.cover_video }}<span class="cover__badge">{{ partial "icon.html" "play" }}{{ partial "t.html" (dict "page" $p "key" "video_badge") }}</span>{{ end }}
