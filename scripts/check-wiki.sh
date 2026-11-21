@@ -138,6 +138,9 @@ check_all_wiki_pages_rendered() {
 
 for c in check_build check_wiki_section check_raw_ignored check_home_posts_only check_broken_link_fails check_index_complete check_search_includes_wiki check_concepts_cite_sources check_rss_posts_only check_ci_strict check_unsafe_link_neutralised check_mermaid_rendered check_mermaid_loaded_everywhere check_cv_linked check_all_wiki_pages_rendered; do $c; done
 bash scripts/check-site.sh || FAILS=$((FAILS+1))
+if [[ -d video/node_modules ]]; then
+  if npm test --silent --prefix video >/dev/null 2>&1; then pass check_video_tests; else fail check_video_tests "npm test --prefix video failed"; fi
+fi
 if [[ -d tools/wx-sync/node_modules ]]; then
   if npm test --silent --prefix tools/wx-sync >/dev/null 2>&1; then pass check_wx_sync_tests; else fail check_wx_sync_tests "npm test --prefix tools/wx-sync failed"; fi
 fi
