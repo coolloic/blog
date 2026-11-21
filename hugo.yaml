@@ -29,7 +29,7 @@ outputs:
 params:
   env: production
   description: "AI进化调研员：把前沿 AI 讲清楚。公众号文章的长期归档，附英文技术笔记与 AI Wiki。"
-  imageBase: "https://pub-PLACEHOLDER.r2.dev"
+  imageBase: "https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev"
   shareImage: "images/og-default.png" # fallback og:image (1200x630) for pages without a cover
   # Search-engine site verification codes; a meta tag is emitted only when a value is set.
   verification:
