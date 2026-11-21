@@ -95,7 +95,7 @@ check_unsafe_link_neutralised() {
 check_cv_linked() {
   # The CV lives at the site root; the blog's menu (every page) and About page must link to it.
   local cv='href="?https://coolloic.github.io/"?[ >]' f bad=""
-  for f in public/index.html public/posts/hello-world/index.html public/about/index.html; do
+  for f in public/index.html public/posts/anatomy-of-an-ai-agent/index.html public/about/index.html; do
     grep -Eq "$cv" "$f" 2>/dev/null || bad+="$f "
   done
   if [[ -z "$bad" ]]; then pass check_cv_linked; else fail check_cv_linked "no link to the CV on: $bad"; fi
@@ -114,7 +114,7 @@ check_mermaid_loaded_everywhere() {
 }
 
 check_mermaid_rendered() {
-  local with=public/wiki/concepts/agent-design-patterns/index.html without=public/posts/hello-world/index.html
+  local with=public/wiki/concepts/agent-design-patterns/index.html without=public/posts/anatomy-of-an-ai-agent/index.html
   if ! grep -Eq '<pre class="?mermaid' "$with" 2>/dev/null; then fail check_mermaid_rendered "no <pre class=mermaid> in agent-design-patterns"
   elif grep -Eq '&amp;(#34|gt|lt|quot);' "$with"; then fail check_mermaid_rendered "diagram source is double-escaped (Mermaid will show syntax errors)"
   elif ! grep -q 'mermaid@[0-9.]*/dist/mermaid.esm.min.mjs' public/js/mermaid-loader.js 2>/dev/null; then fail check_mermaid_rendered "public/js/mermaid-loader.js missing or not importing a pinned Mermaid"

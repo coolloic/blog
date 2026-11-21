@@ -545,7 +545,7 @@ check_redirect_site() {
   local page="$r/articles/index.html" bad=""
   grep -q '<link rel="canonical" href="https://aitanyan.com/articles/">' "$page" 2>/dev/null || bad+="canonical "
   grep -q 'http-equiv="refresh" content="0; url=https://aitanyan.com/articles/"' "$page" 2>/dev/null || bad+="refresh "
-  [[ -f "$r/index.html" && -f "$r/posts/hello-world/index.html" ]] || bad+="pages "
+  [[ -f "$r/index.html" && -f "$r/posts/modern-web-guidelines/index.html" ]] || bad+="pages "
   grep -q 'location.replace' "$r/404.html" 2>/dev/null && grep -q '/blog' "$r/404.html" || bad+="404-mapping "
   [[ ! -e "$r/sitemap.xml" ]] || bad+="old-sitemap "
   rm -rf "$o" "$r"
