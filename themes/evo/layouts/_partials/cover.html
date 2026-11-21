@@ -2,7 +2,7 @@
      cover or it fails to load. partial "cover.html" (dict "page" $p "size" "card|hero")
      Performance: the WebP <picture> always paints first. On the article page (hero) a cover_video is only
      announced with data-video; video-inview.js lays the loop over the image after load. Cards never get video. */ -}}
-{{- $p := .page -}}{{- $hero := eq .size "hero" -}}{{- $eager := or $hero .eager -}}
+{{- $p := .page -}}{{- $hero := eq .size "hero" -}}{{- $eager := or $hero .eager -}}{{- $priority := or $hero (ne .priority false) -}}
 {{- $w := cond $hero 2100 1600 -}}{{- $h := 900 -}}
 {{- $style := slice -}}
 {{- if ne .vt false }}{{ $style = $style | append (printf "view-transition-name: cover-%s" ($p.File.ContentBaseName | default $p.File.BaseFileName | urlize)) }}{{ end -}}
@@ -13,7 +13,7 @@
   {{- $src := partial "img-url.html" . }}
   {{- $dims := index ($p.Params.images | default dict) (path.Base (urls.Parse .).Path) | default (slice $w $h) }}
   {{- $sizes := cond $hero "(min-width: 1200px) 1200px, 100vw" "(min-width: 1024px) 380px, (min-width: 640px) 50vw, 100vw" }}
-  {{ partial "picture.html" (dict "page" $p "src" $src "alt" $p.Params.cover_alt "dims" $dims "sizes" $sizes "class" "cover__media" "eager" $eager) }}
+  {{ partial "picture.html" (dict "page" $p "src" $src "alt" $p.Params.cover_alt "dims" $dims "sizes" $sizes "class" "cover__media" "eager" $eager "priority" $priority) }}
   {{- end }}
   {{- if $video }}<span class="cover__badge">{{ partial "icon.html" "play" }}{{ partial "t.html" (dict "page" $p "key" "video_badge") }}</span>{{ end }}
 </div>

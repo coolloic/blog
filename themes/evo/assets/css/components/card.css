@@ -168,3 +168,4 @@
 .follow-card::after { content: ""; position: absolute; z-index: -1; inset-block: -30px; inset-inline-end: -20px; inline-size: 260px;
   background: var(--follow-logo) center / contain no-repeat; opacity: .14; transform: rotate(-8deg); pointer-events: none; }
 @media (max-width: 639px) { .follow-card::after { inline-size: 180px; opacity: .1; } }
+.page-head__title { display: flex; align-items: center; gap: var(--space-m); }

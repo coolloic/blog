@@ -3,14 +3,14 @@
 {{- $p := .page -}}
 <div class="container stack-section">
   <header class="page-head">
-    <h1>{{ $p.Title }}</h1>
+    <h1 class="page-head__title">{{ with .current }}{{ partial "cat-icon.html" (dict "slug" . "size" 56 "eager" true) }}{{ end }}{{ $p.Title }}</h1>
     {{ with $p.Params.summary }}<p class="page-head__desc">{{ . }}</p>{{ end }}
     <p class="meta-line">{{ printf (partial "t.html" (dict "page" $p "key" "total_count")) (len .pages) }}</p>
   </header>
   {{ partial "category-bar.html" (dict "page" $p "current" .current) }}
   {{- if .pages }}
   {{- $pager := partial "article-pager.html" $p }}
-  <div class="card-grid">{{ range $i, $a := $pager.Pages }}{{ partial "card.html" (dict "page" $a "eager" (lt $i 3)) }}{{ end }}</div>
+  <div class="card-grid">{{ range $i, $a := $pager.Pages }}{{ partial "card.html" (dict "page" $a "eager" (lt $i 3) "priority" (eq $i 0)) }}{{ end }}</div>
   {{ partial "pager.html" (dict "page" $p "pager" $pager) }}
   {{- else }}
   <div class="empty" data-empty="no_category_articles">

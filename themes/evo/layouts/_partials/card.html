@@ -1,8 +1,9 @@
 {{- /* partial "card.html" page, or (dict "page" $p "eager" true) for cards in the first row of a list. */ -}}
 {{- $p := . -}}{{- $eager := false -}}
-{{- if reflect.IsMap . }}{{ $p = .page }}{{ $eager = .eager }}{{ end -}}
+{{- $priority := true -}}
+{{- if reflect.IsMap . }}{{ $p = .page }}{{ $eager = .eager }}{{ $priority = ne .priority false }}{{ end -}}
 <article class="card">
-  {{ partial "cover.html" (dict "page" $p "size" "card" "eager" $eager) }}
+  {{ partial "cover.html" (dict "page" $p "size" "card" "eager" $eager "priority" $priority) }}
   <div class="card__body">
     {{ partial "category-chip.html" $p }}
     <h3 class="card__title"><a class="card__link" href="{{ $p.RelPermalink }}">{{ $p.Title }}</a></h3>

@@ -25,7 +25,7 @@ organization: true
 - **技术笔记（英文）：** 关于 AI agent、工具和 Web 工程的长文，见 [技术笔记](notes/_index.md)。
 - **AI Wiki（英文）：** 一个由 LLM 维护的知识库，每个概念都注明来源，见 [AI Wiki](wiki/_index.md)。
 
-### 欢迎点题和投稿
+### 欢迎点题和投稿 {#contribute}
 
 想让我们调研哪个 AI 话题？哪个 AI 工具想要一份「完全使用指南」？有一手经历或线索愿意分享？发邮件到 **[hello@aitanyan.com](mailto:hello@aitanyan.com)** 告诉我们：写上话题或工具名字，再说说你最关心什么、想用它做什么。呼声高的，我们优先安排。也可以在公众号「AI调研员」后台留言。
 

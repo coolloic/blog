@@ -15,5 +15,5 @@
   {{- if eq $ext "webp" }}{{ $srcset = $srcset | append (printf "%s %dw" .src $w0) }}{{ else }}{{ $srcset = $srcset | append (printf "%s.webp %dw" $base $w0) }}{{ end -}}
 {{- end -}}
 {{- if $srcset }}<picture><source type="image/webp" srcset="{{ delimit $srcset ", " }}" sizes="{{ .sizes }}">{{ end -}}
-<img{{ with .class }} class="{{ . }}"{{ end }} src="{{ .src }}" alt="{{ .alt }}"{{ if reflect.IsSlice $dims }} width="{{ index $dims 0 }}" height="{{ index $dims 1 }}"{{ end }} decoding="async"{{ if .eager }} fetchpriority="high"{{ else }} loading="lazy"{{ end }}>
+<img{{ with .class }} class="{{ . }}"{{ end }} src="{{ .src }}" alt="{{ .alt }}"{{ if reflect.IsSlice $dims }} width="{{ index $dims 0 }}" height="{{ index $dims 1 }}"{{ end }} decoding="async"{{ if .eager }}{{ if ne .priority false }} fetchpriority="high"{{ end }}{{ else }} loading="lazy"{{ end }}>
 {{- if $srcset }}</picture>{{ end -}}
