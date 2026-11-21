@@ -833,8 +833,9 @@ check_perf_basics() {
   local bad="" imgs; imgs=$(html1 "$OUT/articles/index.html" | grep -oE '<img class="?cover__media[^>]*>')
   local first; first=$(echo "$imgs" | head -1)
   [[ "$first" == *fetchpriority=*high* && "$first" != *loading=*lazy* ]] || bad+="first-card-eager "
-  echo "$imgs" | sed -n '2,3p' | grep -q 'loading=' && bad+="row1-should-not-lazy "
+  # Only the first card competes for the LCP: on phones cards 2+ are below the fold.
   echo "$imgs" | sed -n '2,3p' | grep -q 'fetchpriority' && bad+="only-first-high-priority "
+  [[ $(echo "$imgs" | sed -n '2,3p' | grep -c 'loading="\?lazy') -eq 2 ]] || bad+="rest-lazy "
   html1 "$OUT/index.html" | grep -qE '<link rel="?stylesheet"? href="?[^" >]*css/main' && bad+="css-not-inlined "
   html1 "$OUT/index.html" | grep -qE '<style>[^<]{2000,}' || perl -0777 -ne 'exit(/<style>[^<]{2000}/ ? 0 : 1)' "$OUT/index.html" || bad+="no-inline-css "
   grep -q 'logo-mark-128.webp' themes/evo/layouts/_partials/logo.html || bad+="logo-webp "
