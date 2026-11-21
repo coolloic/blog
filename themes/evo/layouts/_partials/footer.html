@@ -11,6 +11,6 @@
         {{- end }}
       </nav>
     </div>
-    <p class="site-footer__copy">{{ printf (partial "t.html" (dict "page" site.Home "key" "copyright")) now.Year }}</p>
+    <p class="site-footer__copy">{{ printf (partial "t.html" (dict "page" site.Home "key" "copyright")) now.Year site.Params.company }}</p>
   </div>
 </footer>

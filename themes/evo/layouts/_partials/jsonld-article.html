@@ -10,7 +10,7 @@
   "inLanguage" (index hugo.Data.i18n (partial "lang.html" .) "html_lang")
   "mainEntityOfPage" .Permalink
   "author" (dict "@type" "Person" "name" (site.Params.author | default "Loic") "url" ("about/" | absURL))
-  "publisher" (dict "@type" "Organization" "name" site.Title "logo" (dict "@type" "ImageObject" "url" ("images/logo-512.png" | absURL)))
+  "publisher" (dict "@type" "Organization" "name" site.Title "legalName" site.Params.company "logo" (dict "@type" "ImageObject" "url" ("images/logo-512.png" | absURL)))
 -}}
 {{- with .Params.wechat_url }}{{ $d = merge $d (dict "isBasedOn" .) }}{{ end -}}
 <script type="application/ld+json">{{ $d | jsonify | safeJS }}</script>

@@ -15,7 +15,7 @@ site_tagline: AI Evolution Researcher
 footer_label: Footer links
 footer_follow: Follow AI调研员
 footer_follow_sub: Scan or search on WeChat for Chinese explainers
-copyright: "© %d AI调研员."
+copyright: "© %d AI调研员 · %s."
 latest: Latest articles
 view_all: View all →
 categories_label: Categories

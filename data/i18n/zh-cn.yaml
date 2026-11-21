@@ -15,7 +15,7 @@ site_tagline: AI Evolution Researcher
 footer_label: 页脚链接
 footer_follow: 关注 AI调研员
 footer_follow_sub: 微信扫码或搜索同名公众号
-copyright: "© %d AI调研员 · 保留所有权利。"
+copyright: "© %d AI调研员 · %s · 保留所有权利。"
 latest: 最新科普
 view_all: 查看全部 →
 categories_label: 栏目分类
