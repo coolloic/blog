@@ -282,3 +282,39 @@ test("resync refuses an article with manual corrections unless forced", async ()
   const r2 = await s.run({ items: [item(1)] }, { resync: "article-1", forceResync: true });
   assert.deepEqual(r2.added, ["article-1"]);
 });
+
+const PREVIEW = "http://mp.weixin.qq.com/s?__biz=MzA&tempkey=abc&chksm=1";
+function draft(n, over = {}) {
+  const { url, ...rest } = item(n, over);
+  return { ...rest, wechat_id: `50253300${n}_1`, preview_url: PREVIEW, ...over };
+}
+
+test("a draft syncs from its preview link like any article, with no WeChat link yet", async () => {
+  const s = await setup();
+  let fetched;
+  const orig = s.run;
+  const r = await runSync({ plan: { items: [draft(1)] }, contentDir: s.contentDir, skipFile: s.skipFile, previewDir: s.previewDir, categories: CATEGORIES, sleepMs: 0,
+    uploader: { url: (k) => `https://img.example/${k}`, exists: async () => false, put: async () => {} },
+    fetchers: { fetchArticleHtml: async (u) => { fetched = u; return ARTICLE; }, downloadImage: async () => ({ bytes: PNG, ext: "png", contentType: "image/png" }) } });
+  assert.deepEqual(r.added, ["article-1"]);
+  assert.equal(fetched, PREVIEW);
+  const fm = readFrontMatter(await readFile(join(s.contentDir, "article-1/index.md"), "utf8"));
+  assert.equal(fm.wechat_url, undefined);
+  assert.equal(fm.wechat_draft, true);
+  assert.equal(fm.wechat_id, "502533001_1");
+  assert.equal(fm.draft, false); // a normal, public article on the site
+  assert.ok(!JSON.stringify(fm).includes("tempkey")); // the temporary preview key is never written
+});
+
+test("when a synced draft is published, the next sync links it by title instead of duplicating it", async () => {
+  const s = await setup();
+  await s.run({ items: [draft(1, { title: "同一个标题" })] });
+  const r = await s.run({ items: [item(9, { title: "同一个标题", slug: "some-other-slug" })] });
+  assert.deepEqual(r.added, []);
+  assert.deepEqual(r.linked, ["article-1"]);
+  const fm = readFrontMatter(await readFile(join(s.contentDir, "article-1/index.md"), "utf8"));
+  assert.equal(fm.wechat_url, "https://mp.weixin.qq.com/s/ID9");
+  assert.equal(fm.wechat_id, "1009_1");
+  assert.equal(fm.wechat_draft, undefined);
+  assert.ok(!existsSync(join(s.contentDir, "some-other-slug")));
+});

@@ -1,7 +1,8 @@
-<section class="wechat-footer" aria-label="{{ partial "t.html" (dict "page" . "key" "from_wechat") }}">
+{{- $k := cond (isset .Params "wechat_url") "" "_follow" -}}
+<section class="wechat-footer" aria-label="{{ partial "t.html" (dict "page" . "key" (printf "from_wechat%s" $k)) }}">
   {{ partial "qr.html" (dict "size" 96 "class" "follow-card__qr" "alt" (partial "t.html" (dict "page" . "key" "follow_qr_alt"))) }}
   <div class="wechat-footer__text">
-    <p class="wechat-footer__title">{{ partial "t.html" (dict "page" . "key" "wechat_footer_title") }}</p>
+    <p class="wechat-footer__title">{{ partial "t.html" (dict "page" . "key" (printf "wechat_footer_title%s" $k)) }}</p>
     <p>{{ partial "t.html" (dict "page" . "key" "wechat_footer_sub") }}</p>
   </div>
   <div class="wechat-footer__actions">

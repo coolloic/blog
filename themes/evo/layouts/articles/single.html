@@ -1,7 +1,8 @@
 {{ define "main" }}
 {{- range .Params.categories }}{{ if not (index hugo.Data.categories .) }}{{ errorf "%s: unknown category %q (allowed: data/categories.yaml)" $.File.Path . }}{{ end }}{{ end }}
 {{- if not .Draft }}
-  {{- range slice "cover" "wechat_url" }}{{ if not (index $.Params .) }}{{ errorf "%s: missing %s" $.File.Path . }}{{ end }}{{ end }}
+  {{- /* wechat_url may be missing only for a WeChat draft synced ahead of publication (wechat_draft: true). */}}
+  {{- range slice "cover" "wechat_url" }}{{ if and (not (index $.Params .)) (not (and (eq . "wechat_url") $.Params.wechat_draft)) }}{{ errorf "%s: missing %s" $.File.Path . }}{{ end }}{{ end }}
 {{- end }}
 {{ partial "progress.html" . }}
 <article class="article">

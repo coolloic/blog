@@ -81,6 +81,6 @@ const result = await runSync({
   log: (line) => console.log(line),
 });
 
-console.log(`\n${dryRun ? "[dry run] " : ""}added ${result.added.length} · unchanged ${result.unchanged.length} · skipped ${result.skipped.length} · failed ${result.failed.length}`);
+console.log(`\n${dryRun ? "[dry run] " : ""}added ${result.added.length} · linked ${result.linked?.length ?? 0} · unchanged ${result.unchanged.length} · skipped ${result.skipped.length} · failed ${result.failed.length}`);
 for (const f of result.failed) console.log(`  failed ${f.slug}: ${f.error}`);
 process.exit(result.failed.length ? 1 : 0);

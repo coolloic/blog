@@ -23,8 +23,8 @@ const DATE = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+08:00$/;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 async function existingArticles(contentDir) {
-  const byId = new Map(), bySlug = new Map(), linkMap = new Map();
-  if (!existsSync(contentDir)) return { byId, bySlug, linkMap };
+  const byId = new Map(), bySlug = new Map(), linkMap = new Map(), draftByTitle = new Map();
+  if (!existsSync(contentDir)) return { byId, bySlug, linkMap, draftByTitle };
   for (const slug of await readdir(contentDir)) {
     if (slug.startsWith("_") || slug.startsWith(".")) continue;
     const file = join(contentDir, slug, "index.md");
@@ -36,8 +36,9 @@ async function existingArticles(contentDir) {
     const short = wechatShortUrl(fm.wechat_url);
     if (short) linkMap.set(short, slug);
     if (fm.wechat_id) linkMap.set(String(fm.wechat_id), slug);
+    if (fm.wechat_draft && fm.title) draftByTitle.set(String(fm.title).trim(), slug);
   }
-  return { byId, bySlug, linkMap };
+  return { byId, bySlug, linkMap, draftByTitle };
 }
 
 function validate(item, categories) {
@@ -45,7 +46,9 @@ function validate(item, categories) {
   if (!SLUG.test(item.slug || "")) return `invalid slug ${JSON.stringify(item.slug)} (kebab-case, ≤ 6 words)`;
   if (!categories.includes(item.category)) return `unknown category ${JSON.stringify(item.category)}`;
   if (!DATE.test(item.date || "")) return `date must look like 2026-11-20T08:00:00+08:00, got ${JSON.stringify(item.date)}`;
-  if (!wechatShortUrl(item.url)) return `url must be https://mp.weixin.qq.com/s/<id>`;
+  // Drafts have no public link yet: they are fetched from the backend's temporary preview link instead.
+  if (item.preview_url) { if (!/^https?:\/\/mp\.weixin\.qq\.com\/s\?/.test(item.preview_url)) return "preview_url must be a mp.weixin.qq.com/s? preview link"; }
+  else if (!wechatShortUrl(item.url)) return `url must be https://mp.weixin.qq.com/s/<id>`;
   if (!item.title) return "missing title";
   return null;
 }
@@ -56,7 +59,7 @@ function summaryFrom(markdown) {
 }
 
 async function syncOne(item, slug, { uploader, fetchers, linkMap, dryRun, force, imageWidths, keep = {} }) {
-  const html = await fetchers.fetchArticleHtml(wechatShortUrl(item.url));
+  const html = await fetchers.fetchArticleHtml(item.preview_url || wechatShortUrl(item.url));
   const { markdown, images, coverUrl, description } = convertArticle(html, { linkMap });
   // Image-message, video and removed posts keep #js_content but render nothing without JavaScript.
   if (!images.length && summaryFrom(markdown).length < MIN_BODY_CHARS) throw new Error("article body is empty (JavaScript-rendered or removed?)");
@@ -78,7 +81,10 @@ async function syncOne(item, slug, { uploader, fetchers, linkMap, dryRun, force,
     ...keep, // keys the owner added by hand to an existing article survive a resync
     title: item.title, date: item.date, summary: item.summary?.trim() || description || summaryFrom(body),
     categories: [item.category], tags: item.tags ?? [], cover,
-    wechat_url: wechatShortUrl(item.url), wechat_id: item.wechat_id, images: dims, webp: dryRun ? undefined : true, draft: false,
+    // A draft has no WeChat link yet (never store the temporary preview key); `wechat_draft` lets the next sync
+    // link it by title once it is published.
+    wechat_url: item.preview_url ? undefined : wechatShortUrl(item.url), wechat_id: item.wechat_id,
+    wechat_draft: item.preview_url ? true : undefined, images: dims, webp: dryRun ? undefined : true, draft: false,
   }, body);
 }
 
@@ -105,8 +111,8 @@ async function repairDeadLinks({ plan, contentDir, previewDir, dryRun, result })
  * @returns {Promise<{added: string[], skipped: string[], failed: {slug: string, error: string}[], unchanged: string[]}>}
  */
 export async function runSync({ plan, contentDir, skipFile, previewDir, uploader, fetchers, categories, dryRun = false, resync = null, forceResync = false, sleepMs = 1500, imageWidths = DEFAULT_IMAGE_WIDTHS, log = () => {} }) {
-  const result = { added: [], skipped: [], failed: [], unchanged: [] };
-  const { byId, bySlug, linkMap } = await existingArticles(contentDir);
+  const result = { added: [], skipped: [], failed: [], unchanged: [], linked: [] };
+  const { byId, bySlug, linkMap, draftByTitle } = await existingArticles(contentDir);
   const skips = (existsSync(skipFile) ? parse(await readFile(skipFile, "utf8")) : null) ?? [];
   const skipIds = new Set(skips.map((s) => String(s.wechat_id)));
   for (const it of plan.items) if (!it.skip && !skipIds.has(String(it.wechat_id)) && wechatShortUrl(it.url)) {
@@ -122,6 +128,15 @@ export async function runSync({ plan, contentDir, skipFile, previewDir, uploader
     if (item.skip || skipIds.has(id)) {
       if (!skipIds.has(id)) { skips.push({ wechat_id: id, title: item.title, reason: String(item.skip) }); skipIds.add(id); newSkips = true; }
       result.skipped.push(id); continue;
+    }
+    // A draft synced earlier and now published under a new id: give it its WeChat link, keep the site's copy.
+    const published = !item.preview_url && !byId.has(id) && draftByTitle.get(String(item.title ?? "").trim());
+    if (published && wechatShortUrl(item.url)) {
+      const file = join(contentDir, published, "index.md"), text = await readFile(file, "utf8");
+      const { wechat_draft, ...fm } = readFrontMatter(text);
+      if (!dryRun) await writeFile(file, renderArticle({ ...fm, wechat_url: wechatShortUrl(item.url), wechat_id: id }, bodyOf(text)));
+      byId.set(id, published); draftByTitle.delete(String(item.title).trim());
+      result.linked.push(published); log(`↔ ${published}: linked to its WeChat post`); continue;
     }
     const existing = byId.get(id);
     if (existing && resync !== existing) { result.unchanged.push(existing); continue; }
