@@ -15,3 +15,6 @@ video/node_modules/
 # wx-sync (sub-project 2): run cache/plan and the tool's dependencies
 .wx-sync/
 tools/wx-sync/node_modules/
+
+# wrangler (Cloudflare CLI) local cache
+.wrangler/

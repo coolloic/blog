@@ -9,7 +9,7 @@ lastmod: 2026-11-21
 
 ## 这个网站
 
-网站正在改版：从英文技术博客改成「AI进化调研员」公众号的中文科普归档站，原来的英文技术文章和 AI Wiki 保留为「技术笔记」栏目。
+网站正在改版：从英文技术博客改成「AI调研员」公众号的中文科普归档站，原来的英文技术文章和 AI Wiki 保留为「技术笔记」栏目。
 
 - **源码：** [github.com/coolloic/blog](https://github.com/coolloic/blog)
 - **技术：** [Hugo](https://gohugo.io) 静态生成，自研主题，设计稿用 Google Stitch 出图；动效全部是渐进增强（View Transitions、滚动驱动动画）

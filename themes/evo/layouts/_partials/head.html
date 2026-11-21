@@ -4,7 +4,9 @@
 <script>(function(){var t;try{t=localStorage.getItem("theme")}catch(e){}if(t!=="light"&&t!=="dark"){t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"}document.documentElement.setAttribute("data-theme",t)})()</script>
 <title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} · {{ site.Title }}{{ end }}</title>
 {{ partial "seo.html" . }}
-<link rel="icon" href="{{ "images/favicon.svg" | relURL }}" type="image/svg+xml">
+<link rel="icon" href="{{ "images/favicon-32.png" | relURL }}" type="image/png" sizes="32x32">
+<link rel="icon" href="{{ "images/icon-192.png" | relURL }}" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="{{ "images/apple-touch-icon.png" | relURL }}">
 {{ partial "fonts.html" . }}
 <style>{{ partial "tokens.css.html" . | safeCSS }}</style>
 {{- $css := resources.Get "css/main.css" | css.Build (dict "minify" hugo.IsProduction) | fingerprint }}

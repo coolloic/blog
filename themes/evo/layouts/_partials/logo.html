@@ -1,0 +1,9 @@
+{{- /* Horizontal logo, rebuilt from the owner's ~/Documents/Logo/AI调研员_logo_横版.svg (same layout,
+     font, colours). Inline so the text can switch colour in dark mode; the robot mark is a small PNG. */ -}}
+<svg class="brand__logo" viewBox="70 68 1290 460" role="img" aria-labelledby="brand-logo-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="brand-logo-title">{{ site.Title }}</title>
+  <image href="{{ "images/logo-mark.png" | relURL }}" x="79" y="77" width="442" height="442"/>
+  <text class="brand__logo-name" x="600" y="300" font-weight="900" font-size="170"><tspan class="brand__logo-ai">AI</tspan>调研员</text>
+  <rect x="606" y="350" width="120" height="12" rx="6" fill="#FFC93C"/>
+  <text class="brand__logo-tagline" x="606" y="450" font-weight="500" font-size="58" letter-spacing="4">每一个脑洞，都有数据撑腰</text>
+</svg>

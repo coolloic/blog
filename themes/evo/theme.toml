@@ -1,4 +1,4 @@
 name = "evo"
 license = "MIT"
-description = "Theme for AI进化调研员: Chinese AI explainer archive plus English tech notes. Built from Stitch designs in design/."
+description = "Theme for AI调研员: Chinese AI explainer archive plus English tech notes. Built from Stitch designs in design/."
 min_version = "0.169.0"

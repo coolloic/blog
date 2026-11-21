@@ -32,7 +32,7 @@
 {{- end }}
 <link rel="alternate" type="application/rss+xml" title="{{ site.Title }}" href="{{ "index.xml" | absURL }}">
 {{- if .IsHome }}
-{{- $site := dict "@context" "https://schema.org" "@type" "WebSite" "name" site.Title "alternateName" "AI Evolution Researcher" "url" ("" | absURL) "inLanguage" "zh-CN" "description" site.Params.description
+{{- $site := dict "@context" "https://schema.org" "@type" "WebSite" "name" site.Title "url" ("" | absURL) "inLanguage" "zh-CN" "description" site.Params.description
     "potentialAction" (dict "@type" "SearchAction" "target" (dict "@type" "EntryPoint" "urlTemplate" (printf "%s?q={search_term_string}" ("search/" | absURL))) "query-input" "required name=search_term_string") }}
 <script type="application/ld+json">{{ $site | jsonify | safeJS }}</script>
 {{- else }}

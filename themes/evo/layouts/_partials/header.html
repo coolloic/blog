@@ -2,9 +2,7 @@
 <header class="site-header">
   <div class="container site-header__inner">
     <a class="brand" href="{{ "" | relURL }}">
-      <span class="brand__mark" aria-hidden="true">{{ partial "icon.html" "spark" }}</span>
-      <span class="brand__name">{{ site.Title }}</span>
-      <span class="brand__tagline">{{ partial "t.html" (dict "page" . "key" "site_tagline") }}</span>
+      {{ partial "logo.html" . }}
     </a>
     <nav class="site-nav" aria-label="{{ partial "t.html" (dict "page" . "key" "nav_label") }}">
       {{ partial "nav-links.html" . }}

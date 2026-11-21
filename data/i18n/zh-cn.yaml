@@ -13,18 +13,18 @@ close: 关闭
 theme_toggle: 切换深色模式
 site_tagline: AI Evolution Researcher
 footer_label: 页脚链接
-footer_follow: 关注 AI进化调研员
+footer_follow: 关注 AI调研员
 footer_follow_sub: 微信扫码或搜索同名公众号
-copyright: "© %d AI进化调研员 · 保留所有权利。"
+copyright: "© %d AI调研员 · 保留所有权利。"
 latest: 最新科普
 view_all: 查看全部 →
 categories_label: 栏目分类
 article_count: "%d 篇"
 video_badge: 动态封面
-follow_title: 关注公众号 AI进化调研员，每周更新
+follow_title: 关注公众号 AI调研员，每日更新
 follow_sub: 在微信里搜索
 follow_badge: WeChat Official Account
-follow_qr_alt: 微信公众号 AI进化调研员 二维码
+follow_qr_alt: 微信公众号 AI调研员 二维码
 notes_title: 技术笔记 Tech Notes
 notes_desc: Long-form English engineering posts & an AI knowledge-base Wiki.
 notes_enter: 进入技术笔记 →
@@ -44,7 +44,7 @@ section_wiki: Wiki
 month_format: "1月"
 toc: 目录
 from_wechat: 原文发于公众号
-wechat_footer_title: 原文发于公众号「AI进化调研员」
+wechat_footer_title: 原文发于公众号「AI调研员」
 wechat_footer_sub: 扫码关注，第一时间读到新文章。
 read_original: 阅读原文
 watch_vertical: 看 60 秒视频版
