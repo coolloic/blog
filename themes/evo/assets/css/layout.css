@@ -52,3 +52,17 @@ main:focus { outline: none; }
 .site-footer__links a { color: var(--color-muted); text-decoration: none; }
 .site-footer__links a:hover { color: var(--color-accent); }
 .site-footer__copy { padding-block-start: var(--space-m); border-block-start: 1px solid color-mix(in srgb, var(--color-border) 30%, transparent); font-family: var(--font-mono); font-size: 13px; color: var(--color-muted); }
+
+/* Back to top: a small floating button. Pure CSS: where scroll-driven animations exist it fades in after the
+   first screen; elsewhere it is simply always there. Instant jump with reduced motion (motion.css). */
+.to-top { position: fixed; inset-inline-end: max(var(--space-m), env(safe-area-inset-right)); inset-block-end: max(var(--space-l), env(safe-area-inset-bottom)); z-index: 40;
+  display: grid; place-items: center; inline-size: 44px; block-size: 44px; border-radius: 50%; border: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-surface) 88%, transparent); color: var(--color-text); box-shadow: 0 6px 20px -8px rgb(0 0 0 / .45);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); text-decoration: none; }
+.to-top:hover, .to-top:focus-visible { border-color: var(--color-accent); color: var(--color-accent); }
+.to-top .icon { inline-size: 20px; block-size: 20px; }
+@supports (animation-timeline: scroll()) {
+  .to-top { animation: evo-to-top linear both; animation-timeline: scroll(root); animation-range: 0 100vh; }
+  @keyframes evo-to-top { from { opacity: 0; visibility: hidden; translate: 0 12px; } 99% { visibility: hidden; } to { opacity: 1; visibility: visible; translate: 0 0; } }
+}
+html { scroll-behavior: smooth; }

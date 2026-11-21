@@ -9,7 +9,7 @@
     <header class="article__head"><h1>{{ .Title }}</h1><p class="article__summary">{{ .Params.summary }}</p></header>
 
     <section class="subscribe__option" aria-labelledby="sub-wechat">
-      <img class="follow-card__qr" src="{{ "images/wechat-qr.png" | relURL }}" width="120" height="120" alt="公众号「AI调研员」二维码" loading="lazy">
+      {{ partial "qr.html" (dict "size" 120 "class" "follow-card__qr" "alt" "公众号「AI调研员」二维码") }}
       <div>
         <h2 id="sub-wechat">方式一：关注公众号</h2>
         <p>微信扫码，或在微信里搜索 <strong>AI调研员</strong>。新文章发布当天推送给你，还能在后台留言提问。</p>

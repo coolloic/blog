@@ -2,7 +2,7 @@
   <div class="container site-footer__inner">
     <div class="site-footer__top">
       <a class="follow-mini" href="{{ "about/" | relURL }}">
-        <img src="{{ "images/wechat-qr.png" | relURL }}" width="48" height="48" alt="" loading="lazy">
+        {{ partial "qr.html" (dict "size" 48 "alt" "") }}
         <span><strong>{{ partial "t.html" (dict "page" site.Home "key" "footer_follow") }}</strong><small>{{ partial "t.html" (dict "page" site.Home "key" "footer_follow_sub") }}</small></span>
       </a>
       <nav class="site-footer__links" aria-label="{{ partial "t.html" (dict "page" site.Home "key" "footer_label") }}">

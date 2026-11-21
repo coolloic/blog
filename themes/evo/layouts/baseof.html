@@ -4,13 +4,14 @@
 <head>
 {{ partial "head.html" . }}
 </head>
-<body>
+<body id="top">
 <a class="skip-link" href="#main" lang="zh-CN">{{ partial "t.html" (dict "page" site.Home "key" "skip_link") }}</a>
 {{ partial "header.html" . }}
 <main id="main" tabindex="-1">
 {{ block "main" . }}{{ end }}
 </main>
 {{ partial "footer.html" . }}
+<a class="to-top" href="#top" aria-label="{{ partial "t.html" (dict "page" . "key" "back_to_top") }}">{{ partial "icon.html" "arrow-up" }}</a>
 {{- $vjs := resources.Get "js/video-inview.js" | js.Build (dict "minify" true "format" "esm") | fingerprint }}
 <script type="module" src="{{ $vjs.RelPermalink }}" integrity="{{ $vjs.Data.Integrity }}"></script>
 </body>

@@ -11,7 +11,7 @@ organization: true
 
 文章首发在微信公众号「AI调研员」，同步到小红书同名账号，并在这里长期归档。
 
-![微信扫码关注 AI调研员](../images/wechat-qr.png)
+![微信扫码关注 AI调研员](../images/qr/wechat-qr-240.webp)
 
 ## 作者
 

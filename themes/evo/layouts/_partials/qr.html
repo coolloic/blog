@@ -1,0 +1,4 @@
+{{- /* WeChat QR code as WebP at 1x/2x: partial "qr.html" (dict "size" 96 "class" "…" "alt" "…" "eager" false).
+     Sizes on disk: 48, 96, 120 (+ 2x: 96, 192, 240) in static/images/qr/. */ -}}
+{{- $s := .size | default 96 -}}
+<img{{ with .class }} class="{{ . }}"{{ end }} src="{{ printf "images/qr/wechat-qr-%d.webp" $s | relURL }}" srcset="{{ printf "images/qr/wechat-qr-%d.webp" (mul $s 2) | relURL }} 2x" width="{{ $s }}" height="{{ $s }}" alt="{{ .alt }}" decoding="async"{{ if not .eager }} loading="lazy"{{ end }}>
