@@ -9,6 +9,7 @@
     <h1>{{ .Title }}</h1>
     {{ with .Params.summary }}<p class="page-head__desc">{{ . }}</p>{{ end }}
   </header>
+  {{- with .Params.hero }}<figure class="page-hero">{{ partial "local-picture.html" (dict "base" (printf "images/%s" .) "alt" ($.Params.hero_alt | default "") "class" "page-hero__img" "eager" true) }}</figure>{{ end }}
   <div class="prose">{{ .Content }}</div>
   <form class="quiz-form" data-quiz-form>
     {{- range $i, $q := .Params.questions }}

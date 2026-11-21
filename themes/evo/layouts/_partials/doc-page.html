@@ -11,6 +11,7 @@
       {{ with $p.Params.summary }}<p class="article__summary">{{ . }}</p>{{ end }}
       {{ partial "toc.html" (dict "page" $p "where" "inline") }}
     </header>
+    {{- with $p.Params.hero }}<figure class="page-hero">{{ partial "local-picture.html" (dict "base" (printf "images/%s" .) "alt" ($p.Params.hero_alt | default "") "class" "page-hero__img" "eager" true) }}</figure>{{ end }}
     <div class="article__layout">
       <div class="prose">{{ $p.Content }}</div>
       {{ partial "toc.html" (dict "page" $p "where" "side") }}

@@ -5,6 +5,8 @@ author: Loic
 tags: ["web", "frontend", "performance", "accessibility", "security"]
 summary: "What 'good' means for a website at the end of 2026: Baseline for browser support, Core Web Vitals for speed, WCAG 2.2 for accessibility, a short list of security defaults, and the platform features that let you delete JavaScript. With the numbers and the 2025–2026 changes."
 draft: false
+hero: "notes/modern-web-guidelines"
+hero_alt: "A designer testing one website on a laptop, a tablet and a phone"
 ---
 
 My last two posts were about AI agents. This one goes back to the web, where I've spent most of my career. Every few months I'm asked some version of "what should a new site do now?", and the answer has changed a lot in two years. Things that needed a framework or a polyfill are now one HTML attribute. The browsers agree on more than they ever have. Laws have caught up with accessibility, and Chrome now warns before loading a plain-HTTP site.

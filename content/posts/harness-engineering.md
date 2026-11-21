@@ -5,6 +5,8 @@ author: Loic
 tags: ["ai", "agents", "llm", "harness-engineering"]
 summary: "Agent = model + harness. The model is the part you rent; the harness is the part you build. What a harness contains, what the teams pushing agents hardest have learned about it, and why it changes rather than disappears as models improve."
 draft: false
+hero: "notes/harness-engineering"
+hero_alt: "An engineer at night reviewing logs and test results on three monitors"
 ---
 
 In my [last post](anatomy-of-an-ai-agent.md) I argued that an agent is a loop, some tools and a lot of careful context management, and that the gap between a demo and a reliable system lives in everything around the model. In 2026 that "everything around" got a name: **harness engineering**.

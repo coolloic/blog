@@ -6,7 +6,8 @@
   <header class="page-head"><h1>{{ .Title }}</h1>{{ with .Params.summary }}<p class="page-head__desc">{{ . }}</p>{{ end }}</header>
   <ul class="note-list">
     {{- range $posts }}
-    <li class="note-list__item">
+    <li class="note-list__item{{ if .Params.hero }} note-list__item--thumb{{ end }}">
+      {{- $post := . }}{{ with .Params.hero }}<a class="note-list__thumb" href="{{ $post.RelPermalink }}" tabindex="-1" aria-hidden="true">{{ partial "local-picture.html" (dict "base" (printf "images/%s" .) "sizes" "240px" "class" "") }}</a>{{ end }}
       <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006-01-02" }}</time>
       <div>
         <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>

@@ -137,3 +137,12 @@
 /* The lazily added cover loop sits over the image and fades in once it is actually playing. */
 .cover__video { position: absolute; inset: 0; opacity: .001; transition: opacity var(--motion-slow) var(--motion-ease); }
 .cover__video.is-playing { opacity: 1; }
+
+/* Page hero image (posts, quiz) and note-list thumbnails */
+.page-hero { margin: 0 0 var(--space-l); border-radius: var(--radius-hero); overflow: hidden; border: 1px solid var(--color-border); }
+.page-hero__img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 1440 / 613; object-fit: cover; }
+.note-list__item--thumb { grid-template-columns: 200px minmax(0, 1fr); }
+.note-list__item--thumb > time { grid-column: 2; }
+.note-list__thumb { grid-row: span 2; display: block; border-radius: var(--radius-card); overflow: hidden; }
+.note-list__thumb img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 1440 / 613; object-fit: cover; }
+@media (max-width: 639px) { .note-list__item--thumb { grid-template-columns: 1fr; } .note-list__item--thumb > time { grid-column: auto; } .note-list__thumb { grid-row: auto; } }

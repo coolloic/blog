@@ -5,6 +5,8 @@ author: Loic
 tags: ["ai", "agents", "llm", "mcp"]
 summary: "Strip away the hype and an AI agent is a loop, some tools, and a lot of careful context management. Here's how the pieces fit together and where the real engineering lives."
 draft: false
+hero: "notes/anatomy-of-an-ai-agent"
+hero_alt: "An engineer sketching an agent loop on a whiteboard"
 ---
 
 "Agent" is one of the most overloaded words in tech right now. Chatbots, workflow builders and coding assistants are all called agents. Under the marketing, though, the systems that actually work share a small, surprisingly simple core. Almost all of the interesting engineering happens *around* that core.
