@@ -8,6 +8,8 @@ cover: "/images/placeholder-cover.svg"
 wechat_url: "https://mp.weixin.qq.com/s/placeholder"
 wechat_id: "sample-1"
 featured: false
+images:
+  "1.jpg": [1280, 720]
 draft: true
 ---
 
@@ -16,6 +18,8 @@ draft: true
 ## 第一节：示例小标题
 
 示例段落。示例段落。一个超长的英文链接用来测试换行：https://example.com/a/very/long/path/that/should/wrap/instead/of/causing/horizontal/scrolling/on/a/phone
+
+![示例图](https://pub-PLACEHOLDER.r2.dev/articles/sample-1/1.jpg "示例图注")
 
 ## 第二节：另一个小标题
 

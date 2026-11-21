@@ -1,0 +1,8 @@
+{{- /* Markdown images. Width/height come from the page's front matter `images` map (file name -> [w, h]),
+     which the WeChat sync writes, so images reserve their space and never shift the layout.
+     A title becomes a caption. Attributes go through html/template escaping (no safeURL). */ -}}
+{{- $dims := index (.Page.Params.images | default dict) (path.Base (urls.Parse .Destination).Path) -}}
+{{- $w := "" }}{{ $h := "" }}{{ if reflect.IsSlice $dims }}{{ $w = index $dims 0 }}{{ $h = index $dims 1 }}{{ end -}}
+{{- if .Title }}<figure>{{ end -}}
+<img src="{{ .Destination }}" alt="{{ .PlainText }}"{{ with $w }} width="{{ . }}"{{ end }}{{ with $h }} height="{{ . }}"{{ end }} loading="lazy" decoding="async">
+{{- with .Title }}<figcaption>{{ . }}</figcaption></figure>{{ end -}}
