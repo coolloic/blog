@@ -21,6 +21,7 @@ async function existingArticles(contentDir) {
     if (fm.wechat_id) { byId.set(String(fm.wechat_id), slug); bySlug.set(slug, String(fm.wechat_id)); }
     const short = wechatShortUrl(fm.wechat_url);
     if (short) linkMap.set(short, slug);
+    if (fm.wechat_id) linkMap.set(String(fm.wechat_id), slug);
   }
   return { byId, bySlug, linkMap };
 }
@@ -70,7 +71,9 @@ export async function runSync({ plan, contentDir, skipFile, previewDir, uploader
   const skips = (existsSync(skipFile) ? parse(await readFile(skipFile, "utf8")) : null) ?? [];
   const skipIds = new Set(skips.map((s) => String(s.wechat_id)));
   for (const it of plan.items) if (!it.skip && !skipIds.has(String(it.wechat_id)) && wechatShortUrl(it.url)) {
-    linkMap.set(wechatShortUrl(it.url), byId.get(String(it.wechat_id)) ?? it.slug);
+    const target = byId.get(String(it.wechat_id)) ?? it.slug;
+    linkMap.set(wechatShortUrl(it.url), target);
+    linkMap.set(String(it.wechat_id), target);
   }
   let newSkips = false, first = true;
 

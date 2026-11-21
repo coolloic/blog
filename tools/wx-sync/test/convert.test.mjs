@@ -71,3 +71,17 @@ test("no runs of blank lines or trailing spaces", () => {
   assert.doesNotMatch(md, /\n{3,}/);
   assert.doesNotMatch(md, /[ \t]+$/m);
 });
+
+const tail = convertArticle(readFileSync(new URL("./fixtures/article-tail.html", import.meta.url), "utf8"), {
+  linkMap: new Map([["2650016552_1", "ai-video-guide"]]),
+});
+
+test("📚 往期推荐 and the 📌 合集 footer are cut, whatever emoji leads them", () => {
+  assert.match(tail.markdown, /正文最后一段/);
+  assert.doesNotMatch(tail.markdown, /往期|合集|某篇旧文/);
+});
+
+test("long-form WeChat links (mid/idx) map to synced articles by wechat_id", () => {
+  assert.match(tail.markdown, /\[另一篇长链接文章\]\(\.\.\/ai-video-guide\/index\.md\)/);
+  assert.match(tail.markdown, /\[外部长链接\]\(https:\/\/mp\.weixin\.qq\.com\/s\?/);
+});

@@ -9,8 +9,14 @@ fail() { echo "FAIL $1: $2"; FAILS=$((FAILS+1)); }
 OUT=$(mktemp -d)
 CONTENT=$(mktemp -d)
 trap 'rm -rf "$OUT" "$CONTENT"' EXIT
-# Real content plus the test fixtures (scripts/fixtures/articles/sample-*), so checks never depend on real articles.
-merge_content() { cp -R content/. "$1"/; [[ -d scripts/fixtures ]] && cp -R scripts/fixtures/. "$1"/; return 0; }
+# Real content with its articles swapped for the test fixtures (scripts/fixtures/articles/sample-*), so the theme
+# checks never depend on which real articles exist. Real articles are covered by check_real_content.
+merge_content() {
+  cp -R content/. "$1"/
+  find "$1/articles" -mindepth 1 -maxdepth 1 -type d -exec rm -rf {} +
+  [[ -d scripts/fixtures ]] && cp -R scripts/fixtures/. "$1"/
+  return 0
+}
 merge_content "$CONTENT"
 BUILD_LOG=$(hugo -D --quiet --panicOnWarning --contentDir "$CONTENT" -d "$OUT" 2>&1) || { echo "FAIL build: $(echo "$BUILD_LOG" | head -5)"; exit 1; }
 nospace() { tr -d ' \n' < "$1"; }
@@ -515,6 +521,15 @@ check_card_foot_split() {
   else fail check_card_foot_split "card footer should show the date and the reading time as separate items: ${foot:0:200}"; fi
 }
 
-CHECKS=(check_theme_evo check_html_lang check_tokens_css check_light_dark_fallback check_theme_script_first check_nav check_skip_link check_wrap check_toggle_button check_tokens_unescaped check_home_featured check_home_featured_fallback check_home_lists_articles_not_wiki check_home_empty check_cover_box check_cover_video_slot check_follow_card check_no_format_errors check_category_order check_category_urls check_category_empty check_archives check_old_urls check_internal_links check_article_page check_wechat_footer check_video_vertical check_video_shortcode check_required_fields check_jsonld check_prev_next check_notes_page check_en_chrome check_code_copy check_wiki_body check_wiki_concept_page check_search_index check_search_page check_view_transitions check_scroll_driven_guarded check_reduced_motion check_js_budget check_progress_bar check_seo check_structured_data check_sitemap check_rss_scope check_404 check_video_dir check_no_blocking_fonts check_search_form_visible check_rise_no_fade check_layout_375 check_paged_canonical check_popover_fallback check_no_double_entities check_summary_with_angle_brackets check_unknown_category check_fixtures_not_in_content check_image_dimensions check_cjk_emphasis check_stitch_fonts check_card_foot_split)
+check_real_content() {
+  local o r n; o=$(mktemp -d)
+  if ! r=$(hugo --gc --minify --panicOnWarning -d "$o" 2>&1); then fail check_real_content "real content does not build: $(echo "$r" | grep -E 'ERROR|WARN' | head -2)"; rm -rf "$o"; return; fi
+  n=$(find "$o/articles" -mindepth 2 -maxdepth 2 -name index.html -not -path '*/page/*' | wc -l | tr -d ' ')
+  r=$(python3 scripts/check-links.py "$o" /blog/ 2>&1); local rc=$?
+  rm -rf "$o"
+  if [[ $rc -eq 0 ]]; then pass "check_real_content ($n articles)"; else fail check_real_content "$(echo "$r" | head -3 | tr '\n' ';')"; fi
+}
+
+CHECKS=(check_theme_evo check_html_lang check_tokens_css check_light_dark_fallback check_theme_script_first check_nav check_skip_link check_wrap check_toggle_button check_tokens_unescaped check_home_featured check_home_featured_fallback check_home_lists_articles_not_wiki check_home_empty check_cover_box check_cover_video_slot check_follow_card check_no_format_errors check_category_order check_category_urls check_category_empty check_archives check_old_urls check_internal_links check_article_page check_wechat_footer check_video_vertical check_video_shortcode check_required_fields check_jsonld check_prev_next check_notes_page check_en_chrome check_code_copy check_wiki_body check_wiki_concept_page check_search_index check_search_page check_view_transitions check_scroll_driven_guarded check_reduced_motion check_js_budget check_progress_bar check_seo check_structured_data check_sitemap check_rss_scope check_404 check_video_dir check_no_blocking_fonts check_search_form_visible check_rise_no_fade check_layout_375 check_paged_canonical check_popover_fallback check_no_double_entities check_summary_with_angle_brackets check_unknown_category check_fixtures_not_in_content check_image_dimensions check_cjk_emphasis check_stitch_fonts check_card_foot_split check_real_content)
 for c in "${@:-${CHECKS[@]}}"; do $c; done
 [[ $FAILS -eq 0 ]] && echo "SITE ALL PASS" || { echo "$FAILS SITE CHECKS FAILED"; exit 1; }

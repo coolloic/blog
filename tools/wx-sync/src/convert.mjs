@@ -14,6 +14,16 @@ export function wechatShortUrl(href) {
   return m ? `https://mp.weixin.qq.com/s/${m[1]}` : null;
 }
 
+/** "<mid>_<idx>" (the wechat_id) for long-form links like /s?__biz=…&mid=…&idx=…, or null. */
+export function wechatIdFromUrl(href) {
+  try {
+    const u = new URL(String(href || ""));
+    if (u.hostname !== "mp.weixin.qq.com" || !u.pathname.startsWith("/s")) return null;
+    const mid = u.searchParams.get("mid"), idx = u.searchParams.get("idx");
+    return mid && idx ? `${mid}_${idx}` : null;
+  } catch { return null; }
+}
+
 function findCover(document, html) {
   const og = document.querySelector('meta[property="og:image"]')?.getAttribute("content");
   if (og) return og;
@@ -21,9 +31,10 @@ function findCover(document, html) {
   return m ? m[1] : null;
 }
 
-// Everything from the first boilerplate block on is dropped: "往期推荐" (links to older posts) and the
-// recurring "📣 招募令" call for reader stories. Matched only at the start of a top-level block.
-const BOILERPLATE = /^(📣\s*)?(往期推荐|推荐阅读|招募令)/;
+// Everything from the first boilerplate block on is dropped: "往期推荐" (links to older posts), the recurring
+// "📣 招募令" call for reader stories and the "📌 想找往期…合集" WeChat-collection hint. Matched only at the
+// start of a top-level block, after any leading emoji or symbols.
+const BOILERPLATE = /^[\p{Extended_Pictographic}\p{S}\uFE0F\s]*(往期推荐|推荐阅读|招募令|想找往期)/u;
 function dropFromRecommended(root) {
   const kids = [...root.children];
   const i = kids.findIndex((el) => BOILERPLATE.test(el.textContent.trim()));
@@ -65,8 +76,9 @@ function prepare(root, linkMap) {
   }
 
   for (const a of [...root.querySelectorAll("a[href]")]) {
-    const short = wechatShortUrl(a.getAttribute("href"));
-    if (short && linkMap.has(short)) a.setAttribute("href", `../${linkMap.get(short)}/index.md`);
+    const href = a.getAttribute("href");
+    const slug = linkMap.get(wechatShortUrl(href)) ?? linkMap.get(wechatIdFromUrl(href));
+    if (slug) a.setAttribute("href", `../${slug}/index.md`);
   }
 
   // Empty paragraphs/sections (spacers like <p><br></p>) carry nothing.
@@ -111,7 +123,7 @@ function makeTurndown() {
 
 /**
  * @param {string} html  full article page HTML
- * @param {{linkMap?: Map<string, string>}} opts  WeChat short URL → blog slug, for already-synced articles
+ * @param {{linkMap?: Map<string, string>}} opts  WeChat short URL or wechat_id → blog slug, for synced articles
  * @returns {{markdown: string, images: {n: number, src: string, alt: string}[], coverUrl: string|null, description: string|null}}
  */
 export function convertArticle(html, { linkMap = new Map() } = {}) {
