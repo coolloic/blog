@@ -1,0 +1,43 @@
+{{ define "main" }}
+{{- $p := . -}}
+{{- $sources := slice }}{{ range .Params.sources }}{{ with site.GetPage (printf "/articles/%s" .) }}{{ $sources = $sources | append . }}{{ else }}{{ errorf "%s: unknown article %q in sources" $p.File.Path . }}{{ end }}{{ end -}}
+{{- $next := site.GetPage (printf "/topics/%s" .Params.next_topic) -}}
+{{- if not $next }}{{ errorf "%s: unknown next_topic %q" .File.Path .Params.next_topic }}{{ end -}}
+<div class="container stack-section quiz">
+  <header class="page-head">
+    <span class="chip chip--topic">{{ partial "t.html" (dict "page" . "key" "quiz_label") }}</span>
+    <h1>{{ .Title }}</h1>
+    {{ with .Params.summary }}<p class="page-head__desc">{{ . }}</p>{{ end }}
+  </header>
+  <div class="prose">{{ .Content }}</div>
+  <form class="quiz-form" data-quiz-form>
+    {{- range $i, $q := .Params.questions }}
+    <fieldset class="quiz-q">
+      <legend><span class="quiz-q__n">{{ add $i 1 }}</span>{{ $q.text }}</legend>
+      <div class="quiz-q__opts">
+        {{- range $v, $label := slice "很少" "一半" "大部分" }}
+        <label><input type="radio" name="{{ $q.id }}" value="{{ $v }}" required> {{ $label }}</label>
+        {{- end }}
+      </div>
+    </fieldset>
+    {{- end }}
+    <fieldset class="quiz-q">
+      <legend><span class="quiz-q__n">+</span>{{ .Params.entry_question }}</legend>
+      <div class="quiz-q__opts"><label><input type="radio" name="entry" value="1" required> 是</label><label><input type="radio" name="entry" value="0"> 不是</label></div>
+    </fieldset>
+    <button class="button" type="submit" disabled>{{ partial "t.html" (dict "page" . "key" "quiz_submit") }}</button>
+    <noscript><p class="quiz-nojs">{{ partial "t.html" (dict "page" . "key" "quiz_nojs") }}</p></noscript>
+  </form>
+  <section class="quiz-result" data-quiz-result aria-live="polite" hidden></section>
+  <p class="quiz-disclaimer">{{ .Params.disclaimer }}</p>
+  <section class="stack" aria-labelledby="quiz-sources">
+    <div class="section-head"><h2 id="quiz-sources">{{ partial "t.html" (dict "page" . "key" "quiz_sources") }}</h2></div>
+    <div class="card-grid card-grid--small">{{ range $sources }}{{ partial "card.html" . }}{{ end }}</div>
+  </section>
+</div>
+{{- $qs := slice }}{{ range .Params.questions }}{{ $qs = $qs | append (dict "id" .id "bucket" .bucket) }}{{ end }}
+{{- $data := dict "site" site.Title "title" .Title "questions" $qs "results" .Params.results "labels" .Params.labels "entry_note" .Params.entry_note "disclaimer_short" .Params.disclaimer_short "url_label" (printf "%s · %s" (strings.TrimSuffix "/" (strings.TrimPrefix "https://" site.BaseURL)) .Title) "next_url" $next.RelPermalink "next_label" (printf "%s：%s →" (partial "t.html" (dict "page" . "key" "quiz_next")) $next.Title) "save_hint" (partial "t.html" (dict "page" . "key" "quiz_save")) }}
+<script type="application/json" id="quiz-data">{{ $data | jsonify | safeJS }}</script>
+{{- $js := resources.Get "js/quiz.js" | js.Build (dict "minify" true "format" "esm") | fingerprint }}
+<script type="module" src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}"></script>
+{{ end }}

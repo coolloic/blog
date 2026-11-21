@@ -100,3 +100,12 @@ tools_group_learning: Learning
 tools_group_jobs: Job hunting
 tools_group_college: University applications
 tools_group_life: Life and money
+quiz_label: Quiz
+quiz_submit: See my result
+quiz_nojs: This quiz needs JavaScript; you can read the articles below and apply the method yourself.
+quiz_sources: The method comes from these articles
+quiz_next: Read next
+quiz_save: Long-press to save the image
+quiz_cta_title: "Quiz: will AI take my job?"
+quiz_cta_body: Nine questions that split your work into three kinds of tasks.
+quiz_cta_button: Start →

@@ -100,3 +100,12 @@ tools_group_learning: 学习
 tools_group_jobs: 求职
 tools_group_college: 升学填志愿
 tools_group_life: 生活与理财
+quiz_label: 互动自测
+quiz_submit: 看结果
+quiz_nojs: 这个自测需要启用 JavaScript；也可以直接阅读下面的文章，按文中的「岗位体检」方法自己梳理。
+quiz_sources: 方法来自这些文章
+quiz_next: 接着读
+quiz_save: 长按图片保存，分享给朋友
+quiz_cta_title: 测一测：AI 会取代我的工作吗？
+quiz_cta_body: 9 个问题，按文章里的「岗位体检」方法，把你的工作拆成三类任务。
+quiz_cta_button: 开始自测 →

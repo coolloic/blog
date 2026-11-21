@@ -18,6 +18,14 @@
     {{- end }}
   </section>
 
+  {{- with site.GetPage "/quiz/job-check" }}
+  <a class="quiz-cta" href="{{ .RelPermalink }}">
+    <span class="quiz-cta__title">{{ partial "t.html" (dict "page" $ "key" "quiz_cta_title") }}</span>
+    <span class="quiz-cta__body">{{ partial "t.html" (dict "page" $ "key" "quiz_cta_body") }}</span>
+    <span class="button">{{ partial "t.html" (dict "page" $ "key" "quiz_cta_button") }}</span>
+  </a>
+  {{- end }}
+
   {{- with (where site.RegularPages "Section" "topics").ByWeight }}
   <section class="stack" aria-labelledby="topics-heading">
     <div class="section-head">
