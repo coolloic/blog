@@ -1,0 +1,1 @@
+Mobile versions at 390px width, dark theme: home (banner stacks: headline, values as a vertical list, buttons full width, "最近更新" panel below; category tiles as horizontal scroll chips), article page (headings bars full width, TOC collapsed under a "目录" button, sticky bottom bar with "▶ 视频版" and "评论"), menu drawer (nav list + search field + theme toggle + QR), search sheet.

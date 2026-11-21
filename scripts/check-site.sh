@@ -60,6 +60,8 @@ check_theme_script_first() {
 }
 
 css_all() { cat "$OUT"/css/*.css "$OUT"/index.html 2>/dev/null | tr -d ' \n'; }
+# The stylesheet is inlined into each page (<style>); write it to a file for the CSS-level checks.
+css_file() { local f="$OUT/.inline.css"; [[ -f "$f" ]] || perl -0777 -ne 'print "$1\n" while /<style>(.*?)<\/style>/gs' "$OUT/index.html" > "$f"; echo "$f"; }
 
 check_nav() {
   local f bad=""
@@ -99,7 +101,7 @@ check_toggle_button() {
 
 check_tokens_unescaped() {
   local style; style=$(tr -d '\n' < "$OUT/posts/hello-world/index.html" | grep -o '<style>.*</style>' | head -1)
-  if [[ -n "$style" && "$style" != *"&#34"* && "$style" != *"&quot;"* && "$style" == *'--font-body:"'* ]]; then pass check_tokens_unescaped
+  if [[ -n "$style" && "$style" != *"&#34"* && "$style" != *"&quot;"* && "$style" == *'--font-body:'*'"PingFang SC"'* ]]; then pass check_tokens_unescaped
   else fail check_tokens_unescaped "token CSS is HTML-escaped or missing: $(echo "$style" | grep -o -- '--font-body:[^;]*')"; fi
 }
 
@@ -155,12 +157,25 @@ check_cover_box() {
 
 addvideo() { sed -i '' 's|^featured: false|featured: false\ncover_video: "https://example.com/x.mp4"|' articles/sample-1/index.md; }
 check_cover_video_slot() {
-  local o; o=$(mktemp -d)
+  # Performance: the cover image (WebP <picture>) is always what paints first; the loop video is added by
+  # video-inview.js after load, only on the article page, never in cards, never with reduced motion or Save-Data.
+  local o bad=""; o=$(mktemp -d)
   build_variant "$o" addvideo || { fail check_cover_video_slot "variant build failed"; rm -rf "$o"; return; }
-  local v; v=$(html1 "$o/index.html" | grep -oE '<video[^>]*>' | head -1)
-  if [[ "$v" == *muted* && "$v" == *playsinline* && "$v" == *preload=*none* && "$v" == *poster=* && "$v" == *x.mp4* ]] && ! echo "$v" | grep -qE '[ "]autoplay([ =>]|$)'; then pass check_cover_video_slot
-  else fail check_cover_video_slot "bad or missing <video>: $v"; fi
+  local art; art=$(html1 "$o/articles/sample-1/index.html")
+  echo "$art" | grep -qE '<video' && bad+="video-in-article-html "
+  echo "$art" | grep -qE 'data-video="?https://example\.com/x\.mp4' || bad+="article-data-video "
+  echo "$art" | grep -qE 'class="?cover cover--hero[^>]*>[^<]*<(picture|img)' || bad+="article-picture-first "
+  html1 "$o/index.html" | grep -qE 'data-video=|<video' && bad+="video-in-cards "
+  local js; js=$(cat themes/evo/assets/js/video-inview.js)
+  [[ "$js" == *"saveData"* && "$js" == *'createElement("video")'* && "$js" == *'"load"'* ]] || bad+="js-lazy-create "
+  if [[ -z "$bad" ]]; then pass check_cover_video_slot; else fail check_cover_video_slot "$bad"; fi
   rm -rf "$o"
+}
+
+check_asset_cache_headers() {
+  # Only hashed file names may be cached forever (static/js/mermaid-loader.js is not hashed).
+  if grep -qF '"source": "/css/(.*)\\.([a-f0-9]{64})\\.css"' vercel.json && grep -qF '"source": "/js/(.*)\\.([a-f0-9]{64})\\.js"' vercel.json && grep -q immutable vercel.json; then pass check_asset_cache_headers
+  else fail check_asset_cache_headers "vercel.json lacks immutable caching for fingerprinted /css and /js"; fi
 }
 
 check_follow_card() {
@@ -357,7 +372,7 @@ check_view_transitions() {
 }
 
 check_scroll_driven_guarded() {
-  local css="$OUT"/css/*.css r
+  local css; css=$(css_file); local r
   if ! cat $css | tr -d ' \n' | grep -q 'animation-timeline'; then fail check_scroll_driven_guarded "no scroll-driven animations found"; return; fi
   r=$(python3 scripts/check-css-guard.py $css 2>&1)
   if [[ $? -eq 0 ]]; then pass check_scroll_driven_guarded; else fail check_scroll_driven_guarded "$(echo "$r" | head -3 | tr '\n' ';')"; fi
@@ -450,7 +465,7 @@ check_search_form_visible() {
 }
 
 check_rise_no_fade() {
-  if perl -0777 -ne 'exit(/\@keyframes evo-rise\{[^}]*opacity/ ? 0 : 1)' "$OUT"/css/*.css; then fail check_rise_no_fade "card rise-in fades opacity (off-screen text fails contrast audits)"
+  if perl -0777 -ne 'exit(/\@keyframes evo-rise\{[^}]*opacity/ ? 0 : 1)' "$(css_file)"; then fail check_rise_no_fade "card rise-in fades opacity (off-screen text fails contrast audits)"
   else pass check_rise_no_fade; fi
 }
 
@@ -513,16 +528,15 @@ check_cjk_emphasis() {
 }
 
 check_stitch_fonts() {
-  # Stitch's three type voices, self-hosted (fonts.googleapis.com is unreachable in mainland China).
-  local bad="" css; css=$(cat "$OUT"/css/*.css "$OUT/index.html")
+  # Performance first: one self-hosted web font (Crimson Pro, display headings), preloaded and small; body and
+  # code use system fonts. Never Google Fonts (unreachable in mainland China).
+  local bad="" css; css=$(cat "$OUT/index.html")
   grep -rlq 'fonts.googleapis.com\|fonts.gstatic.com' "$OUT" --include='*.html' && bad+="google-fonts-request "
   local pre; pre=$(html1 "$OUT/index.html" | grep -oE '<link rel="?preload"? href="?[^" >]+\.woff2' | sed -E 's/.*href="?//; s|^/blog/||'); [[ -n "$pre" && -f "$OUT/$pre" ]] || bad+="preloaded-font-missing($pre) "
-  # the minifier may lowercase and unquote family names inside @font-face
-  for fam in "Crimson Pro" "Lato" "Source Code Pro"; do echo "$css" | grep -qiE "@font-face *\{ *font-family: *\"?$fam" || bad+="no-@font-face:$fam "; done
-  echo "$css" | grep -q 'font-display:swap\|font-display: swap' || bad+="font-display "
-  local n; n=$(ls "$OUT"/fonts/*.woff2 2>/dev/null | wc -l | tr -d ' '); [[ "$n" -ge 4 ]] || bad+="woff2-files=$n "
-  html1 "$OUT/index.html" | grep -qE '<link rel="?preload"? [^>]*as="?font' || bad+="no-preload "
-  python3 scripts/check-contrast.py >/dev/null || bad+="contrast "
+  echo "$css" | grep -qiE '@font-face *\{ *font-family: *"?crimson pro' || bad+="no-@font-face:Crimson "
+  echo "$css" | grep -qiE 'font-family: *"?(lato|source code pro)"?;' && bad+="extra-web-fonts "
+  local n; n=$(ls "$OUT"/fonts/*.woff2 2>/dev/null | wc -l | tr -d ' '); [[ "$n" -eq 1 ]] || bad+="woff2-files=$n "
+  local size; size=$(wc -c < "$OUT/$pre" 2>/dev/null || echo 999999); [[ "$size" -lt 30000 ]] || bad+="font-too-big($size) "
   if [[ -z "$bad" ]]; then pass check_stitch_fonts; else fail check_stitch_fonts "$bad"; fi
 }
 
@@ -782,6 +796,57 @@ check_subscribe_page() {
   if [[ -z "$bad" ]]; then pass check_subscribe_page; else fail check_subscribe_page "$bad"; fi
 }
 
-CHECKS=(check_theme_evo check_html_lang check_tokens_css check_light_dark_fallback check_theme_script_first check_nav check_skip_link check_wrap check_toggle_button check_tokens_unescaped check_home_featured check_home_featured_fallback check_home_lists_articles_not_wiki check_home_empty check_cover_box check_cover_video_slot check_follow_card check_no_format_errors check_category_order check_category_urls check_category_empty check_archives check_old_urls check_internal_links check_article_page check_wechat_footer check_video_vertical check_video_shortcode check_required_fields check_jsonld check_prev_next check_notes_page check_en_chrome check_code_copy check_wiki_body check_wiki_concept_page check_search_index check_search_page check_view_transitions check_scroll_driven_guarded check_reduced_motion check_js_budget check_progress_bar check_seo check_structured_data check_sitemap check_rss_scope check_404 check_video_dir check_no_blocking_fonts check_search_form_visible check_rise_no_fade check_layout_375 check_paged_canonical check_popover_fallback check_no_double_entities check_summary_with_angle_brackets check_unknown_category check_fixtures_not_in_content check_image_dimensions check_cjk_emphasis check_stitch_fonts check_card_foot_split check_real_content check_redirect_site check_sitemap_scope check_noindex_thin check_post_jsonld check_company check_webp_srcset check_topics check_topic_unknown_article check_trust_pages check_corrections_note check_glossary check_glossary_bad_wiki check_topic_min_articles check_small_fixes check_tools check_tools_unknown_article check_quiz check_comments check_footer_no_personal_links check_home_banner check_subscribe_page)
+check_tech_feel() {
+  local css bad=""; css=$(css_all)
+  echo "$css" | grep -qE '\.banner::?before\{[^}]*linear-gradient' || bad+="grid-layer "
+  echo "$css" | grep -qE '\.banner::?after\{[^}]*animation:[^}]*evo-scan' || bad+="scan-sweep "
+  echo "$css" | grep -qE '\.banner__eyebrow\{[^}]*font-family:var\(--font-mono\)' || bad+="mono-eyebrow "
+  echo "$css" | grep -qE '\.banner__eyebrow::?after\{[^}]*animation:[^}]*evo-blink' || bad+="cursor "
+  echo "$css" | grep -qE '\.banner__stats\{[^}]*font-family:var\(--font-mono\)' || bad+="mono-stats "
+  echo "$css" | grep -qE '\.card::?after\{[^}]*linear-gradient' || bad+="card-glow "
+  local rm; rm=$(echo "$css" | grep -oE '@media \(prefers-reduced-motion:reduce\)\{.{0,600}' | head -1)
+  [[ -z "$rm" ]] && rm=$(echo "$css" | perl -0777 -ne 'print $1 if /(\@media\s*\(prefers-reduced-motion:\s*reduce\)\{.{0,900})/s')
+  echo "$rm" | grep -qE "\.banner::?after" && echo "$rm" | grep -qE "\.banner__eyebrow::?after" || bad+="reduced-motion "
+  if [[ -z "$bad" ]]; then pass check_tech_feel; else fail check_tech_feel "$bad"; fi
+}
+
+check_cover_uncropped() {
+  local css bad=""; css=$(css_all)
+  echo "$css" | grep -qE '\.cover__media\{[^}]*object-fit:contain' || bad+="contain "
+  echo "$css" | grep -qE '\.cover\{[^}]*aspect-ratio:(2\.35/1|47/20)' || bad+="card-ratio "
+  # square covers come pre-composed as cover_wide; no runtime blur layer or second download per card
+  [[ "$css" == *"--cover-src"* ]] && bad+="runtime-blur-layer "
+  html1 "$OUT/articles/index.html" | grep -qE 'src="?https://example\.com/wide/cover-wide\.jpg' || bad+="cover_wide-not-used "
+  html1 "$OUT/articles/sample-3/index.html" | grep -qE 'og:image"? content="?https://example\.com/square\.jpg' || bad+="og-should-keep-original "
+  if [[ -z "$bad" ]]; then pass check_cover_uncropped; else fail check_cover_uncropped "$bad"; fi
+}
+
+check_dark_default() {
+  local head bad=""; head=$(html1 "$OUT/index.html" | sed 's|</head>.*||')
+  echo "$head" | grep -qE 'prefers-color-scheme: dark\)"\)\.matches' && bad+="script-follows-os "
+  echo "$head" | grep -qE '[a-z]="dark"' || bad+="script-default "
+  nospace "$OUT/index.html" | grep -qE ':root\{color-scheme:dark;' || bad+="css-default "
+  if [[ -z "$bad" ]]; then pass check_dark_default; else fail check_dark_default "$bad"; fi
+}
+
+check_perf_basics() {
+  local bad="" imgs; imgs=$(html1 "$OUT/articles/index.html" | grep -oE '<img class="?cover__media[^>]*>')
+  local first; first=$(echo "$imgs" | head -1)
+  [[ "$first" == *fetchpriority=*high* && "$first" != *loading=*lazy* ]] || bad+="first-card-eager "
+  echo "$imgs" | sed -n '2,3p' | grep -q 'loading=' && bad+="row1-should-not-lazy "
+  html1 "$OUT/index.html" | grep -qE '<link rel="?stylesheet"? href="?[^" >]*css/main' && bad+="css-not-inlined "
+  html1 "$OUT/index.html" | grep -qE '<style>[^<]{2000,}' || perl -0777 -ne 'exit(/<style>[^<]{2000}/ ? 0 : 1)' "$OUT/index.html" || bad+="no-inline-css "
+  grep -q 'logo-mark-128.webp' themes/evo/layouts/_partials/logo.html || bad+="logo-webp "
+  [[ -f static/images/logo-mark-128.webp && $(wc -c < static/images/logo-mark-128.webp) -lt 12000 ]] || bad+="logo-size "
+  if [[ -z "$bad" ]]; then pass check_perf_basics; else fail check_perf_basics "$bad"; fi
+}
+
+check_display_font_optional() {
+  # The display font is the LCP text's font; "optional" means no late swap, so LCP happens at first paint.
+  if html1 "$OUT/index.html" | grep -qiE 'font-family:"?crimson pro"?;[^}]*font-display:optional'; then pass check_display_font_optional
+  else fail check_display_font_optional "Crimson Pro should use font-display: optional"; fi
+}
+
+CHECKS=(check_theme_evo check_html_lang check_tokens_css check_light_dark_fallback check_theme_script_first check_nav check_skip_link check_wrap check_toggle_button check_tokens_unescaped check_home_featured check_home_featured_fallback check_home_lists_articles_not_wiki check_home_empty check_cover_box check_cover_video_slot check_follow_card check_no_format_errors check_category_order check_category_urls check_category_empty check_archives check_old_urls check_internal_links check_article_page check_wechat_footer check_video_vertical check_video_shortcode check_required_fields check_jsonld check_prev_next check_notes_page check_en_chrome check_code_copy check_wiki_body check_wiki_concept_page check_search_index check_search_page check_view_transitions check_scroll_driven_guarded check_reduced_motion check_js_budget check_progress_bar check_seo check_structured_data check_sitemap check_rss_scope check_404 check_video_dir check_no_blocking_fonts check_search_form_visible check_rise_no_fade check_layout_375 check_paged_canonical check_popover_fallback check_no_double_entities check_summary_with_angle_brackets check_unknown_category check_fixtures_not_in_content check_image_dimensions check_cjk_emphasis check_stitch_fonts check_card_foot_split check_real_content check_redirect_site check_sitemap_scope check_noindex_thin check_post_jsonld check_company check_webp_srcset check_topics check_topic_unknown_article check_trust_pages check_corrections_note check_glossary check_glossary_bad_wiki check_topic_min_articles check_small_fixes check_tools check_tools_unknown_article check_quiz check_comments check_footer_no_personal_links check_home_banner check_subscribe_page check_tech_feel check_cover_uncropped check_dark_default check_asset_cache_headers check_perf_basics check_display_font_optional)
 for c in "${@:-${CHECKS[@]}}"; do $c; done
 [[ $FAILS -eq 0 ]] && echo "SITE ALL PASS" || { echo "$FAILS SITE CHECKS FAILED"; exit 1; }

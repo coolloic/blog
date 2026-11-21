@@ -44,7 +44,9 @@ The WeChat backend is **read-only** for this skill: never click, edit, publish o
 
 6. **Sync:** `node tools/wx-sync/bin/wx-sync.mjs --plan .wx-sync/plan.json`. It prints `added · unchanged · skipped · failed`. Re-run the same command for failures after fixing their cause (articles that succeeded stay `unchanged`). A conversion bug gets a failing case in `tools/wx-sync/test/convert.test.mjs` before the fix.
 
-7. **Check and commit.** `bash scripts/check-wiki.sh` reaches `ALL PASS`. Stage exactly the new `content/articles/<slug>/` folders and `data/wechat-skip.yaml`, and commit `content: sync N WeChat articles`. On `main`, push after the check passes (CLAUDE.md approval). Report added, skipped (with reasons) and failed counts.
+7. **Covers and videos.** `node tools/wx-sync/bin/wx-sync.mjs --wide-covers` gives every square cover (WeChat's secondary-article covers) a 2.35:1 `cover_wide`, so the site's cover boxes never crop it. Then write `video/stories/<slug>.json` for each new article from its own text and run `cd video && npm run render -- <slug>...` (see `video/README.md`).
+
+8. **Check and commit.** `bash scripts/check-wiki.sh` reaches `ALL PASS`. Stage exactly the new `content/articles/<slug>/` folders, their `video/stories/<slug>.json` and `data/wechat-skip.yaml`, and commit `content: sync N WeChat articles`. On `main`, push after the check passes (CLAUDE.md approval). Report added, skipped (with reasons) and failed counts.
 
 ## Re-syncing one article
 

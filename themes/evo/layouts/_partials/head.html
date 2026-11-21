@@ -1,7 +1,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 {{- /* Must run before any stylesheet so the first paint already has the right theme. */}}
-<script>(function(){var t;try{t=localStorage.getItem("theme")}catch(e){}if(t!=="light"&&t!=="dark"){t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"}document.documentElement.setAttribute("data-theme",t)})()</script>
+<script>(function(){var t;try{t=localStorage.getItem("theme")}catch(e){}if(t!=="light"){t="dark"}document.documentElement.setAttribute("data-theme",t)})()</script>
 <title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} · {{ site.Title }}{{ end }}</title>
 {{ partial "seo.html" . }}
 <link rel="icon" href="{{ "images/favicon-32.png" | relURL }}" type="image/png" sizes="32x32">
@@ -10,4 +10,5 @@
 {{ partial "fonts.html" . }}
 <style>{{ partial "tokens.css.html" . | safeCSS }}</style>
 {{- $css := resources.Get "css/main.css" | css.Build (dict "minify" hugo.IsProduction) | fingerprint }}
-<link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
+{{- /* Inlined (about 8KB gzipped): saves the render-blocking request on first paint. */}}
+<style>{{ $css.Content | safeCSS }}</style>

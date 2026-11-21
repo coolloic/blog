@@ -7,13 +7,13 @@
 {{- $light := slice -}}{{- $dark := slice -}}
 {{- range $k, $v := $t.color }}{{ $light = $light | append (printf "--color-%s: %s;" $k $v.light) }}{{ $dark = $dark | append (printf "--color-%s: %s;" $k $v.dark) }}{{ end -}}
 {{- $css := printf `@layer tokens {
-:root { color-scheme: light dark; %s }
+:root { color-scheme: dark; %s }
 :root[data-theme=light] { color-scheme: light; }
 :root[data-theme=dark] { color-scheme: dark; }
 @supports not (color: light-dark(#fff, #000)) {
   :root { %s }
-  @media (prefers-color-scheme: dark) { :root:not([data-theme=light]) { %s } }
+  :root[data-theme=light] { %s }
   :root[data-theme=dark] { %s }
 }
-}` (delimit $vars " ") (delimit $light " ") (delimit $dark " ") (delimit $dark " ") -}}
+}` (delimit $vars " ") (delimit $dark " ") (delimit $light " ") (delimit $dark " ") -}}
 {{- return $css -}}

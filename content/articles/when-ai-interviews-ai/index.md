@@ -17,10 +17,14 @@ images:
   cover.jpg:
     - 458
     - 459
+  cover-wide.jpg:
+    - 1280
+    - 544
 webp: true
 draft: false
 cover_video: "https://aitanyan.com/img/videos/when-ai-interviews-ai/cover-loop.mp4"
 video_vertical: "https://aitanyan.com/img/videos/when-ai-interviews-ai/vertical.mp4"
+cover_wide: "https://aitanyan.com/img/articles/when-ai-interviews-ai/cover-wide.jpg"
 ---
 
 想象一下未来某个周一：你的 AI 分身替你投了 200 份简历，参加了 30 场 AI 面试，晚上发来一份报告：“有 3 家公司想见真人的你。”这听起来像科幻，但它的零件，今天已经全都有了。【本文是推演，数据来自公开调查】

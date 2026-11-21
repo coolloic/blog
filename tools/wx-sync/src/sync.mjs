@@ -4,7 +4,7 @@ import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { parse, stringify } from "yaml";
 import { convertArticle, wechatShortUrl } from "./convert.mjs";
-import { dimensions, webpVariants } from "./images.mjs";
+import { dimensions, webpVariants, wideCover, needsWide, WIDE } from "./images.mjs";
 import { bodyOf, readFrontMatter, renderArticle } from "./frontmatter.mjs";
 
 const SLUG = /^[a-z0-9]+(-[a-z0-9]+){0,5}$/;
@@ -180,6 +180,37 @@ export async function optimizeExisting({ contentDir, uploader, downloadImage, im
       }
       if (!dryRun) await writeFile(file, renderArticle({ ...fm, webp: true }, bodyOf(text)));
       result.optimized.push(slug); log(`✓ ${slug}`);
+    } catch (e) {
+      result.failed.push({ slug, error: e.message }); log(`✗ ${slug}: ${e.message}`);
+    }
+  }
+  return result;
+}
+
+/**
+ * Wide (2.35:1) covers for articles whose cover is square-ish: uploads `cover-wide.jpg` plus WebP versions and
+ * sets `cover_wide` (the original `cover` stays, for sharing). Articles that already have one are skipped.
+ * @returns {Promise<{added: string[], failed: {slug: string, error: string}[]}>}
+ */
+export async function addWideCovers({ contentDir, uploader, downloadImage, imageWidths = DEFAULT_IMAGE_WIDTHS, dryRun = false, log = () => {} }) {
+  const result = { added: [], failed: [] };
+  for (const slug of await readdir(contentDir)) {
+    const file = join(contentDir, slug, "index.md");
+    if (!existsSync(file)) continue;
+    const text = await readFile(file, "utf8");
+    const fm = readFrontMatter(text);
+    const name = fm.cover && String(fm.cover).split("/").pop();
+    const dims = name && fm.images?.[name];
+    if (fm.cover_wide || !Array.isArray(dims) || !needsWide(dims)) continue;
+    try {
+      if (!dryRun) {
+        const wide = await wideCover((await downloadImage(fm.cover)).bytes);
+        await uploader.put(`articles/${slug}/cover-wide.jpg`, wide, "image/jpeg");
+        await uploadWebp(uploader, slug, "cover-wide", wide, imageWidths, true, "jpg");
+        const images = { ...fm.images, "cover-wide.jpg": [WIDE.width, WIDE.height] };
+        await writeFile(file, renderArticle({ ...fm, cover_wide: uploader.url(`articles/${slug}/cover-wide.jpg`), images }, bodyOf(text)));
+      }
+      result.added.push(slug); log(`✓ ${slug}`);
     } catch (e) {
       result.failed.push({ slug, error: e.message }); log(`✗ ${slug}: ${e.message}`);
     }

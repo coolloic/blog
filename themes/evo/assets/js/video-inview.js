@@ -1,13 +1,27 @@
-// Cover videos (Remotion loops) play only while on screen. With reduced motion they never play: the poster stays.
-const videos = document.querySelectorAll("video[data-autoplay-in-view]");
+// Cover loops (Remotion) on the article page. The WebP cover paints first (it is the LCP); after the page has
+// loaded, a muted <video> is created over it while the cover is on screen. Never with reduced motion or
+// Save-Data; pauses off screen. Cards never carry videos.
+const covers = document.querySelectorAll("[data-video]");
 const reduce = matchMedia("(prefers-reduced-motion: reduce)");
-if (videos.length && "IntersectionObserver" in window) {
+const saveData = navigator.connection?.saveData;
+function start() {
+  if (!covers.length || reduce.matches || saveData || !("IntersectionObserver" in window)) return;
   const io = new IntersectionObserver((entries) => {
-    for (const { target: v, isIntersecting } of entries) {
-      if (isIntersecting && !reduce.matches) { v.preload = "auto"; v.play().catch(() => {}); }
-      else v.pause();
+    for (const { target: box, isIntersecting } of entries) {
+      let v = box.querySelector("video");
+      if (isIntersecting && !reduce.matches) {
+        if (!v) {
+          v = Object.assign(document.createElement("video"), { muted: true, loop: true, playsInline: true, src: box.dataset.video });
+          v.className = "cover__media cover__video";
+          v.setAttribute("aria-hidden", "true");
+          v.addEventListener("playing", () => v.classList.add("is-playing"), { once: true });
+          box.append(v);
+        }
+        v.play().catch(() => {});
+      } else v?.pause();
     }
   }, { threshold: 0.25 });
-  videos.forEach((v) => io.observe(v));
-  reduce.addEventListener("change", () => reduce.matches && videos.forEach((v) => v.pause()));
+  covers.forEach((c) => io.observe(c));
+  reduce.addEventListener("change", () => reduce.matches && covers.forEach((c) => c.querySelector("video")?.pause()));
 }
+if (document.readyState === "complete") start(); else addEventListener("load", start, { once: true });

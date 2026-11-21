@@ -23,10 +23,14 @@ images:
   cover.jpg:
     - 543
     - 544
+  cover-wide.jpg:
+    - 1280
+    - 544
 webp: true
 draft: false
 cover_video: "https://aitanyan.com/img/videos/where-experience-comes-from/cover-loop.mp4"
 video_vertical: "https://aitanyan.com/img/videos/where-experience-comes-from/vertical.mp4"
+cover_wide: "https://aitanyan.com/img/articles/where-experience-comes-from/cover-wide.jpg"
 ---
 
 【AI 脑洞实验室 No.19】这是一个经典的“先有鸡还是先有蛋”的问题：公司只招有经验的人，可没人给机会，经验从哪里来？在 AI 时代，这个问题可能会变得更尖锐。

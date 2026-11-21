@@ -1,9 +1,12 @@
+{{- /* partial "card.html" page, or (dict "page" $p "eager" true) for cards in the first row of a list. */ -}}
+{{- $p := . -}}{{- $eager := false -}}
+{{- if reflect.IsMap . }}{{ $p = .page }}{{ $eager = .eager }}{{ end -}}
 <article class="card">
-  {{ partial "cover.html" (dict "page" . "size" "card") }}
+  {{ partial "cover.html" (dict "page" $p "size" "card" "eager" $eager) }}
   <div class="card__body">
-    {{ partial "category-chip.html" . }}
-    <h3 class="card__title"><a class="card__link" href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
-    {{ with .Summary }}<p class="card__summary">{{ . | plainify | htmlUnescape }}</p>{{ end }}
-    <div class="card__foot"><time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006-01-02" }}</time><span class="card__read">{{ printf (partial "t.html" (dict "page" . "key" "reading_time")) (int (math.Max 1 .ReadingTime)) }}</span></div>
+    {{ partial "category-chip.html" $p }}
+    <h3 class="card__title"><a class="card__link" href="{{ $p.RelPermalink }}">{{ $p.Title }}</a></h3>
+    {{ with $p.Summary }}<p class="card__summary">{{ . | plainify | htmlUnescape }}</p>{{ end }}
+    <div class="card__foot"><time datetime="{{ $p.Date.Format "2006-01-02" }}">{{ $p.Date.Format "2006-01-02" }}</time><span class="card__read">{{ printf (partial "t.html" (dict "page" $p "key" "reading_time")) (int (math.Max 1 $p.ReadingTime)) }}</span></div>
   </div>
 </article>

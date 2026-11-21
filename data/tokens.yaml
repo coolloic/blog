@@ -14,9 +14,9 @@ color:
   border:        {light: "#E0C0B1", dark: "#584237"}   # outline-variant
   subtle:        {light: "#7A6155", dark: "#A78B7D"}   # outline: summaries, dates, footer (light darkened from #8C7164 for AA)
 font:
-  body: '"Lato", "PingFang SC", "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif'
+  body: '-apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif'
   display: '"Crimson Pro", "Songti SC", "Noto Serif SC", Georgia, serif'
-  mono: '"Source Code Pro", ui-monospace, "SF Mono", Menlo, Consolas, monospace'
+  mono: 'ui-monospace, "SF Mono", Menlo, Consolas, monospace'
 size:
   body: "18px"
   body-en: "17px"

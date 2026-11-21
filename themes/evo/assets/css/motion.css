@@ -25,6 +25,6 @@
 @media (prefers-reduced-motion: reduce) {
   @view-transition { navigation: none; }
   ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
-  .progress, .card, .cat-tile, .note-list__item, .result { animation: none !important; }
+  .progress, .card, .cat-tile, .note-list__item, .result, .banner::after, .banner__eyebrow::after { animation: none !important; }
   *, *::before, *::after { transition-duration: 0s !important; scroll-behavior: auto !important; }
 }

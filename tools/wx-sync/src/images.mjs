@@ -34,3 +34,20 @@ export async function webpVariants(bytes, name, widths, ext = "") {
   }
   return out;
 }
+
+/** Size of a WeChat headline cover (≈2.35:1); the site's cover boxes use this ratio. */
+export const WIDE = { width: 1280, height: 544 };
+
+/** True for covers that would be cropped in a 2.35:1 box (WeChat's square secondary-article covers). */
+export const needsWide = ([w, h]) => w / h < 2;
+
+/**
+ * A 1280×544 JPEG with the whole cover centred and the sides filled by a blurred, dimmed copy of it,
+ * baked once so pages need no runtime blur or extra download.
+ */
+export async function wideCover(bytes) {
+  const { width, height } = WIDE;
+  const backdrop = await sharp(bytes).rotate().resize(width, height, { fit: "cover" }).blur(40).linear(0.42, 0).toBuffer();
+  const front = await sharp(bytes).rotate().resize({ height, width: width - 64, fit: "inside" }).toBuffer();
+  return sharp(backdrop).composite([{ input: front, gravity: "center" }]).jpeg({ quality: 86, mozjpeg: true }).toBuffer();
+}

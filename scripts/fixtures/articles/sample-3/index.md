@@ -4,7 +4,8 @@ date: 2026-11-20T08:00:00+08:00
 summary: "示例文章（占位），用于开发主题。"
 categories: ["education"]
 tags: ["agents"]
-cover: "/images/placeholder-cover.svg"
+cover: "https://example.com/square.jpg"
+cover_wide: "https://example.com/wide/cover-wide.jpg"
 wechat_url: "https://mp.weixin.qq.com/s/placeholder"
 wechat_id: "sample-3"
 featured: false

@@ -1,18 +1,20 @@
 {{- /* Cover box with a fixed aspect ratio and a brand-gradient background that shows when there is no
-     cover or it fails to load. partial "cover.html" (dict "page" $p "size" "card|hero") */ -}}
-{{- $p := .page -}}{{- $hero := eq .size "hero" -}}
+     cover or it fails to load. partial "cover.html" (dict "page" $p "size" "card|hero")
+     Performance: the WebP <picture> always paints first. On the article page (hero) a cover_video is only
+     announced with data-video; video-inview.js lays the loop over the image after load. Cards never get video. */ -}}
+{{- $p := .page -}}{{- $hero := eq .size "hero" -}}{{- $eager := or $hero .eager -}}
 {{- $w := cond $hero 2100 1600 -}}{{- $h := 900 -}}
-<div class="cover cover--{{ .size }}"{{ if ne .vt false }} style="view-transition-name: cover-{{ $p.File.ContentBaseName | default $p.File.BaseFileName | urlize }}"{{ end }}>
-  {{- with $p.Params.cover }}
+{{- $style := slice -}}
+{{- if ne .vt false }}{{ $style = $style | append (printf "view-transition-name: cover-%s" ($p.File.ContentBaseName | default $p.File.BaseFileName | urlize)) }}{{ end -}}
+{{- $video := and $hero $p.Params.cover_video -}}
+<div class="cover cover--{{ .size }}"{{ with $style }} style="{{ delimit . "; " | safeCSS }}"{{ end }}{{ if $video }} data-video="{{ partial "img-url.html" $p.Params.cover_video }}"{{ end }}>
+  {{- /* cover_wide: a 2.35:1 version of a square WeChat cover (wx-sync --wide-covers); the original stays for sharing. */}}
+  {{- with $p.Params.cover_wide | default $p.Params.cover }}
   {{- $src := partial "img-url.html" . }}
-  {{- with $p.Params.cover_video }}
-  <video class="cover__media" src="{{ partial "img-url.html" . }}" poster="{{ $src }}" width="{{ $w }}" height="{{ $h }}" muted loop playsinline preload="none" data-autoplay-in-view aria-hidden="true"></video>
-  {{- else }}
   {{- $dims := index ($p.Params.images | default dict) (path.Base (urls.Parse .).Path) | default (slice $w $h) }}
   {{- $sizes := cond $hero "(min-width: 1200px) 1200px, 100vw" "(min-width: 1024px) 380px, (min-width: 640px) 50vw, 100vw" }}
-  {{ partial "picture.html" (dict "page" $p "src" $src "alt" $p.Params.cover_alt "dims" $dims "sizes" $sizes "class" "cover__media" "eager" $hero) }}
+  {{ partial "picture.html" (dict "page" $p "src" $src "alt" $p.Params.cover_alt "dims" $dims "sizes" $sizes "class" "cover__media" "eager" $eager) }}
   {{- end }}
-  {{- end }}
-  {{- if $p.Params.cover_video }}<span class="cover__badge">{{ partial "icon.html" "play" }}{{ partial "t.html" (dict "page" $p "key" "video_badge") }}</span>{{ end }}
+  {{- if $video }}<span class="cover__badge">{{ partial "icon.html" "play" }}{{ partial "t.html" (dict "page" $p "key" "video_badge") }}</span>{{ end }}
 </div>
 {{- /**/ -}}
