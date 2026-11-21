@@ -1,4 +1,4 @@
-<section class="follow-card" data-follow-card aria-label="{{ partial "t.html" (dict "page" . "key" "follow_title") }}">
+<section class="follow-card" data-follow-card style="--follow-logo: url({{ "images/logo-mark-128.webp" | relURL }})" aria-label="{{ partial "t.html" (dict "page" . "key" "follow_title") }}">
   {{ partial "qr.html" (dict "size" 96 "class" "follow-card__qr" "alt" (partial "t.html" (dict "page" . "key" "follow_qr_alt"))) }}
   <div class="follow-card__text">
     <h2 class="follow-card__title">{{ partial "t.html" (dict "page" . "key" "follow_title") }}</h2>

@@ -156,3 +156,15 @@
 .quiz-cta { min-block-size: 200px; align-content: center; }
 .notes-strip { min-block-size: 180px; }
 .notes-strip::before { background: linear-gradient(90deg, color-mix(in srgb, var(--color-bg) 92%, transparent), color-mix(in srgb, var(--color-bg) 72%, transparent)); }
+
+/* Follow card: a dot-grid pattern, a soft glow and a large faded logo robot (the header's cached image). */
+.follow-card { position: relative; isolation: isolate; overflow: hidden;
+  background-color: var(--color-surface);
+  background-image:
+    radial-gradient(520px 260px at 0% 0%, color-mix(in srgb, var(--color-accent-fill) 20%, transparent), transparent 70%),
+    radial-gradient(circle, color-mix(in srgb, var(--color-accent2) 26%, transparent) 1.2px, transparent 1.6px),
+    radial-gradient(circle, color-mix(in srgb, var(--color-accent-fill) 22%, transparent) 1.2px, transparent 1.6px);
+  background-size: auto, 22px 22px, 22px 22px; background-position: 0 0, 0 0, 11px 11px; }
+.follow-card::after { content: ""; position: absolute; z-index: -1; inset-block: -30px; inset-inline-end: -20px; inline-size: 260px;
+  background: var(--follow-logo) center / contain no-repeat; opacity: .14; transform: rotate(-8deg); pointer-events: none; }
+@media (max-width: 639px) { .follow-card::after { inline-size: 180px; opacity: .1; } }
