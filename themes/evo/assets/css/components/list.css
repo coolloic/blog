@@ -12,7 +12,7 @@
 .row-list li { display: flex; justify-content: space-between; gap: var(--space-m); line-height: 1.6; }
 .row-list a { color: var(--color-text); text-decoration: none; }
 .row-list a:hover { color: var(--color-accent); }
-.row-list time { flex: none; font-family: var(--font-mono); font-size: 13px; color: var(--color-muted); }
+.row-list time { flex: none; font-family: var(--font-mono); font-size: 13px; color: var(--color-subtle); }
 .cat-overview { display: grid; gap: var(--space-l); grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); }
 .cat-overview__item { display: grid; gap: var(--space-s); align-content: start; padding: var(--space-l); border: 1px solid color-mix(in srgb, var(--color-border) 60%, transparent); border-radius: var(--radius-card); background: var(--color-surface); }
 .cat-overview__item h2 { display: flex; justify-content: space-between; align-items: baseline; font-size: var(--size-h3); }
@@ -26,7 +26,7 @@
 .archive__month { font-family: var(--font-mono); font-size: var(--size-small); color: var(--color-accent); }
 .archive__list { display: grid; gap: var(--space-s); padding: 0; list-style: none; }
 .archive__list li { display: grid; grid-template-columns: auto 1fr auto; align-items: baseline; gap: var(--space-m); line-height: 1.6; }
-.archive__list time { font-family: var(--font-mono); font-size: 13px; color: var(--color-muted); }
+.archive__list time { font-family: var(--font-mono); font-size: 13px; color: var(--color-subtle); }
 .archive__list a { color: var(--color-text); text-decoration: none; }
 .archive__list a:hover { color: var(--color-accent); }
 .badge { padding: 0 var(--space-s); border-radius: var(--radius-chip); font-family: var(--font-mono); font-size: var(--size-label); white-space: nowrap; }

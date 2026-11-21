@@ -87,7 +87,7 @@ check_toggle_button() {
 
 check_tokens_unescaped() {
   local style; style=$(tr -d '\n' < "$OUT/posts/hello-world/index.html" | grep -o '<style>.*</style>' | head -1)
-  if [[ -n "$style" && "$style" != *"&#34"* && "$style" != *"&quot;"* && "$style" == *'--font-body:"PingFang SC"'* ]]; then pass check_tokens_unescaped
+  if [[ -n "$style" && "$style" != *"&#34"* && "$style" != *"&quot;"* && "$style" == *'--font-body:"'* ]]; then pass check_tokens_unescaped
   else fail check_tokens_unescaped "token CSS is HTML-escaped or missing: $(echo "$style" | grep -o -- '--font-body:[^;]*')"; fi
 }
 
@@ -502,6 +502,19 @@ check_cjk_emphasis() {
   else fail check_cjk_emphasis "bold ending in CJK punctuation does not render (goldmark cjk.escapedSpace off?)"; fi
 }
 
-CHECKS=(check_theme_evo check_html_lang check_tokens_css check_light_dark_fallback check_theme_script_first check_nav check_skip_link check_wrap check_toggle_button check_tokens_unescaped check_home_featured check_home_featured_fallback check_home_lists_articles_not_wiki check_home_empty check_cover_box check_cover_video_slot check_follow_card check_no_format_errors check_category_order check_category_urls check_category_empty check_archives check_old_urls check_internal_links check_article_page check_wechat_footer check_video_vertical check_video_shortcode check_required_fields check_jsonld check_prev_next check_notes_page check_en_chrome check_code_copy check_wiki_body check_wiki_concept_page check_search_index check_search_page check_view_transitions check_scroll_driven_guarded check_reduced_motion check_js_budget check_progress_bar check_seo check_structured_data check_sitemap check_rss_scope check_404 check_video_dir check_no_blocking_fonts check_search_form_visible check_rise_no_fade check_layout_375 check_paged_canonical check_popover_fallback check_no_double_entities check_summary_with_angle_brackets check_unknown_category check_fixtures_not_in_content check_image_dimensions check_cjk_emphasis)
+check_stitch_fonts() {
+  local h; h=$(html1 "$OUT/index.html" | sed 's|</head>.*||' | perl -pe 's|<noscript>.*?</noscript>||g')
+  local link; link=$(echo "$h" | grep -oE '<link[^>]*fonts.googleapis.com/css2[^>]*>' | head -1)
+  if [[ "$link" == *Crimson+Pro* && "$link" == *Lato* && "$link" == *Source+Code+Pro* && "$link" == *rel=*preload* ]] && python3 scripts/check-contrast.py >/dev/null; then pass check_stitch_fonts
+  else fail check_stitch_fonts "need one non-blocking Google Fonts link with Crimson Pro, Lato and Source Code Pro, and passing contrast incl. subtle: $link"; fi
+}
+
+check_card_foot_split() {
+  local foot; foot=$(perl -0777 -ne 'print $1 if /(<div class="?card__foot.*?<\/div>)/s' "$OUT/index.html")
+  if echo "$foot" | grep -qE '<time[^>]*>2026-11-' && echo "$foot" | grep -qE 'class="?card__read'; then pass check_card_foot_split
+  else fail check_card_foot_split "card footer should show the date and the reading time as separate items: ${foot:0:200}"; fi
+}
+
+CHECKS=(check_theme_evo check_html_lang check_tokens_css check_light_dark_fallback check_theme_script_first check_nav check_skip_link check_wrap check_toggle_button check_tokens_unescaped check_home_featured check_home_featured_fallback check_home_lists_articles_not_wiki check_home_empty check_cover_box check_cover_video_slot check_follow_card check_no_format_errors check_category_order check_category_urls check_category_empty check_archives check_old_urls check_internal_links check_article_page check_wechat_footer check_video_vertical check_video_shortcode check_required_fields check_jsonld check_prev_next check_notes_page check_en_chrome check_code_copy check_wiki_body check_wiki_concept_page check_search_index check_search_page check_view_transitions check_scroll_driven_guarded check_reduced_motion check_js_budget check_progress_bar check_seo check_structured_data check_sitemap check_rss_scope check_404 check_video_dir check_no_blocking_fonts check_search_form_visible check_rise_no_fade check_layout_375 check_paged_canonical check_popover_fallback check_no_double_entities check_summary_with_angle_brackets check_unknown_category check_fixtures_not_in_content check_image_dimensions check_cjk_emphasis check_stitch_fonts check_card_foot_split)
 for c in "${@:-${CHECKS[@]}}"; do $c; done
 [[ $FAILS -eq 0 ]] && echo "SITE ALL PASS" || { echo "$FAILS SITE CHECKS FAILED"; exit 1; }

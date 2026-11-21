@@ -5,11 +5,7 @@
 <title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} · {{ site.Title }}{{ end }}</title>
 {{ partial "seo.html" . }}
 <link rel="icon" href="{{ "images/favicon.svg" | relURL }}" type="image/svg+xml">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-{{- /* Display font loads without blocking first paint; headings use the serif fallback until it arrives. */}}
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@600;700&display=swap"></noscript>
+{{ partial "fonts.html" . }}
 <style>{{ partial "tokens.css.html" . | safeCSS }}</style>
 {{- $css := resources.Get "css/main.css" | css.Build (dict "minify" hugo.IsProduction) | fingerprint }}
 <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">

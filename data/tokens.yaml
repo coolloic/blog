@@ -12,10 +12,11 @@ color:
   accent2:       {light: "#006B5F", dark: "#4FDBC8"}   # secondary: teal, tech notes
   accent3:       {light: "#842BD2", dark: "#DDB7FF"}   # tertiary: purple, category chips
   border:        {light: "#E0C0B1", dark: "#584237"}   # outline-variant
+  subtle:        {light: "#7A6155", dark: "#A78B7D"}   # outline: summaries, dates, footer (light darkened from #8C7164 for AA)
 font:
-  body: '"PingFang SC", "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif'
+  body: '"Lato", "PingFang SC", "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif'
   display: '"Crimson Pro", "Songti SC", "Noto Serif SC", Georgia, serif'
-  mono: 'ui-monospace, "SF Mono", Menlo, Consolas, monospace'
+  mono: '"Source Code Pro", ui-monospace, "SF Mono", Menlo, Consolas, monospace'
 size:
   body: "18px"
   body-en: "17px"

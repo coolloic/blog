@@ -2,7 +2,8 @@
 import sys, yaml
 PAIRS = [('text','bg'),('muted','bg'),('text','surface'),('muted','surface'),('text','surface2'),('muted','surface2'),
          ('accent','bg'),('accent','surface'),('accent2','bg'),('accent2','surface'),('accent3','bg'),('accent3','surface'),
-         ('on-accent-fill','accent-fill')]
+         ('on-accent-fill','accent-fill'),
+         ('subtle','bg'),('subtle','surface'),('subtle','surface2')]
 def lum(h):
     c = [int(h.lstrip('#')[i:i+2], 16) / 255 for i in (0, 2, 4)]
     c = [x / 12.92 if x <= 0.03928 else ((x + 0.055) / 1.055) ** 2.4 for x in c]
