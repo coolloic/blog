@@ -925,7 +925,7 @@ check_back_links() {
   local g; g=$(cd "$OUT" && ls -d glossary/*/ | head -1)
   perl -0777 -ne 'exit(/<nav class="?crumbs[^>]*>.{0,400}?href="?\/blog\/glossary\//s ? 0 : 1)' "$OUT/${g}index.html" || bad+="glossary "
   local q; q=$(cd "$OUT" && ls -d quiz/*/ | head -1)
-  for f in subscribe/index.html "${q}index.html" about/index.html methodology/index.html; do
+  for f in subscribe/index.html "${q}index.html" methodology/index.html; do
     perl -0777 -ne 'exit(/<nav class="?crumbs[^>]*>.{0,400}?href="?\/blog\/"?.{0,400}?首页<\/a>/s ? 0 : 1)' "$OUT/$f" || bad+="home:$f "
   done
   if [[ -z "$bad" ]]; then pass check_back_links; else fail check_back_links "$bad"; fi
@@ -952,6 +952,21 @@ check_footer_contact() {
   else fail check_footer_contact "footer lacks 投稿与联系 -> mailto:hello@aitanyan.com"; fi
 }
 
-CHECKS=(check_theme_evo check_html_lang check_tokens_css check_light_dark_fallback check_theme_script_first check_nav check_skip_link check_wrap check_toggle_button check_tokens_unescaped check_home_featured check_home_featured_fallback check_home_lists_articles_not_wiki check_home_empty check_cover_box check_cover_video_slot check_follow_card check_no_format_errors check_category_order check_category_urls check_category_empty check_archives check_old_urls check_internal_links check_article_page check_wechat_footer check_video_vertical check_video_shortcode check_required_fields check_jsonld check_prev_next check_notes_page check_en_chrome check_code_copy check_wiki_body check_wiki_concept_page check_search_index check_search_page check_view_transitions check_scroll_driven_guarded check_reduced_motion check_js_budget check_progress_bar check_seo check_structured_data check_sitemap check_rss_scope check_404 check_video_dir check_no_blocking_fonts check_search_form_visible check_rise_no_fade check_layout_375 check_paged_canonical check_popover_fallback check_no_double_entities check_summary_with_angle_brackets check_unknown_category check_fixtures_not_in_content check_image_dimensions check_cjk_emphasis check_stitch_fonts check_card_foot_split check_real_content check_redirect_site check_sitemap_scope check_noindex_thin check_post_jsonld check_company check_webp_srcset check_topics check_topic_unknown_article check_trust_pages check_corrections_note check_glossary check_glossary_bad_wiki check_topic_min_articles check_small_fixes check_tools check_tools_unknown_article check_quiz check_comments check_footer_no_personal_links check_home_banner check_subscribe_page check_tech_feel check_cover_uncropped check_dark_default check_asset_cache_headers check_perf_basics check_display_font_optional check_follow_badge_zh check_category_icons check_qr_webp check_back_to_top check_notes_quiz_images check_strip_banners check_follow_card_pattern check_back_links check_image_preconnect check_about_call_for_topics check_footer_contact)
+check_back_links_sitewide() {
+  # Top-level (nav) pages have no back link; every other page has exactly one (2026-11-22, owner).
+  local bad="" p f n
+  while IFS= read -r f; do
+    p=${f#"$OUT"/}; p=${p%index.html}
+    case "$p" in *page/[0-9]*/) continue ;; esac
+    n=$(grep -oE '<nav class="?crumbs"?[ >]' "$f" | wc -l | tr -d ' ')
+    case "$p" in
+      ""|articles/|topics/|glossary/|tools/|notes/|search/|about/) [[ "$n" -eq 0 ]] || bad+="extra:/$p " ;;
+      *) [[ "$n" -eq 1 ]] || bad+="missing($n):/$p " ;;
+    esac
+  done < <(find "$OUT" -name index.html)
+  if [[ -z "$bad" ]]; then pass check_back_links_sitewide; else fail check_back_links_sitewide "$(echo "$bad" | tr ' ' '\n' | sort | uniq | head -14 | tr '\n' ' ')"; fi
+}
+
+CHECKS=(check_theme_evo check_html_lang check_tokens_css check_light_dark_fallback check_theme_script_first check_nav check_skip_link check_wrap check_toggle_button check_tokens_unescaped check_home_featured check_home_featured_fallback check_home_lists_articles_not_wiki check_home_empty check_cover_box check_cover_video_slot check_follow_card check_no_format_errors check_category_order check_category_urls check_category_empty check_archives check_old_urls check_internal_links check_article_page check_wechat_footer check_video_vertical check_video_shortcode check_required_fields check_jsonld check_prev_next check_notes_page check_en_chrome check_code_copy check_wiki_body check_wiki_concept_page check_search_index check_search_page check_view_transitions check_scroll_driven_guarded check_reduced_motion check_js_budget check_progress_bar check_seo check_structured_data check_sitemap check_rss_scope check_404 check_video_dir check_no_blocking_fonts check_search_form_visible check_rise_no_fade check_layout_375 check_paged_canonical check_popover_fallback check_no_double_entities check_summary_with_angle_brackets check_unknown_category check_fixtures_not_in_content check_image_dimensions check_cjk_emphasis check_stitch_fonts check_card_foot_split check_real_content check_redirect_site check_sitemap_scope check_noindex_thin check_post_jsonld check_company check_webp_srcset check_topics check_topic_unknown_article check_trust_pages check_corrections_note check_glossary check_glossary_bad_wiki check_topic_min_articles check_small_fixes check_tools check_tools_unknown_article check_quiz check_comments check_footer_no_personal_links check_home_banner check_subscribe_page check_tech_feel check_cover_uncropped check_dark_default check_asset_cache_headers check_perf_basics check_display_font_optional check_follow_badge_zh check_category_icons check_qr_webp check_back_to_top check_notes_quiz_images check_strip_banners check_follow_card_pattern check_back_links check_image_preconnect check_about_call_for_topics check_footer_contact check_back_links_sitewide)
 for c in "${@:-${CHECKS[@]}}"; do $c; done
 [[ $FAILS -eq 0 ]] && echo "SITE ALL PASS" || { echo "$FAILS SITE CHECKS FAILED"; exit 1; }

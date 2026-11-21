@@ -4,7 +4,6 @@
 {{- $next := site.GetPage (printf "/topics/%s" .Params.next_topic) -}}
 {{- if not $next }}{{ errorf "%s: unknown next_topic %q" .File.Path .Params.next_topic }}{{ end -}}
 <div class="container stack-section quiz">
-  {{ partial "crumbs.html" . }}
   <header class="page-head">
     <span class="chip chip--topic">{{ partial "t.html" (dict "page" . "key" "quiz_label") }}</span>
     <h1>{{ .Title }}</h1>

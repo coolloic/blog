@@ -1,7 +1,6 @@
 {{ define "main" }}
 {{- $arts := partial "topic-articles.html" . -}}
 <div class="container stack-section topic">
-  {{ partial "crumbs.html" . }}
   <header class="page-head">
     <span class="chip chip--topic">{{ partial "t.html" (dict "page" . "key" "nav_topics") }}</span>
     <h1>{{ .Title }}</h1>

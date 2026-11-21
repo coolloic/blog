@@ -1,14 +1,23 @@
-{{- /* Back link at the top of a detail page: ← its list (posts go back to Tech Notes), plus the category for
-     science articles. Plain links; the BreadcrumbList JSON-LD lives in seo.html. */ -}}
+{{- /* Back link for every page except the top-level (nav) pages, inserted once by baseof.html (owner's rule,
+     2026-11-22). Where "back" goes: posts and the Wiki root → Tech Notes; Wiki pages → Wiki; category pages
+     and the category overview → 科普 (plus the category name on articles); tag pages → tag overview;
+     anything without a list of its own → home. The BreadcrumbList JSON-LD lives in seo.html. */ -}}
 {{- $p := . -}}
-{{- $back := cond (eq $p.Section "posts") (site.GetPage "/notes") $p.Parent -}}
-{{- /* Pages without a list of their own (about, subscribe, the quiz…) go back to the home page. */ -}}
-{{- if or (not $back) $back.IsHome (eq $p.Section "quiz") }}{{ $back = site.Home }}{{ end -}}
+{{- $top := slice "/" "/articles/" "/topics/" "/glossary/" "/tools/" "/notes/" "/search/" "/about/" -}}
+{{- $path := strings.TrimPrefix (strings.TrimSuffix "/" (urls.Parse site.BaseURL).Path) $p.RelPermalink -}}
+{{- if and (not (in $top $path)) (not (in (slice "404" "home") $p.Kind)) (not (findRE `/page/\d+/$` $path)) -}}
+{{- $back := $p.Parent -}}
+{{- if eq $p.Section "posts" }}{{ $back = site.GetPage "/notes" }}
+{{- else if eq $p.Section "wiki" }}{{ $back = cond (eq $path "/wiki/") (site.GetPage "/notes") (site.GetPage "/wiki") }}
+{{- else if eq $p.Data.Plural "categories" }}{{ $back = site.GetPage "/articles" }}
+{{- else if and (eq $p.Kind "term") (eq $p.Data.Plural "tags") }}{{ $back = site.GetPage "/tags" }}
+{{- else if or (eq $p.Section "quiz") (not $back) }}{{ $back = site.Home }}{{ end -}}
 {{- with $back }}
 <nav class="crumbs" aria-label="{{ partial "t.html" (dict "page" $p "key" "breadcrumb") }}">
   <a class="crumbs__back" href="{{ .RelPermalink }}">{{ partial "icon.html" "arrow-left" }}{{ if .IsHome }}{{ partial "t.html" (dict "page" $p "key" "nav_home") }}{{ else }}{{ .Title }}{{ end }}</a>
-  {{- if eq $p.Section "articles" }}{{ with index ($p.Params.categories | default slice) 0 }}{{ with index hugo.Data.categories . }}
-  <span aria-hidden="true">/</span><a href="{{ printf "categories/%s/" (index $p.Params.categories 0) | relURL }}">{{ .name }}</a>
+  {{- if and (eq $p.Section "articles") $p.IsPage }}{{ with index ($p.Params.categories | default slice) 0 }}{{ $slug := . }}{{ with index hugo.Data.categories . }}
+  <span aria-hidden="true">/</span><a href="{{ printf "categories/%s/" $slug | relURL }}">{{ .name }}</a>
   {{- end }}{{ end }}{{ end }}
 </nav>
 {{- end }}
+{{- end -}}

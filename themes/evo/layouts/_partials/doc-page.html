@@ -3,7 +3,6 @@
 {{ partial "progress.html" $p }}
 <article class="article article--doc">
   <div class="container">
-    {{ if eq .kind "post" }}{{ partial "crumbs.html" $p }}{{ end }}
     <header class="article__head">
       <div class="article-meta">
         {{- if eq .kind "post" }}{{ partial "meta-line.html" $p }}{{ else }}{{ with $p.Lastmod }}<span class="meta-line">{{ partial "t.html" (dict "page" $p "key" "updated") }} <time datetime="{{ .Format "2006-01-02" }}">{{ .Format "2006-01-02" }}</time></span>{{ end }}{{ end }}
