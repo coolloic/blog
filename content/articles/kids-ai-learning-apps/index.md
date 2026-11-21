@@ -8,7 +8,7 @@ tags:
   - "孩子"
   - "学习"
   - "手机应用推荐"
-cover: "https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/kids-ai-learning-apps/cover.jpg"
+cover: "https://aitanyan.com/img/articles/kids-ai-learning-apps/cover.jpg"
 wechat_url: "https://mp.weixin.qq.com/s/TTO4VWgy5BgumXrjxORSoA"
 wechat_id: "2650017038_3"
 images:
@@ -29,7 +29,7 @@ draft: false
 
 【AI 手机应用推荐 · 学习篇｜非广告】头条讨论了“孩子用 AI 写作业，是作弊还是新能力”。不管你怎么看，AI 学习 App 已经在很多孩子手里了。这篇介绍两款热门的，重点讲**家长怎么设置，让 AI 当老师，而不是当答案机**。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/kids-ai-learning-apps/1.png)
+![](https://aitanyan.com/img/articles/kids-ai-learning-apps/1.png)
 
 先说明：本文**不是广告**，没有收任何平台的钱，不放下载链接。应用信息来自苹果 App Store 公开页面（2026 年 11 月 18 日查看），其他数据来自公开报道，文末附来源链接。
 
@@ -41,7 +41,7 @@ draft: false
 
 ## 二、豆包爱学：字节的“AI 老师”
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/kids-ai-learning-apps/2.png)
+![](https://aitanyan.com/img/articles/kids-ai-learning-apps/2.png)
 
 **是什么：**\ 字节跳动旗下的 AI 学习 App，前身是“河马爱学”，2024 年 9 月改名并入豆包产品线。
 
@@ -51,7 +51,7 @@ draft: false
 
 ## 三、作业帮：老牌拍题 App 加上了 AI
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/kids-ai-learning-apps/3.png)
+![](https://aitanyan.com/img/articles/kids-ai-learning-apps/3.png)
 
 **是什么：**\ 很多 90 后、00 后都用过的拍照搜题 App。App Store 介绍里说它有约 19 亿道题的题库，现在加上了 AI 讲解思路和追问、AI 批改作业和作文。
 

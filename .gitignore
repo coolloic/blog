@@ -18,3 +18,6 @@ tools/wx-sync/node_modules/
 
 # wrangler (Cloudflare CLI) local cache
 .wrangler/
+
+# Vercel CLI project link
+.vercel/

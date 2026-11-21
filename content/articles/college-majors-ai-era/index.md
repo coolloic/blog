@@ -7,7 +7,7 @@ categories:
 tags:
   - "选专业"
   - "高考"
-cover: "https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/college-majors-ai-era/cover.jpg"
+cover: "https://aitanyan.com/img/articles/college-majors-ai-era/cover.jpg"
 wechat_url: "https://mp.weixin.qq.com/s/Xc9aTcWktmRdIRwy2M9xoA"
 wechat_id: "2650017036_1"
 images:
@@ -28,7 +28,7 @@ draft: false
 
 过去十年，“学计算机，稳了”几乎是家长圈的共识。可最近的数据却让很多人意外：一些热门专业的毕业生找工作变难了，而一些被认为“冷门”“辛苦”“不体面”的方向，反而越来越抗风险。今天我们用国内外的就业数据和研究，聊聊 AI 时代选专业的新思路。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/college-majors-ai-era/1.jpg)
+![](https://aitanyan.com/img/articles/college-majors-ai-era/1.jpg)
 
 ## 一、热门专业的“风向”变了
 
@@ -50,7 +50,7 @@ draft: false
 
 世界经济论坛《2025 年未来就业报告》的预测也相互印证：到 2030 年，**按绝对数量增长最多的岗位**是农业工人、配送司机、建筑工人，以及护士、社工、心理咨询等“照护经济”岗位；而收银员、行政助理、会计审计等文书类岗位下降最快，平面设计师和法律秘书也首次接近下降最快的前十名。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/college-majors-ai-era/2.jpg)
+![](https://aitanyan.com/img/articles/college-majors-ai-era/2.jpg)
 
 ## 三、国内的专业目录，也在快速“换血”
 
@@ -82,7 +82,7 @@ draft: false
 
 **4\. 兴趣仍然最重要。**\ 在变化最快的时代，真正能让人走得远的，是愿意长期投入的方向。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/college-majors-ai-era/3.jpg)
+![](https://aitanyan.com/img/articles/college-majors-ai-era/3.jpg)
 
 ## 写在最后
 

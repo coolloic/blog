@@ -7,7 +7,7 @@ categories:
 tags:
   - "面试"
   - "手机应用推荐"
-cover: "https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-interview-practice-apps/cover.jpg"
+cover: "https://aitanyan.com/img/articles/ai-interview-practice-apps/cover.jpg"
 wechat_url: "https://mp.weixin.qq.com/s/THdcnypsea9xxXnGLwmaQw"
 wechat_id: "2650017105_3"
 images:
@@ -28,11 +28,11 @@ draft: false
 
 【AI 手机应用推荐 · 面试篇】头条讲了 AI 面试官怎么筛人，次条脑洞了“AI 面 AI”。这一篇说实用的：面对 AI 面试，怎么提前练？介绍两款常见求职 App 里用得上的功能，以及几条一定要守的底线。本文**非广告**，没有收任何平台的钱，不放下载链接；应用信息来自苹果 App Store 公开页面（2026 年 11 月 20 日查看）。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-interview-practice-apps/1.png)
+![](https://aitanyan.com/img/articles/ai-interview-practice-apps/1.png)
 
 ## 一、牛客：刷 AI 面试真题，看前辈面经
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-interview-practice-apps/2.png "牛客 App Store 页面（2026 年 11 月截图，卡通人物已遮挡）")
+![](https://aitanyan.com/img/articles/ai-interview-practice-apps/2.png "牛客 App Store 页面（2026 年 11 月截图，卡通人物已遮挡）")
 
 **是什么：**\ 主要面向大学生和应届生的求职学习 App，App Store 评分 4.8（约 3.4 万个评分），商务类排行第 117。
 
@@ -44,7 +44,7 @@ draft: false
 
 ## 二、猎聘：社招、中高端岗位为主
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-interview-practice-apps/3.png "猎聘 App Store 页面（2026 年 11 月截图，人物头像已遮挡）")
+![](https://aitanyan.com/img/articles/ai-interview-practice-apps/3.png "猎聘 App Store 页面（2026 年 11 月截图，人物头像已遮挡）")
 
 **是什么：**\ 猎聘自我介绍为国内中高端人才求职招聘平台，App Store 评分 4.9（约 55 万个评分），商务类排行第 13。
 

@@ -7,7 +7,7 @@ categories:
 tags:
   - "高考"
   - "脑洞实验室"
-cover: "https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-picks-your-college/cover.jpg"
+cover: "https://aitanyan.com/img/articles/ai-picks-your-college/cover.jpg"
 wechat_url: "https://mp.weixin.qq.com/s/0JMi_ZJ5z1PBlXwFveMYEQ"
 wechat_id: "2650017036_2"
 images:
@@ -28,7 +28,7 @@ draft: false
 
 【AI 脑洞实验室 No.11】每年高考出分后，几百万个家庭都会面对同一个难题：分数、位次、城市、学校、专业，几千个选项，怎么选？现在已经有不少平台推出 AI 志愿助手。如果有一天，AI 不只是“帮你查”，而是直接告诉你：“就报这个”，你敢听吗？
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-picks-your-college/1.jpg)
+![](https://aitanyan.com/img/articles/ai-picks-your-college/1.jpg)
 
 ## 一、AI 填志愿，到底比人强在哪？
 
@@ -46,7 +46,7 @@ draft: false
 
 **3\. 如果所有人都听 AI 的？**\ 假设大家用的都是同一个 AI，它推荐“性价比最高”的那几个专业，结果所有人都挤过去，原本的“捡漏”就变成了“扎堆”。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-picks-your-college/2.jpg)
+![](https://aitanyan.com/img/articles/ai-picks-your-college/2.jpg)
 
 ## 三、脑洞时间：一个 AI 决定志愿的世界
 
@@ -56,7 +56,7 @@ draft: false
 
 **剧本三：AI 当甩锅对象。**\ 报错了，就怪 AI。可人生的选择，终究要由自己负责。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-picks-your-college/3.jpg)
+![](https://aitanyan.com/img/articles/ai-picks-your-college/3.jpg)
 
 ## 四、我们的看法
 

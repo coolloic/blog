@@ -7,7 +7,7 @@ categories:
 tags:
   - "医疗"
   - "健康"
-cover: "https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-cancer-detection/cover.jpg"
+cover: "https://aitanyan.com/img/articles/ai-cancer-detection/cover.jpg"
 wechat_url: "https://mp.weixin.qq.com/s/ywId72rv9Z9TUaWFUC_5fg"
 wechat_id: "2650016566_1"
 images:
@@ -38,7 +38,7 @@ draft: false
 
 瑞典隆德大学主导的 MASAI 试验，是全球第一项在真实筛查中检验 AI 的大规模随机对照试验。2021 年至 2022 年间，超过 10 万名女性被随机分成两组：一组由两位放射科医生"双人阅片"，另一组由 AI 先给片子打风险分、标出可疑区域，再由医生判断。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-cancer-detection/1.jpg)
+![](https://aitanyan.com/img/articles/ai-cancer-detection/1.jpg)
 
 结果：
 
@@ -54,7 +54,7 @@ draft: false
 
 2026 年 4 月发表在《科学》上的研究，让 OpenAI 的推理模型与数百名医生比拼临床推理。在真实急诊病例的早期决策点，**模型在 67% 的病例中给出了正确或非常接近的诊断，而医生约为 50%–55%**。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-cancer-detection/2.jpg)
+![](https://aitanyan.com/img/articles/ai-cancer-detection/2.jpg)
 
 ### 但"AI + 医生"不一定比医生强
 
@@ -69,7 +69,7 @@ draft: false
 
 截至 2026 年 9 月，美国 FDA 的 AI 医疗器械清单已收录 **1614 款**获批产品，其中约 **76%** 属于放射影像领域。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-cancer-detection/3.jpg)
+![](https://aitanyan.com/img/articles/ai-cancer-detection/3.jpg)
 
 两个容易被忽略的事实：
 
@@ -98,7 +98,7 @@ draft: false
 - 2026 年 7 月，英矽智能宣布其 AI 发现靶点、AI 设计分子的特发性肺纤维化药物 rentosertib **进入三期临床**，计划纳入约 320 名患者、治疗 52 周，结果预计要到 2029 年前后才能揭晓；
 - 但截至目前，**还没有一款 AI 发现的药物获批上市**，也有早期 AI 药物在临床中失败或被放弃。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-cancer-detection/4.jpg)
+![](https://aitanyan.com/img/articles/ai-cancer-detection/4.jpg)
 
 AI 正在缩短新药研发的前期时间，但它绕不过临床试验这道关——**药物是否真的有效、是否安全，最终仍然要在人身上一点一点验证。**\ 至于"永生"，目前没有任何可靠证据支持。
 
@@ -110,7 +110,7 @@ AI 正在缩短新药研发的前期时间，但它绕不过临床试验这道�
 
 **当 AI 的诊断比医生更准时，你会更相信 AI，还是更相信那个会为你的生命负责的人？**
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-cancer-detection/5.jpg)
+![](https://aitanyan.com/img/articles/ai-cancer-detection/5.jpg)
 
 * * *
 

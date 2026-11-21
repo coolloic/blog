@@ -7,7 +7,7 @@ categories:
 tags:
   - "求职"
   - "面试"
-cover: "https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-job-interviews/cover.jpg"
+cover: "https://aitanyan.com/img/articles/ai-job-interviews/cover.jpg"
 wechat_url: "https://mp.weixin.qq.com/s/mTLWLha0wfcpVB4e0nQAiQ"
 wechat_id: "2650017105_1"
 images:
@@ -22,7 +22,7 @@ draft: false
 
 今年秋招，不少应届生发现：第一轮面试官变成了屏幕里的“数字人”，问完问题就倒计时，答完没有任何回音。AI 正在成为招聘的第一道门。这篇用数据讲清楚：AI 到底怎么筛你、哪里可能看走眼，以及求职者能做什么。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-job-interviews/1.png)
+![](https://aitanyan.com/img/articles/ai-job-interviews/1.png)
 
 ## 一、AI 招聘已经有多普遍？
 

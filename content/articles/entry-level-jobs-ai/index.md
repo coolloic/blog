@@ -7,7 +7,7 @@ categories:
 tags:
   - "求职"
   - "年轻人"
-cover: "https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/entry-level-jobs-ai/cover.jpg"
+cover: "https://aitanyan.com/img/articles/entry-level-jobs-ai/cover.jpg"
 wechat_url: "https://mp.weixin.qq.com/s/1d5VVU-p6GGj8QE7Wgp_og"
 wechat_id: "2650017037_1"
 images:
@@ -28,7 +28,7 @@ draft: false
 
 “招聘要求：三年以上经验。”刚毕业的年轻人最怕看到这句话。而在 AI 时代，这个问题可能更严重了：那些原本给新人练手的基础工作，正在被 AI 接手。这篇说说数据，也给正在找工作的年轻人一些实在的建议。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/entry-level-jobs-ai/1.jpg)
+![](https://aitanyan.com/img/articles/entry-level-jobs-ai/1.jpg)
 
 ## 一、最先受冲击的，是年轻人
 
@@ -42,7 +42,7 @@ draft: false
 
 教育部数据显示，**2026 届全国普通高校毕业生预计达 1270 万人，比上一届增加 48 万人**，再创历史新高。教育部也在推动高校增设“微专业”和职业能力培训，帮助毕业生更快适应岗位需求。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/entry-level-jobs-ai/2.jpg)
+![](https://aitanyan.com/img/articles/entry-level-jobs-ai/2.jpg)
 
 ## 三、第一份工作，可以往这些方向找
 
@@ -60,7 +60,7 @@ draft: false
 
 孩子第一份工作不理想，不一定是坏事。AI 时代，**第一份工作的意义不只是“稳定”，更是“学到 AI 学不会的东西”。**
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/entry-level-jobs-ai/3.jpg)
+![](https://aitanyan.com/img/articles/entry-level-jobs-ai/3.jpg)
 
 ## 写在最后
 

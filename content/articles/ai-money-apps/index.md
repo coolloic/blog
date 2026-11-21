@@ -7,7 +7,7 @@ categories:
 tags:
   - "理财"
   - "手机应用推荐"
-cover: "https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-money-apps/cover.jpg"
+cover: "https://aitanyan.com/img/articles/ai-money-apps/cover.jpg"
 wechat_url: "https://mp.weixin.qq.com/s/WZMADbOpGxYYI5HlCBX0vQ"
 wechat_id: "2650017035_3"
 images:
@@ -25,11 +25,11 @@ draft: false
 
 【AI 手机应用推荐 · 钱包篇】头条聊了“AI 会让贫富差距越来越大吗”，次条脑洞了“AI 创造的财富每人每月发一份”。大币还没发下来，AI 已经开始帮你管小钱了。这一篇讲支付宝今年推出的 AI 助手“阿宝”怎么用，以及 AI 碰到钱时一定要守住的 4 条规则。本文**非广告**，也不构成任何理财建议。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-money-apps/1.png)
+![](https://aitanyan.com/img/articles/ai-money-apps/1.png)
 
 ## 一、支付宝「阿宝」：帮你办事，但不动你的钱
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-money-apps/2.png "支付宝 App Store 页面（2026 年 11 月截图，二维码已遮挡）")
+![](https://aitanyan.com/img/articles/ai-money-apps/2.png "支付宝 App Store 页面（2026 年 11 月截图，二维码已遮挡）")
 
 今年 6 月 16 日，支付宝推出了 AI 版，叫“阿宝”。AI 版页面很简单，只有\ **「阿宝」和「资产」两个页面**：在「阿宝」里用文字或语音说需求，比如“充 50 元话费”“查去南京的高铁”，它会自动打开对应的小程序。
 

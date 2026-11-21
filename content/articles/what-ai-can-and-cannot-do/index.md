@@ -7,7 +7,7 @@ categories:
 tags:
   - "AI 能力"
   - "就业"
-cover: "https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/what-ai-can-and-cannot-do/cover.jpg"
+cover: "https://aitanyan.com/img/articles/what-ai-can-and-cannot-do/cover.jpg"
 wechat_url: "https://mp.weixin.qq.com/s/LE5enDR1spShERRAEjcTOQ"
 wechat_id: "2650016420_1"
 images:
@@ -45,7 +45,7 @@ draft: false
 
 能写出 125 页原创证明的系统，却不会玩一个陌生的小游戏。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/what-ai-can-and-cannot-do/1.jpg)
+![](https://aitanyan.com/img/articles/what-ai-can-and-cannot-do/1.jpg)
 
 如果你只看到前一组数字，你会觉得人类已经出局；如果你只看到后一组，你会觉得 AI 不过是"昂贵的自动补全"。两种结论都是错的。本文试图做一件更难的事：**把 2026 年能找到的硬证据摆在一起，冷静地拆解 AI 的能力边界、它对劳动的真实冲击，以及人类接下来的位置。**
 
@@ -61,7 +61,7 @@ draft: false
 
 更值得注意的是：METR 自己承认，它的任务集已经**快被做穿了**——前沿模型能稳定完成其中除少数几个之外的几乎所有任务，置信区间因此被撑得极宽。**我们正在失去给 AI 能力"设上限"的尺子。**
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/what-ai-can-and-cannot-do/2.jpg)
+![](https://aitanyan.com/img/articles/what-ai-can-and-cannot-do/2.jpg)
 
 ### 2\. 专业知识与推理：在多数"考试"上已达到或超过人类基线
 
@@ -142,7 +142,7 @@ METR 在 2025 年做过一个随机对照试验：资深开源开发者使用 AI
 
 需要注意的是："公司宣称因为 AI 而裁员"与"AI 真的替代了这些岗位"不是一回事。不少分析者警告，AI 可能被当作削减成本的**体面理由**。同时，2026 年美国裁员总量反而比 2025 年下降了约 44%。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/what-ai-can-and-cannot-do/3.jpg)
+![](https://aitanyan.com/img/articles/what-ai-can-and-cannot-do/3.jpg)
 
 ### 2\. 真正的冲击点：入门级岗位
 
@@ -160,7 +160,7 @@ METR 在 2025 年做过一个随机对照试验：资深开源开发者使用 AI
 
 换句话说：**AI 没有消灭入门级岗位，而是把它变成了入门者够不着的东西。**
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/what-ai-can-and-cannot-do/4.jpg)
+![](https://aitanyan.com/img/articles/what-ai-can-and-cannot-do/4.jpg)
 
 ### 4\. 增强与自动化，正在同时发生
 
@@ -194,7 +194,7 @@ Anthropic 的一项对照实验显示：学习一个新编程库时，依赖 AI 
 
 **同一个工具，用来"要答案"还是"求理解"，结果截然不同。**
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/what-ai-can-and-cannot-do/5.jpg)
+![](https://aitanyan.com/img/articles/what-ai-can-and-cannot-do/5.jpg)
 
 ### 趋势五：加速本身在加速，而制度在落后
 
@@ -232,7 +232,7 @@ Anthropic 的一项对照实验显示：学习一个新编程库时，依赖 AI 
 
 这个问题，AI 回答不了。它只能由我们自己来回答。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/what-ai-can-and-cannot-do/6.jpg)
+![](https://aitanyan.com/img/articles/what-ai-can-and-cannot-do/6.jpg)
 
 **数据来源**（均为公开资料）：
 

@@ -7,7 +7,7 @@ categories:
 tags:
   - "诈骗"
   - "深度伪造"
-cover: "https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-voice-clone-scams/cover.jpg"
+cover: "https://aitanyan.com/img/articles/ai-voice-clone-scams/cover.jpg"
 wechat_url: "https://mp.weixin.qq.com/s/gi99cMzFlYlqPMhq3SbkFg"
 wechat_id: "2650016568_1"
 images:
@@ -41,7 +41,7 @@ draft: false
 - AI 视频公司 Runway 2026 年的实验中，1043 名参与者判断 5 秒视频真假的正确率只有 **57.1%**，几乎等于猜；
 - 全球最著名的案例发生在香港：工程公司奥雅纳（Arup）的一名财务人员参加了一场视频会议，会上的"首席财务官"和几位"同事"**全部是 AI 深度伪造的**，他先后转出了约 **2560 万美元**。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-voice-clone-scams/1.jpg)
+![](https://aitanyan.com/img/articles/ai-voice-clone-scams/1.jpg)
 
 **视频会议里的人会说话、会点头、会回应你——但这一切都可以是假的。**
 
@@ -51,7 +51,7 @@ draft: false
 
 安全公司 McAfee 的测试显示，**只需约 3 秒的音频**，AI 就能克隆出相似度约 85% 的声音。这些音频从哪来？朋友圈的视频、短视频平台的口播、语音留言、甚至一通客服电话。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-voice-clone-scams/2.jpg)
+![](https://aitanyan.com/img/articles/ai-voice-clone-scams/2.jpg)
 
 McAfee 对 7000 人的调查发现：
 
@@ -65,7 +65,7 @@ McAfee 对 7000 人的调查发现：
 
 ## 三、AI 诈骗在中国：老人是重灾区
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-voice-clone-scams/3.jpg)
+![](https://aitanyan.com/img/articles/ai-voice-clone-scams/3.jpg)
 
 - 公安部数据显示，**2025 年第一季度，全国 AI 换脸、拟声诈骗案件数量环比激增 45%**，其中**老年群体受骗占比达 38%**；
 - 中国互联网金融协会的数据显示，2025 年 AI 换脸诈骗造成的直接损失**超过 18 亿元**；
@@ -89,7 +89,7 @@ McAfee 对 7000 人的调查发现：
 
 **6\. 少在公开平台暴露家人的声音和人脸。**\ 孩子和老人的视频，尽量设置为仅亲友可见。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-voice-clone-scams/4.jpg)
+![](https://aitanyan.com/img/articles/ai-voice-clone-scams/4.jpg)
 
 ## 五、未来，如何辨别真人和 AI？
 
@@ -110,7 +110,7 @@ AI 让"眼见为实""耳听为真"这两条人类用了几万年的生存经验�
 
 **今晚，要不要和家人约定一个只有你们知道的暗号？**
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-voice-clone-scams/5.jpg)
+![](https://aitanyan.com/img/articles/ai-voice-clone-scams/5.jpg)
 
 * * *
 

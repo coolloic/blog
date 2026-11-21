@@ -5,5 +5,4 @@ Hugo site with a custom theme (`themes/evo`). The main content is Chinese AI exp
 - Preview locally: `hugo server -D`, then open http://localhost:1313/blog/
 - Checks: `bash scripts/check-wiki.sh` (it runs `scripts/check-site.sh` too)
 - Design: `design/` (Google Stitch screens and exports), tokens in `data/tokens.yaml`, specs in `docs/`
-- Deploy: push to `main` on GitHub (GitHub Pages via Actions)
-- After cloning: `git submodule update --init` (PaperMod is still a submodule until it is removed)
+- Deploy: push to `main`; Vercel builds it (vercel.json) and serves https://aitanyan.com/. The old GitHub Pages address redirects there.

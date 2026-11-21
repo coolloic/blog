@@ -7,7 +7,7 @@ categories:
 tags:
   - "AI 视频"
   - "防骗"
-cover: "https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-video-guide/cover.jpg"
+cover: "https://aitanyan.com/img/articles/ai-video-guide/cover.jpg"
 wechat_url: "https://mp.weixin.qq.com/s/1RZ_47dW-OPf7RNm4tvJhA"
 wechat_id: "2650016552_1"
 images:
@@ -45,7 +45,7 @@ draft: false
 - **时长**
   ：单次生成通常在 **8–30 秒**之间；通过"续写"串联，Veo 最长约 148 秒，可灵约 3 分钟。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-video-guide/1.jpg)
+![](https://aitanyan.com/img/articles/ai-video-guide/1.jpg)
 
 但要看清一个事实：**真正的"AI 电影"不是一句话生成的。**\ 行业里的做法，是在每个模型画质最好的时长内一个镜头一个镜头地生成，再剪辑拼接——因为越往后续写，画面越容易"漂移"。目前几乎所有模型在超过 20 秒的连续画面里，都还很难保证人物长相始终一致。
 
@@ -61,7 +61,7 @@ draft: false
 - 截至 2026 年 3 月，**超过 7 万家**京东商家使用京东的数字人主播；
 - 一个数字人直播间的成本大约只有真人团队的 **十分之一**。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-video-guide/2.jpg)
+![](https://aitanyan.com/img/articles/ai-video-guide/2.jpg)
 
 但有一个数字常被忽略：数字人直播只贡献了直播电商总成交额的约 **8.3%**。它们擅长在深夜时段读商品介绍、回答标准问题，却很难像真人一样建立信任。**能 24 小时不停播，不等于能 24 小时让人信任。**
 
@@ -71,7 +71,7 @@ draft: false
 
 答案是：**已经可以，而且大多数人高估了自己的辨别力。**
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-video-guide/3.jpg)
+![](https://aitanyan.com/img/articles/ai-video-guide/3.jpg)
 
 Runway 那项实验中，1043 名参与者里只有 **9.5%** 能稳定分辨真假；而且人们判断真视频和假视频的准确率几乎一样，说明大家其实是在"猜"。耶鲁大学 2026 年春季的青年民调更扎心：多数年轻人自信能认出 AI 内容，但实测中，18–34 岁人群里有 80% 只能认对一半左右的 AI 图片。
 
@@ -96,7 +96,7 @@ Runway 那项实验中，1043 名参与者里只有 **9.5%** 能稳定分辨�
 - **第五步，剪辑**
   ：节奏、转场、字幕，依然是人决定作品好坏的关键一环。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-video-guide/4.jpg)
+![](https://aitanyan.com/img/articles/ai-video-guide/4.jpg)
 
 三条红线一定要守：**不用他人的脸和声音**（肖像权、声音权）；**不照搬受版权保护的角色**；**按规定标注 AI 生成**。
 
@@ -106,7 +106,7 @@ Runway 那项实验中，1043 名参与者里只有 **9.5%** 能稳定分辨�
 
 **当一段视频可以被任何人凭空造出来，我们还能凭什么相信自己看到的东西？**
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-video-guide/5.jpg)
+![](https://aitanyan.com/img/articles/ai-video-guide/5.jpg)
 
 * * *
 

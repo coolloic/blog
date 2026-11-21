@@ -7,7 +7,7 @@ categories:
 tags:
   - "工程"
   - "航天"
-cover: "https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-designs-rockets/cover.jpg"
+cover: "https://aitanyan.com/img/articles/ai-designs-rockets/cover.jpg"
 wechat_url: "https://mp.weixin.qq.com/s/kDdtTVqlr2aJwQh_2HU6Ug"
 wechat_id: "2650016354_1"
 images:
@@ -31,7 +31,7 @@ draft: false
 
 **一、AI设计的火箭部件，为什么“奇怪”？**
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-designs-rockets/1.jpg)
+![](https://aitanyan.com/img/articles/ai-designs-rockets/1.jpg)
 
 这些由AI生成的结构：
 

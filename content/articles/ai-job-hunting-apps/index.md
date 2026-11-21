@@ -7,7 +7,7 @@ categories:
 tags:
   - "求职"
   - "手机应用推荐"
-cover: "https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-job-hunting-apps/cover.jpg"
+cover: "https://aitanyan.com/img/articles/ai-job-hunting-apps/cover.jpg"
 wechat_url: "https://mp.weixin.qq.com/s/C5wRc6eIvQPTabjjIAENgA"
 wechat_id: "2650017037_3"
 images:
@@ -25,13 +25,13 @@ draft: false
 
 【AI 手机应用推荐 · 求职篇｜非广告】头条讲了“入门岗位被 AI 吃掉，年轻人第一份工作去哪找”。工作难找，但找工作的工具变强了：**改简历、练面试、看岗位，AI 都能帮一把**。这篇介绍几款常见的，也提醒你哪些事千万别让 AI 替你做。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-job-hunting-apps/1.png)
+![](https://aitanyan.com/img/articles/ai-job-hunting-apps/1.png)
 
 先说明：本文**不是广告**，没有收任何平台的钱，不放下载链接。应用信息来自苹果 App Store 公开页面（2026 年 11 月 18 日查看），其他数据来自公开报道，文末附来源链接。
 
 ## 一、BOSS直聘：招聘 App 里加了 AI
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-job-hunting-apps/2.png)
+![](https://aitanyan.com/img/articles/ai-job-hunting-apps/2.png)
 
 **是什么：**\ 很多年轻人找工作的第一站。按公司 2026 年二季度财报，平均月活约 7020 万；App Store 页面上的介绍写的是“7200 万+ 月活”，两个口径略有不同。
 

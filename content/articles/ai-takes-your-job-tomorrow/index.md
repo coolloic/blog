@@ -7,7 +7,7 @@ categories:
 tags:
   - "裁员"
   - "脑洞实验室"
-cover: "https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-takes-your-job-tomorrow/cover.jpg"
+cover: "https://aitanyan.com/img/articles/ai-takes-your-job-tomorrow/cover.jpg"
 wechat_url: "https://mp.weixin.qq.com/s/MdzNECXjVcl2RBPz3BrDWw"
 wechat_id: "2650017039_2"
 images:
@@ -28,7 +28,7 @@ draft: false
 
 【AI 脑洞实验室 No.13】想象一下：明天早上你到公司，发现工位上已经坐着一个“AI 同事”，它会做你会做的所有事，而且不用睡觉、不用休假、不要工资。你的老板说：“你可以先休息一段时间。”接下来会发生什么？
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-takes-your-job-tomorrow/1.jpg)
+![](https://aitanyan.com/img/articles/ai-takes-your-job-tomorrow/1.jpg)
 
 ## 一、这不完全是想象
 
@@ -42,13 +42,13 @@ draft: false
 
 **剧本三：你真的被替代了。**\ 如果你的工作全是重复、标准、不需要判断的事，AI 接管之后，公司可能确实不再需要这个岗位。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-takes-your-job-tomorrow/2.jpg)
+![](https://aitanyan.com/img/articles/ai-takes-your-job-tomorrow/2.jpg)
 
 ## 三、一个反直觉的问题
 
 如果所有公司都用 AI 替代员工，谁来买这些公司的产品？AI 不消费，人才消费。一个只靠 AI 运转、却没人有收入的社会，是不可持续的。这也是为什么，“AI 创造的财富如何分配”会成为未来最重要的问题之一。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-takes-your-job-tomorrow/3.jpg)
+![](https://aitanyan.com/img/articles/ai-takes-your-job-tomorrow/3.jpg)
 
 ## 四、留给你的问题
 

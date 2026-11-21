@@ -7,7 +7,7 @@ categories:
 tags:
   - "医疗"
   - "科研"
-cover: "https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/huawei-medical-ai/cover.jpg"
+cover: "https://aitanyan.com/img/articles/huawei-medical-ai/cover.jpg"
 wechat_url: "https://mp.weixin.qq.com/s/b46E5lhxc3OoAR1xYPZwhg"
 wechat_id: "2650016408_1"
 images:
@@ -50,7 +50,7 @@ draft: false
 2. **92 选 2 本身说明了命中率**
    ——速度快、成本低，但筛选和验证依然是硬功夫。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/huawei-medical-ai/1.png)
+![](https://aitanyan.com/img/articles/huawei-medical-ai/1.png)
 
 ## 二、华为的路径：不做「明星 AI 科学家」，做底座和场景
 
@@ -83,7 +83,7 @@ draft: false
 - **HAIP 医院通用 AI 平台**
   ：10 月 30 日，华西医院与华为发布联合创新实验室、HAIP 白皮书（华西、南方医院与华为主编，40 家单位参编）和五类医疗智能体。华西披露，文书智能体已辅助生成 300 多万份病历；医保智能体用 8500 多条审核规则识别七类风险。华西也是首家部署昇腾 950 的医疗机构。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/huawei-medical-ai/2.png)
+![](https://aitanyan.com/img/articles/huawei-medical-ai/2.png)
 
 ## 三、冷静看：亮点在哪，问题在哪
 
@@ -107,7 +107,7 @@ draft: false
 
 **5\. 责任与监管还在追赶。** 当智能体参与病历书写、医保审核、甚至科研决策，出错由谁负责？目前的做法是「医生复核并担责」，这在效率与安全之间是合理的折中，但也意味着 AI 的效率红利有上限。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/huawei-medical-ai/3.png)
+![](https://aitanyan.com/img/articles/huawei-medical-ai/3.png)
 
 ## 四、给开发者的几点启示
 

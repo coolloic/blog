@@ -1,6 +1,5 @@
-# Change baseURL to your real address once deployed,
-# e.g. https://<github-username>.github.io/blog/ or a custom domain.
-baseURL: https://coolloic.github.io/blog/
+# Production address (Vercel). The old https://coolloic.github.io/blog/ redirects here.
+baseURL: https://aitanyan.com/
 locale: zh-cn
 title: AI调研员
 theme: evo
@@ -29,7 +28,7 @@ outputs:
 params:
   env: production
   description: "AI调研员：把前沿 AI 讲清楚。公众号文章的长期归档，附英文技术笔记与 AI Wiki。"
-  imageBase: "https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev"
+  imageBase: "https://aitanyan.com/img" # Vercel rewrites /img/* to the R2 bucket (vercel.json)
   shareImage: "images/og-default.png" # fallback og:image (1200x630) for pages without a cover
   # Search-engine site verification codes; a meta tag is emitted only when a value is set.
   verification:

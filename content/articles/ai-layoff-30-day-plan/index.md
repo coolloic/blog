@@ -7,7 +7,7 @@ categories:
 tags:
   - "裁员"
   - "求职"
-cover: "https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-layoff-30-day-plan/cover.jpg"
+cover: "https://aitanyan.com/img/articles/ai-layoff-30-day-plan/cover.jpg"
 wechat_url: "https://mp.weixin.qq.com/s/DZeazTGq5lpzHt4isL_Zbw"
 wechat_id: "2650017039_1"
 images:
@@ -28,7 +28,7 @@ draft: false
 
 “公司要用 AI 优化流程，你的岗位取消了。”这句话，正在越来越多的会议室里出现。如果有一天轮到你，前 30 天该做什么？这篇不讲焦虑，只讲行动。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-layoff-30-day-plan/1.jpg)
+![](https://aitanyan.com/img/articles/ai-layoff-30-day-plan/1.jpg)
 
 ## 一、先看清形势：AI 裁员是真的，但没有传说中那么多
 
@@ -36,7 +36,7 @@ draft: false
 
 也有经济学家提醒：一些公司把“AI”当成裁员的体面理由，背后其实是此前招人太多、业务收缩。**所以，被裁不一定说明你“被 AI 打败了”，更可能是你所在的岗位结构变了。**
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-layoff-30-day-plan/2.jpg)
+![](https://aitanyan.com/img/articles/ai-layoff-30-day-plan/2.jpg)
 
 ## 二、第 1—3 天：先把权益和钱理清楚
 
@@ -76,7 +76,7 @@ draft: false
 
 **4\. 照顾好情绪。**\ 失业带来的失落很正常。保持作息，和家人朋友聊聊，必要时寻求专业帮助。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-layoff-30-day-plan/3.jpg)
+![](https://aitanyan.com/img/articles/ai-layoff-30-day-plan/3.jpg)
 
 ## 写在最后
 

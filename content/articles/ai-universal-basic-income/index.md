@@ -7,7 +7,7 @@ categories:
 tags:
   - "基本收入"
   - "脑洞实验室"
-cover: "https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-universal-basic-income/cover.jpg"
+cover: "https://aitanyan.com/img/articles/ai-universal-basic-income/cover.jpg"
 wechat_url: "https://mp.weixin.qq.com/s/iV65Kr3e-v5s8hIXpjkJ-w"
 wechat_id: "2650017035_2"
 images:
@@ -28,7 +28,7 @@ draft: false
 
 【AI 脑洞实验室 No.27】假设 AI 让社会变得极其富有，政府决定：每个成年人每月无条件领一笔钱，不管你工作不工作。你会怎么过？
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-universal-basic-income/1.jpg)
+![](https://aitanyan.com/img/articles/ai-universal-basic-income/1.jpg)
 
 ## 一、“发钱”已经被试过
 
@@ -44,13 +44,13 @@ draft: false
 
 **剧本三：钱从哪来？**\ 向 AI 公司征税、向机器人征税，还是发行“AI 红利”？每一种方案都会引发激烈争论。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-universal-basic-income/2.jpg)
+![](https://aitanyan.com/img/articles/ai-universal-basic-income/2.jpg)
 
 ## 三、钱解决不了的问题
 
 工作带来的不只是收入，还有身份、节奏和与人的连接。**发钱也许能解决“活下去”，但“为什么而活”还得自己找答案。**
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-universal-basic-income/3.jpg)
+![](https://aitanyan.com/img/articles/ai-universal-basic-income/3.jpg)
 
 ## 四、留给你的问题
 

@@ -7,7 +7,7 @@ categories:
 tags:
   - "就业"
   - "职业规划"
-cover: "https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/will-ai-take-your-job/cover.jpg"
+cover: "https://aitanyan.com/img/articles/will-ai-take-your-job/cover.jpg"
 wechat_url: "https://mp.weixin.qq.com/s/9B6evEWH-k6h_VO_5l-fVg"
 wechat_id: "2650016551_1"
 images:
@@ -38,7 +38,7 @@ draft: false
 
 世界经济论坛（WEF）《2025 未来就业报告》调查了全球上千家雇主，给出的预测是：到 2030 年，全球将**新增约 1.7 亿个岗位，同时有约 9200 万个岗位消失**，净增约 7800 万。换句话说，约 **22%** 的工作会被"重新洗牌"。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/will-ai-take-your-job/1.jpg)
+![](https://aitanyan.com/img/articles/will-ai-take-your-job/1.jpg)
 
 增长最快的，是大数据、金融科技、AI 与机器学习、软件开发这类技术岗位；但按绝对数量算，增长最多的反而是农业工人、配送司机、建筑工人、护理和教育——**社会最基础的那部分工作**。
 
@@ -52,7 +52,7 @@ draft: false
 
 塔夫茨大学的美国 AI 就业风险指数给出了类似的排序：**作家和作者（57%）、程序员（55%）、网页与界面设计师（55%）**\ 的岗位受影响比例最高。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/will-ai-take-your-job/2.jpg)
+![](https://aitanyan.com/img/articles/will-ai-take-your-job/2.jpg)
 
 有两个反直觉的结论值得记住：
 
@@ -79,7 +79,7 @@ WEF 把平面设计师列入了萎缩最快的岗位。冲击最大的是批量�
 
 和流行看法相反，WEF 预计**中学教师和高校教师属于增长最多的岗位**之一。微软的研究虽然发现部分大学课程的任务与 AI 高度重合，但教书从来不只是传递信息——还有陪伴、激励、管理一个班级的人。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/will-ai-take-your-job/3.jpg)
+![](https://aitanyan.com/img/articles/will-ai-take-your-job/3.jpg)
 
 ## 四、未来还有必要上大学吗？
 
@@ -89,7 +89,7 @@ WEF 把平面设计师列入了萎缩最快的岗位。冲击最大的是批量�
 - 但拉长到整个职业生涯，25–54 岁的本科学历者失业率约 **2.7%**，只有高中学历者为 **4.7%**；
 - 纽约联储测算，大学教育的年化回报率仍约 **12.5%**；盖洛普 2026 年调查中，约 80% 的本科毕业生认为学位对职业重要。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/will-ai-take-your-job/4.jpg)
+![](https://aitanyan.com/img/articles/will-ai-take-your-job/4.jpg)
 
 真正变化的是：**选什么专业、学到什么能力**，比"有没有上大学"更重要。只会背知识、做标准化作业的学习方式，恰恰是 AI 最擅长替代的。
 
@@ -113,7 +113,7 @@ WEF 把平面设计师列入了萎缩最快的岗位。冲击最大的是批量�
 
 **当 AI 能做我工作里 50% 的事情时，剩下那 50%，我是否足够不可替代？**
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/will-ai-take-your-job/5.jpg)
+![](https://aitanyan.com/img/articles/will-ai-take-your-job/5.jpg)
 
 * * *
 

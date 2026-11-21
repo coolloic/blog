@@ -7,7 +7,7 @@ categories:
 tags:
   - "求职"
   - "脑洞实验室"
-cover: "https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/where-experience-comes-from/cover.jpg"
+cover: "https://aitanyan.com/img/articles/where-experience-comes-from/cover.jpg"
 wechat_url: "https://mp.weixin.qq.com/s/zp49B8I9DSJgww97lZDBOQ"
 wechat_id: "2650017037_2"
 images:
@@ -28,7 +28,7 @@ draft: false
 
 【AI 脑洞实验室 No.19】这是一个经典的“先有鸡还是先有蛋”的问题：公司只招有经验的人，可没人给机会，经验从哪里来？在 AI 时代，这个问题可能会变得更尖锐。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/where-experience-comes-from/1.jpg)
+![](https://aitanyan.com/img/articles/where-experience-comes-from/1.jpg)
 
 ## 一、“学徒”消失了，“师傅”从哪来？
 
@@ -44,13 +44,13 @@ draft: false
 
 **剧本三：经验贬值。**\ 如果 AI 的能力足够强，也许“经验”本身就不再那么重要，取而代之的是学习速度和判断力。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/where-experience-comes-from/2.jpg)
+![](https://aitanyan.com/img/articles/where-experience-comes-from/2.jpg)
 
 ## 三、一个值得警惕的结局
 
 如果每家公司都只想用现成的“有经验的人”，没人愿意花成本培养新人，那么十年后，整个行业可能会面临人才断层：老员工退休了，新一代却没有机会成长起来。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/where-experience-comes-from/3.jpg)
+![](https://aitanyan.com/img/articles/where-experience-comes-from/3.jpg)
 
 ## 四、留给你的问题
 

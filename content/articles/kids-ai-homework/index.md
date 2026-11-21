@@ -7,7 +7,7 @@ categories:
 tags:
   - "孩子"
   - "作业"
-cover: "https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/kids-ai-homework/cover.jpg"
+cover: "https://aitanyan.com/img/articles/kids-ai-homework/cover.jpg"
 wechat_url: "https://mp.weixin.qq.com/s/Uo_UNksWFWTmsZoY4dQaew"
 wechat_id: "2650017038_1"
 images:
@@ -28,7 +28,7 @@ draft: false
 
 晚上九点，孩子说“作业写完了”，你一看，作文写得比你还好。是孩子突然开窍了，还是 AI 代笔了？这可能是今天很多家长共同的困惑。禁也禁不住，放又不放心，到底该怎么办？我们看看数据和研究怎么说。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/kids-ai-homework/1.jpg)
+![](https://aitanyan.com/img/articles/kids-ai-homework/1.jpg)
 
 ## 一、用 AI 写作业，已经是“大多数”
 
@@ -60,7 +60,7 @@ draft: false
 
 **小结：**\ 决定好坏的不是 AI 本身，而是**它替孩子思考，还是陪孩子思考**。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/kids-ai-homework/2.jpg)
+![](https://aitanyan.com/img/articles/kids-ai-homework/2.jpg)
 
 ## 三、国内的规则已经划出来了
 
@@ -88,7 +88,7 @@ draft: false
 
 **5\. 和孩子一起查 AI 的错。**\ AI 会算错、会编造，带孩子挑错，本身就是在训练批判性思维。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/kids-ai-homework/3.jpg)
+![](https://aitanyan.com/img/articles/kids-ai-homework/3.jpg)
 
 ## 写在最后
 

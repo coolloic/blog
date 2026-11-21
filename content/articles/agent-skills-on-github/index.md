@@ -7,7 +7,7 @@ categories:
 tags:
   - "Agent"
   - "GitHub"
-cover: "https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/agent-skills-on-github/cover.jpg"
+cover: "https://aitanyan.com/img/articles/agent-skills-on-github/cover.jpg"
 wechat_url: "https://mp.weixin.qq.com/s/tI4eiHvuw9_KMHzQ51XTxQ"
 wechat_id: "2650016368_1"
 images:
@@ -41,7 +41,7 @@ draft: false
 - **addyosmani/agent-skills**
   ：约 11.5 万星，今日新增约 465 星。Google 工程师 Addy Osmani 维护，定位是“生产级”的工程技能。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/agent-skills-on-github/1.png)
+![](https://aitanyan.com/img/articles/agent-skills-on-github/1.png)
 
 再往下看，本周榜单上还有 Donchitos/Claude-Code-Game-Studios（本周新增约 4,300 星），把 Claude Code 包装成一个由多个 Agent 和几十个工作流技能组成的“游戏开发工作室”。可以说，“给 Agent 装技能”已经成了一个独立赛道。
 
@@ -59,7 +59,7 @@ YAML 头部只有两个必填字段：`name`（小写、用连字符）和 `des
 
 这里的关键设计在于 `description`。Agent 平时只看到每个技能的名字和简介，只有判断当前任务用得上时，才把完整的 `SKILL.md` 读进上下文。这样既能挂载几十上百个技能，又不会一开始就把上下文窗口塞满。这是一种“按需加载”的上下文工程。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/agent-skills-on-github/2.png)
+![](https://aitanyan.com/img/articles/agent-skills-on-github/2.png)
 
 ### 3\. 为什么是现在火
 
@@ -82,7 +82,7 @@ YAML 头部只有两个必填字段：`name`（小写、用连字符）和 `des
 
 前者是能力，后者是方法。很多团队接好了 MCP，却发现 Agent 做事风格不稳定，缺的往往就是这一层。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/agent-skills-on-github/3.png)
+![](https://aitanyan.com/img/articles/agent-skills-on-github/3.png)
 
 落地建议：
 

@@ -7,7 +7,7 @@ categories:
 tags:
   - "高考"
   - "手机应用推荐"
-cover: "https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-college-application-apps/cover.jpg"
+cover: "https://aitanyan.com/img/articles/ai-college-application-apps/cover.jpg"
 wechat_url: "https://mp.weixin.qq.com/s/PNUEIgSXLxTvvzneYwwQ_Q"
 wechat_id: "2650017036_3"
 images:
@@ -31,7 +31,7 @@ draft: false
 
 【AI 手机应用推荐 · 高考志愿篇】头条聊了“冷门专业”为什么反而吃香，次条脑洞了“AI 替你填志愿”。这一篇说点实在的：2026 年高考，几款主流 AI 都免费上线了志愿填报功能，到底能帮什么、不能帮什么？明年要报志愿的家庭，现在了解正好。本文**非广告**，没有收任何一家的钱。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-college-application-apps/1.png)
+![](https://aitanyan.com/img/articles/ai-college-application-apps/1.png)
 
 ## 一、先看数据：AI 第一次大规模参与填志愿
 
@@ -43,7 +43,7 @@ draft: false
 
 ## 二、元宝（腾讯）：生成志愿表，还附“风险提示”
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-college-application-apps/2.png)
+![](https://aitanyan.com/img/articles/ai-college-application-apps/2.png)
 
 元宝 App Store 页面（2026 年 11 月截图，部分人物图已遮挡）。高考功能是季节性的，明年出分季再上线时界面可能不同
 
@@ -53,7 +53,7 @@ draft: false
 
 ## 三、千问（阿里）：从查分到录取，全程提醒
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-college-application-apps/3.png "千问 App Store 页面（2026 年 11 月截图，生成示例图已遮挡）")
+![](https://aitanyan.com/img/articles/ai-college-application-apps/3.png "千问 App Store 页面（2026 年 11 月截图，生成示例图已遮挡）")
 
 今年千问把原来夸克高考的服务升级成了“全周期高考志愿填报 Agent”，有**志愿日历**、志愿报告等功能，覆盖志愿规划、查分、填报、录取跟进几个关键节点，会主动提醒时间点。
 
@@ -61,7 +61,7 @@ draft: false
 
 ## 四、百度：AI 方案 + 真人专家审核
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-college-application-apps/4.png "百度 App Store 页面（2026 年 11 月截图，视频、新闻和小说封面中的人物已遮挡）")
+![](https://aitanyan.com/img/articles/ai-college-application-apps/4.png "百度 App Store 页面（2026 年 11 月截图，视频、新闻和小说封面中的人物已遮挡）")
 
 百度在 App 里提供“AI 志愿助手”，今年的特点是引入了**真人专家审核**机制，面向全国考生免费开放。百度 App 本身也内置了“文心助手”，平时可以拿来查院校、查专业。
 

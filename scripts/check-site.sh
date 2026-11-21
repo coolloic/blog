@@ -3,6 +3,8 @@
 # Builds drafts (-D) into a temp dir so the sample articles are covered.
 set -u
 cd "$(dirname "$0")/.."
+# Build under a sub-path on purpose (production is the site root): any link that forgets relURL breaks here.
+export HUGO_BASEURL="https://coolloic.github.io/blog/"
 FAILS=0
 pass() { echo "PASS $1"; }
 fail() { echo "FAIL $1: $2"; FAILS=$((FAILS+1)); }

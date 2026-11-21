@@ -7,7 +7,7 @@ categories:
 tags:
   - "千问"
   - "工具推荐"
-cover: "https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/qwen-beginner-guide/cover.jpg"
+cover: "https://aitanyan.com/img/articles/qwen-beginner-guide/cover.jpg"
 wechat_url: "https://mp.weixin.qq.com/s/7uE6mSbZuNYGCq6DC0r1Vg"
 wechat_id: "2650017039_3"
 images:
@@ -49,7 +49,7 @@ draft: false
 
 【AI 工具推荐 No.2】上一期我们教了豆包，这一期换阿里的「千问」。它免费、中文好用，打开网页就能问。这次挑的 4 个场景，正好接着头条讲的“被裁员之后”：算补偿、看协议、改简历，再加一个生活里常用的“翻译外文说明书”。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/qwen-beginner-guide/1.png)
+![](https://aitanyan.com/img/articles/qwen-beginner-guide/1.png)
 
 本文用的是**千问网页版**（电脑浏览器打开 www.qianwen.com），所有截图都来自 2026 年 11 月的实际操作。手机上下载「千问」App 也能用，按钮位置会有些不一样。
 
@@ -57,7 +57,7 @@ draft: false
 
 打开网页就是下面这个界面，不登录也能直接提问；登录后可以保存历史对话。记住三个地方就够了：
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/qwen-beginner-guide/2.png)
+![](https://aitanyan.com/img/articles/qwen-beginner-guide/2.png)
 
 - **① 输入框**
   ：在这里打字提问，像发微信一样。
@@ -70,7 +70,7 @@ draft: false
 
 步骤：在输入框里把情况说清楚：工作了多久、月薪多少、在哪个城市、公司给的理由。我们输入的是：“我在杭州一家公司工作了 3 年 8 个月，月薪 1.2 万，公司说业务调整要裁掉我。我大概能拿多少补偿？请列出算法，再告诉我签字前要注意什么”。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/qwen-beginner-guide/3.png)
+![](https://aitanyan.com/img/articles/qwen-beginner-guide/3.png)
 
 千问先讲了算法：按《劳动合同法》，经济补偿按工作年限算，**每满一年给一个月工资，满六个月不满一年按一年算**，所以 3 年 8 个月按 4 个月算，**4 × 1.2 万 = 4.8 万元**。它还提醒：如果公司没有提前 30 天书面通知，有些情况下还要多给一个月工资（代通知金）。
 
@@ -80,15 +80,15 @@ draft: false
 
 步骤 1：点输入框左边的「+」，选「上传图片」把协议拍照传上去；如果是 Word 或 PDF 文件，就选「上传文档」。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/qwen-beginner-guide/4.png)
+![](https://aitanyan.com/img/articles/qwen-beginner-guide/4.png)
 
 步骤 2：图片加好后写清楚你的情况和要求，比如“公司让我签这份解除劳动合同协议。我工作了 3 年 8 个月，月薪 1.2 万。请帮我逐条看看，哪些条款对我不利、签字前应该怎么和公司谈，用大白话说”。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/qwen-beginner-guide/5.png)
+![](https://aitanyan.com/img/articles/qwen-beginner-guide/5.png)
 
 步骤 3：千问逐条拆解了这份协议：按工龄算应该拿 4.8 万，协议只写了 3.6 万，**直接少了 1.2 万**；“分 6 个月支付”也有风险，万一公司后面拖欠，钱很难要回来；后面还提醒了“自愿放弃其他任何权利”这类条款要特别小心。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/qwen-beginner-guide/6.png)
+![](https://aitanyan.com/img/articles/qwen-beginner-guide/6.png)
 
 💡 小技巧：上传前把身份证号、银行卡号这些信息遮住。AI 能帮你发现问题、理清该问什么，但签不签、怎么谈，最好再找律师或当地劳动部门确认。（本文演示用的协议是我们做的示例素材。）
 
@@ -96,7 +96,7 @@ draft: false
 
 步骤：点「新对话」，把原来的写法和**真实数据**一起给它，并且说明“不要编造”。我们输入的是：“我在简历里是这样写的：负责公司小程序的日常运营，写文案，做活动，管理用户群。我做了 3 年，用户群从 2 个做到 30 个，双十一活动带来过 80 万销售额。帮我改得更有说服力，给两个版本，不要编造我没做过的事”。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/qwen-beginner-guide/7.png)
+![](https://aitanyan.com/img/articles/qwen-beginner-guide/7.png)
 
 几秒钟就给了两个版本：一个突出业绩，一个突出能力，还解释了为什么这样改。
 
@@ -106,15 +106,15 @@ draft: false
 
 步骤 1：点输入框下方的「翻译」，进入翻译模式。这里还能选语言，也可以直接用「图片翻译」「文档翻译」。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/qwen-beginner-guide/8.png)
+![](https://aitanyan.com/img/articles/qwen-beginner-guide/8.png)
 
 步骤 2：把说明书的照片传上来，回车发送。它会先给出文字版译文，一条条对照着看很方便。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/qwen-beginner-guide/9.png)
+![](https://aitanyan.com/img/articles/qwen-beginner-guide/9.png)
 
 步骤 3：点上方的「图片」，还能看到**原图上的英文直接换成了中文**，排版不变，适合截图发给家里人看。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/qwen-beginner-guide/10.png)
+![](https://aitanyan.com/img/articles/qwen-beginner-guide/10.png)
 
 💡 小技巧：进口小家电、护肤品、旅行时的菜单和路牌都能这么翻。药品说明书翻完后，用法用量一定要再问医生或药师。
 

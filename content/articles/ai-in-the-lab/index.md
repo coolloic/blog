@@ -6,7 +6,7 @@ categories:
   - "frontier"
 tags:
   - "科研"
-cover: "https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-in-the-lab/cover.jpg"
+cover: "https://aitanyan.com/img/articles/ai-in-the-lab/cover.jpg"
 wechat_url: "https://mp.weixin.qq.com/s/6dGgGiKb1GGvJMZ_fj4KVw"
 wechat_id: "2650016396_1"
 images:
@@ -39,7 +39,7 @@ draft: false
 
 这篇文章按一项研究的生命周期，把它拆成五个环节来看。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-in-the-lab/1.png)
+![](https://aitanyan.com/img/articles/ai-in-the-lab/1.png)
 
 ## 一、读：文献调研，最先被改变的环节
 
@@ -63,7 +63,7 @@ Google DeepMind 的 Co-Scientist 用的是一套“科研组会”式的多智�
 
 FutureHouse 的 Robin 走的是类似路线：在干性年龄相关性黄斑变性（dry AMD）上提出 30 个候选药物，测试其中排名前 5 的，有 2 个被认为有前景。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-in-the-lab/2.png)
+![](https://aitanyan.com/img/articles/ai-in-the-lab/2.png)
 
 这些数字说明了一件事：**AI 擅长把搜索空间从“无穷”缩小到“几十”，但从几十到真正有效，仍然要靠湿实验。**
 
@@ -99,7 +99,7 @@ Google 的研究团队则提出了 **Paper Assistant Tool（PAT）**：一个�
 
 问题也随之而来。一篇 2026 年 9 月的 arXiv 综述梳理了 230 份文献和机构记录，把这种局面称为“**AI 论文与 AI 审稿的军备竞赛**”：一边是论文产量被 AI 放大，一边是评审被自动化，中间夹着针对 AI 审稿的提示注入、操纵和各种防御政策。也有研究指出，AI 辅助的论文和审稿出现了“数量上升、质量下降”的迹象。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-in-the-lab/3.png)
+![](https://aitanyan.com/img/articles/ai-in-the-lab/3.png)
 
 ## 六、冷静看：五个尚未解决的问题
 

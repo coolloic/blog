@@ -7,7 +7,7 @@ categories:
 tags:
   - "贫富差距"
   - "经济"
-cover: "https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-wealth-gap/cover.jpg"
+cover: "https://aitanyan.com/img/articles/ai-wealth-gap/cover.jpg"
 wechat_url: "https://mp.weixin.qq.com/s/dL2kr78d99dNX7VB7V6nGg"
 wechat_id: "2650017035_1"
 images:
@@ -31,7 +31,7 @@ draft: false
 
 > 栏目：人类与 AI 的未来｜AI调研员
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-wealth-gap/1.jpg)
+![](https://aitanyan.com/img/articles/ai-wealth-gap/1.jpg)
 
 有人说，AI 是这个时代最大的"平权工具"——一个县城的小学老师，和硅谷工程师用的是同一个 ChatGPT。
 
@@ -69,7 +69,7 @@ draft: false
 
 AI 让工作变快了，但多出来的钱，不一定进你的工资卡。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-wealth-gap/2.jpg)
+![](https://aitanyan.com/img/articles/ai-wealth-gap/2.jpg)
 
 * * *
 
@@ -106,7 +106,7 @@ IMF 的另一篇论文甚至提出一个反直觉的观点：和以往的自动�
 
 > **你，是 AI 的"使用者"，还是 AI 的"被替代者"，还是 AI 的"拥有者"？**
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-wealth-gap/3.jpg)
+![](https://aitanyan.com/img/articles/ai-wealth-gap/3.jpg)
 
 * * *
 
@@ -122,7 +122,7 @@ IMF 的另一篇论文甚至提出一个反直觉的观点：和以往的自动�
 
 这才是 AI 时代真正的新鸿沟：不是穷人和富人，而是**会用 AI 的人和不会用 AI 的人**。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/ai-wealth-gap/4.jpg)
+![](https://aitanyan.com/img/articles/ai-wealth-gap/4.jpg)
 
 * * *
 

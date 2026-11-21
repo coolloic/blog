@@ -7,7 +7,7 @@ categories:
 tags:
   - "Google"
   - "新模型"
-cover: "https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/gemini-decision-1/cover.jpg"
+cover: "https://aitanyan.com/img/articles/gemini-decision-1/cover.jpg"
 wechat_url: "https://mp.weixin.qq.com/s/qxndScGDosR1nAKt9QXrKg"
 wechat_id: "2650016381_1"
 images:
@@ -62,7 +62,7 @@ draft: false
 
 Gemini Decision 1 就是冲着这三个问题来的。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/gemini-decision-1/1.png)
+![](https://aitanyan.com/img/articles/gemini-decision-1/1.png)
 
 ## 二、它是怎么工作的：一次前向计算，直接打分
 
@@ -78,7 +78,7 @@ Google 官方博客的描述是：Gemini Decision 1 不再逐 token 生成答案
 | `choice` （单选） | 路由到哪个模型？选哪个工具？ | 每个选项的概率（合计为 1） |
 | `score` （分级打分） | 严重程度、相关度、质量等级 | 加权分数 + 各级概率 |
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/gemini-decision-1/2.png)
+![](https://aitanyan.com/img/articles/gemini-decision-1/2.png)
 
 几个关键规格（来自官方文档）：
 
@@ -111,7 +111,7 @@ Google 称 Gemini Decision 1 在其覆盖 Agent 路由、推理、排序与多�
 
 根据第三方 CellCog 对 Google 官方图表的读数，Gemini Decision 1 的校准误差约 **0.025**，而 Gemini 3.5 Flash-Lite 约 **0.21**——相差近一个数量级。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/gemini-decision-1/3.png)
+![](https://aitanyan.com/img/articles/gemini-decision-1/3.png)
 
 需要客观地说：这些数据都来自 Google 自己的测试（以及第三方对官方图表的"目测"转录），目前还没有独立复现。按 CellCog 的读数，在 7 个共同测试中它拿下了 5 个第一，但在 Mind2Web 多模态和 When2Call 两项上并非最佳——这和"全面领先"的说法略有出入。
 
@@ -140,7 +140,7 @@ Google 称 Gemini Decision 1 在其覆盖 Agent 路由、推理、排序与多�
 - **Google Labs 的 CC**
   ：从 200 多个表情里挑一个最合适的来回应。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/gemini-decision-1/4.png)
+![](https://aitanyan.com/img/articles/gemini-decision-1/4.png)
 
 生态方面，OpenRouter、LangChain、Vercel、LiteLLM、Pydantic AI、Pipecat、LiveKit 等都已宣布接入。官方还提供了 Doorstep Parcels、Find the Zookeeper 等 Demo 和一个可以导出代码的 Decisions Playground。
 

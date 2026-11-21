@@ -7,7 +7,7 @@ categories:
 tags:
   - "考试"
   - "脑洞实验室"
-cover: "https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/if-exams-disappear/cover.jpg"
+cover: "https://aitanyan.com/img/articles/if-exams-disappear/cover.jpg"
 wechat_url: "https://mp.weixin.qq.com/s/hYGzZMEzWJZOft7xSH9e9A"
 wechat_id: "2650017038_2"
 images:
@@ -28,7 +28,7 @@ draft: false
 
 【AI 脑洞实验室 No.7】如果每个学生都能随时问 AI，那一张试卷、一篇作文，还能证明什么？有人说，考试会消失；也有人说，考试会变得更严。我们来推演一下。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/if-exams-disappear/1.jpg)
+![](https://aitanyan.com/img/articles/if-exams-disappear/1.jpg)
 
 ## 一、为什么考试可能“失效”
 
@@ -44,7 +44,7 @@ draft: false
 
 **剧本三：考“和 AI 合作”的能力。**\ 考试允许用 AI，但题目变成：“这是 AI 给出的三个方案，找出其中的错误，并说明你会选哪一个。”
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/if-exams-disappear/2.jpg)
+![](https://aitanyan.com/img/articles/if-exams-disappear/2.jpg)
 
 ## 三、每个剧本都有代价
 
@@ -56,7 +56,7 @@ draft: false
 
 也许最现实的结果是：考试不会消失，但会变成**多种方式的组合**，而“能讲清楚自己的思路”会成为最重要的能力。
 
-![](https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/if-exams-disappear/3.jpg)
+![](https://aitanyan.com/img/articles/if-exams-disappear/3.jpg)
 
 ## 四、留给你的问题
 

@@ -6,7 +6,7 @@ categories:
   - "frontier"
 tags:
   - "世界模型"
-cover: "https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/articles/world-models/cover.jpg"
+cover: "https://aitanyan.com/img/articles/world-models/cover.jpg"
 wechat_url: "https://mp.weixin.qq.com/s/0hjLZZYahtxhE-uH6XwwEw"
 wechat_id: "2650016346_1"
 images:

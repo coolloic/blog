@@ -1,0 +1,14 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "installCommand": "curl -sSL https://github.com/gohugoio/hugo/releases/download/v0.169.0/hugo_extended_0.169.0_linux-amd64.tar.gz | tar -xz -C /tmp hugo",
+  "buildCommand": "/tmp/hugo --gc --minify --panicOnWarning",
+  "outputDirectory": "public",
+  "trailingSlash": true,
+  "rewrites": [
+    { "source": "/img/:path*", "destination": "https://pub-bd01a3edb15a438b89073b425e21afb2.r2.dev/:path*" }
+  ],
+  "headers": [
+    { "source": "/img/(.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=86400, s-maxage=604800" }] }
+  ]
+}
