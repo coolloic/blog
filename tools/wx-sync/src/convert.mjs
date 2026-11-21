@@ -112,7 +112,7 @@ function makeTurndown() {
 /**
  * @param {string} html  full article page HTML
  * @param {{linkMap?: Map<string, string>}} opts  WeChat short URL → blog slug, for already-synced articles
- * @returns {{markdown: string, images: {n: number, src: string, alt: string}[], coverUrl: string|null}}
+ * @returns {{markdown: string, images: {n: number, src: string, alt: string}[], coverUrl: string|null, description: string|null}}
  */
 export function convertArticle(html, { linkMap = new Map() } = {}) {
   const { document } = parseHTML(html);
@@ -124,5 +124,6 @@ export function convertArticle(html, { linkMap = new Map() } = {}) {
     .replace(/[ \t]+$/gm, "")
     .replace(/\n{3,}/g, "\n\n")
     .trim() + "\n";
-  return { markdown, images, coverUrl: findCover(document, html) };
+  const description = document.querySelector('meta[property="og:description"]')?.getAttribute("content")?.trim() || null;
+  return { markdown, images, coverUrl: findCover(document, html), description };
 }

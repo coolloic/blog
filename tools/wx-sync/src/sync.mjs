@@ -41,7 +41,7 @@ function summaryFrom(markdown) {
 
 async function syncOne(item, slug, { uploader, fetchers, linkMap, dryRun }) {
   const html = await fetchers.fetchArticleHtml(wechatShortUrl(item.url));
-  const { markdown, images, coverUrl } = convertArticle(html, { linkMap });
+  const { markdown, images, coverUrl, description } = convertArticle(html, { linkMap });
   if (!coverUrl) throw new Error("no cover image found on the article page");
   const dims = {}, urlFor = {};
   const store = async (src, name) => {
@@ -55,7 +55,7 @@ async function syncOne(item, slug, { uploader, fetchers, linkMap, dryRun }) {
   const cover = await store(coverUrl, "cover");
   const body = markdown.replace(/\(wximg:(\d+)/g, (_, n) => `(${urlFor[n]}`);
   return renderArticle({
-    title: item.title, date: item.date, summary: item.summary?.trim() || summaryFrom(body),
+    title: item.title, date: item.date, summary: item.summary?.trim() || description || summaryFrom(body),
     categories: [item.category], tags: item.tags ?? [], cover,
     wechat_url: wechatShortUrl(item.url), wechat_id: item.wechat_id, images: dims, draft: false,
   }, body);

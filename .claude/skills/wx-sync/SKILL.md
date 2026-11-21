@@ -27,11 +27,13 @@ The WeChat backend is **read-only** for this skill: never click, edit, publish o
      "date": "2026-11-20T08:00:00+08:00", "summary": "<digest>", "slug": "…", "category": "…", "tags": ["…"], "skip": null } ] }
    ```
    - `date`: `create_time` (Unix seconds) in Beijing time, `+08:00`.
+   - `summary`: the digest if you have it in full; otherwise `""` and the tool uses the article page's `og:description` (the same digest).
    - `slug`: English kebab-case, at most 6 words, unique across `content/articles/`, describing the topic (`ai-layoff-30-day-plan`). A slug is a permanent URL: choose it once.
    - `category`: exactly one, from `data/categories.yaml`:
      - `work`: layoffs, job hunting, careers, skills for work.
      - `education`: children and AI, exams, choosing a major, learning.
      - `life`: money, health, scams, society, AI video and other everyday topics.
+     - `frontier`: new models, research, science and tech trends (world models, AI in the lab, GitHub trends).
      - `tools`: tutorials and app recommendations, including every 【AI 工具推荐】 and 【AI 手机应用推荐】 post.
      When title and digest leave it open, read the article before deciding.
    - `tags`: 2–4 short Chinese topic words. A series named at the start of the digest adds its tag: 【AI 脑洞实验室】 → `脑洞实验室`, 【AI 工具推荐】 → `工具推荐`, 【AI 手机应用推荐 …】 → `手机应用推荐`.

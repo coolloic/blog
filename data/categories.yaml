@@ -3,4 +3,5 @@
 work:      {order: 1, name: 工作与职业, desc: 裁员、求职、职业规划，AI 时代的工作怎么变。}
 education: {order: 2, name: 教育与成长, desc: 孩子用 AI、考试、选专业，学习方式怎么变。}
 life:      {order: 3, name: 生活与安全, desc: 钱、健康、诈骗与日常，AI 进入生活的方方面面。}
-tools:     {order: 4, name: AI 工具, desc: 好用的 AI 工具和 App，手把手教你用起来。}
+frontier:  {order: 4, name: AI 前沿, desc: 新模型、科研与技术趋势，看 AI 正在发生什么。}
+tools:     {order: 5, name: AI 工具, desc: 好用的 AI 工具和 App，手把手教你用起来。}

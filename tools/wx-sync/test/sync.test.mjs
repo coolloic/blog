@@ -10,7 +10,7 @@ import { readFrontMatter } from "../src/frontmatter.mjs";
 
 const ARTICLE = readFileSync(new URL("./fixtures/article.html", import.meta.url), "utf8");
 const PNG = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAYAAACddGYaAAAAEUlEQVR4nGP4z8DwHxkzEC4AAJS1E+3cJd2wAAAAAElFTkSuQmCC", "base64");
-const CATEGORIES = ["work", "education", "life", "tools"];
+const CATEGORIES = ["work", "education", "life", "frontier", "tools"];
 
 function item(n, over = {}) {
   return { wechat_id: `100${n}_1`, url: `https://mp.weixin.qq.com/s/ID${n}`, title: `标题 ${n}`, date: "2026-11-20T08:00:00+08:00",
@@ -146,9 +146,17 @@ test("links to other articles in the same plan become site links", async () => {
   assert.match(text, /\]\(\.\.\/other-slug\/index\.md\)/);
 });
 
-test("empty summary falls back to the start of the body", async () => {
+test("empty summary falls back to the page's og:description", async () => {
   const s = await setup();
   await s.run({ items: [item(1, { summary: "" })] });
+  const fm = readFrontMatter(await readFile(join(s.contentDir, "article-1/index.md"), "utf8"));
+  assert.equal(fm.summary, "作者写的摘要：这一篇讲的是示例。");
+});
+
+test("without og:description, summary falls back to the start of the body", async () => {
+  const s = await setup();
+  const noDesc = ARTICLE.replace(/<meta property="og:description"[^>]*>/, "");
+  await s.run({ items: [item(1, { summary: "" })] }, { fetchers: { fetchArticleHtml: async () => noDesc, downloadImage: async () => ({ bytes: PNG, ext: "jpg", contentType: "image/jpeg" }) } });
   const fm = readFrontMatter(await readFile(join(s.contentDir, "article-1/index.md"), "utf8"));
   assert.match(fm.summary, /开头段落/);
   assert.ok(fm.summary.length <= 81);

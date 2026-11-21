@@ -166,7 +166,7 @@ check_no_format_errors() {
 
 check_category_order() {
   local order; order=$(html1 "$OUT/index.html" | grep -oE 'href="?/blog/categories/[a-z]+/' | sed -E 's|.*/categories/||; s|/||' | awk '!s[$0]++' | tr '\n' ' ')
-  if [[ "$order" == "work education life tools " ]]; then pass check_category_order
+  if [[ "$order" == "work education life frontier tools " ]]; then pass check_category_order
   else fail check_category_order "category tiles in wrong order: $order"; fi
 }
 
@@ -182,8 +182,8 @@ check_category_empty() {
   local o h bad=""; o=$(mktemp -d)
   build_variant "$o" onlyfixtures || { fail check_category_empty "variant build failed"; rm -rf "$o"; return; }
   h=$(html1 "$o/categories/index.html" 2>/dev/null)
-  for c in work education life tools; do [[ "$h" =~ href=\"?/blog/categories/$c/ ]] || bad+="index:$c "; done
-  for c in life tools; do grep -qE 'data-empty="?no_category_articles' "$o/categories/$c/index.html" 2>/dev/null || bad+="$c:empty-state "; done
+  for c in work education life frontier tools; do [[ "$h" =~ href=\"?/blog/categories/$c/ ]] || bad+="index:$c "; done
+  for c in life frontier tools; do grep -qE 'data-empty="?no_category_articles' "$o/categories/$c/index.html" 2>/dev/null || bad+="$c:empty-state "; done
   rm -rf "$o"
   if [[ -z "$bad" ]]; then pass check_category_empty; else fail check_category_empty "$bad"; fi
 }

@@ -5,7 +5,7 @@ import { convertArticle } from "../src/convert.mjs";
 
 const html = readFileSync(new URL("./fixtures/article.html", import.meta.url), "utf8");
 const linkMap = new Map([["https://mp.weixin.qq.com/s/OTHER123", "other-slug"]]);
-const { markdown: md, images, coverUrl } = convertArticle(html, { linkMap });
+const { markdown: md, images, coverUrl, description } = convertArticle(html, { linkMap });
 
 test("WeChat widgets and everything from 往期推荐 on are dropped", () => {
   assert.doesNotMatch(md, /名片签名不该出现|示例公众号/);
@@ -57,6 +57,10 @@ test("images become ordered placeholders; decorative dividers are dropped; capti
 test("links to synced WeChat articles become site links; others stay", () => {
   assert.match(md, /\[站内文章链接\]\(\.\.\/other-slug\/index\.md\)/);
   assert.match(md, /\[外部链接\]\(https:\/\/example\.com\/page\)/);
+});
+
+test("description comes from og:description", () => {
+  assert.equal(description, "作者写的摘要：这一篇讲的是示例。");
 });
 
 test("cover comes from og:image", () => {
