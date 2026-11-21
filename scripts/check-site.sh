@@ -137,7 +137,7 @@ check_home_lists_articles_not_wiki() {
   else fail check_home_lists_articles_not_wiki "home must list articles and no wiki pages"; fi
 }
 
-noarticles() { rm -rf articles/sample-* topics/*/; }  # topics point at articles, so they go too
+noarticles() { rm -rf articles/sample-* topics/*/ tools/_index.md; }  # topics and the tool list point at articles, so they go too
 check_home_empty() {
   local o; o=$(mktemp -d)
   if build_variant "$o" noarticles && grep -qE 'data-empty="?no_articles' "$o/index.html"; then pass check_home_empty
@@ -695,6 +695,28 @@ check_small_fixes() {
   if [[ -z "$bad" ]]; then pass check_small_fixes; else fail check_small_fixes "$bad"; fi
 }
 
-CHECKS=(check_theme_evo check_html_lang check_tokens_css check_light_dark_fallback check_theme_script_first check_nav check_skip_link check_wrap check_toggle_button check_tokens_unescaped check_home_featured check_home_featured_fallback check_home_lists_articles_not_wiki check_home_empty check_cover_box check_cover_video_slot check_follow_card check_no_format_errors check_category_order check_category_urls check_category_empty check_archives check_old_urls check_internal_links check_article_page check_wechat_footer check_video_vertical check_video_shortcode check_required_fields check_jsonld check_prev_next check_notes_page check_en_chrome check_code_copy check_wiki_body check_wiki_concept_page check_search_index check_search_page check_view_transitions check_scroll_driven_guarded check_reduced_motion check_js_budget check_progress_bar check_seo check_structured_data check_sitemap check_rss_scope check_404 check_video_dir check_no_blocking_fonts check_search_form_visible check_rise_no_fade check_layout_375 check_paged_canonical check_popover_fallback check_no_double_entities check_summary_with_angle_brackets check_unknown_category check_fixtures_not_in_content check_image_dimensions check_cjk_emphasis check_stitch_fonts check_card_foot_split check_real_content check_redirect_site check_sitemap_scope check_noindex_thin check_post_jsonld check_company check_webp_srcset check_topics check_topic_unknown_article check_trust_pages check_corrections_note check_glossary check_glossary_bad_wiki check_topic_min_articles check_small_fixes)
+check_tools() {
+  local h bad=""; h=$(html1 "$OUT/tools/index.html" 2>/dev/null)
+  [[ -n "$h" ]] || bad+="no-page "
+  echo "$h" | grep -qE 'id="?demo-a"?' || bad+="anchor "
+  perl -0777 -ne 'exit(/id="?demo-b.{0,1500}?href="?\/blog\/articles\/sample-3\/.{0,400}?href="?\/blog\/articles\/sample-2\//s ? 0 : 1)' "$OUT/tools/index.html" || bad+="article-links-in-order "
+  [[ "$h" == *"非广告"* ]] || bad+="disclaimer "
+  echo "$h" | grep -qE '<h2[^>]*>通用 AI 助手</h2>' || bad+="group-heading "
+  perl -0777 -ne 'exit(/<nav class="?site-nav.{0,900}?href="?\/blog\/tools\/"?>工具<\/a>/s ? 0 : 1)' "$OUT/index.html" || bad+="nav "
+  perl -0777 -ne 'exit(/<footer.{0,1500}?href="?\/blog\/archives\/"?/s ? 0 : 1)' "$OUT/index.html" || bad+="archive-in-footer "
+  if [[ -z "$bad" ]]; then pass check_tools; else fail check_tools "$bad"; fi
+}
+
+badtool() { sed -i.bak 's/articles: \["sample-1"\]/articles: ["no-such-article"]/' tools/_index.md && rm -f tools/_index.md.bak; }
+check_tools_unknown_article() {
+  local o cdir log rc; o=$(mktemp -d); cdir=$(mktemp -d)
+  merge_content "$cdir"; ( cd "$cdir" && badtool )
+  log=$(hugo -D --contentDir "$cdir" -d "$o" 2>&1); rc=$?
+  rm -rf "$o" "$cdir"
+  if [[ $rc -ne 0 && "$log" == *"unknown article"* ]]; then pass check_tools_unknown_article
+  else fail check_tools_unknown_article "a tool linking a missing article must fail the build (rc=$rc)"; fi
+}
+
+CHECKS=(check_theme_evo check_html_lang check_tokens_css check_light_dark_fallback check_theme_script_first check_nav check_skip_link check_wrap check_toggle_button check_tokens_unescaped check_home_featured check_home_featured_fallback check_home_lists_articles_not_wiki check_home_empty check_cover_box check_cover_video_slot check_follow_card check_no_format_errors check_category_order check_category_urls check_category_empty check_archives check_old_urls check_internal_links check_article_page check_wechat_footer check_video_vertical check_video_shortcode check_required_fields check_jsonld check_prev_next check_notes_page check_en_chrome check_code_copy check_wiki_body check_wiki_concept_page check_search_index check_search_page check_view_transitions check_scroll_driven_guarded check_reduced_motion check_js_budget check_progress_bar check_seo check_structured_data check_sitemap check_rss_scope check_404 check_video_dir check_no_blocking_fonts check_search_form_visible check_rise_no_fade check_layout_375 check_paged_canonical check_popover_fallback check_no_double_entities check_summary_with_angle_brackets check_unknown_category check_fixtures_not_in_content check_image_dimensions check_cjk_emphasis check_stitch_fonts check_card_foot_split check_real_content check_redirect_site check_sitemap_scope check_noindex_thin check_post_jsonld check_company check_webp_srcset check_topics check_topic_unknown_article check_trust_pages check_corrections_note check_glossary check_glossary_bad_wiki check_topic_min_articles check_small_fixes check_tools check_tools_unknown_article)
 for c in "${@:-${CHECKS[@]}}"; do $c; done
 [[ $FAILS -eq 0 ]] && echo "SITE ALL PASS" || { echo "$FAILS SITE CHECKS FAILED"; exit 1; }

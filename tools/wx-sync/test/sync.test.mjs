@@ -9,7 +9,9 @@ import { runSync, optimizeExisting } from "../src/sync.mjs";
 import { readFrontMatter } from "../src/frontmatter.mjs";
 
 const ARTICLE = readFileSync(new URL("./fixtures/article.html", import.meta.url), "utf8");
-const PNG = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAYAAACddGYaAAAAEUlEQVR4nGP4z8DwHxkzEC4AAJS1E+3cJd2wAAAAAElFTkSuQmCC", "base64");
+import sharp from "sharp";
+// A valid 3×2 PNG made by sharp itself (a hand-written base64 PNG made libspng fail intermittently).
+const PNG = await sharp({ create: { width: 3, height: 2, channels: 4, background: "#336699" } }).png().toBuffer();
 const CATEGORIES = ["work", "education", "life", "frontier", "tools"];
 
 function item(n, over = {}) {

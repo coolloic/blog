@@ -1,0 +1,36 @@
+{{ define "main" }}
+{{- /* AI tool library: tools and groups live in content/tools/_index.md front matter. Every tool must link at
+     least one article, and every slug must exist (unknown ones fail the build). */ -}}
+{{- $groups := .Params.groups -}}
+{{- $tools := .Params.tools -}}
+<div class="container stack-section tools">
+  <header class="page-head">
+    <h1>{{ .Title }}</h1>
+    {{ with .Params.summary }}<p class="page-head__desc">{{ . }}</p>{{ end }}
+    <p class="tools__note">{{ partial "t.html" (dict "page" . "key" "tools_note") }}</p>
+  </header>
+  <nav class="cat-bar" aria-label="{{ partial "t.html" (dict "page" . "key" "categories_label") }}">
+    {{- range $groups }}<a href="#g-{{ . }}">{{ partial "t.html" (dict "page" $ "key" (printf "tools_group_%s" .)) }}</a>{{ end }}
+  </nav>
+  {{- range $g := $groups }}
+  <section class="stack" id="g-{{ $g }}" aria-labelledby="h-{{ $g }}">
+    <div class="section-head"><h2 id="h-{{ $g }}">{{ partial "t.html" (dict "page" $ "key" (printf "tools_group_%s" $g)) }}</h2></div>
+    <div class="tool-grid">
+      {{- range where $tools "group" $g }}
+      {{- $arts := slice }}{{ range .articles }}{{ with site.GetPage (printf "/articles/%s" .) }}{{ $arts = $arts | append . }}{{ else }}{{ errorf "content/tools/_index.md: tool %q: unknown article %q" $.Title . }}{{ end }}{{ end }}
+      {{- if not $arts }}{{ errorf "content/tools/_index.md: tool %q needs at least one article" .name }}{{ end }}
+      <article class="tool-card" id="{{ .id }}">
+        <header class="tool-card__head"><h3>{{ .name }}</h3>{{ with .maker }}<span class="tool-card__maker">{{ . }}</span>{{ end }}</header>
+        <p>{{ .desc }}</p>
+        {{- with .tips }}<ul class="tool-card__tips">{{ range . }}<li>{{ . }}</li>{{ end }}</ul>{{ end }}
+        <div class="tool-card__links"><span>{{ partial "t.html" (dict "page" $ "key" "tools_read") }}</span>{{ range $arts }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}</div>
+        {{- with .checked }}<p class="meta-line">{{ partial "t.html" (dict "page" $ "key" "tools_checked") }} <time datetime="{{ . }}">{{ . }}</time></p>{{ end }}
+      </article>
+      {{- end }}
+    </div>
+  </section>
+  {{- end }}
+</div>
+{{- $items := slice }}{{ range $i, $t := $tools }}{{ $items = $items | append (dict "@type" "ListItem" "position" (add $i 1) "item" (dict "@type" "SoftwareApplication" "name" $t.name "applicationCategory" "UtilitiesApplication" "description" $t.desc "url" (printf "%s#%s" $.Permalink $t.id))) }}{{ end }}
+<script type="application/ld+json">{{ dict "@context" "https://schema.org" "@type" "ItemList" "name" .Title "itemListElement" $items | jsonify | safeJS }}</script>
+{{ end }}

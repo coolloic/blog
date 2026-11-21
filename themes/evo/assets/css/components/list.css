@@ -56,3 +56,16 @@
 .glossary-list dd { margin: var(--space-xs) 0 0; font-size: var(--size-small); line-height: 1.6; color: var(--color-subtle); }
 .glossary-entry__en { font-family: var(--font-mono); color: var(--color-subtle); }
 .glossary-entry__note { font-size: var(--size-small); color: var(--color-subtle); }
+/* Tools */
+.tools__note { font-size: var(--size-small); color: var(--color-subtle); }
+.tool-grid { display: grid; gap: var(--space-l); grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); }
+.tool-card { display: grid; gap: var(--space-s); align-content: start; padding: var(--space-l); border: 1px solid color-mix(in srgb, var(--color-border) 60%, transparent); border-radius: var(--radius-card); background: var(--color-surface); scroll-margin-block-start: 6rem; }
+.tool-card:target { border-color: var(--color-accent); }
+.tool-card__head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--space-s); }
+.tool-card__head h3 { font-family: var(--font-body); font-size: 1.25rem; }
+.tool-card__maker { font-family: var(--font-mono); font-size: var(--size-label); color: var(--color-subtle); }
+.tool-card p { font-size: var(--size-small); line-height: 1.7; }
+.tool-card__tips { display: grid; gap: var(--space-xs); padding-inline-start: 1.2em; font-size: var(--size-small); line-height: 1.6; color: var(--color-subtle); }
+.tool-card__links { display: grid; gap: var(--space-xs); font-size: var(--size-small); }
+.tool-card__links span { color: var(--color-subtle); }
+.tool-card__links a { text-decoration: none; }
