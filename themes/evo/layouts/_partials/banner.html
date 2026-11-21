@@ -1,0 +1,28 @@
+{{- /* Home banner: what the site is, what readers get, and how to follow it. Context: the home page. */ -}}
+{{- $articles := where site.RegularPages "Section" "articles" -}}
+{{- $t := dict "page" . -}}
+<section class="banner" aria-labelledby="banner-title">
+  <div class="banner__main">
+    <p class="banner__eyebrow">{{ partial "t.html" (merge $t (dict "key" "banner_eyebrow")) }}</p>
+    <h1 class="banner__title" id="banner-title">{{ partial "t.html" (merge $t (dict "key" "banner_title")) }}<span>{{ partial "t.html" (merge $t (dict "key" "banner_title_2")) }}</span></h1>
+    <ul class="banner__values">
+      {{- range slice "read" "use" "trust" }}
+      <li><strong>{{ partial "t.html" (merge $t (dict "key" (printf "banner_%s" .))) }}</strong><span>{{ partial "t.html" (merge $t (dict "key" (printf "banner_%s_desc" .))) }}</span></li>
+      {{- end }}
+    </ul>
+    <div class="banner__actions">
+      <a class="button" href="{{ "articles/" | relURL }}">{{ partial "t.html" (merge $t (dict "key" "banner_cta_read")) }}</a>
+      <a class="button button--ghost" href="{{ "subscribe/" | relURL }}">{{ partial "icon.html" "rss" }}{{ partial "t.html" (merge $t (dict "key" "banner_cta_subscribe")) }}</a>
+    </div>
+    <p class="banner__stats">{{ printf (partial "t.html" (merge $t (dict "key" "banner_stats"))) (len $articles) (len (where site.RegularPages "Section" "topics")) (len (where site.RegularPages "Section" "glossary")) }}</p>
+  </div>
+  <aside class="banner__latest" aria-labelledby="banner-latest">
+    <h2 id="banner-latest">{{ partial "t.html" (merge $t (dict "key" "banner_latest")) }}</h2>
+    <ol>
+      {{- range first 3 $articles.ByDate.Reverse }}
+      <li><a href="{{ .RelPermalink }}">{{ .Title }}</a><time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "01-02" }}</time></li>
+      {{- end }}
+    </ol>
+    <a class="banner__feed" href="{{ "subscribe/" | relURL }}">{{ partial "t.html" (merge $t (dict "key" "banner_feed_hint")) }} →</a>
+  </aside>
+</section>

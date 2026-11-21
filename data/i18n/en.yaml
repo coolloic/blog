@@ -113,3 +113,19 @@ comments_title: Comments
 comments_placeholder: Share your thoughts (shown after review)
 comments_loading: Loading comments…
 comments_nojs: Comments need JavaScript.
+banner_eyebrow: AI explained for everyone
+banner_title: AI is changing how you work, learn and live.
+banner_title_2: We check the facts and explain it plainly.
+banner_read: Understand
+banner_read_desc: Jobs, learning, scams and money — what AI means for you
+banner_use: Use it
+banner_use_desc: Checklists, steps and tested tools you can use today
+banner_trust: Sourced
+banner_trust_desc: Numbers cite primary sources; no paid recommendations; corrections are public
+banner_cta_read: Start reading
+banner_cta_subscribe: Subscribe
+banner_stats: "%d articles · %d topics · %d terms"
+banner_latest: Latest
+banner_feed_hint: Follow by RSS or WeChat
+subscribe_copy: Copy
+subscribe_copied: Copied

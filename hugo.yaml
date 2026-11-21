@@ -80,7 +80,7 @@ menu:
     - {identifier: archives, name: 归档, url: "archives/", weight: 15}
     - {identifier: methodology, name: 调研方法, url: "methodology/", weight: 22}
     - {identifier: corrections, name: 更正与反馈, url: "corrections/", weight: 24}
-    - {identifier: rss, name: RSS, url: "index.xml", weight: 30}
+    - {identifier: subscribe, name: 订阅更新, url: "subscribe/", weight: 30}
 
 markup:
   goldmark:

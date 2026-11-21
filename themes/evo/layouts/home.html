@@ -1,12 +1,12 @@
 {{ define "main" }}
 {{- $articles := where site.RegularPages "Section" "articles" -}}
 <div class="container stack-section">
-<h1 class="visually-hidden">{{ site.Title }}</h1>
 {{- if not $articles }}
+  <h1 class="visually-hidden">{{ site.Title }}</h1>
   {{ partial "empty.html" (dict "page" . "key" "no_articles") }}
 {{- else }}
   {{- $featured := index (where $articles "Params.featured" true).ByDate.Reverse 0 | default (index $articles.ByDate.Reverse 0) }}
-  <section aria-label="{{ $featured.Title }}">{{ partial "hero.html" $featured }}</section>
+  {{ partial "banner.html" . }}
 
   <section class="cat-tiles" aria-label="{{ partial "t.html" (dict "page" . "key" "categories_label") }}">
     {{- range $c := partial "categories.html" . }}{{ $slug := $c.slug }}
@@ -52,7 +52,8 @@
       <a href="{{ "articles/" | relURL }}">{{ partial "t.html" (dict "page" . "key" "view_all") }}</a>
     </div>
     <div class="card-grid">
-      {{- range first 6 (complement (slice $featured) $articles.ByDate.Reverse) }}{{ partial "card.html" . }}{{ end }}
+      <div class="card-grid__item" data-featured>{{ partial "card.html" $featured }}</div>
+      {{- range first 5 (complement (slice $featured) $articles.ByDate.Reverse) }}{{ partial "card.html" . }}{{ end }}
     </div>
   </section>
 {{- end }}

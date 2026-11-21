@@ -1,0 +1,43 @@
+{{ define "main" }}
+{{- /* Subscribe: WeChat first (most readers), then RSS explained plainly with one-click links per reader app. */ -}}
+{{- $feeds := slice
+  (dict "key" "articles" "url" ("articles/index.xml" | absURL))
+  (dict "key" "all" "url" ("index.xml" | absURL)) -}}
+{{- $main := (index $feeds 0).url -}}
+<article class="article article--page subscribe">
+  <div class="container">
+    <header class="article__head"><h1>{{ .Title }}</h1><p class="article__summary">{{ .Params.summary }}</p></header>
+
+    <section class="subscribe__option" aria-labelledby="sub-wechat">
+      <img class="follow-card__qr" src="{{ "images/wechat-qr.png" | relURL }}" width="120" height="120" alt="公众号「AI调研员」二维码" loading="lazy">
+      <div>
+        <h2 id="sub-wechat">方式一：关注公众号</h2>
+        <p>微信扫码，或在微信里搜索 <strong>AI调研员</strong>。新文章发布当天推送给你，还能在后台留言提问。</p>
+      </div>
+    </section>
+
+    <section class="subscribe__option subscribe__option--rss" aria-labelledby="sub-rss">
+      <div>
+        <h2 id="sub-rss">方式二：RSS 订阅</h2>
+        <p><strong>RSS 是什么？</strong>像"订报纸"：在 RSS 阅读器里加上下面的地址，本站一有新文章，就自动出现在你的阅读器里。没有算法推荐，不用注册本站，也不会收集你的信息。</p>
+        <p class="subscribe__apps">一键订阅：
+          <a class="button" href="https://www.inoreader.com/?add_feed={{ $main | urlquery }}" rel="noopener">Inoreader</a>
+          <a class="button button--ghost" href="https://feedly.com/i/subscription/feed/{{ $main | urlquery }}" rel="noopener">Feedly</a>
+        </p>
+        <ul class="subscribe__feeds">
+          {{- range $feeds }}
+          <li>
+            <span class="subscribe__feed-name">{{ if eq .key "articles" }}只看 AI 科普（推荐）{{ else }}全部更新（含英文技术笔记）{{ end }}</span>
+            <code>{{ .url }}</code>
+            <button class="button button--ghost" type="button" data-copy="{{ .url }}" data-copied="{{ partial "t.html" (dict "page" $ "key" "subscribe_copied") }}" hidden>{{ partial "t.html" (dict "page" $ "key" "subscribe_copy") }}</button>
+          </li>
+          {{- end }}
+        </ul>
+        <p class="subscribe__tip">其他阅读器（NetNewsWire、Reeder、Thunderbird 等）：复制上面的地址，在阅读器里选"添加订阅"粘贴即可。</p>
+      </div>
+    </section>
+  </div>
+</article>
+{{- $js := resources.Get "js/code-copy.js" | js.Build (dict "minify" true "format" "esm") | fingerprint }}
+<script type="module" src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}"></script>
+{{ end }}

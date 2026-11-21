@@ -127,7 +127,7 @@ check_home_featured_fallback() {
   build_variant "$o" unfeature || { fail check_home_featured_fallback "variant build failed"; rm -rf "$o"; return; }
   local card; card=$(after_attr "$o/index.html" data-featured)
   if [[ "$card" =~ href=\"?/blog/articles/sample-3/ ]]; then pass check_home_featured_fallback
-  else fail check_home_featured_fallback "without featured, hero should be the newest (sample-3): ${card:0:200}"; fi
+  else fail check_home_featured_fallback "without featured, the first latest card should be the newest (sample-3): ${card:0:200}"; fi
   rm -rf "$o"
 }
 
@@ -147,8 +147,6 @@ check_home_empty() {
 
 check_cover_box() {
   local h bad=""; h=$(html1 "$OUT/index.html")
-  local hero; hero=$(after_attr "$OUT/index.html" data-featured | grep -oE '<img[^>]*>' | head -1)
-  [[ "$hero" == *fetchpriority=*high* && "$hero" == *width=* && "$hero" == *height=* ]] || bad+="hero-img($hero) "
   local card; card=$(after_attr "$OUT/index.html" 'class="?card[ ">]' | grep -oE '<img[^>]*>' | head -1)
   [[ "$card" == *loading=*lazy* && "$card" == *width=* && "$card" == *height=* ]] || bad+="card-img($card) "
   echo "$(css_all)" | grep -qE '\.cover\{[^}]*aspect-ratio' || bad+="css(.cover aspect-ratio) "
@@ -752,6 +750,38 @@ check_footer_no_personal_links() {
   else pass check_footer_no_personal_links; fi
 }
 
-CHECKS=(check_theme_evo check_html_lang check_tokens_css check_light_dark_fallback check_theme_script_first check_nav check_skip_link check_wrap check_toggle_button check_tokens_unescaped check_home_featured check_home_featured_fallback check_home_lists_articles_not_wiki check_home_empty check_cover_box check_cover_video_slot check_follow_card check_no_format_errors check_category_order check_category_urls check_category_empty check_archives check_old_urls check_internal_links check_article_page check_wechat_footer check_video_vertical check_video_shortcode check_required_fields check_jsonld check_prev_next check_notes_page check_en_chrome check_code_copy check_wiki_body check_wiki_concept_page check_search_index check_search_page check_view_transitions check_scroll_driven_guarded check_reduced_motion check_js_budget check_progress_bar check_seo check_structured_data check_sitemap check_rss_scope check_404 check_video_dir check_no_blocking_fonts check_search_form_visible check_rise_no_fade check_layout_375 check_paged_canonical check_popover_fallback check_no_double_entities check_summary_with_angle_brackets check_unknown_category check_fixtures_not_in_content check_image_dimensions check_cjk_emphasis check_stitch_fonts check_card_foot_split check_real_content check_redirect_site check_sitemap_scope check_noindex_thin check_post_jsonld check_company check_webp_srcset check_topics check_topic_unknown_article check_trust_pages check_corrections_note check_glossary check_glossary_bad_wiki check_topic_min_articles check_small_fixes check_tools check_tools_unknown_article check_quiz check_comments check_footer_no_personal_links)
+check_home_banner() {
+  local h bad=""; h=$(html1 "$OUT/index.html")
+  local b; b=$(after_attr "$OUT/index.html" 'class="?banner"?[ >]' 4000)
+  [[ -n "$b" ]] || bad+="no-banner "
+  echo "$b" | grep -qE '<h1[^>]*class="?banner__title' || bad+="h1 "
+  echo "$h" | grep -qE '<h1[^>]*visually-hidden' && bad+="hidden-h1-still-there "
+  [[ "$b" == *"看懂变化"* && "$b" == *"拿来就用"* && "$b" == *"有据可查"* ]] || bad+="values "
+  echo "$b" | grep -qE 'href="?/blog/articles/"?' || bad+="cta-read "
+  echo "$b" | grep -qE 'href="?/blog/subscribe/"?' || bad+="cta-subscribe "
+  echo "$b" | grep -qE '[0-9]+ 篇科普' || bad+="stats "
+  echo "$b" | grep -qE 'href="?/blog/articles/sample-' || bad+="latest-list "
+  echo "$h" | grep -qE 'class="?hero"? data-featured' && bad+="old-hero "
+  if [[ -z "$bad" ]]; then pass check_home_banner; else fail check_home_banner "$bad"; fi
+}
+
+check_subscribe_page() {
+  local f="$OUT/subscribe/index.html" bad=""
+  [[ -f "$f" ]] || { fail check_subscribe_page "no /subscribe/ page"; return; }
+  local h; h=$(html1 "$f")
+  [[ "$h" == *"https://coolloic.github.io/blog/articles/index.xml"* ]] || bad+="articles-feed-url "
+  [[ "$h" == *"https://coolloic.github.io/blog/index.xml"* ]] || bad+="all-feed-url "
+  echo "$h" | grep -qE 'inoreader\.com/\?add_feed=https%3A%2F%2Fcoolloic\.github\.io%2Fblog%2Farticles%2Findex\.xml' || bad+="inoreader "
+  echo "$h" | grep -qE 'feedly\.com/i/subscription/feed/https%3A%2F%2Fcoolloic\.github\.io%2Fblog%2Farticles%2Findex\.xml' || bad+="feedly "
+  echo "$h" | grep -qE 'data-copy=' || bad+="copy-button "
+  [[ "$h" == *"wechat-qr.png"* ]] || bad+="qr "
+  echo "$h" | grep -qE '<link rel="?alternate"? type="?application/rss\+xml' || bad+="feed-autodiscovery "
+  grep -q '<item>' "$OUT/articles/index.xml" || bad+="articles-feed-empty "
+  grep -q '/posts/' "$OUT/articles/index.xml" && bad+="articles-feed-has-posts "
+  html1 "$OUT/index.html" | grep -oE '<footer.*</footer>' | grep -qE 'href="?/blog/subscribe/' || bad+="footer-link "
+  if [[ -z "$bad" ]]; then pass check_subscribe_page; else fail check_subscribe_page "$bad"; fi
+}
+
+CHECKS=(check_theme_evo check_html_lang check_tokens_css check_light_dark_fallback check_theme_script_first check_nav check_skip_link check_wrap check_toggle_button check_tokens_unescaped check_home_featured check_home_featured_fallback check_home_lists_articles_not_wiki check_home_empty check_cover_box check_cover_video_slot check_follow_card check_no_format_errors check_category_order check_category_urls check_category_empty check_archives check_old_urls check_internal_links check_article_page check_wechat_footer check_video_vertical check_video_shortcode check_required_fields check_jsonld check_prev_next check_notes_page check_en_chrome check_code_copy check_wiki_body check_wiki_concept_page check_search_index check_search_page check_view_transitions check_scroll_driven_guarded check_reduced_motion check_js_budget check_progress_bar check_seo check_structured_data check_sitemap check_rss_scope check_404 check_video_dir check_no_blocking_fonts check_search_form_visible check_rise_no_fade check_layout_375 check_paged_canonical check_popover_fallback check_no_double_entities check_summary_with_angle_brackets check_unknown_category check_fixtures_not_in_content check_image_dimensions check_cjk_emphasis check_stitch_fonts check_card_foot_split check_real_content check_redirect_site check_sitemap_scope check_noindex_thin check_post_jsonld check_company check_webp_srcset check_topics check_topic_unknown_article check_trust_pages check_corrections_note check_glossary check_glossary_bad_wiki check_topic_min_articles check_small_fixes check_tools check_tools_unknown_article check_quiz check_comments check_footer_no_personal_links check_home_banner check_subscribe_page)
 for c in "${@:-${CHECKS[@]}}"; do $c; done
 [[ $FAILS -eq 0 ]] && echo "SITE ALL PASS" || { echo "$FAILS SITE CHECKS FAILED"; exit 1; }

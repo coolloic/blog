@@ -113,3 +113,19 @@ comments_title: 评论
 comments_placeholder: 说说你的看法（评论审核通过后显示）
 comments_loading: 评论加载中…
 comments_nojs: 评论需要启用 JavaScript。也可以在公众号后台留言。
+banner_eyebrow: AI调研员 · 写给普通人的 AI 科普
+banner_title: AI 正在改变你的工作、学习和生活。
+banner_title_2: 我们替你查清楚，用大白话讲明白。
+banner_read: 看懂变化
+banner_read_desc: 裁员与求职、孩子学习、防骗理财，AI 对你意味着什么
+banner_use: 拿来就用
+banner_use_desc: 清单、步骤和工具实测，读完就能上手
+banner_trust: 有据可查
+banner_trust_desc: 数字引用原始出处，工具推荐不收推广费，错了公开更正
+banner_cta_read: 开始阅读
+banner_cta_subscribe: 订阅更新
+banner_stats: "已发布 %d 篇科普 · %d 个专题 · %d 个 AI 名词"
+banner_latest: 最近更新
+banner_feed_hint: 用 RSS 或公众号订阅，新文章自动送到
+subscribe_copy: 复制地址
+subscribe_copied: 已复制

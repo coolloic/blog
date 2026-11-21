@@ -69,3 +69,43 @@
 
 .empty { display: grid; gap: var(--space-s); justify-items: center; padding: var(--space-section) var(--space-l); border: 1px dashed var(--color-border); border-radius: var(--radius-card); text-align: center; color: var(--color-muted); }
 .empty__title { font-family: var(--font-display); font-size: var(--size-h3); font-weight: 700; color: var(--color-text); }
+/* Home banner */
+.banner { display: grid; gap: var(--space-xl); padding: clamp(24px, 5vw, 56px); border-radius: var(--radius-hero); border: 1px solid var(--color-border);
+  background: radial-gradient(700px 420px at 100% 0%, color-mix(in srgb, var(--color-accent-fill) 18%, transparent), transparent 70%),
+              radial-gradient(600px 500px at 0% 100%, color-mix(in srgb, var(--color-accent3) 14%, transparent), transparent 70%), var(--color-surface); }
+@media (min-width: 960px) { .banner { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); align-items: start; } }
+.banner__main { display: grid; gap: var(--space-l); min-inline-size: 0; }
+.banner__eyebrow { margin: 0; font-size: var(--size-small); font-weight: 700; color: var(--color-accent2); letter-spacing: .08em; }
+.banner__title { margin: 0; font-family: var(--font-display); font-size: clamp(28px, 4.4vw, 48px); line-height: 1.25; word-break: keep-all; overflow-wrap: anywhere; }
+.banner__title span { display: block; color: var(--color-accent); }
+.banner__values { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-m); }
+@media (min-width: 640px) { .banner__values { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.banner__values li { display: grid; gap: var(--space-xs); padding-inline-start: var(--space-m); border-inline-start: 3px solid var(--color-accent-fill); }
+.banner__values strong { font-size: 1.05rem; }
+.banner__values span { font-size: var(--size-small); color: var(--color-muted); line-height: 1.6; }
+.banner__actions { display: flex; flex-wrap: wrap; gap: var(--space-m); }
+.banner__actions .button--ghost .icon { color: var(--color-accent-fill); }
+.banner__stats { margin: 0; font-size: var(--size-small); color: var(--color-subtle); }
+.banner__latest { display: grid; gap: var(--space-m); padding: var(--space-l); border-radius: var(--radius-card); background: var(--color-bg); border: 1px solid var(--color-border); min-inline-size: 0; }
+.banner__latest h2 { margin: 0; font-size: var(--size-small); color: var(--color-subtle); letter-spacing: .08em; }
+.banner__latest ol { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-m); counter-reset: latest; }
+.banner__latest li { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: var(--space-s); align-items: baseline; counter-increment: latest; }
+.banner__latest li::before { content: counter(latest, decimal-leading-zero); font-family: var(--font-display); font-weight: 700; color: var(--color-accent-fill); }
+.banner__latest a { color: var(--color-text); text-decoration: none; font-weight: 700; line-height: 1.5; overflow-wrap: anywhere; }
+.banner__latest a:hover { color: var(--color-accent); }
+.banner__latest time { font-size: var(--size-label); color: var(--color-subtle); }
+.banner__feed { font-size: var(--size-small); color: var(--color-accent); }
+.card-grid__item { display: contents; }
+
+/* Subscribe page */
+.subscribe__option { display: flex; gap: var(--space-l); align-items: flex-start; padding: var(--space-l); margin-block: var(--space-l); border: 1px solid var(--color-border); border-radius: var(--radius-card); background: var(--color-surface); }
+.subscribe__option h2 { margin-block: 0 var(--space-s); font-size: var(--size-h3); }
+.subscribe__option > div { min-inline-size: 0; }
+@media (max-width: 639px) { .subscribe__option { flex-direction: column; } }
+.subscribe__apps { display: flex; flex-wrap: wrap; gap: var(--space-s); align-items: center; }
+.subscribe__feeds { list-style: none; padding: 0; display: grid; gap: var(--space-m); }
+.subscribe__feeds li { display: grid; gap: var(--space-xs); }
+.subscribe__feeds code { overflow-wrap: anywhere; font-size: var(--size-small); }
+.subscribe__feeds .button { justify-self: start; }
+.subscribe__feed-name { font-weight: 700; }
+.subscribe__tip { font-size: var(--size-small); color: var(--color-subtle); }
