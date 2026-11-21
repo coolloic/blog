@@ -8,6 +8,8 @@ import { dimensions } from "./images.mjs";
 import { readFrontMatter, renderArticle } from "./frontmatter.mjs";
 
 const SLUG = /^[a-z0-9]+(-[a-z0-9]+){0,5}$/;
+const WECHAT_ID = /^\d+_\d+$/;
+const MIN_BODY_CHARS = 50;
 const DATE = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+08:00$/;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -15,7 +17,10 @@ async function existingArticles(contentDir) {
   const byId = new Map(), bySlug = new Map(), linkMap = new Map();
   if (!existsSync(contentDir)) return { byId, bySlug, linkMap };
   for (const slug of await readdir(contentDir)) {
+    if (slug.startsWith("_") || slug.startsWith(".")) continue;
     const file = join(contentDir, slug, "index.md");
+    // Every existing folder is owned by someone: a synced article (its wechat_id) or a hand-written one.
+    bySlug.set(slug, "(not synced)");
     if (!existsSync(file)) continue;
     const fm = readFrontMatter(await readFile(file, "utf8"));
     if (fm.wechat_id) { byId.set(String(fm.wechat_id), slug); bySlug.set(slug, String(fm.wechat_id)); }
@@ -27,6 +32,7 @@ async function existingArticles(contentDir) {
 }
 
 function validate(item, categories) {
+  if (!WECHAT_ID.test(String(item.wechat_id ?? ""))) return `invalid wechat_id ${JSON.stringify(item.wechat_id)} (expected <appmsgid>_<itemidx>)`;
   if (!SLUG.test(item.slug || "")) return `invalid slug ${JSON.stringify(item.slug)} (kebab-case, ≤ 6 words)`;
   if (!categories.includes(item.category)) return `unknown category ${JSON.stringify(item.category)}`;
   if (!DATE.test(item.date || "")) return `date must look like 2026-11-20T08:00:00+08:00, got ${JSON.stringify(item.date)}`;
@@ -40,16 +46,19 @@ function summaryFrom(markdown) {
   return text.length > 80 ? text.slice(0, 80) + "…" : text;
 }
 
-async function syncOne(item, slug, { uploader, fetchers, linkMap, dryRun }) {
+async function syncOne(item, slug, { uploader, fetchers, linkMap, dryRun, force }) {
   const html = await fetchers.fetchArticleHtml(wechatShortUrl(item.url));
   const { markdown, images, coverUrl, description } = convertArticle(html, { linkMap });
+  // Image-message, video and removed posts keep #js_content but render nothing without JavaScript.
+  if (!images.length && summaryFrom(markdown).length < MIN_BODY_CHARS) throw new Error("article body is empty (JavaScript-rendered or removed?)");
   if (!coverUrl) throw new Error("no cover image found on the article page");
   const dims = {}, urlFor = {};
   const store = async (src, name) => {
     const img = await fetchers.downloadImage(src);
     const file = `${name}.${img.ext}`, key = `articles/${slug}/${file}`;
     dims[file] = dimensions(img.bytes);
-    if (!dryRun && !(await uploader.exists(key))) await uploader.put(key, img.bytes, img.contentType);
+    // Keys are positional (1.jpg, 2.jpg…): a resync must overwrite them, or edited articles keep old pictures.
+    if (!dryRun && (force || !(await uploader.exists(key)))) await uploader.put(key, img.bytes, img.contentType);
     return uploader.url(key);
   };
   for (const im of images) urlFor[im.n] = await store(im.src, String(im.n));
@@ -60,6 +69,25 @@ async function syncOne(item, slug, { uploader, fetchers, linkMap, dryRun }) {
     categories: [item.category], tags: item.tags ?? [], cover,
     wechat_url: wechatShortUrl(item.url), wechat_id: item.wechat_id, images: dims, draft: false,
   }, body);
+}
+
+// Links were pointed at every planned article before fetching. Any target that did not end up on disk
+// (it failed, or was skipped later) goes back to its WeChat URL, so the site never links to a missing page.
+async function repairDeadLinks({ plan, contentDir, previewDir, dryRun, result }) {
+  const exists = (slug) => existsSync(join(contentDir, slug, "index.md")) || (dryRun && existsSync(join(previewDir, slug, "index.md")));
+  const wechatUrlOf = new Map(plan.items.filter((i) => i.slug && wechatShortUrl(i.url)).map((i) => [i.slug, wechatShortUrl(i.url)]));
+  const dirs = dryRun ? [previewDir] : [contentDir];
+  for (const dir of dirs) {
+    if (!existsSync(dir)) continue;
+    for (const slug of await readdir(dir)) {
+      const file = join(dir, slug, "index.md");
+      if (!existsSync(file)) continue;
+      const text = await readFile(file, "utf8");
+      const fixed = text.replace(/\]\(\.\.\/([a-z0-9-]+)\/index\.md\)/g, (m, target) =>
+        exists(target) || !wechatUrlOf.has(target) ? m : `](${wechatUrlOf.get(target)})`);
+      if (fixed !== text) { await writeFile(file, fixed); result.relinked = [...(result.relinked ?? []), slug]; }
+    }
+  }
 }
 
 /**
@@ -79,6 +107,7 @@ export async function runSync({ plan, contentDir, skipFile, previewDir, uploader
 
   for (const item of plan.items) {
     const id = String(item.wechat_id);
+    if (!WECHAT_ID.test(id)) { result.failed.push({ slug: item.slug, error: `invalid wechat_id ${JSON.stringify(item.wechat_id)}` }); continue; }
     if (item.skip || skipIds.has(id)) {
       if (!skipIds.has(id)) { skips.push({ wechat_id: id, title: item.title, reason: String(item.skip) }); skipIds.add(id); newSkips = true; }
       result.skipped.push(id); continue;
@@ -93,7 +122,7 @@ export async function runSync({ plan, contentDir, skipFile, previewDir, uploader
     if (!first && sleepMs) await sleep(sleepMs);
     first = false;
     try {
-      const text = await syncOne(item, slug, { uploader, fetchers, linkMap, dryRun });
+      const text = await syncOne(item, slug, { uploader, fetchers, linkMap, dryRun, force: resync === existing && Boolean(existing) });
       const dir = join(dryRun ? previewDir : contentDir, slug);
       await mkdir(dir, { recursive: true });
       await writeFile(join(dir, "index.md.tmp"), text);
@@ -104,6 +133,7 @@ export async function runSync({ plan, contentDir, skipFile, previewDir, uploader
       result.failed.push({ slug, error: e.message }); log(`✗ ${slug}: ${e.message}`);
     }
   }
+  await repairDeadLinks({ plan, contentDir, previewDir, dryRun, result });
   if (newSkips && !dryRun) await writeFile(skipFile, stringify(skips));
   return result;
 }

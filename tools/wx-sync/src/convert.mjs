@@ -51,7 +51,39 @@ function isCaption(el) {
   return small || grey || /^图\s*\d*[：:]/.test(text);
 }
 
+// WeChat puts <section>/<p> blocks inside table cells; GFM rows must be one line. Flatten cell blocks to
+// inline text, and give header-less tables a header row (turndown-plugin-gfm only converts tables with one).
+function normalizeTables(root) {
+  for (const table of root.querySelectorAll("table")) {
+    for (const cell of table.querySelectorAll("td, th")) {
+      cell.innerHTML = cell.innerHTML
+        .replace(/<\/?(p|section|div|span)\b[^>]*>/gi, (m) => (/^<\/?span/i.test(m) ? "" : " "))
+        .replace(/<br\s*\/?>/gi, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+    const first = table.querySelector("tr");
+    if (first && !table.querySelector("th")) {
+      for (const td of [...first.querySelectorAll("td")]) {
+        const th = root.ownerDocument.createElement("th");
+        th.innerHTML = td.innerHTML;
+        td.replaceWith(th);
+      }
+    }
+  }
+}
+
+// og:description arrives with JS escapes (\x26quot;) on top of HTML entities.
+export function decodeMetaText(s, document) {
+  if (!s) return null;
+  const unescaped = s.replace(/\\x([0-9a-fA-F]{2})/g, (_, h) => String.fromCharCode(parseInt(h, 16)));
+  const el = document.createElement("div");
+  el.innerHTML = unescaped;
+  return el.textContent.trim() || null;
+}
+
 function prepare(root, linkMap) {
+  normalizeTables(root);
   [...root.querySelectorAll("*")].filter((el) => el.tagName.startsWith("MP-")).forEach((el) => el.remove());
   dropFromRecommended(root);
 
@@ -136,6 +168,6 @@ export function convertArticle(html, { linkMap = new Map() } = {}) {
     .replace(/[ \t]+$/gm, "")
     .replace(/\n{3,}/g, "\n\n")
     .trim() + "\n";
-  const description = document.querySelector('meta[property="og:description"]')?.getAttribute("content")?.trim() || null;
+  const description = decodeMetaText(document.querySelector('meta[property="og:description"]')?.getAttribute("content"), document);
   return { markdown, images, coverUrl: findCover(document, html), description };
 }

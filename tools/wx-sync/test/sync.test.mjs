@@ -161,3 +161,51 @@ test("without og:description, summary falls back to the start of the body", asyn
   assert.match(fm.summary, /开头段落/);
   assert.ok(fm.summary.length <= 81);
 });
+
+
+test("links to a plan article that failed fall back to its WeChat URL", async () => {
+  const s = await setup({ failImage: "fake/2" });
+  const linking = ARTICLE.replace("https://mp.weixin.qq.com/s/OTHER123", "https://mp.weixin.qq.com/s/ID2");
+  let n = 0;
+  const r = await s.run({ items: [item(1), item(2)] }, { fetchers: {
+    fetchArticleHtml: async () => (n++ === 0 ? linking.replace(/fake\/2/g, "fake/two") : ARTICLE),
+    downloadImage: async (url) => { if (url.includes("fake/2")) throw new Error("HTTP 404"); return { bytes: PNG, ext: "jpg", contentType: "image/jpeg" }; },
+  } });
+  assert.deepEqual(r.added, ["article-1"]);
+  const text = await readFile(join(s.contentDir, "article-1/index.md"), "utf8");
+  assert.doesNotMatch(text, /\.\.\/article-2\/index\.md/);
+  assert.match(text, /\]\(https:\/\/mp\.weixin\.qq\.com\/s\/ID2\)/);
+});
+
+test("resync re-uploads every image even when the key exists", async () => {
+  const s = await setup();
+  await s.run({ items: [item(1)] });
+  const before = s.calls.put.length;
+  await s.run({ items: [item(1)] }, { resync: "article-1" });
+  assert.equal(s.calls.put.length - before, before);
+});
+
+test("a hand-written article folder is never overwritten", async () => {
+  const s = await setup();
+  await mkdir(join(s.contentDir, "article-1"));
+  await writeFile(join(s.contentDir, "article-1/index.md"), "---\ntitle: mine\n---\nhand written\n");
+  const r = await s.run({ items: [item(1)] });
+  assert.equal(r.failed.length, 1);
+  assert.equal(await readFile(join(s.contentDir, "article-1/index.md"), "utf8"), "---\ntitle: mine\n---\nhand written\n");
+});
+
+test("an item without a valid wechat_id is refused", async () => {
+  const s = await setup();
+  const r = await s.run({ items: [item(1, { wechat_id: undefined }), item(2, { wechat_id: "abc" })] });
+  assert.equal(r.failed.length, 2);
+  assert.equal(s.calls.fetch, 0);
+});
+
+test("an article page with no body text and no images fails instead of writing an empty article", async () => {
+  const s = await setup();
+  const empty = '<html><head><meta property="og:image" content="https://mmbiz.qpic.cn/c/0?wx_fmt=jpeg"></head><body><div id="js_content"><p> </p></div></body></html>';
+  const r = await s.run({ items: [item(1)] }, { fetchers: { fetchArticleHtml: async () => empty, downloadImage: async () => ({ bytes: PNG, ext: "jpg", contentType: "image/jpeg" }) } });
+  assert.equal(r.failed.length, 1);
+  assert.match(r.failed[0].error, /empty/);
+  assert.deepEqual(await readdir(s.contentDir), []);
+});

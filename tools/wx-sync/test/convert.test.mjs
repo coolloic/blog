@@ -85,3 +85,22 @@ test("long-form WeChat links (mid/idx) map to synced articles by wechat_id", () 
   assert.match(tail.markdown, /\[另一篇长链接文章\]\(\.\.\/ai-video-guide\/index\.md\)/);
   assert.match(tail.markdown, /\[外部长链接\]\(https:\/\/mp\.weixin\.qq\.com\/s\?/);
 });
+
+const tbl = convertArticle(readFileSync(new URL("./fixtures/article-table.html", import.meta.url), "utf8"));
+
+test("WeChat tables with block content in cells become one-line Markdown rows", () => {
+  const rows = tbl.markdown.split("\n").filter((l) => l.startsWith("|"));
+  assert.match(tbl.markdown, /^\| 题型 \| 用途 \| 返回 \|$/m);
+  assert.match(tbl.markdown, /^\| `noul` （是\/否） \| 有没有违规？ 需不需要工具？ \| "是"的概率 \+ 置信度 \|$/m);
+  assert.doesNotMatch(tbl.markdown, /^\|\s*$/m);
+  assert.ok(rows.every((r) => r.trim().endsWith("|")), "every table line is a complete row");
+});
+
+test("a table without header cells uses its first row as the header", () => {
+  assert.match(tbl.markdown, /^\| 甲 \| 乙 \|$/m);
+  assert.match(tbl.markdown, /^\| 1 \| 2 \|$/m);
+});
+
+test("og:description is decoded (JS \\x escapes and HTML entities)", () => {
+  assert.equal(tbl.description, "AI 能做的事\"越来越多\"，也有做不到的");
+});

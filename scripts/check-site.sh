@@ -525,6 +525,9 @@ check_real_content() {
   local o r n; o=$(mktemp -d)
   if ! r=$(hugo --gc --minify --panicOnWarning -d "$o" 2>&1); then fail check_real_content "real content does not build: $(echo "$r" | grep -E 'ERROR|WARN' | head -2)"; rm -rf "$o"; return; fi
   n=$(find "$o/articles" -mindepth 2 -maxdepth 2 -name index.html -not -path '*/page/*' | wc -l | tr -d ' ')
+  # Sync artefacts: table rows broken into paragraphs, JS escapes leaking from WeChat metadata.
+  local junk; junk=$(grep -rlE '<p>\|</p>|\\x26' "$o" --include='*.html' --include='*.xml' --include='*.json' 2>/dev/null | sed "s|$o/||" | head -5 | tr '\n' ' ')
+  [[ -z "$junk" ]] || { fail check_real_content "sync artefacts (<p>|</p> or \\x26) in: $junk"; rm -rf "$o"; return; }
   r=$(python3 scripts/check-links.py "$o" /blog/ 2>&1); local rc=$?
   rm -rf "$o"
   if [[ $rc -eq 0 ]]; then pass "check_real_content ($n articles)"; else fail check_real_content "$(echo "$r" | head -3 | tr '\n' ';')"; fi
