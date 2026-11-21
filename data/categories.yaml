@@ -1,6 +1,6 @@
 # Category slugs are part of URLs (/categories/<slug>/): never rename a slug once live. Names can change.
-# `order` sets the display order (home tiles, category switcher).
-models:   {order: 1, name: 新模型速递, desc: 拆解前沿模型的架构、能力边界与基准实测。}
-concepts: {order: 2, name: 概念科普, desc: 用日常直觉讲透注意力、RAG 与智能体原理。}
-tools:    {order: 3, name: 工具实测, desc: 本地部署、工作流插件与日常效率横向对比。}
-industry: {order: 4, name: 行业观察, desc: 算力经济学、开源生态与产品演进的冷静记录。}
+# `order` sets the display order (home tiles, category switcher). Articles must use one of these slugs.
+work:      {order: 1, name: 工作与职业, desc: 裁员、求职、职业规划，AI 时代的工作怎么变。}
+education: {order: 2, name: 教育与成长, desc: 孩子用 AI、考试、选专业，学习方式怎么变。}
+life:      {order: 3, name: 生活与安全, desc: 钱、健康、诈骗与日常，AI 进入生活的方方面面。}
+tools:     {order: 4, name: AI 工具, desc: 好用的 AI 工具和 App，手把手教你用起来。}

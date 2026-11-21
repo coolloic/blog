@@ -7,8 +7,12 @@ FAILS=0
 pass() { echo "PASS $1"; }
 fail() { echo "FAIL $1: $2"; FAILS=$((FAILS+1)); }
 OUT=$(mktemp -d)
-trap 'rm -rf "$OUT"' EXIT
-BUILD_LOG=$(hugo -D --quiet --panicOnWarning -d "$OUT" 2>&1) || { echo "FAIL build: $(echo "$BUILD_LOG" | head -5)"; exit 1; }
+CONTENT=$(mktemp -d)
+trap 'rm -rf "$OUT" "$CONTENT"' EXIT
+# Real content plus the test fixtures (scripts/fixtures/articles/sample-*), so checks never depend on real articles.
+merge_content() { cp -R content/. "$1"/; [[ -d scripts/fixtures ]] && cp -R scripts/fixtures/. "$1"/; return 0; }
+merge_content "$CONTENT"
+BUILD_LOG=$(hugo -D --quiet --panicOnWarning --contentDir "$CONTENT" -d "$OUT" 2>&1) || { echo "FAIL build: $(echo "$BUILD_LOG" | head -5)"; exit 1; }
 nospace() { tr -d ' \n' < "$1"; }
 
 check_theme_evo() {
@@ -90,7 +94,7 @@ check_tokens_unescaped() {
 # Build a variant of the site from a copy of content/ changed by a callback: build_variant <outdir> <fn>
 build_variant() {
   local out=$1 fn=$2 cdir; cdir=$(mktemp -d)
-  cp -R content/. "$cdir"/
+  merge_content "$cdir"
   ( cd "$cdir" && $fn )
   hugo -D --quiet --panicOnWarning --contentDir "$cdir" -d "$out" >/dev/null 2>&1; local rc=$?
   rm -rf "$cdir"; return $rc
@@ -162,21 +166,41 @@ check_no_format_errors() {
 
 check_category_order() {
   local order; order=$(html1 "$OUT/index.html" | grep -oE 'href="?/blog/categories/[a-z]+/' | sed -E 's|.*/categories/||; s|/||' | awk '!s[$0]++' | tr '\n' ' ')
-  if [[ "$order" == "models concepts tools industry " ]]; then pass check_category_order
+  if [[ "$order" == "work education life tools " ]]; then pass check_category_order
   else fail check_category_order "category tiles in wrong order: $order"; fi
 }
 
 check_category_urls() {
-  local f="$OUT/categories/concepts/index.html" h; h=$(html1 "$f" 2>/dev/null)
-  if [[ -f "$f" && "$h" == *"/blog/articles/sample-1/"* && "$h" == *"/blog/articles/sample-3/"* && "$h" == *"<title>概念科普"* && ! -e "$OUT/categories/概念科普" ]]; then pass check_category_urls
-  else fail check_category_urls "categories/concepts missing, wrong title, or missing samples"; fi
+  local f="$OUT/categories/education/index.html" h; h=$(html1 "$f" 2>/dev/null)
+  if [[ -f "$f" && "$h" == *"/blog/articles/sample-1/"* && "$h" == *"/blog/articles/sample-3/"* && "$h" == *"<title>教育与成长"* && ! -e "$OUT/categories/教育与成长" ]]; then pass check_category_urls
+  else fail check_category_urls "categories/education missing, wrong title, or missing samples"; fi
 }
 
+# Keep only the fixture articles, so life and tools are empty whatever real content exists.
+onlyfixtures() { find articles -mindepth 1 -maxdepth 1 -type d ! -name 'sample-*' -exec rm -rf {} +; }
 check_category_empty() {
-  local h bad=""; h=$(html1 "$OUT/categories/index.html" 2>/dev/null)
-  for c in models concepts tools industry; do [[ "$h" =~ href=\"?/blog/categories/$c/ ]] || bad+="index:$c "; done
-  grep -qE 'data-empty="?no_category_articles' "$OUT/categories/tools/index.html" 2>/dev/null || bad+="tools:empty-state "
+  local o h bad=""; o=$(mktemp -d)
+  build_variant "$o" onlyfixtures || { fail check_category_empty "variant build failed"; rm -rf "$o"; return; }
+  h=$(html1 "$o/categories/index.html" 2>/dev/null)
+  for c in work education life tools; do [[ "$h" =~ href=\"?/blog/categories/$c/ ]] || bad+="index:$c "; done
+  for c in life tools; do grep -qE 'data-empty="?no_category_articles' "$o/categories/$c/index.html" 2>/dev/null || bad+="$c:empty-state "; done
+  rm -rf "$o"
   if [[ -z "$bad" ]]; then pass check_category_empty; else fail check_category_empty "$bad"; fi
+}
+
+badcategory() { sed -i.bak 's/^categories: .*/categories: ["nope"]/' articles/sample-1/index.md && rm -f articles/sample-1/index.md.bak; }
+check_unknown_category() {
+  local o cdir log rc; o=$(mktemp -d); cdir=$(mktemp -d)
+  merge_content "$cdir"; ( cd "$cdir" && badcategory )
+  log=$(hugo -D --contentDir "$cdir" -d "$o" 2>&1); rc=$?
+  rm -rf "$o" "$cdir"
+  if [[ $rc -ne 0 && "$log" == *"unknown category"* ]]; then pass check_unknown_category
+  else fail check_unknown_category "an article with an unknown category slug must fail the build (rc=$rc)"; fi
+}
+
+check_fixtures_not_in_content() {
+  if compgen -G "content/articles/sample-*" >/dev/null; then fail check_fixtures_not_in_content "sample articles must live in scripts/fixtures/, not content/"
+  else pass check_fixtures_not_in_content; fi
 }
 
 check_archives() {
@@ -202,7 +226,7 @@ check_article_page() {
   local f="$OUT/articles/sample-1/index.html" h bad=""; h=$(html1 "$f")
   [[ "$h" == *"<article"* ]] || bad+="article "
   echo "$h" | grep -qE 'class="?cover cover--hero' || bad+="hero-cover "
-  echo "$h" | grep -qE 'href="?/blog/categories/concepts/"?[^>]*>概念科普' || bad+="category-link "
+  echo "$h" | grep -qE 'href="?/blog/categories/education/"?[^>]*>教育与成长' || bad+="category-link "
   [[ "$h" == *"阅读 "*" 分钟"* ]] || bad+="reading-time "
   echo "$h" | grep -qE '<nav[^>]*class="?toc' || bad+="toc "
   if [[ -z "$bad" ]]; then pass check_article_page; else fail check_article_page "missing: $bad"; fi
@@ -233,7 +257,7 @@ check_video_shortcode() {
 addmissing() { mkdir -p articles/zz-missing; printf -- '---\ntitle: zz\ndate: 2026-11-01\ncover: "/images/placeholder-cover.svg"\ndraft: false\n---\nx\n' > articles/zz-missing/index.md; }
 check_required_fields() {
   local o cdir log rc; o=$(mktemp -d); cdir=$(mktemp -d)
-  cp -R content/. "$cdir"/; ( cd "$cdir" && addmissing )
+  merge_content "$cdir"; ( cd "$cdir" && addmissing )
   log=$(hugo --contentDir "$cdir" -d "$o" 2>&1); rc=$?
   rm -rf "$o" "$cdir"
   if [[ $rc -ne 0 && "$log" == *"missing wechat_url"* ]]; then pass check_required_fields
@@ -425,21 +449,21 @@ check_layout_375() {
   mkdir -p "$OUT.srv" && ln -sfn "$OUT" "$OUT.srv/blog"
   python3 -m http.server "$port" -d "$OUT.srv" >/dev/null 2>&1 & srv=$!
   sleep 1
-  hugo -D --quiet --panicOnWarning -d "$OUT.layout" --baseURL "http://localhost:$port/blog/" >/dev/null 2>&1
+  hugo -D --quiet --panicOnWarning --contentDir "$CONTENT" -d "$OUT.layout" --baseURL "http://localhost:$port/blog/" >/dev/null 2>&1
   ln -sfn "$OUT.layout" "$OUT.srv/blog"
   r=$(node scripts/check-layout.mjs "http://localhost:$port/blog/" "" articles/sample-3/ articles/ posts/modern-web-guidelines/ posts/hello-world/ wiki/concepts/agent-loop/ wiki/ notes/ archives/ search/ about/ 2>&1); local rc=$?
   kill $srv 2>/dev/null; wait $srv 2>/dev/null; rm -rf "$OUT.srv" "$OUT.layout"
   if [[ $rc -eq 0 ]]; then pass check_layout_375; else fail check_layout_375 "$(echo "$r" | head -6 | tr '\n' ';')"; fi
 }
 
-manyarticles() { for i in $(seq 1 10); do mkdir -p articles/zz-many-$i; printf -- '---\ntitle: "分页测试 %s"\ndate: 2026-10-%02dT08:00:00+08:00\nsummary: "x"\ncategories: ["concepts"]\ncover: "/images/placeholder-cover.svg"\nwechat_url: "https://mp.weixin.qq.com/s/p"\ndraft: true\n---\nx\n' $i $i > articles/zz-many-$i/index.md; done; }
+manyarticles() { for i in $(seq 1 10); do mkdir -p articles/zz-many-$i; printf -- '---\ntitle: "分页测试 %s"\ndate: 2026-10-%02dT08:00:00+08:00\nsummary: "x"\ncategories: ["education"]\ncover: "/images/placeholder-cover.svg"\nwechat_url: "https://mp.weixin.qq.com/s/p"\ndraft: true\n---\nx\n' $i $i > articles/zz-many-$i/index.md; done; }
 check_paged_canonical() {
   local o; o=$(mktemp -d)
   build_variant "$o" manyarticles || { fail check_paged_canonical "variant build failed"; rm -rf "$o"; return; }
   local c1 c2 t2; c1=$(grep -oE '<link rel="?canonical"? href="?[^" >]+' "$o/articles/page/2/index.html" | sed -E 's/.*href="?//')
-  t2=$(grep -oE '<link rel="?canonical"? href="?[^" >]+' "$o/categories/concepts/page/2/index.html" | sed -E 's/.*href="?//')
-  if [[ "$c1" == */articles/page/2/ && "$t2" == */categories/concepts/page/2/ ]]; then pass check_paged_canonical
-  else fail check_paged_canonical "page 2 canonical: articles=$c1 concepts=$t2"; fi
+  t2=$(grep -oE '<link rel="?canonical"? href="?[^" >]+' "$o/categories/education/page/2/index.html" | sed -E 's/.*href="?//')
+  if [[ "$c1" == */articles/page/2/ && "$t2" == */categories/education/page/2/ ]]; then pass check_paged_canonical
+  else fail check_paged_canonical "page 2 canonical: articles=$c1 education=$t2"; fi
   rm -rf "$o"
 }
 
@@ -466,6 +490,6 @@ check_summary_with_angle_brackets() {
   rm -rf "$o"
 }
 
-CHECKS=(check_theme_evo check_html_lang check_tokens_css check_light_dark_fallback check_theme_script_first check_nav check_skip_link check_wrap check_toggle_button check_tokens_unescaped check_home_featured check_home_featured_fallback check_home_lists_articles_not_wiki check_home_empty check_cover_box check_cover_video_slot check_follow_card check_no_format_errors check_category_order check_category_urls check_category_empty check_archives check_old_urls check_internal_links check_article_page check_wechat_footer check_video_vertical check_video_shortcode check_required_fields check_jsonld check_prev_next check_notes_page check_en_chrome check_code_copy check_wiki_body check_wiki_concept_page check_search_index check_search_page check_view_transitions check_scroll_driven_guarded check_reduced_motion check_js_budget check_progress_bar check_seo check_structured_data check_sitemap check_rss_scope check_404 check_video_dir check_no_blocking_fonts check_search_form_visible check_rise_no_fade check_layout_375 check_paged_canonical check_popover_fallback check_no_double_entities check_summary_with_angle_brackets)
+CHECKS=(check_theme_evo check_html_lang check_tokens_css check_light_dark_fallback check_theme_script_first check_nav check_skip_link check_wrap check_toggle_button check_tokens_unescaped check_home_featured check_home_featured_fallback check_home_lists_articles_not_wiki check_home_empty check_cover_box check_cover_video_slot check_follow_card check_no_format_errors check_category_order check_category_urls check_category_empty check_archives check_old_urls check_internal_links check_article_page check_wechat_footer check_video_vertical check_video_shortcode check_required_fields check_jsonld check_prev_next check_notes_page check_en_chrome check_code_copy check_wiki_body check_wiki_concept_page check_search_index check_search_page check_view_transitions check_scroll_driven_guarded check_reduced_motion check_js_budget check_progress_bar check_seo check_structured_data check_sitemap check_rss_scope check_404 check_video_dir check_no_blocking_fonts check_search_form_visible check_rise_no_fade check_layout_375 check_paged_canonical check_popover_fallback check_no_double_entities check_summary_with_angle_brackets check_unknown_category check_fixtures_not_in_content)
 for c in "${@:-${CHECKS[@]}}"; do $c; done
 [[ $FAILS -eq 0 ]] && echo "SITE ALL PASS" || { echo "$FAILS SITE CHECKS FAILED"; exit 1; }

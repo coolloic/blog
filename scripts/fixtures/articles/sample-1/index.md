@@ -1,13 +1,13 @@
 ---
-title: "示例二：新模型速递占位标题"
-date: 2026-11-19T08:00:00+08:00
+title: "示例一：什么是 MCP？给 AI 装上 USB 接口"
+date: 2026-11-18T08:00:00+08:00
 summary: "示例文章（占位），用于开发主题。"
-categories: ["models"]
+categories: ["education"]
 tags: ["agents"]
 cover: "/images/placeholder-cover.svg"
 wechat_url: "https://mp.weixin.qq.com/s/placeholder"
-wechat_id: "sample-2"
-featured: true
+wechat_id: "sample-1"
+featured: false
 draft: true
 ---
 

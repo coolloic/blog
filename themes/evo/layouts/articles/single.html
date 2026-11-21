@@ -1,4 +1,5 @@
 {{ define "main" }}
+{{- range .Params.categories }}{{ if not (index hugo.Data.categories .) }}{{ errorf "%s: unknown category %q (allowed: data/categories.yaml)" $.File.Path . }}{{ end }}{{ end }}
 {{- if not .Draft }}
   {{- range slice "cover" "wechat_url" }}{{ if not (index $.Params .) }}{{ errorf "%s: missing %s" $.File.Path . }}{{ end }}{{ end }}
 {{- end }}
