@@ -27,6 +27,7 @@ outputs:
 
 params:
   env: production
+  comments: {server: "https://comments.aitanyan.com"} # Waline (services/comments); articles only
   company: "L.J.K Consultant Limited" # registered company: footer copyright and JSON-LD publisher legalName
   description: "AI调研员：把前沿 AI 讲清楚。公众号文章的长期归档，附英文技术笔记与 AI Wiki。"
   imageBase: "https://aitanyan.com/img" # Vercel rewrites /img/* to the R2 bucket (vercel.json)

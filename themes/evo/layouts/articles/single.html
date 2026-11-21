@@ -23,6 +23,7 @@
       {{ partial "wechat-footer.html" . }}
       {{ with .Params.tags }}<ul class="tag-cloud" aria-label="{{ partial "t.html" (dict "page" $ "key" "tags") }}">{{ range . }}<li><a href="{{ printf "tags/%s/" (urlize .) | relURL }}">#{{ . }}</a></li>{{ end }}</ul>{{ end }}
       {{ partial "post-nav.html" . }}
+      {{ partial "comments.html" . }}
       {{ partial "related.html" . }}
     </div>
   </div>

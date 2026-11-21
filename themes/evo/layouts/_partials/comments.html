@@ -1,0 +1,15 @@
+{{- /* Waline comments (server: params.comments.server). Keyed by the path from the site root, so moving the
+     domain or base path keeps each thread. Off for a page with front matter comments: false. */ -}}
+{{- with site.Params.comments }}{{ if and .server (ne $.Params.comments false) }}
+{{- $path := printf "/%s" (strings.TrimPrefix "/" (strings.TrimPrefix (urls.Parse site.BaseURL).Path $.RelPermalink)) }}
+<section class="comments" id="comments" aria-labelledby="comments-heading">
+  <h2 id="comments-heading">{{ partial "t.html" (dict "page" $ "key" "comments_title") }}</h2>
+  <div data-waline-server="{{ .server }}" data-waline-path="{{ $path }}" data-waline-assets="{{ "vendor/waline/" | relURL }}" data-waline-placeholder="{{ partial "t.html" (dict "page" $ "key" "comments_placeholder") }}">
+    <p class="comments__loading" data-waline-loading>{{ partial "t.html" (dict "page" $ "key" "comments_loading") }}</p>
+    <div data-waline-el></div>
+  </div>
+  <noscript><p class="comments__loading">{{ partial "t.html" (dict "page" $ "key" "comments_nojs") }}</p></noscript>
+</section>
+{{- $js := resources.Get "js/comments.js" | js.Build (dict "minify" true "format" "esm") | fingerprint }}
+<script type="module" src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}"></script>
+{{- end }}{{ end -}}

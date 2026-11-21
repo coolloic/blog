@@ -109,3 +109,7 @@ quiz_save: 长按图片保存，分享给朋友
 quiz_cta_title: 测一测：AI 会取代我的工作吗？
 quiz_cta_body: 9 个问题，按文章里的「岗位体检」方法，把你的工作拆成三类任务。
 quiz_cta_button: 开始自测 →
+comments_title: 评论
+comments_placeholder: 说说你的看法（评论审核通过后显示）
+comments_loading: 评论加载中…
+comments_nojs: 评论需要启用 JavaScript。也可以在公众号后台留言。

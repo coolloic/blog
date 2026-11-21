@@ -12,3 +12,4 @@ public/
 resources/
 .env*
 .vercel/
+services/

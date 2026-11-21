@@ -109,3 +109,7 @@ quiz_save: Long-press to save the image
 quiz_cta_title: "Quiz: will AI take my job?"
 quiz_cta_body: Nine questions that split your work into three kinds of tasks.
 quiz_cta_button: Start →
+comments_title: Comments
+comments_placeholder: Share your thoughts (shown after review)
+comments_loading: Loading comments…
+comments_nojs: Comments need JavaScript.

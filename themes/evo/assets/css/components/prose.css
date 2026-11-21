@@ -69,3 +69,13 @@
 .corrections h2 { font-size: 1.125rem; }
 .corrections ul { display: grid; gap: var(--space-xs); padding-inline-start: 1.2em; }
 .corrections time { font-family: var(--font-mono); color: var(--color-subtle); }
+/* Comments (Waline), themed with the site tokens */
+.comments { display: grid; gap: var(--space-m); }
+.comments h2 { font-size: var(--size-h3); }
+.comments__loading { font-size: var(--size-small); color: var(--color-subtle); }
+.comments [data-waline-el] {
+  --waline-theme-color: var(--color-accent-fill); --waline-active-color: var(--color-accent);
+  --waline-color: var(--color-text); --waline-bg-color: var(--color-surface); --waline-bg-color-light: var(--color-surface2);
+  --waline-border-color: var(--color-border); --waline-light-grey: var(--color-subtle); --waline-dark-grey: var(--color-muted);
+  --waline-info-color: var(--color-subtle); --waline-font-size: 1rem; --waline-border-radius: var(--radius-card);
+}
