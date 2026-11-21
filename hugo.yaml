@@ -57,11 +57,6 @@ params:
     Content: "Technical writing on cutting-edge AI: models, agents, tooling, and what I learn building with them."
 
   socialIcons:
-    - name: cv
-      title: CV
-      url: "https://coolloic.github.io/"
-    - name: github
-      url: "https://github.com/coolloic"
     - name: rss
       url: "index.xml"
 
@@ -82,13 +77,10 @@ menu:
     - {identifier: search, name: 搜索, url: "search/", weight: 50}
     - {identifier: about, name: 关于, url: "about/", weight: 60}
   footer:
-    - {identifier: cv, name: CV, url: "https://coolloic.github.io/", weight: 10}
     - {identifier: archives, name: 归档, url: "archives/", weight: 15}
-    - {identifier: now, name: Now, url: "now/", weight: 20}
     - {identifier: methodology, name: 调研方法, url: "methodology/", weight: 22}
     - {identifier: corrections, name: 更正与反馈, url: "corrections/", weight: 24}
     - {identifier: rss, name: RSS, url: "index.xml", weight: 30}
-    - {identifier: github, name: GitHub, url: "https://github.com/coolloic", weight: 40}
 
 markup:
   goldmark:
